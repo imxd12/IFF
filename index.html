@@ -1,0 +1,234 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+   <title>Dashboard</title>
+
+  <!-- Favicon / App Icon -->
+  <link rel="icon" type="image/svg+xml" href="icon-512.svg">
+  <!-- Optional fallback for older browsers -->
+  <link rel="shortcut icon" href="icon-512.png" type="image/png">
+  <link rel="stylesheet" href="global.css">
+  <link rel="stylesheet" href="index.css">
+  <link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#000000">
+
+</head>
+<body>
+  <div class="app">
+    <div class="card header">
+      <div class="brand">
+        <div class="logo">
+  <img src="icon-512.svg" alt="FinFusion Logo" style="width:100%;height:100%;border-radius:10px;">
+</div>
+        <div>
+          <div class="app-title">FinFusion</div>
+          <div class="small-muted">3-in-1 Finance</div>
+        </div>
+      </div>
+      <div style="text-align:right">
+        <div id="timeNow" class="small-muted"></div>
+        <div class="small-muted" id="welcomeMsg"></div>
+      </div>
+    </div>
+
+    <!-- Splash Screen -->
+<div id="splashScreen" class="splash-screen">
+  <div class="splash-content">
+    <!-- SVG Logo -->
+    <img src="icon-512.svg" alt="FinFusion Logo" class="splash-logo" />
+    <div class="splash-title">FinFusion</div>
+    <div class="splash-subtitle">All-in-One Finance & Productivity</div>
+  </div>
+</div>
+    
+    <!-- Quick Summary -->
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <div style="font-weight:700">Quick Summary</div>
+          <div class="small-muted">Accurate all-time totals</div>
+        </div>
+        <div>
+          <button class="btn" id="btnExportAll">Export All</button>
+        </div>
+      </div>
+
+      <div class="widgets" style="margin-top:12px">
+        <div class="card widget">
+          <div class="small-muted">Today's Expense</div>
+          <div id="todayExpense" style="font-weight:700;font-size:16px">₹0</div>
+        </div>
+        <div class="card widget">
+          <div class="small-muted">This Month PocketCal</div>
+          <div id="monthPocket" style="font-weight:700;font-size:16px">₹0</div>
+        </div>
+        <div class="card widget">
+          <div class="small-muted">Blinkit Income (Month)</div>
+          <div id="monthNexus" style="font-weight:700;font-size:16px">₹0</div>
+        </div>
+        <div class="card widget">
+          <div class="small-muted">All-time Balance</div>
+          <div id="allTimeBalance" style="font-weight:700;font-size:16px">₹0</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- App Links -->
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <div style="font-weight:700">App Links</div>
+        <div class="small-muted">Tap to open</div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-primary" onclick="location.href='spendly.html'">💰 Spendly</button>
+        <button class="btn btn-primary" onclick="location.href='nexus.html'">📊 Nexus</button>
+        <button class="btn btn-primary" onclick="location.href='pocketcal.html'">📅 PocketCal</button>
+      </div>
+    </div>
+
+    <!-- Help & Legal -->
+    <div class="card">
+      <div style="font-weight:700;margin-bottom:8px">Help & Legal</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn" id="btnDevOptions">👨‍💻 Developer Options</button>
+        <button class="btn" id="btnTerms">📜 Terms & Conditions</button>
+        <button class="btn" id="btnHowToUse">📝 How to Use</button>
+      </div>
+      <div style="margin-top:8px" class="small-muted">Use the app pages above. Export/backup for data transfer. Click buttons for more info.</div>
+    </div>
+  </div>
+
+  <!-- Modal Popup -->
+  <div id="modal" class="modal">
+    <div class="modal-content">
+      <span id="modalClose" class="modal-close">&times;</span>
+      <div id="modalBody"></div>
+    </div>
+  </div>
+
+  <!-- Floating Branding Card -->
+<div class="branding-card">
+  <div class="branding-text">@imxd-FinFusion 2025</div>
+</div>
+
+<!-- Profile Modal -->
+<div id="profileModal" class="profile-modal">
+  <div class="profile-content">
+    <span class="close-btn">&times;</span>
+
+    <!-- Profile Photo -->
+    <div class="profile-photo">
+      <img src="Imad.jpg" alt="Imad Khan">
+    </div>
+
+    <!-- About Myself -->
+    <div class="profile-section">
+      <h3>About Myself</h3>
+      <p><strong>Name:</strong> Imad Khan</p>
+      <p><strong>Role:</strong> Developer | FinFusion Creator</p>
+      <p><strong>Email:</strong> <a href="mailto:imadak999@gmail.com">imadak999@gmail.com</a></p>
+      <p><strong>Instagram:</strong> <a href="https://www.instagram.com/_imxd12" target="_blank">@_imxd12</a></p>
+      <p><strong>WhatsApp:</strong> <a href="https://wa.me/918097814934" target="_blank">Chat on WhatsApp</a></p>
+    </div>
+
+<!-- Education -->
+<div class="profile-section">
+  <h3>Education 🎓</h3>
+  <p>
+    <strong>● B.E (Expected June 2028) :</strong> Pursuing Electrical & Computer Engineering, Anjuman-I-Islam's Kalsekar Technical Campus, Panvel - Navi Mumbai 
+    <a href="https://maps.app.goo.gl/xcGfMsNk44Qse9CLA" target="_blank" title="View on Google Maps" class="location-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#ff4757" viewBox="0 0 24 24">
+        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z"/>
+      </svg>
+    </a>
+  </p>
+  <p>
+    <strong>● Diploma (June 2024):</strong> Automation & Robotics, Anjuman-I-Islam's Abdul Razzaq Kalsekar Polytechnic, Panvel - Navi Mumbai 
+    <a href="https://maps.app.goo.gl/bUB4eSrFojxXSUjy9" target="_blank" title="View on Google Maps" class="location-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#ff4757" viewBox="0 0 24 24">
+        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z"/>
+      </svg>
+    </a>
+  </p>
+  <p>
+    <strong>● S.S.C (March 2021):</strong> St. Francis Xavier's English Medium High School, Ajgoan 
+    <a href="https://maps.app.goo.gl/mbEHeidS6EWQ3zmr5" target="_blank" title="View on Google Maps" class="location-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#ff4757" viewBox="0 0 24 24">
+        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z"/>
+      </svg>
+    </a>
+  </p>
+</div>
+
+    <!-- Work Experience -->
+    <div class="profile-section">
+      <h3>Work Experience 💼</h3>
+      <ul>
+        <li>
+          <strong>IRABOT TechEd LLP</strong> (June 2023 - July 2023)<br>
+          Completed a six-week industrial internship in Automation and Robotics.
+            <a href="https://maps.app.goo.gl/cVu78nW3DoMW48V88" target="_blank" title="View on Google Maps" class="location-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#ff4757" viewBox="0 0 24 24">
+        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z"/>
+      </svg>
+    </a>
+</li>
+      </ul>
+    </div>
+
+    <!-- Professional Certifications -->
+    <div class="profile-section">
+      <h3>Professional Certifications 📜</h3>
+      <ul>
+        <strong>Aug 2023 - May 2024:</strong>
+        <li>Research Paper "Automated Attendance Marking System Using Raspberry Pi" published in International Journal of Research and Analytical Reviews (IJRAR)</li>
+        <li>Participation Certificate - "NEUROFEST" State Level Project Competition 2024 (Anjuman-I-Islam Abdul Razzaq Kalsekar Polytechnic, Panvel)</li>
+        <li>Participation Certificate - "TECHNOVATION" State Level Project Competition 2024 (Vivekanand Education Society's Polytechnic, Chembur)</li>
+      </ul>
+    </div>
+
+    <!-- Resume Link Button -->
+<div class="profile-section">
+  <h3>Resume 📄</h3>
+  <p>
+    <a href="Imad_Khan_Resume.pdf" target="_blank" class="btn btn-primary">
+      View / Download Resume
+    </a>
+  </p>
+</div>
+
+
+    <!-- App Note -->
+    <div class="profile-note">
+      <p>FinFusion 2025 — All-in-One Finance & Productivity Web App</p>
+    </div>
+  </div>
+</div>
+
+
+  <!-- Bottom Navbar -->
+  <div class="bottom-nav">
+    <div class="nav-btn" id="nav-home" data-href="index.html">
+      <div class="nav-icon">🏠</div>
+      <div class="nav-label">Home</div>
+    </div>
+    <div class="nav-btn" id="nav-spend" data-href="spendly.html">
+      <div class="nav-icon">💰</div>
+      <div class="nav-label">Spendly</div>
+    </div>
+    <div class="nav-btn" id="nav-nexus" data-href="nexus.html">
+      <div class="nav-icon">📊</div>
+      <div class="nav-label">Nexus</div>
+    </div>
+    <div class="nav-btn" id="nav-pocket" data-href="pocketcal.html">
+      <div class="nav-icon">📅</div>
+      <div class="nav-label">PocketCal</div>
+    </div>
+  </div>
+
+  <script src="global.js"></script>
+  <script src="index.js"></script>
+</body>
+</html>

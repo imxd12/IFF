@@ -1,0 +1,97 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+   <title>PocketCal</title>
+
+  <!-- Favicon / App Icon -->
+  <link rel="icon" type="image/svg+xml" href="icon-512.svg">
+  <!-- Optional fallback for older browsers -->
+  <link rel="shortcut icon" href="icon-512.png" type="image/png">
+  <link rel="stylesheet" href="global.css">
+  <link rel="stylesheet" href="pocketcal.css">
+</head>
+<body>
+  <div class="app">
+    <!-- Header -->
+    <div class="card header">
+      <div class="brand">
+        <div class="logo">📅</div>
+        <div>
+          <div class="app-title">PocketCal</div>
+          <div class="small-muted">Dad’s Money Log</div>
+        </div>
+      </div>
+      <div style="text-align:right">
+        <div id="timeNow" class="small-muted"></div>
+        <div class="small-muted">Click date to add</div>
+      </div>
+    </div>
+
+    <!-- Totals -->
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <div class="small-muted">All-time total</div>
+          <div id="pcAll" style="font-weight:700">₹0</div>
+        </div>
+        <div>
+          <div class="small-muted">This month</div>
+          <div id="pcMonth" style="font-weight:700">₹0</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Calendar -->
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <div style="font-weight:700">Calendar</div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <button class="btn" id="prevMonth">◀</button>
+          <div id="calMonth" class="small-muted"></div>
+          <button class="btn" id="nextMonth">▶</button>
+        </div>
+      </div>
+      <div id="calendarGrid"></div>
+      <div style="margin-top:8px">
+        <input id="pcSearch" class="input" placeholder="Search date (YYYY-MM-DD)" />
+      </div>
+    </div>
+  </div>
+
+  <!-- Popup Modal -->
+  <div id="entryModal" class="modal hidden">
+    <div class="modal-content card">
+      <h3 id="modalTitle">Add Entry</h3>
+      <input id="pcDate" type="date" class="input" />
+      <input id="pcAmount" type="number" class="input" placeholder="Amount" />
+      <input id="pcNotes" class="input" placeholder="Notes" />
+      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:10px">
+        <button class="btn btn-danger" id="pcDelete">Delete</button>
+        <button class="btn" id="pcClose">Cancel</button>
+        <button class="btn btn-primary" id="pcSave">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Navbar -->
+  <div class="bottom-nav">
+    <div class="nav-btn" data-href="index.html">
+      <div class="nav-icon">🏠</div><div class="nav-label">Home</div>
+    </div>
+    <div class="nav-btn" data-href="spendly.html">
+      <div class="nav-icon">💰</div><div class="nav-label">Spendly</div>
+    </div>
+    <div class="nav-btn" data-href="nexus.html">
+      <div class="nav-icon">📊</div><div class="nav-label">Nexus</div>
+    </div>
+    <div class="nav-btn active" data-href="pocketcal.html">
+      <div class="nav-icon">📅</div><div class="nav-label">PocketCal</div>
+    </div>
+  </div>
+
+  <script src="global.js"></script>
+  <script src="pocketcal.js"></script>
+</body>
+</html>

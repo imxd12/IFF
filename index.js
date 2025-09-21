@@ -40,7 +40,7 @@ document.getElementById('welcomeMsg').textContent = welcome();
   const totalExpense = spend.filter(s=>s.type==='expense').reduce((a,b)=>a+Number(b.amount||0),0);
   const totalPocket = pocket.reduce((a,b)=>a+Number(b.amount||0),0);
   const totalNexus = nexus.reduce((a,b)=>a+Number(b.payout||0),0);
-  const allBalance = totalIncome - totalExpense + totalPocket + totalNexus;
+  const allBalance = totalIncome - totalExpense ;
   document.getElementById('allTimeBalance').textContent = fmt(allBalance);
 
   // Export all
@@ -152,4 +152,5 @@ window.onclick = e => { if(e.target === profileModal) profileModal.style.display
 window.addEventListener('load', () => {
   const splash = document.getElementById('splashScreen');
   setTimeout(() => splash.style.display = 'none', 3000);
+
 });

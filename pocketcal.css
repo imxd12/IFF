@@ -91,3 +91,35 @@
       background: rgba(0,200,100,0.1);
       border-color: var(--accent);
     }
+
+    .calendar {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.calendar .day {
+  background: rgba(255,255,255,0.08);
+  border-radius: 12px;
+  min-height: 70px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-size: 0.85rem;
+  color: #fff;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.calendar .day span.amount {
+  font-size: 0.75rem;
+  margin-top: 3px;
+  color: #4dd0e1; /* accent */
+}
+
+.calendar .day:hover {
+  background: rgba(255,255,255,0.15);
+  transform: scale(1.05);
+}

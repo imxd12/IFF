@@ -76,7 +76,7 @@
 /* Floating Branding Card above navbar */
 .branding-card {
   position: fixed;
-  bottom: 140px; /* space above bottom-nav */
+  bottom: 25px; /* space above bottom-nav */
   left: 50%;
   transform: translateX(-50%);
   background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
@@ -278,3 +278,4 @@
   50% { transform: rotate(15deg);}
   100% { transform: rotate(0deg);}
 }
+

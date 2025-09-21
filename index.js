@@ -40,7 +40,7 @@ document.getElementById('welcomeMsg').textContent = welcome();
   const totalExpense = spend.filter(s=>s.type==='expense').reduce((a,b)=>a+Number(b.amount||0),0);
   const totalPocket = pocket.reduce((a,b)=>a+Number(b.amount||0),0);
   const totalNexus = nexus.reduce((a,b)=>a+Number(b.payout||0),0);
-  const allBalance = totalIncome - totalExpense ;
+  const allBalance = totalIncome - totalExpense;
   document.getElementById('allTimeBalance').textContent = fmt(allBalance);
 
   // Export all
@@ -61,17 +61,6 @@ document.getElementById('welcomeMsg').textContent = welcome();
 
 // Button content
 const devContent = `
-  <h3>Developer Options</h3>
-  <p>FinFusion v1.0 — All-in-One Finance & Productivity Tracker</p>
-  <p>Developer: Imad Khan</p>
-  <p>Contact: <a href="mailto:imadak999@gmail.com">imadak999@gmail.com</a></p>
-  <p>Instagram: <a href="https://www.instagram.com/_imxd12" target="_blank">@_imxd12</a></p>
-  <p>App Version: Web HTML/CSS/JS (Responsive & Mobile-First)</p>
-  <p>Last updated: ${new Date().toLocaleDateString()}</p>
-`;
-
-
-const termsContent = `
   <h3>Terms & Conditions</h3>
   <p>1. Use the app responsibly. All data is stored locally in your browser.</p>
   <p>2. Developer is not liable for any financial losses based on app data.</p>
@@ -82,7 +71,8 @@ const termsContent = `
   <p>7. Updates may improve functionality; check developer options for version info.</p>
 `;
 
-const howToUseContent = `
+
+const termsContent = `
   <h3>How to Use FinFusion</h3>
 
   <h4>Spendly — Expense & Income Tracker</h4>
@@ -94,7 +84,7 @@ const howToUseContent = `
     <li>Edit or delete any entry by clicking the respective buttons.</li>
     <li>Use the search bar to quickly find transactions by notes or category.</li>
     <li>Export data to CSV or backup to JSON for offline storage.</li>
-  </ul>
+  </ul><br>
 
   <h4>Nexus — Blinkit Income Tracker</h4>
   <ul>
@@ -104,7 +94,7 @@ const howToUseContent = `
     <li>Edit or delete income logs to correct mistakes.</li>
     <li>Charts visualize income trends over time.</li>
     <li>Backup and export options available for security.</li>
-  </ul>
+  </ul><br>
 
   <h4>PocketCal — Pocket Money Manager</h4>
   <ul>
@@ -114,7 +104,7 @@ const howToUseContent = `
     <li>Edit or delete entries as needed.</li>
     <li>Charts help visualize where your money is going.</li>
     <li>Export or backup your data to JSON files for safety.</li>
-  </ul>
+  </ul><br>
 
   <h4>General Tips</h4>
   <ul>
@@ -124,6 +114,7 @@ const howToUseContent = `
     <li>Keep your browser storage clean to maintain app performance.</li>
   </ul>
 `;
+
 
   document.getElementById('btnDevOptions').onclick = ()=>{
     modalBody.innerHTML = devContent;
@@ -152,5 +143,4 @@ window.onclick = e => { if(e.target === profileModal) profileModal.style.display
 window.addEventListener('load', () => {
   const splash = document.getElementById('splashScreen');
   setTimeout(() => splash.style.display = 'none', 3000);
-
 });

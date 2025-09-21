@@ -99,15 +99,16 @@
         current.setMonth(current.getMonth()+1); renderCalendar();
       };
 
-      // Search
-      $('#pcSearch').oninput = e => {
-        const v = e.target.value.trim();
-        if(v.length===10){
-          const entry = data.find(d=>d.date===v);
-          if(entry) openModal(v, entry);
-          else openModal(v, null);
-        }
-      };
+// Search by date picker
+$('#pcSearch').onchange = e => {
+  const v = e.target.value.trim();
+  if (v) {
+    const entry = data.find(d => d.date === v);
+    if (entry) openModal(v, entry);
+    else openModal(v, null);
+  }
+};
+
 
       // Add Today Button
       $('#btnAddToday').onclick = () => {

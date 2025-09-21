@@ -1,31 +1,81 @@
+/* Calendar Grid */
 #calendarGrid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 6px;
+  margin-top: 10px;
 }
+
 #calendarGrid .day {
-  padding: 10px;
-  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 8px;
+  border-radius: 12px;
   text-align: center;
   border: 1px solid var(--glass-border);
-  height: 70px;
+  min-height: 80px;
   cursor: pointer;
-  transition: 0.2s;
+  transition: all 0.2s ease;
+  background: var(--card);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
 }
+
 #calendarGrid .day:hover {
-  background: rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.06);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
 }
+
 #calendarGrid .day.has-entry {
-  background: rgba(0, 200, 100, 0.1);
+  background: rgba(16, 185, 129, 0.15);
   border-color: var(--accent);
 }
+
 #calendarGrid .day .date-num {
   font-weight: 700;
+  font-size: 14px;
+  color: var(--text);
 }
+
 #calendarGrid .day .amount {
   font-size: 12px;
   color: var(--muted);
-  margin-top: 6px;
+  margin-top: 4px;
+  word-break: break-word;
+}
+
+/* Responsive Calendar */
+@media (max-width: 768px) {
+  #calendarGrid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+  }
+  #calendarGrid .day {
+    min-height: 70px;
+    padding: 6px;
+  }
+  #calendarGrid .day .date-num {
+    font-size: 13px;
+  }
+  #calendarGrid .day .amount {
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 480px) {
+  #calendarGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+  #calendarGrid .day {
+    min-height: 65px;
+    padding: 5px;
+  }
+  #calendarGrid .day .date-num {
+    font-size: 12px;
+  }
 }
 
 /* Modal */
@@ -37,27 +87,42 @@
   align-items: center;
   justify-content: center;
   z-index: 20;
+  backdrop-filter: blur(4px);
 }
+
 .modal.hidden {
   display: none;
 }
+
 .modal-content {
-  max-width: 320px;
-  width: 90%;
-  padding: 16px;
-  border-radius: 12px;
+  max-width: 400px;
+  width: 92%;
+  padding: 20px;
+  border-radius: 16px;
+  background: var(--card);
+  color: var(--text);
   animation: pop 0.3s ease;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.25);
 }
+
 @keyframes pop {
   from { transform: scale(0.9); opacity: 0; }
   to   { transform: scale(1); opacity: 1; }
 }
 
-/* Danger Button */
+/* Buttons */
 .btn-danger {
   background: #e11d48;
   color: #fff;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: 0.2s;
 }
+
 .btn-danger:hover {
-  opacity: 0.8;
+  opacity: 0.85;
+  transform: scale(1.03);
 }

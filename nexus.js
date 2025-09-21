@@ -94,20 +94,32 @@ attachBottomNav('nav-nexus');
 
   $('#searchNexus').oninput = e => renderList(e.target.value);
 
-  function updateChart(){
-    const canvas = $('#nxChart');
-    const last = data.slice().sort((a,b)=>a.date.localeCompare(b.date)).slice(-12);
-    const labels = last.map(i=> i.date.slice(5));
-    const values = last.map(i=> i.payout);
-    drawBar(canvas, labels, values);
+function updateChart(){
+  const canvas = $('#nxChart');
+  const last = data.slice().sort((a,b)=>a.date.localeCompare(b.date)).slice(-12);
+  const labels = last.map(i=> i.date.slice(5));
+  const values = last.map(i=> i.payout);
+  drawBar(canvas, labels, values);
 
-    const now = new Date();
-    const monthStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
-    const monthTotal = data.filter(d=>d.date.startsWith(monthStr)).reduce((a,b)=>a+b.payout,0);
-    const ytd = data.reduce((a,b)=>a+b.payout,0);
-    $('#nxMonth').textContent = fmt(monthTotal);
-    $('#nxYTD').textContent = fmt(ytd);
-  }
+  const now = new Date();
+  const monthStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+  
+  // Monthly payout
+  const monthTotal = data.filter(d=>d.date.startsWith(monthStr)).reduce((a,b)=>a+b.payout,0);
+  $('#nxMonth').textContent = fmt(monthTotal);
+
+  // YTD payout
+  const ytd = data.reduce((a,b)=>a+b.payout,0);
+  $('#nxYTD').textContent = fmt(ytd);
+
+  // Total Bonus (all-time)
+  const totalBonus = data.reduce((a,b)=>a+(b.bonus||0),0);
+  $('#nxBonusTotal').textContent = fmt(totalBonus);
+
+  // Total Penalty (all-time)
+  const totalPenalty = data.reduce((a,b)=>a+(b.penalty||0),0);
+  $('#nxPenaltyTotal').textContent = fmt(totalPenalty);
+}
 
   renderList();
 })();

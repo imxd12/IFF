@@ -39,6 +39,7 @@ const categoryMap = {
     '📺 Electronics / Gadgets',
     '🛒 Groceries',
     '🎁 Gifts',
+    '✏️ Stationary',
     'All'
   ],
   Bills: [
@@ -190,3 +191,4 @@ const categoryMap = {
   renderList();
 
 })();
+

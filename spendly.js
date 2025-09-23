@@ -39,7 +39,7 @@ const categoryMap = {
     '📺 Electronics / Gadgets',
     '🛒 Groceries',
     '🎁 Gifts',
-    '✏️ Stationary'
+    '✏️ Stationary',
     'All'
   ],
   Bills: [
@@ -49,7 +49,7 @@ const categoryMap = {
     '📞 Phone / Landline',
     '📺 Cable / OTT',
     '🧾 Insurance / Subscriptions',
-    '🚉 Railway Pass 
+    '🚉 Railway Pass',
     'All'
   ],
   Health: [
@@ -192,6 +192,7 @@ const categoryMap = {
   renderList();
 
 })();
+
 
 
 

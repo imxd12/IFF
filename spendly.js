@@ -2,95 +2,34 @@ startClock('#timeNow');
 attachBottomNav('nav-spend');
 
 (function(){
-    // Enhanced Subcategories with Emojis for Spendly
+  // Extended categories with emojis
 const categoryMap = {
-  Food: [
-    '🍳 Breakfast',
-    '🥪 Lunch',
-    '🍝 Dinner',
-    '🍿 Snacks',
-    '☕ Beverages',
-    '🍰 Desserts',
-    '🛒 Groceries',
-    'All'
-  ],
-  Travel: [
-    '🚌 Bus',
-    '🚗 Taxi / Ride-share',
-    '🚖 Local Transport',
-    '✈️ Flights',
-    '🚆 Train / Intercity',
-    '⛴️ Ferry / Boat',
-    '🛣️ Fuel / Petrol',
-    'All'
-  ],
-  Rent: [
-    '🏠 House Rent',
-    '📱 Mobile Recharge',
-    '💡 Utilities (Electricity, Water)',
-    '🌐 Internet / WiFi',
-    '🏢 Office / Workspace',
-    'All'
-  ],
-  Shopping: [
-    '👕 Clothes',
-    '👗 Fashion / Accessories',
-    '🛍️ Online Shopping',
-    '📺 Electronics / Gadgets',
-    '🛒 Groceries',
-    '🎁 Gifts',
-    '✏️ Stationary',
-    'All'
-  ],
-  Bills: [
-    '💡 Electricity',
-    '🌊 Water',
-    '🌐 Internet / WiFi',
-    '📞 Phone / Landline',
-    '📺 Cable / OTT',
-    '🧾 Insurance / Subscriptions',
-    '🚉 Railway Pass',
-    'All'
-  ],
-  Health: [
-    '💊 Medicines',
-    '🩺 Doctor / Clinic',
-    '🏋️‍♂️ Gym / Fitness',
-    '🦷 Dental',
-    '💆‍♀️ Spa / Wellness',
-    'All'
-  ],
-  Entertainment: [
-    '🎬 Movies / OTT',
-    '🎮 Games',
-    '🎵 Music / Events',
-    '📚 Books / Magazines',
-    '🎤 Concerts / Shows',
-    'All'
-  ],
-  Education: [
-    '📚 Tuition / Classes',
-    '📝 Exams / Fees',
-    '💻 Online Courses',
-    '📖 Books / Materials',
-    'All'
-  ],
-  Other: [
-    '🛠️ Miscellaneous',
-    '🎁 Gifts',
-    '💵 Donations / Charity',
-    'All'
-  ]
+  Food: ['🍳 Breakfast','🥪 Lunch','🍝 Dinner','🍿 Snacks','☕ Beverages','🍰 Desserts','🛒 Groceries','All'],
+  Travel: ['🚌 Bus','🚗 Taxi','🚖 Local Transport','✈️ Flights','🚆 Train','⛴️ Ferry','🛣️ Fuel','All'],
+  Rent: ['🏠 House Rent','📱 Mobile Recharge','💡 Utilities','🌐 Internet','🏢 Workspace','All'],
+  Shopping: ['👕 Clothes','👗 Fashion','🛍️ Online','📺 Electronics','🎁 Gifts','🖊️ Stationary','All'], // added Stationary
+  Bills: ['💡 Electricity','🌊 Water','🌐 WiFi','📞 Phone','📺 OTT','🧾 Insurance','🎫 Railway Pass','All'], // added Railway Pass
+  Health: ['💊 Medicines','🩺 Doctor','🏋️‍♂️ Gym','🦷 Dental','💆 Spa','All'],
+  Entertainment: ['🎬 Movies','🎮 Games','🎵 Music','📚 Books','🎤 Shows','All'],
+  Education: ['📚 Tuition','📝 Exams','💻 Online Course','📖 Books','All'],
+  Savings: ['🏦 Bank Deposit','📈 Investments','💎 Assets','All'],
+  Family: ['👨‍👩‍👧 Kids','🎂 Celebrations','🎁 Gifts','All'],
+  Other: ['🛠️ Miscellaneous','💵 Charity','All']
 };
 
   const expenseCategory = $('#expenseCategory');
   const expenseSub = $('#expenseSub');
+
+  // Fill category dropdown
+  expenseCategory.innerHTML = Object.keys(categoryMap).map(c=>`<option value="${c}">${c}</option>`).join('');
   function populateSub(){ expenseSub.innerHTML = categoryMap[expenseCategory.value].map(s=> `<option>${s}</option>`).join(''); }
   expenseCategory.onchange = populateSub;
   populateSub();
 
   // Data storage
   let data = loadData('fin_spendly') || [];
+  let showLimit = 6;
+  let showAll = false;
 
   // Totals
   function calcTotals(){
@@ -102,14 +41,21 @@ const categoryMap = {
   }
 
   // Render list
-  let showLimit = 6;
   function renderList(filter=''){
     const list = $('#listSpend'); list.innerHTML='';
-    const items = data.slice().reverse().filter(it=>{
-      if(!filter) return true;
-      const q = filter.toLowerCase();
-      return (it.notes||'').toLowerCase().includes(q) || (it.category||'').toLowerCase().includes(q) || (it.sub||'').toLowerCase().includes(q);
-    }).slice(0, showLimit);
+    const q = filter.toLowerCase();
+    const selDate = $('#filterDate').value;
+
+    let items = data.slice().reverse().filter(it=>{
+      let match = true;
+      if(q){
+        match = (it.notes||'').toLowerCase().includes(q) || (it.category||'').toLowerCase().includes(q) || (it.sub||'').toLowerCase().includes(q);
+      }
+      if(selDate){ match = match && it.date===selDate; }
+      return match;
+    });
+
+    if(!showAll){ items = items.slice(0, showLimit); }
 
     items.forEach(it=>{
       const li = document.createElement('li'); li.className='list-item';
@@ -117,11 +63,9 @@ const categoryMap = {
         <div style="font-weight:700">${it.type==='expense' ? '- ' + fmt(it.amount) : '+ ' + fmt(it.amount)} • ${it.category||''} / ${it.sub||''}</div>
         <div class="meta">${it.date} • ${it.notes||''}</div>
       </div>
-      <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end">
-        <div>
-          <button class="btn" data-id="${it.id}" data-action="edit">Edit</button>
-          <button class="btn" data-id="${it.id}" data-action="del">Delete</button>
-        </div>
+      <div>
+        <button class="btn" data-id="${it.id}" data-action="edit">Edit</button>
+        <button class="btn" data-id="${it.id}" data-action="del">Delete</button>
       </div>`;
       list.appendChild(li);
     });
@@ -158,7 +102,17 @@ const categoryMap = {
   };
 
   // Search
-  $('#searchSpend').oninput = e => { showLimit=6; renderList(e.target.value); };
+  $('#searchSpend').oninput = e => { renderList(e.target.value); };
+
+  // Date filter
+  $('#filterDate').onchange = ()=> renderList($('#searchSpend').value);
+
+  // See All button
+  $('#btnSeeAll').onclick = ()=>{
+    showAll = !showAll;
+    $('#btnSeeAll').textContent = showAll ? "Show Less" : "See All";
+    renderList($('#searchSpend').value);
+  };
 
   // Edit/Delete
   $('#listSpend').onclick = e => {
@@ -166,8 +120,9 @@ const categoryMap = {
     const id = btn.dataset.id; const action = btn.dataset.action;
     const idx = data.findIndex(d=>d.id===id); if(idx<0) return;
     const it = data[idx];
-    if(action==='del'){ if(confirm('Delete entry?')){ data.splice(idx,1); saveData('fin_spendly',data); renderList($('#searchSpend').value); snack('Deleted'); } }
-    else if(action==='edit'){
+    if(action==='del'){
+      if(confirm('Delete entry?')){ data.splice(idx,1); saveData('fin_spendly',data); renderList($('#searchSpend').value); snack('Deleted'); }
+    } else if(action==='edit'){
       if(it.type==='income'){
         $('#incomeAmount').value=it.amount; $('#incomeDate').value=it.date; $('#incomeNotes').value=it.notes;
       } else {
@@ -190,9 +145,4 @@ const categoryMap = {
   }
 
   renderList();
-
 })();
-
-
-
-

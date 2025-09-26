@@ -1,27 +1,43 @@
+// Start clock and navigation
 startClock('#timeNow');
 attachBottomNav('nav-home');
 
 (function(){
-// Personalized welcome message
-function welcome() {
-  const h = new Date().getHours();
-  const name = "Imad";
-  
-  if(h >= 0 && h < 4) return `Good midnight 🌙, ${name}!`;
-  if(h >= 4 && h < 7) return `Good early morning 🌅, ${name}!`;
-  if(h >= 7 && h < 12) return `Good morning ☀️, ${name}!`;
-  if(h >= 12 && h < 14) return `Good noon 🌞, ${name}!`;
-  if(h >= 14 && h < 18) return `Good afternoon 🌤️, ${name}!`;
-  if(h >= 18 && h < 21) return `Good evening 🌙, ${name}!`;
-  return `Good night 🌌, ${name}!`;
-}
+  // Load saved username or default
+  let username = localStorage.getItem('fin_userName') || "Imad";
 
-document.getElementById('welcomeMsg').textContent = welcome();
+  // Personalized welcome message
+  function welcome(){
+    const h = new Date().getHours();
+    if(h >= 0 && h < 4) return `Good midnight 🌙, ${username}!`;
+    if(h >= 4 && h < 7) return `Good early morning 🌅, ${username}!`;
+    if(h >= 7 && h < 12) return `Good morning ☀️, ${username}!`;
+    if(h >= 12 && h < 14) return `Good noon 🌞, ${username}!`;
+    if(h >= 14 && h < 18) return `Good afternoon 🌤️, ${username}!`;
+    if(h >= 18 && h < 21) return `Good evening 🌙, ${username}!`;
+    return `Good night 🌌, ${username}!`;
+  }
+
+  function updateWelcome(){
+    document.getElementById('welcomeMsg').textContent = welcome();
+  }
+
+  updateWelcome();
+
+  // Button to set/edit username
+  document.getElementById('btnSetName').onclick = ()=>{
+    const newName = prompt("Enter your name:", username);
+    if(newName && newName.trim() !== ""){
+      username = newName.trim();
+      localStorage.setItem('fin_userName', username);
+      updateWelcome();
+    }
+  };
 
   // Load all app data
-  const spend = loadData('fin_spendly');
-  const nexus = loadData('fin_nexus');
-  const pocket = loadData('fin_pocketcal');
+  const spend = loadData('fin_spendly') || [];
+  const nexus = loadData('fin_nexus') || [];
+  const pocket = loadData('fin_pocketcal') || [];
 
   const today = new Date().toISOString().split('T')[0];
   const thisMonth = new Date().toISOString().slice(0,7);
@@ -38,27 +54,22 @@ document.getElementById('welcomeMsg').textContent = welcome();
 
   const totalIncome = spend.filter(s=>s.type==='income').reduce((a,b)=>a+Number(b.amount||0),0);
   const totalExpense = spend.filter(s=>s.type==='expense').reduce((a,b)=>a+Number(b.amount||0),0);
-  const totalPocket = pocket.reduce((a,b)=>a+Number(b.amount||0),0);
-  const totalNexus = nexus.reduce((a,b)=>a+Number(b.payout||0),0);
   const allBalance = totalIncome - totalExpense;
   document.getElementById('allTimeBalance').textContent = fmt(allBalance);
 
   // Export all
-  document.getElementById('btnExportAll').onclick = ()=>{
-    const blob={spend,nexus,pocket,exportedAt:new Date().toISOString()};
+  document.getElementById('btnExportAll').onclick = ()=> {
+    const blob = {spend,nexus,pocket,exportedAt:new Date().toISOString()};
     exportJSON('finfusion-backup.json', blob);
     snack('All data exported as JSON');
   };
 
-  // Modal references
+  // Modal handling
   const modal = document.getElementById('modal');
   const modalBody = document.getElementById('modalBody');
   const modalClose = document.getElementById('modalClose');
-
   modalClose.onclick = ()=>{ modal.style.display='none'; }
-
   window.onclick = e => { if(e.target===modal) modal.style.display='none'; }
-
 // Button content
 const devContent = `
   <h3>Terms & Conditions</h3>
@@ -70,7 +81,6 @@ const devContent = `
   <p>6. Data privacy: All entries remain on your local storage; the app does not send your data online.</p>
   <p>7. Updates may improve functionality; check developer options for version info.</p>
 `;
-
 
 const termsContent = `
   <h3>How to Use FinFusion</h3>
@@ -114,7 +124,6 @@ const termsContent = `
     <li>Keep your browser storage clean to maintain app performance.</li>
   </ul>
 `;
-
 
   document.getElementById('btnDevOptions').onclick = ()=>{
     modalBody.innerHTML = devContent;

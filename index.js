@@ -1,4 +1,4 @@
-// Start clock and navigation
+ // Start clock and navigation
 startClock('#timeNow');
 attachBottomNav('nav-home');
 
@@ -6,17 +6,24 @@ attachBottomNav('nav-home');
   // Load saved username or default
   let username = localStorage.getItem('fin_userName') || "Imad";
 
-  // Personalized welcome message
-  function welcome(){
+// Personalized welcome message (more detailed)
+function welcome() {
     const h = new Date().getHours();
-    if(h >= 0 && h < 4) return `Good midnight 🌙, ${username}!`;
-    if(h >= 4 && h < 7) return `Good early morning 🌅, ${username}!`;
-    if(h >= 7 && h < 12) return `Good morning ☀️, ${username}!`;
-    if(h >= 12 && h < 14) return `Good noon 🌞, ${username}!`;
-    if(h >= 14 && h < 18) return `Good afternoon 🌤️, ${username}!`;
-    if(h >= 18 && h < 21) return `Good evening 🌙, ${username}!`;
-    return `Good night 🌌, ${username}!`;
-  }
+
+    if (h >= 0 && h < 3) return `Good midnight 🌙, ${username}!`;
+    if (h >= 3 && h < 5) return `Early dawn 🌌, ${username}!`;
+    if (h >= 5 && h < 7) return `Good early morning 🌅, ${username}!`;
+    if (h >= 7 && h < 9) return `Good morning ☀️, ${username}!`;
+    if (h >= 9 && h < 12) return `Late morning 🌤️, ${username}!`;
+    if (h >= 12 && h < 14) return `Good noon 🌞, ${username}!`;
+    if (h >= 14 && h < 16) return `Early afternoon 🌤️, ${username}!`;
+    if (h >= 16 && h < 18) return `Late afternoon 🌇, ${username}!`;
+    if (h >= 18 && h < 20) return `Good evening 🌙, ${username}!`;
+    if (h >= 20 && h < 22) return `Good Night 🌃, ${username}!`;
+    if (h >= 22 && h < 24) return `Late night 🌌, ${username}!`;
+
+    return `Hello, ${username}!`; // fallback
+}
 
   function updateWelcome(){
     document.getElementById('welcomeMsg').textContent = welcome();
@@ -82,59 +89,12 @@ const devContent = `
   <p>7. Updates may improve functionality; check developer options for version info.</p>
 `;
 
-const termsContent = `
-  <h3>How to Use FinFusion</h3>
-
-  <h4>Spendly — Expense & Income Tracker</h4>
-  <ul>
-    <li>Add separate entries for Income and Expense.</li>
-    <li>Select the appropriate category and subcategory for each entry.</li>
-    <li>Use the "Notes" field to describe the transaction.</li>
-    <li>Track monthly totals and get alerts if budget exceeds limits.</li>
-    <li>Edit or delete any entry by clicking the respective buttons.</li>
-    <li>Use the search bar to quickly find transactions by notes or category.</li>
-    <li>Export data to CSV or backup to JSON for offline storage.</li>
-  </ul><br>
-
-  <h4>Nexus — Blinkit Income Tracker</h4>
-  <ul>
-    <li>Record daily working hours, payouts, bonuses, and penalties.</li>
-    <li>View monthly and all-time income summaries.</li>
-    <li>Use the "View More" button to see older entries.</li>
-    <li>Edit or delete income logs to correct mistakes.</li>
-    <li>Charts visualize income trends over time.</li>
-    <li>Backup and export options available for security.</li>
-  </ul><br>
-
-  <h4>PocketCal — Pocket Money Manager</h4>
-  <ul>
-    <li>Track your daily pocket money and usage.</li>
-    <li>View monthly summaries to plan expenses better.</li>
-    <li>Set recurring entries for regular allowances.</li>
-    <li>Edit or delete entries as needed.</li>
-    <li>Charts help visualize where your money is going.</li>
-    <li>Export or backup your data to JSON files for safety.</li>
-  </ul><br>
-
-  <h4>General Tips</h4>
-  <ul>
-    <li>Use export/backup regularly to prevent data loss.</li>
-    <li>Check your all-time balance for an overview of financial health.</li>
-    <li>Use charts to identify spending trends and plan budgets.</li>
-    <li>Keep your browser storage clean to maintain app performance.</li>
-  </ul>
-`;
-
   document.getElementById('btnDevOptions').onclick = ()=>{
     modalBody.innerHTML = devContent;
     modal.style.display='block';
   }
   document.getElementById('btnTerms').onclick = ()=>{
-    modalBody.innerHTML = termsContent;
-    modal.style.display='block';
-  }
-  document.getElementById('btnHowToUse').onclick = ()=>{
-    modalBody.innerHTML = howToUseContent;
+    modalBody.innerHTML = devContent; // Reusing devContent for simplicity
     modal.style.display='block';
   }
 

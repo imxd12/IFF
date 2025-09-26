@@ -124,3 +124,15 @@
   .card{padding:10px;border-radius:12px;}
   .row{gap:8px;}
 }
+
+/* See All button */
+#btnSeeAll{
+  margin-top:8px;
+  text-align:center;
+  background:rgba(255,255,255,0.06);
+  border:1px solid var(--glass-border);
+  width:100%;
+}
+#btnSeeAll:hover{
+  background:rgba(255,255,255,0.12);
+}

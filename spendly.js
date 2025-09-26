@@ -2,20 +2,20 @@ startClock('#timeNow');
 attachBottomNav('nav-spend');
 
 (function(){
-  // Extended categories with emojis
-const categoryMap = {
-  Food: ['🍳 Breakfast','🥪 Lunch','🍝 Dinner','🍿 Snacks','☕ Beverages','🍰 Desserts','🛒 Groceries','All'],
-  Travel: ['🚌 Bus','🚗 Taxi','🚖 Local Transport','✈️ Flights','🚆 Train','⛴️ Ferry','🛣️ Fuel','All'],
-  Rent: ['🏠 House Rent','📱 Mobile Recharge','💡 Utilities','🌐 Internet','🏢 Workspace','All'],
-  Shopping: ['👕 Clothes','👗 Fashion','🛍️ Online','📺 Electronics','🎁 Gifts','🖊️ Stationary','All'], // added Stationary
-  Bills: ['💡 Electricity','🌊 Water','🌐 WiFi','📞 Phone','📺 OTT','🧾 Insurance','🎫 Railway Pass','All'], // added Railway Pass
-  Health: ['💊 Medicines','🩺 Doctor','🏋️‍♂️ Gym','🦷 Dental','💆 Spa','All'],
-  Entertainment: ['🎬 Movies','🎮 Games','🎵 Music','📚 Books','🎤 Shows','All'],
-  Education: ['📚 Tuition','📝 Exams','💻 Online Course','📖 Books','All'],
-  Savings: ['🏦 Bank Deposit','📈 Investments','💎 Assets','All'],
-  Family: ['👨‍👩‍👧 Kids','🎂 Celebrations','🎁 Gifts','All'],
-  Other: ['🛠️ Miscellaneous','💵 Charity','All']
-};
+  // Extended categories with more emojis
+  const categoryMap = {
+    Food: ['🍳 Breakfast','🥪 Lunch','🍝 Dinner','🍿 Snacks','☕ Beverages','🍰 Desserts','🛒 Groceries','🥤 Drinks','🍔 Fast Food','🥗 Healthy Meals','All'],
+    Travel: ['🚌 Bus','🚗 Taxi','🚖 Local Transport','✈️ Flights','🚆 Train','⛴️ Ferry','🛣️ Fuel','🚲 Bicycle','🏍️ Bike','🛺 Rickshaw','All'],
+    Rent: ['🏠 House Rent','📱 Mobile Recharge','💡 Utilities','🌐 Internet','🏢 Workspace','🛋️ Furniture Rent','All'],
+    Shopping: ['👕 Clothes','👗 Fashion','🛍️ Online','📺 Electronics','🎁 Gifts','🖊️ Stationary','👟 Shoes','💄 Cosmetics','All'],
+    Bills: ['💡 Electricity','🌊 Water','🌐 WiFi','📞 Phone','📺 OTT','🧾 Insurance','🎫 Railway Pass','📦 Subscriptions','All'],
+    Health: ['💊 Medicines','🩺 Doctor','🏋️‍♂️ Gym','🦷 Dental','💆 Spa','🧘 Yoga','All'],
+    Entertainment: ['🎬 Movies','🎮 Games','🎵 Music','📚 Books','🎤 Shows','🎲 Board Games','🎯 Hobbies','All'],
+    Education: ['📚 Tuition','📝 Exams','💻 Online Course','📖 Books','🖋️ Stationary','🎓 Certifications','All'],
+    Savings: ['🏦 Bank Deposit','📈 Investments','💎 Assets','🪙 Crypto','💰 Cash Savings','All'],
+    Family: ['👨‍👩‍👧 Kids','🎂 Celebrations','🎁 Gifts','👵👴 Elder Care','All'],
+    Other: ['🛠️ Miscellaneous','💵 Charity','🌱 Donations','🎟️ Tickets','All']
+  };
 
   const expenseCategory = $('#expenseCategory');
   const expenseSub = $('#expenseSub');

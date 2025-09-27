@@ -1,26 +1,44 @@
-/* Nexus List Items */
+/* =========================
+   Variables (if using)
+========================= */
+:root {
+  --bg: #0f1724;
+  --text: #fff;
+  --muted: rgba(255,255,255,0.7);
+  --accent: #2dd4bf;
+  --card-radius: 14px;
+  --glass-bg: rgba(255,255,255,0.06);
+  --glass-border: rgba(255,255,255,0.08);
+}
+
+/* =========================
+   Nexus List Items
+========================= */
 #listNexus .list-item {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  padding: 10px 12px;
-  border-radius: 12px;
+  padding: 12px 16px;
+  border-radius: var(--card-radius);
   border: 1px solid rgba(255,255,255,0.12);
   background: rgba(255,255,255,0.04);
   backdrop-filter: blur(8px);
-  margin-bottom: 6px;
+  margin-bottom: 8px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.3);
   transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
 }
+
 #listNexus .list-item:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 18px rgba(0,0,0,0.4);
   background: rgba(255,255,255,0.08);
 }
+
 #listNexus .meta {
   font-size: 12px;
   color: var(--muted);
   margin-top: 4px;
+  line-height: 1.4;
 }
 
 /* =========================
@@ -29,7 +47,7 @@
 .modal {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.75); /* slightly darker for focus */
+  background: rgba(0, 0, 0, 0.75);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -44,12 +62,12 @@
 }
 
 .modal-content {
-  max-width: 420px; /* slightly wider */
+  max-width: 440px;
   width: 95%;
   background: linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0.04));
   backdrop-filter: blur(14px);
   border-radius: 20px;
-  padding: 25px;
+  padding: 28px;
   box-shadow: 0 15px 35px rgba(0,0,0,0.6);
   color: var(--text);
   position: relative;
@@ -57,13 +75,13 @@
   animation: pop 0.4s cubic-bezier(0.25, 1, 0.5, 1);
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
 }
 
 .modal-content h3 {
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 700;
-  margin-bottom: 12px;
+  margin-bottom: 14px;
   text-align: center;
 }
 
@@ -71,12 +89,12 @@
 .modal-content select,
 .modal-content textarea {
   width: 100%;
-  padding: 10px 12px;
+  padding: 12px 14px;
   border-radius: 12px;
   border: 1px solid rgba(255,255,255,0.2);
   background: rgba(255,255,255,0.05);
   color: var(--text);
-  font-size: 14px;
+  font-size: 15px;
   transition: all 0.25s ease;
 }
 
@@ -85,30 +103,31 @@
 .modal-content textarea:focus {
   outline: none;
   border-color: var(--accent);
-  box-shadow: 0 0 8px var(--accent);
+  box-shadow: 0 0 10px var(--accent);
 }
 
 .modal-content textarea {
   resize: vertical;
-  min-height: 60px;
-  max-height: 120px;
+  min-height: 70px;
+  max-height: 140px;
 }
 
 .modal-content .button-group {
   display: flex;
-  gap: 10px;
+  gap: 12px;
   justify-content: flex-end;
-  margin-top: 15px;
+  margin-top: 16px;
   flex-wrap: wrap;
 }
 
 .modal-content .btn {
   flex: 1;
-  padding: 8px 14px;
-  font-size: 14px;
-  border-radius: 10px;
+  padding: 10px 16px;
+  font-size: 15px;
+  border-radius: 12px;
   font-weight: 500;
   transition: all 0.2s ease;
+  cursor: pointer;
 }
 
 .modal-content .btn-primary {
@@ -118,7 +137,7 @@
 
 .modal-content .btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 15px rgba(45,212,191,0.3);
+  box-shadow: 0 6px 18px rgba(45,212,191,0.35);
 }
 
 .modal-content .btn-danger {
@@ -128,7 +147,7 @@
 
 .modal-content .btn-danger:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 15px rgba(225,29,72,0.3);
+  box-shadow: 0 6px 18px rgba(225,29,72,0.35);
 }
 
 /* =========================
@@ -141,79 +160,119 @@
 }
 
 /* =========================
-   Responsive
+   Buttons
 ========================= */
-@media (max-width: 768px) {
+.btn {
+  border: none;
+  border-radius: 12px;
+  padding: 8px 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.btn-danger {
+  background: #e11d48;
+  color: #fff;
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: #fff;
+}
+
+/* =========================
+   Search & Filters
+========================= */
+#searchNexus,
+#monthPicker,
+#fromDate,
+#toDate,
+#searchDate {
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.04);
+  color: var(--text);
+  transition: all 0.25s ease;
+  font-size: 14px;
+}
+
+#searchNexus:focus,
+#monthPicker:focus,
+#fromDate:focus,
+#toDate:focus,
+#searchDate:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 10px var(--accent);
+}
+
+/* =========================
+   Responsive Design
+========================= */
+@media (max-width: 992px) {
+  #listNexus .list-item {
+    flex-direction: column;
+    gap: 6px;
+  }
+
   .modal-content {
-    padding: 20px;
     max-width: 95%;
+    padding: 22px;
+    gap: 12px;
   }
 
   .modal-content h3 {
-    font-size: 18px;
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .modal-content {
+    padding: 20px;
   }
 
   .modal-content input,
   .modal-content select,
   .modal-content textarea {
-    font-size: 13px;
-    padding: 8px 10px;
+    font-size: 14px;
+    padding: 10px 12px;
   }
 
   .modal-content .btn {
-    font-size: 13px;
-    padding: 7px 10px;
+    font-size: 14px;
+    padding: 8px 12px;
+  }
+
+  .button-group {
+    flex-direction: column;
   }
 }
 
 @media (max-width: 480px) {
+  #listNexus .list-item {
+    flex-direction: column;
+    gap: 8px;
+    padding: 10px;
+  }
+
   .modal-content {
     padding: 18px;
     gap: 10px;
   }
 
   .modal-content h3 {
-    font-size: 16px;
-  }
-
-  .modal-content .button-group {
-    flex-direction: column;
+    font-size: 18px;
   }
 
   .modal-content .btn {
     width: 100%;
+    font-size: 13px;
   }
-}
-
-
-/* Buttons */
-.btn-danger { 
-  background: #e11d48;
-  color: #fff; 
-  border: none;
-  padding: 6px 10px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 500;
-  transition: all 0.2s ease;
-}
-.btn-danger:hover { 
-  opacity: 0.85;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(225,29,72,0.3);
-}
-
-/* New Search Inputs */
-#searchDate {
-  padding: 8px;
-  border-radius: 10px;
-  border: 1px solid rgba(255,255,255,0.12);
-  background: rgba(255,255,255,0.04);
-  color: var(--text);
-  transition: all 0.25s ease;
-}
-#searchDate:focus {
-  outline: none;
-  border-color: var(--accent);
-  box-shadow: 0 0 10px rgba(255,255,255,0.2);
 }

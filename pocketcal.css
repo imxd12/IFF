@@ -1,8 +1,8 @@
 /* Calendar Grid */
 #calendarGrid {
   display: grid;
-  grid-template-columns: repeat(7, 1fr); /* always 7 columns */
-  grid-auto-rows: 80px; /* fixed row height for equal cells */
+  grid-template-columns: repeat(7, 1fr);
+  grid-auto-rows: 80px;
   gap: 6px;
   text-align: center;
 }
@@ -48,51 +48,57 @@
   color: var(--muted);
 }
 
+/* Modal */
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 20;
+}
+.modal.hidden { display: none; }
+.modal-content {
+  max-width: 320px;
+  width: 90%;
+  padding: 16px;
+  border-radius: 12px;
+  animation: pop 0.3s ease;
+}
+@keyframes pop {
+  from { transform: scale(0.9); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
 
-    /* Modal */
-    .modal {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.6);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 20;
-    }
-    .modal.hidden { display: none; }
-    .modal-content {
-      max-width: 320px;
-      width: 90%;
-      padding: 16px;
-      border-radius: 12px;
-      animation: pop 0.3s ease;
-    }
-    @keyframes pop {
-      from { transform: scale(0.9); opacity: 0; }
-      to   { transform: scale(1); opacity: 1; }
-    }
+/* Danger Button */
+.btn-danger {
+  background: #e11d48;
+  color: #fff;
+}
+.btn-danger:hover { opacity: 0.8; }
 
-    /* Danger Button */
-    .btn-danger {
-      background: #e11d48;
-      color: #fff;
-    }
-    .btn-danger:hover { opacity: 0.8; }
+/* Add Today Button */
+#btnAddToday {
+  margin-top: 8px;
+  font-size: 13px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--glass-border);
+  cursor: pointer;
+  background: var(--card);
+  transition: 0.2s;
+}
+#btnAddToday:hover {
+  background: rgba(0,200,100,0.1);
+  border-color: var(--accent);
+}
 
-    /* Add Today Button */
-    #btnAddToday {
-      margin-top: 8px;
-      font-size: 13px;
-      padding: 6px 10px;
-      border-radius: 8px;
-      border: 1px solid var(--glass-border);
-      cursor: pointer;
-      background: var(--card);
-      transition: 0.2s;
-    }
-    #btnAddToday:hover {
-      background: rgba(0,200,100,0.1);
-      border-color: var(--accent);
-    }
-
-    
+/* Summary extra */
+.summary-extra {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 6px;
+  font-size: 13px;
+  color: var(--muted);
+}

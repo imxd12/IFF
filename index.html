@@ -4,14 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MoneyFlow - Personal Finance Dashboard</title>
-  
-
-<!-- Favicon -->
-<link rel="icon" type="image/png" sizes="32x32" href="icon-32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="icon-16.png">
   <link rel="stylesheet" href="global.css">
   <link rel="stylesheet" href="index.css">
-<link rel="manifest" href="manifest.json">
+  <link rel="manifest" href="manifest.json">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -70,14 +65,6 @@
     <section class="welcome-section scroll-fade-in">
       <h2 class="welcome-greeting" id="welcomeText">Welcome back!</h2>
       <p class="text-muted">Your financial overview at a glance</p>
-      <div class="welcome-actions">
-        <button class="btn btn-secondary" onclick="openModal('#profileModal')">
-          <span>@imxd-2025</span>
-        </button>
-        <button class="btn btn-secondary" onclick="openModal('#nameModal')">
-          <span>✏️ Set Name</span>
-        </button>
-      </div>
     </section>
 
     <!-- Summary Cards -->
@@ -123,55 +110,243 @@
       </div>
     </section>
 
+            <!-- Welcome Section -->
+         <div class="welcome-actions">
+        <button class="btn btn-secondary" onclick="openModal('#profileModal')">
+          <span>@imxd-2025</span>
+        </button>
+        <button class="btn btn-secondary" onclick="openModal('#nameModal')">
+          <span>✏️ Set Name</span>
+        </button>
+      </div>
+    </section>
+
   </div>
 
-  <!-- Profile Modal -->
-  <div class="modal" id="profileModal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2 class="modal-title">Profile</h2>
-        <button class="modal-close" onclick="closeModal('#profileModal')">&times;</button>
-      </div>
-      <div class="profile-details">
-        <div class="profile-photo-large">
-          <img src="https://via.placeholder.com/150" alt="Imad Khan" id="profileImageLarge">
+<!-- Enhanced Profile Modal -->
+<div class="modal" id="profileModal">
+  <div class="modal-content profile-modal-content">
+    <div class="modal-header">
+      <h2 class="modal-title">👨‍💻 Professional Profile</h2>
+      <button class="modal-close" onclick="closeModal('#profileModal')">&times;</button>
+    </div>
+    
+    <div class="profile-details">
+      
+      <!-- Profile Photo -->
+      <div class="profile-photo-large">
+        <img src="Imad.jpg" alt="Imad Khan" id="profileImageLarge">
+        <div class="photo-overlay">
+          <span class="verified-badge">✓</span>
         </div>
+      </div>
+      
+      <!-- Header Info -->
+      <div class="profile-header-info">
         <h3 class="profile-name">Imad Khan</h3>
-        <p class="profile-handle">@imxd-2025</p>
+        <p class="profile-handle">@imxd12</p>
         <p class="profile-title">Developer | MoneyFlow Creator</p>
         
+        <!-- Location -->
         <div class="profile-location" id="userLocation">
-          <span>📍</span>
+          <svg width="16" height="16" fill="var(--accent)" viewBox="0 0 24 24">
+            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z"/>
+          </svg>
           <span>Fetching location...</span>
         </div>
-        
-        <div class="profile-contact">
-          <h4>Contact</h4>
-          <p><strong>Email:</strong> imadak999@gmail.com</p>
-          <p><strong>Instagram:</strong> <a href="https://instagram.com/_imxd12" target="_blank">@_imxd12</a></p>
-          <p><strong>WhatsApp:</strong> <a href="https://wa.me/" target="_blank">Chat</a></p>
+      </div>
+
+      <!-- About Myself Section -->
+      <div class="profile-section">
+        <h4 class="section-heading">
+          <span class="section-icon">👨‍💻</span>
+          About Myself
+        </h4>
+        <div class="section-content">
+          <p class="profile-bio">
+            Passionate developer specializing in web applications and automation. Creator of MoneyFlow, 
+            an all-in-one finance and productivity tracking platform. Currently pursuing Electrical & 
+            Computer Engineering with a strong foundation in Automation & Robotics.
+          </p>
         </div>
-        
-        <div class="profile-education">
-          <h4>Education</h4>
-          <div class="edu-item">
-            <strong>B.E (Expected June 2028)</strong>
-            <p>Electrical & Computer Engineering</p>
-            <p>Anjuman-I-Islam's Kalsekar Technical Campus, Panvel</p>
+      </div>
+
+      <!-- Contact Information Section -->
+      <div class="profile-section">
+        <h4 class="section-heading">
+          <span class="section-icon">📧</span>
+          Contact Information
+        </h4>
+        <div class="section-content contact-grid">
+          <div class="contact-item">
+            <svg width="20" height="20" fill="var(--accent)" viewBox="0 0 24 24">
+              <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+            </svg>
+            <div>
+              <strong>Email</strong>
+              <a href="mailto:imadak999@gmail.com">imadak999@gmail.com</a>
+            </div>
           </div>
-          <div class="edu-item">
-            <strong>Diploma (June 2024)</strong>
-            <p>Automation & Robotics</p>
-            <p>Anjuman-I-Islam's Abdul Razzaq Kalsekar Polytechnic</p>
+          
+          <div class="contact-item">
+            <svg width="20" height="20" fill="var(--accent)" viewBox="0 0 24 24">
+              <path d="M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4a5.8 5.8 0 0 1-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8A5.8 5.8 0 0 1 7.8 2m-.2 2A3.6 3.6 0 0 0 4 7.6v8.8C4 18.39 5.61 20 7.6 20h8.8a3.6 3.6 0 0 0 3.6-3.6V7.6C20 5.61 18.39 4 16.4 4H7.6m9.65 1.5a1.25 1.25 0 0 1 1.25 1.25A1.25 1.25 0 0 1 17.25 8 1.25 1.25 0 0 1 16 6.75a1.25 1.25 0 0 1 1.25-1.25M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3z"/>
+            </svg>
+            <div>
+              <strong>Instagram</strong>
+              <a href="https://www.instagram.com/_imxd12" target="_blank">@_imxd12</a>
+            </div>
           </div>
-          <div class="edu-item">
-            <strong>S.S.C (March 2021)</strong>
-            <p>St. Francis Xavier's English Medium High School, Ajgoan</p>
+          
+          <div class="contact-item">
+            <svg width="20" height="20" fill="var(--accent)" viewBox="0 0 24 24">
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+            </svg>
+            <div>
+              <strong>WhatsApp</strong>
+              <a href="https://wa.me/918097814934" target="_blank">Chat on WhatsApp</a>
+            </div>
           </div>
         </div>
       </div>
+
+      <!-- Education Section -->
+      <div class="profile-section">
+        <h4 class="section-heading">
+          <span class="section-icon">🎓</span>
+          Education
+        </h4>
+        <div class="section-content">
+          <div class="edu-item">
+            <div class="edu-header">
+              <strong>B.E (Expected June 2028)</strong>
+              <a href="https://maps.app.goo.gl/xcGfMsNk44Qse9CLA" target="_blank" class="location-link" title="View on Google Maps">
+                <svg width="16" height="16" fill="#ef4444" viewBox="0 0 24 24">
+                  <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z"/>
+                </svg>
+              </a>
+            </div>
+            <p class="edu-course">Electrical & Computer Engineering</p>
+            <p class="edu-institution">Anjuman-I-Islam's Kalsekar Technical Campus, Panvel - Navi Mumbai</p>
+          </div>
+          
+          <div class="edu-item">
+            <div class="edu-header">
+              <strong>Diploma (June 2024)</strong>
+              <a href="https://maps.app.goo.gl/bUB4eSrFojxXSUjy9" target="_blank" class="location-link" title="View on Google Maps">
+                <svg width="16" height="16" fill="#ef4444" viewBox="0 0 24 24">
+                  <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z"/>
+                </svg>
+              </a>
+            </div>
+            <p class="edu-course">Automation & Robotics</p>
+            <p class="edu-institution">Anjuman-I-Islam's Abdul Razzaq Kalsekar Polytechnic,<br> Panvel - Navi Mumbai</p>
+          </div>
+          
+          <div class="edu-item">
+            <div class="edu-header">
+              <strong>S.S.C (March 2021)</strong>
+              <a href="https://maps.app.goo.gl/mbEHeidS6EWQ3zmr5" target="_blank" class="location-link" title="View on Google Maps">
+                <svg width="16" height="16" fill="#ef4444" viewBox="0 0 24 24">
+                  <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z"/>
+                </svg>
+              </a>
+            </div>
+            <p class="edu-institution">St. Francis Xavier's English Medium High School, Ajgoan</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Work Experience Section -->
+      <div class="profile-section">
+        <h4 class="section-heading">
+          <span class="section-icon">💼</span>
+          Work Experience
+        </h4>
+        <div class="section-content">
+          <div class="work-item">
+            <div class="work-header">
+              <strong>IRABOT TechEd LLP</strong>
+              <a href="https://maps.app.goo.gl/cVu78nW3DoMW48V88" target="_blank" class="location-link" title="View on Google Maps">
+                <svg width="16" height="16" fill="#ef4444" viewBox="0 0 24 24">
+                  <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z"/>
+                </svg>
+              </a>
+            </div>
+            <p class="work-period">June 2023 - July 2023</p>
+            <p class="work-description">Completed a six-week industrial internship in Automation and Robotics. Gained hands-on experience in industrial automation systems, robotics programming, and real-world applications of automation technology.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Professional Certifications Section -->
+      <div class="profile-section">
+        <h4 class="section-heading">
+          <span class="section-icon">📜</span>
+          Professional Certifications
+        </h4>
+        <div class="section-content">
+          <p class="cert-period"><strong>Aug 2023 - May 2024</strong></p>
+          <ul class="cert-list">
+            <li>
+              <span class="cert-icon">📄</span>
+              <strong>Research Publication:</strong> "Automated Attendance Marking System Using Raspberry Pi" 
+              published in International Journal of Research and Analytical Reviews (IJRAR)
+            </li>
+            <li>
+              <span class="cert-icon">🏆</span>
+              <strong>NEUROFEST 2024:</strong> Participation Certificate - State Level Project Competition 
+              (Anjuman-I-Islam Abdul Razzaq Kalsekar Polytechnic, Panvel)
+            </li>
+            <li>
+              <span class="cert-icon">🏆</span>
+              <strong>TECHNOVATION 2024:</strong> Participation Certificate - State Level Project Competition 
+              (Vivekanand Education Society's Polytechnic, Chembur)
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Resume Section -->
+      <div class="profile-section">
+        <h4 class="section-heading">
+          <span class="section-icon">📄</span>
+          Resume
+        </h4>
+        <div class="section-content">
+          <a href="resume.pdf" target="_blank" class="btn btn-primary btn-resume">
+            <svg width="20" height="20" fill="white" viewBox="0 0 24 24">
+              <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
+            </svg>
+            View / Download Resume
+          </a>
+        </div>
+      </div>
+
+      <!-- App Footer Note -->
+      <div class="profile-footer">
+        <div class="app-badge">
+          <svg width="24" height="24" viewBox="0 0 100 100">
+            <defs>
+              <linearGradient id="badgeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#10b981"/>
+                <stop offset="100%" style="stop-color:#3b82f6"/>
+              </linearGradient>
+            </defs>
+            ircle cx="50" cy="50" r="4545" fill="url(#badgeGrad)"/>
+            <text x="50" y="65" font-size="40" font-weight="800" fill="white" text-anchor="middle">₹</text>
+          </svg>
+          <div>
+            <strong>MoneyFlow 2025</strong>
+            <p>All-in-One Finance & Productivity Web App</p>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
+</div>
+
 
   <!-- Set Name Modal -->
   <div class="modal" id="nameModal">
@@ -205,33 +380,162 @@
     </div>
   </div>
 
-  <!-- Help Modal -->
-  <div class="modal" id="helpModal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2 class="modal-title">How to Use MoneyFlow</h2>
-        <button class="modal-close" onclick="closeModal('#helpModal')">&times;</button>
+<!-- Help Modal -->
+<div class="modal" id="helpModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 class="modal-title">📖 Complete Guide to MoneyFlow</h2>
+      <button class="modal-close" onclick="closeModal('#helpModal')">&times;</button>
+    </div>
+    <div class="help-content">
+      
+      <!-- Spendly Section -->
+      <h3>💰 Spendly - Income & Expense Tracker</h3>
+      <p>Track daily income and expenses with detailed categories. View balance and export reports.</p>
+      
+      <h4>How to Use Spendly:</h4>
+      <ul>
+        <li><strong>Adding Income:</strong> Click the "Income" tab, select date, amount, category (Salary, Business, Gift, etc.), add notes, and save</li>
+        <li><strong>Adding Expense:</strong> Click the "Expense" tab, choose from 11 categories (Food, Travel, Shopping, Bills, etc.), select subcategory, enter amount and save</li>
+        <li><strong>View Transactions:</strong> All entries appear in the list below with type, date, category, and amount</li>
+        <li><strong>Edit/Delete:</strong> Click any transaction to edit details or delete it</li>
+        <li><strong>Quick Add:</strong> Use the floating action button (FAB) in bottom-right for quick expense entry</li>
+        <li><strong>Filter Data:</strong> Use date picker or search box to find specific transactions</li>
+        <li><strong>Export Data:</strong> Click "Export CSV" to download your data for backup or analysis</li>
+        <li><strong>Import Data:</strong> Use "Import JSON" to restore previously backed up data</li>
+      </ul>
+
+      <h4>Available Categories:</h4>
+      <p>Food, Travel, Rent, Shopping, Bills, Health, Entertainment, Education, Savings, Family, Other - each with multiple subcategories</p>
+
+      <!-- Nexus Section -->
+      <h3>💼 Nexus - Work & Earnings Tracker</h3>
+      <p>Log work items, hours, bonuses, and penalties. Perfect for gig workers and freelancers.</p>
+      
+      <h4>How to Use Nexus:</h4>
+      <ul>
+        <li><strong>Create Entry:</strong> Click "Add New Entry" button or use FAB</li>
+        <li><strong>Fill Details:</strong> Enter date, select work category (Freelance, Delivery, Design, Development, etc.)</li>
+        <li><strong>Track Metrics:</strong> Input items completed, hours worked, bonus earned, and any penalties</li>
+        <li><strong>Auto Calculate:</strong> Payout is calculated automatically as: (Items × 10) + (Hours × 50) + Bonus - Penalty</li>
+        <li><strong>Manual Override:</strong> You can manually enter payout amount if calculation doesn't fit your work</li>
+        <li><strong>Add Notes:</strong> Describe the work done for future reference</li>
+        <li><strong>View Analytics:</strong> Check daily earnings trend, category distribution, items vs hours comparison, and bonus/penalty analysis</li>
+        <li><strong>Export Reports:</strong> Download JSON or CSV files for record keeping</li>
+      </ul>
+
+      <h4>Analytics Features:</h4>
+      <ul>
+        <li>Daily Earnings Trend Chart (Last 14 Days)</li>
+        <li>Category-wise Earnings Distribution</li>
+        <li>Items vs Hours Comparison</li>
+        <li>Bonus vs Penalty Analysis</li>
+        <li>Total Items, Hours, Bonus, Penalty metrics</li>
+      </ul>
+
+      <!-- PocketCal Section -->
+      <h3>📅 PocketCal - Calendar Money Tracker</h3>
+      <p>Calendar view of pocket money received. See monthly totals and daily averages.</p>
+      
+      <h4>How to Use PocketCal:</h4>
+      <ul>
+        <li><strong>Navigate Calendar:</strong> Use Previous/Next buttons to switch months</li>
+        <li><strong>Add Entry:</strong> Click any date on calendar to add/edit entry for that day</li>
+        <li><strong>Quick Add Today:</strong> Use "Add Today" button or FAB to quickly log today's amount</li>
+        <li><strong>Jump to Date:</strong> Use date picker to navigate to specific date quickly</li>
+        <li><strong>View at Glance:</strong> Days with entries show green highlight and amount below date</li>
+        <li><strong>Today's Date:</strong> Current date highlighted with blue border</li>
+        <li><strong>Categories:</strong> Choose from Pocket Money, Gift, Allowance, Reward, Work, Education, Festival, Other</li>
+        <li><strong>View Charts:</strong> Analyze daily amounts, category distribution, weekly comparison, and 6-month trend</li>
+      </ul>
+
+      <h4>Summary Statistics:</h4>
+      <ul>
+        <li>This Month Total - Total amount received this month</li>
+        <li>All-Time Total - Cumulative amount since tracking started</li>
+        <li>Highest Day - Maximum amount received in a single day</li>
+        <li>Average/Day - Average daily amount for entries logged</li>
+        <li>Days Tracked - Total number of days with entries</li>
+        <li>This Week Total - Amount received in current week</li>
+        <li>Best Month - Highest monthly total ever recorded</li>
+      </ul>
+
+      <!-- General Tips -->
+      <h3>💡 Essential Tips & Best Practices</h3>
+      <ul>
+        <li><strong>Regular Backups:</strong> Export your data weekly using "Export" buttons in each module</li>
+        <li><strong>Consistent Categorization:</strong> Use categories consistently for accurate analytics</li>
+        <li><strong>Daily Updates:</strong> Update entries daily to maintain accurate financial picture</li>
+        <li><strong>Dashboard Overview:</strong> Check main dashboard for quick overview of all modules</li>
+        <li><strong>Theme Toggle:</strong> Switch to dark mode (moon icon) for comfortable night usage</li>
+        <li><strong>Search & Filter:</strong> Use search boxes and date filters to find old transactions quickly</li>
+        <li><strong>Notes Field:</strong> Always add notes for better tracking and memory recall</li>
+        <li><strong>Edit Entries:</strong> Click any entry to edit if you made a mistake</li>
+      </ul>
+
+      <!-- Data Management -->
+      <h3>💾 Data Management</h3>
+      <ul>
+        <li><strong>Local Storage:</strong> All data stored locally in your browser - no server uploads</li>
+        <li><strong>Privacy:</strong> Your financial data stays on your device only</li>
+        <li><strong>Export Formats:</strong> CSV for spreadsheets, JSON for backup/restore</li>
+        <li><strong>Import Data:</strong> Restore from JSON backup if you clear browser data</li>
+        <li><strong>Multiple Devices:</strong> Use export/import to transfer data between devices</li>
+        <li><strong>Clear Data:</strong> Use Developer Options to clear all data (caution: irreversible)</li>
+      </ul>
+
+      <!-- Keyboard Shortcuts -->
+      <h3>⌨️ Quick Actions</h3>
+      <ul>
+        <li><strong>FAB Button:</strong> Floating button in bottom-right for quick entry in all modules</li>
+        <li><strong>Profile Button:</strong> Click top-right profile photo or @imxd-2025 button to view developer info</li>
+        <li><strong>Set Name:</strong> Customize welcome greeting with your name</li>
+        <li><strong>Bottom Navigation:</strong> Swipe effect shows active tab - easy switching between modules</li>
+      </ul>
+
+      <!-- Troubleshooting -->
+      <h3>🔧 Troubleshooting</h3>
+      <ul>
+        <li><strong>Data Not Saving?</strong> Check browser settings - ensure localStorage is enabled</li>
+        <li><strong>Charts Not Loading?</strong> Refresh page or check internet connection (Chart.js requires CDN)</li>
+        <li><strong>Lost Data?</strong> Always keep export backups - data clears if browser cache is cleared</li>
+        <li><strong>Modal Not Closing?</strong> Click outside modal area or use X button</li>
+        <li><strong>Theme Not Switching?</strong> Clear cache and reload page</li>
+      </ul>
+
+      <!-- Advanced Features -->
+      <h3>🚀 Advanced Features</h3>
+      <ul>
+        <li><strong>PWA Support:</strong> Install as app on mobile for offline access (manifest.json included)</li>
+        <li><strong>Service Worker:</strong> Caches files for faster loading and offline functionality</li>
+        <li><strong>Responsive Design:</strong> Works perfectly on mobile, tablet, and desktop</li>
+        <li><strong>Geolocation:</strong> Profile shows your current location (requires permission)</li>
+        <li><strong>Scroll Animations:</strong> Smooth fade-in and blur effects as you scroll</li>
+        <li><strong>Liquid Navigation:</strong> Bottom nav bar with flowing liquid animation</li>
+      </ul>
+
+      <!-- Contact & Support -->
+      <h3>📞 Need Help?</h3>
+      <p>If you encounter issues or have suggestions:</p>
+      <ul>
+        <li><strong>Developer:</strong> Imad Khan (@imxd-2025)</li>
+        <li><strong>Email:</strong> imadak999@gmail.com</li>
+        <li><strong>Instagram:</strong> @_imxd12</li>
+        <li><strong>Version:</strong> MoneyFlow v1.0 (2025)</li>
+      </ul>
+
+      <!-- Footer Note -->
+      <div style="margin-top: 30px; padding: 20px; background: var(--glass); border-radius: var(--radius); border: 1px solid var(--glass-border); text-align: center;">
+        <p style="font-size: 14px; color: var(--text-secondary); margin: 0;">
+          <strong>💡 Pro Tip:</strong> Bookmark this page and make it your daily habit to track finances. 
+          Consistency is the key to financial awareness! 🎯
+        </p>
       </div>
-      <div class="help-content">
-        <h3>Spendly 💰</h3>
-        <p>Track daily income and expenses with detailed categories. View balance and export reports.</p>
-        
-        <h3>Nexus 💼</h3>
-        <p>Log work items, hours, bonuses, and penalties. Perfect for gig workers and freelancers.</p>
-        
-        <h3>PocketCal 📅</h3>
-        <p>Calendar view of pocket money received. See monthly totals and daily averages.</p>
-        
-        <h3>Tips 💡</h3>
-        <ul>
-          <li>Export your data regularly as backup</li>
-          <li>Use categories to organize transactions</li>
-          <li>Check dashboard for quick overview</li>
-          <li>Toggle dark mode for night usage</li>
-        </ul>
-      </div>
+
     </div>
   </div>
+</div>
+
 
   <!-- Footer -->
   <footer class="footer">
@@ -289,6 +593,3 @@
   <script src="index.js"></script>
 </body>
 </html>
-
-
-

@@ -20,10 +20,10 @@
   window.initThemeToggle = function() {
     const theme = localStorage.getItem('fin_theme') || 'light';
     document.documentElement.setAttribute('data-theme', theme);
-    
+
     const toggle = $('.theme-toggle');
     if (!toggle) return;
-    
+
     const updateIcon = () => {
       const currentTheme = document.documentElement.getAttribute('data-theme');
       const slider = $('.theme-toggle-slider');
@@ -31,9 +31,9 @@
         slider.innerHTML = currentTheme === 'dark' ? '🌙' : '☀️';
       }
     };
-    
+
     updateIcon();
-    
+
     toggle.addEventListener('click', () => {
       const current = document.documentElement.getAttribute('data-theme');
       const newTheme = current === 'dark' ? 'light' : 'dark';
@@ -47,7 +47,7 @@
   window.startClock = function(selector = '#timeNow') {
     const el = $(selector);
     if (!el) return;
-    
+
     function update() {
       const now = new Date();
       const hours = String(now.getHours()).padStart(2, '0');
@@ -60,7 +60,7 @@
       });
       el.textContent = `${date} • ${hours}:${minutes}:${seconds}`;
     }
-    
+
     update();
     setInterval(update, 1000);
   };
@@ -69,12 +69,14 @@
   window.attachBottomNav = function(activeId) {
     const nav = $('.bottom-nav');
     if (!nav) return;
-    
+
     const items = $$('.nav-item', nav);
     items.forEach((item, index) => {
       if (item.id === activeId) {
         item.classList.add('active');
         nav.setAttribute('data-active', index);
+      } else {
+        item.classList.remove('active');
       }
     });
   };
@@ -119,7 +121,7 @@
   window.showSnackbar = function(message, type = 'success') {
     const existing = $('.snackbar');
     if (existing) existing.remove();
-    
+
     const snackbar = document.createElement('div');
     snackbar.className = 'snackbar';
     snackbar.textContent = message;
@@ -137,9 +139,9 @@
       animation: slideInUp 0.3s ease;
       font-weight: 600;
     `;
-    
+
     document.body.appendChild(snackbar);
-    
+
     setTimeout(() => {
       snackbar.style.animation = 'fadeOut 0.3s ease';
       setTimeout(() => snackbar.remove(), 300);
@@ -164,13 +166,13 @@
       showSnackbar('No data to export', 'error');
       return;
     }
-    
+
     const csv = [
       headers.join(','),
       ...data.map(row => headers.map(h => `"${row[h] || ''}"`).join(','))
     ].join('
-');
-    
+'); // <-- Proper line breaks
+
     const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -189,7 +191,7 @@
     input.onchange = (e) => {
       const file = e.target.files[0];
       if (!file) return;
-      
+
       const reader = new FileReader();
       reader.onload = (event) => {
         try {
@@ -207,9 +209,6 @@
 
   // ===== SCROLL ANIMATIONS =====
   window.initScrollAnimations = function() {
-    const observers = [];
-    
-    // Fade in animation
     const fadeElements = $$('.scroll-fade-in');
     const fadeObserver = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
@@ -218,11 +217,9 @@
         }
       });
     }, { threshold: 0.1 });
-    
+
     fadeElements.forEach(el => fadeObserver.observe(el));
-    observers.push(fadeObserver);
-    
-    // Blur animation
+
     const blurElements = $$('.scroll-blur');
     const blurObserver = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
@@ -231,11 +228,8 @@
         }
       });
     }, { threshold: 0.1 });
-    
+
     blurElements.forEach(el => blurObserver.observe(el));
-    observers.push(blurObserver);
-    
-    return observers;
   };
 
   // ===== GEOLOCATION =====
@@ -268,7 +262,9 @@
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
       navigator.serviceWorker.register('./sw.js')
-        .then(() => console.log('SW registered'))
+        .then(reg => {
+          console.log('SW registered', reg);
+        })
         .catch(err => console.log('SW error:', err));
     });
   }

@@ -1,204 +1,284 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
-   <title>Dashboard</title>
-
-  <!-- Favicon / App Icon -->
-  <link rel="icon" type="image/svg+xml" href="icon-512.svg">
-  <!-- Optional fallback for older browsers -->
-  <link rel="shortcut icon" href="icon-512.png" type="image/png">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MoneyFlow - Personal Finance Dashboard</title>
   <link rel="stylesheet" href="global.css">
   <link rel="stylesheet" href="index.css">
   <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#000000">
-
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
-  <div class="app">
-    <div class="card header">
-      <div class="brand">
-        <div class="logo">
-          <img src="icon-512.svg" alt="FinFusion Logo" style="width:100%;height:100%;border-radius:10px;">
-        </div>
-        <div>
-          <div class="app-title">FinFusion</div>
-          <div class="small-muted">3-in-1 Finance</div>
-        </div>
-      </div>
-      <div style="text-align:right">
-        <div id="timeNow" class="small-muted"></div>
-        <div class="small-muted" id="welcomeMsg"></div>
-        <!-- Button to set name -->
-        </div>
+  
+  <!-- Splash Screen -->
+  <div class="splash-screen" id="splashScreen">
+    <svg class="splash-logo" width="120" height="120" viewBox="0 0 120 120">
+      <defs>
+        <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#10b981;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+        </linearGradient>
+      </defs>
+      <circle cx="60" cy="60" r="50" fill="none" stroke="url(#logoGrad)" stroke-width="4">
+        <animate attributeName="stroke-dasharray" from="0 314" to="314 0" dur="2s" repeatCount="indefinite"/>
+      </circle>
+      <text x="60" y="70" font-family="Inter" font-size="32" font-weight="800" fill="url(#logoGrad)" text-anchor="middle">₹</text>
+    </svg>
+    <h2 class="splash-text">MoneyFlow</h2>
+  </div>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="header-left">
+      <svg class="brand-logo" viewBox="0 0 100 100">
+        <defs>
+          <linearGradient id="brandGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#10b981"/>
+            <stop offset="100%" style="stop-color:#3b82f6"/>
+          </linearGradient>
+        </defs>
+        <circle cx="50" cy="50" r="45" fill="url(#brandGrad)"/>
+        <text x="50" y="65" font-size="40" font-weight="800" fill="white" text-anchor="middle">₹</text>
+      </svg>
+      <h1 class="brand-name">MoneyFlow</h1>
     </div>
     
-    <!-- Quick Summary -->
-    <div class="card">
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <div>
-          <div style="font-weight:700">Quick Summary</div>
-          <div class="small-muted">Accurate all-time totals</div>
-        </div>
-        <div>
-          <button class="btn" id="btnExportAll">Export All</button>
-        </div>
+    <div class="header-center">
+      <div class="time-display" id="timeNow">Loading...</div>
+    </div>
+    
+    <div class="header-right">
+      <div class="theme-toggle">
+        <div class="theme-toggle-slider">☀️</div>
       </div>
+      <div class="profile-btn" onclick="openModal('#profileModal')">
+        <img src="https://via.placeholder.com/100" alt="Profile" id="profileImage">
+      </div>
+    </div>
+  </header>
 
-      <div class="widgets" style="margin-top:12px">
-        <div class="card widget">
-          <div class="small-muted">Today's Expense</div>
-          <div id="todayExpense" style="font-weight:700;font-size:16px">₹0</div>
-        </div>
-        <div class="card widget">
-          <div class="small-muted">All-time Balance</div>
-          <div id="allTimeBalance" style="font-weight:700;font-size:16px">₹0</div>
-        </div>
-        <div class="card widget">
-          <div class="small-muted">This Month PocketCal</div>
-          <div id="monthPocket" style="font-weight:700;font-size:16px">₹0</div>
-        </div>
-        <div class="card widget">
-          <div class="small-muted">Blinkit Income (Month)</div>
-          <div id="monthNexus" style="font-weight:700;font-size:16px">₹0</div>
-        </div>
+  <!-- Main Container -->
+  <div class="container">
+    
+    <!-- Welcome Section -->
+    <section class="welcome-section scroll-fade-in">
+      <h2 class="welcome-greeting" id="welcomeText">Welcome back!</h2>
+      <p class="text-muted">Your financial overview at a glance</p>
+      <div class="welcome-actions">
+        <button class="btn btn-secondary" onclick="openModal('#profileModal')">
+          <span>@imxd-2025</span>
+        </button>
+        <button class="btn btn-secondary" onclick="openModal('#nameModal')">
+          <span>✏️ Set Name</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- Summary Cards -->
+    <div class="widget-grid">
+      <div class="card scroll-fade-in" style="animation-delay: 0.1s">
+        <div class="summary-icon">💰</div>
+        <div class="summary-label">Today's Expense</div>
+        <div class="summary-value" id="todayExpense">₹0</div>
+      </div>
+      
+      <div class="card scroll-fade-in" style="animation-delay: 0.2s">
+        <div class="summary-icon">📅</div>
+        <div class="summary-label">This Month Pocket</div>
+        <div class="summary-value" id="monthPocket">₹0</div>
+      </div>
+      
+      <div class="card scroll-fade-in" style="animation-delay: 0.3s">
+        <div class="summary-icon">💼</div>
+        <div class="summary-label">This Month Nexus</div>
+        <div class="summary-value" id="monthNexus">₹0</div>
+      </div>
+      
+      <div class="card scroll-fade-in" style="animation-delay: 0.4s">
+        <div class="summary-icon">💎</div>
+        <div class="summary-label">All-Time Balance</div>
+        <div class="summary-value" id="totalBalance">₹0</div>
       </div>
     </div>
 
-    <!-- App Links -->
-    <div class="card">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-        <div style="font-weight:700">App Links</div>
-        <div class="small-muted">Tap to open</div>
+    <!-- Quick Actions -->
+    <section class="quick-actions scroll-blur">
+      <h3 class="section-title">Quick Actions</h3>
+      <div class="action-grid">
+        <button class="btn btn-primary" onclick="openModal('#devModal')">
+          <span>🛠️ Developer Options</span>
+        </button>
+        <button class="btn btn-primary" onclick="openModal('#helpModal')">
+          <span>❓ How to Use</span>
+        </button>
+        <button class="btn btn-primary" onclick="exportAllData()">
+          <span>📤 Export All Data</span>
+        </button>
       </div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <button class="btn btn-primary" onclick="location.href='spendly.html'">💰 Spendly</button>
-        <button class="btn btn-primary" onclick="location.href='nexus.html'">📊 Nexus</button>
-        <button class="btn btn-primary" onclick="location.href='pocketcal.html'">📅 PocketCal</button>
-      </div>
-    </div>
+    </section>
 
-    <!-- Help & Legal -->
-    <div class="card">
-      <div style="font-weight:700;margin-bottom:8px">Help & Legal</div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <button class="btn" id="btnDevOptions">📜 Terms & Conditions</button>
-        <button class="btn" id="btnTerms">📝 How to Use</button>
-        <button class="btn btn-primary" id="btnSetName" style="margin-top:4px;">Set Name</button>
-      </div>
-      <div style="margin-top:8px" class="small-muted">
-  Use the app pages above. Export/backup for data transfer. <br>
-  Set your name to personalize the app. <br>
-  View developer: <strong>@imxd-2025</strong>
-</div>
   </div>
 
-  <!-- Modal Popup -->
-  <div id="modal" class="modal">
+  <!-- Profile Modal -->
+  <div class="modal" id="profileModal">
     <div class="modal-content">
-      <span id="modalClose" class="modal-close">&times;</span>
-      <div id="modalBody"></div>
+      <div class="modal-header">
+        <h2 class="modal-title">Profile</h2>
+        <button class="modal-close" onclick="closeModal('#profileModal')">&times;</button>
+      </div>
+      <div class="profile-details">
+        <div class="profile-photo-large">
+          <img src="https://via.placeholder.com/150" alt="Imad Khan" id="profileImageLarge">
+        </div>
+        <h3 class="profile-name">Imad Khan</h3>
+        <p class="profile-handle">@imxd-2025</p>
+        <p class="profile-title">Developer | MoneyFlow Creator</p>
+        
+        <div class="profile-location" id="userLocation">
+          <span>📍</span>
+          <span>Fetching location...</span>
+        </div>
+        
+        <div class="profile-contact">
+          <h4>Contact</h4>
+          <p><strong>Email:</strong> imadak999@gmail.com</p>
+          <p><strong>Instagram:</strong> <a href="https://instagram.com/_imxd12" target="_blank">@_imxd12</a></p>
+          <p><strong>WhatsApp:</strong> <a href="https://wa.me/" target="_blank">Chat</a></p>
+        </div>
+        
+        <div class="profile-education">
+          <h4>Education</h4>
+          <div class="edu-item">
+            <strong>B.E (Expected June 2028)</strong>
+            <p>Electrical & Computer Engineering</p>
+            <p>Anjuman-I-Islam's Kalsekar Technical Campus, Panvel</p>
+          </div>
+          <div class="edu-item">
+            <strong>Diploma (June 2024)</strong>
+            <p>Automation & Robotics</p>
+            <p>Anjuman-I-Islam's Abdul Razzaq Kalsekar Polytechnic</p>
+          </div>
+          <div class="edu-item">
+            <strong>S.S.C (March 2021)</strong>
+            <p>St. Francis Xavier's English Medium High School, Ajgoan</p>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
-  <!-- Floating Branding Card -->
-<div class="branding-card">
-  <div class="branding-text">@imxd-2025</div>
-</div>
-
-<!-- Profile Modal -->
-<div id="profileModal" class="profile-modal">
-  <div class="profile-content">
-    <span class="close-btn">&times;</span>
-
-    <!-- Profile Photo -->
-    <div class="profile-photo">
-      <img src="Imad.jpg" alt="Imad Khan">
-    </div>
-
-    <!-- About Myself -->
-    <div class="profile-section">
-      <h3>About Myself 👨‍💻</h3>
-      <p><strong>Name:</strong> Imad Khan</p>
-      <p><strong>Role:</strong> Developer | FinFusion Creator</p>
-      <p><strong>Email:</strong> <a href="mailto:imadak999@gmail.com">imadak999@gmail.com</a></p>
-      <p><strong>Instagram:</strong> <a href="https://www.instagram.com/_imxd12" target="_blank">@_imxd12</a></p>
-      <p><strong>WhatsApp:</strong> <a href="https://wa.me/918097814934" target="_blank">Chat on WhatsApp</a></p>
-    </div>
-
-<!-- Education -->
-<div class="profile-section">
-  <h3>Education 🎓</h3>
-  <p>
-    <strong>● B.E (Expected June 2028) :</strong> Pursuing Electrical & Computer Engineering, Anjuman-I-Islam's Kalsekar Technical Campus, Panvel - Navi Mumbai 
-    <a href="https://maps.app.goo.gl/xcGfMsNk44Qse9CLA" target="_blank" title="View on Google Maps" class="location-icon">
-      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#ff4757" viewBox="0 0 24 24">
-        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z"/>
-      </svg>
-    </a>
-  </p>
-  <p>
-    <strong>● Diploma (June 2024):</strong> Automation & Robotics, Anjuman-I-Islam's Abdul Razzaq Kalsekar Polytechnic, Panvel - Navi Mumbai 
-    <a href="https://maps.app.goo.gl/bUB4eSrFojxXSUjy9" target="_blank" title="View on Google Maps" class="location-icon">
-      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#ff4757" viewBox="0 0 24 24">
-        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z"/>
-      </svg>
-    </a>
-  </p>
-  <p>
-    <strong>● S.S.C (March 2021):</strong> St. Francis Xavier's English Medium High School, Ajgoan 
-    <a href="https://maps.app.goo.gl/mbEHeidS6EWQ3zmr5" target="_blank" title="View on Google Maps" class="location-icon">
-      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#ff4757" viewBox="0 0 24 24">
-        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z"/>
-      </svg>
-    </a>
-  </p>
-</div>
-
-    <!-- Work Experience -->
-    <div class="profile-section">
-      <h3>Work Experience 💼</h3>
-      <ul>
-        <li>
-          <strong>IRABOT TechEd LLP</strong> (June 2023 - July 2023)<br>
-          Completed a six-week industrial internship in Automation and Robotics.
-            <a href="https://maps.app.goo.gl/cVu78nW3DoMW48V88" target="_blank" title="View on Google Maps" class="location-icon">
-      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#ff4757" viewBox="0 0 24 24">
-        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z"/>
-      </svg>
-    </a>
-</li>
-      </ul>
-    </div>
-
-    <!-- Professional Certifications -->
-    <div class="profile-section">
-      <h3>Professional Certifications 📜</h3>
-      <ul>
-        <strong>Aug 2023 - May 2024:</strong>
-        <li>Research Paper "Automated Attendance Marking System Using Raspberry Pi" published in International Journal of Research and Analytical Reviews (IJRAR)</li>
-        <li>Participation Certificate - "NEUROFEST" State Level Project Competition 2024 (Anjuman-I-Islam Abdul Razzaq Kalsekar Polytechnic, Panvel)</li>
-        <li>Participation Certificate - "TECHNOVATION" State Level Project Competition 2024 (Vivekanand Education Society's Polytechnic, Chembur)</li>
-      </ul>
-    </div>
-
-    <!-- Resume Link Button -->
-<div class="profile-section">
-  <h3>Resume 📄</h3>
-  <p>
-    <a href="resume.pdf" target="_blank" class="btn btn-primary">
-      View / Download Resume
-    </a>
-  </p>
-</div>
-
-    <!-- App Note -->
-    <div class="profile-note">
-      <p>FinFusion 2025 — All-in-One Finance & Productivity Web App</p>
+  <!-- Set Name Modal -->
+  <div class="modal" id="nameModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title">Set Your Name</h2>
+        <button class="modal-close" onclick="closeModal('#nameModal')">&times;</button>
+      </div>
+      <form onsubmit="saveName(event)">
+        <div class="form-group">
+          <label class="form-label">Enter Your Name</label>
+          <input type="text" class="form-input" id="userName" placeholder="Your Name" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Save Name</button>
+      </form>
     </div>
   </div>
-</div>
+
+  <!-- Developer Modal -->
+  <div class="modal" id="devModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title">Developer Options</h2>
+        <button class="modal-close" onclick="closeModal('#devModal')">&times;</button>
+      </div>
+      <div class="dev-options">
+        <button class="btn btn-danger" onclick="clearAllData()">🗑️ Clear All Data</button>
+        <button class="btn btn-secondary" onclick="viewStorage()">📊 View Storage</button>
+        <button class="btn btn-secondary" onclick="downloadBackup()">💾 Download Backup</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Help Modal -->
+  <div class="modal" id="helpModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title">How to Use MoneyFlow</h2>
+        <button class="modal-close" onclick="closeModal('#helpModal')">&times;</button>
+      </div>
+      <div class="help-content">
+        <h3>Spendly 💰</h3>
+        <p>Track daily income and expenses with detailed categories. View balance and export reports.</p>
+        
+        <h3>Nexus 💼</h3>
+        <p>Log work items, hours, bonuses, and penalties. Perfect for gig workers and freelancers.</p>
+        
+        <h3>PocketCal 📅</h3>
+        <p>Calendar view of pocket money received. See monthly totals and daily averages.</p>
+        
+        <h3>Tips 💡</h3>
+        <ul>
+          <li>Export your data regularly as backup</li>
+          <li>Use categories to organize transactions</li>
+          <li>Check dashboard for quick overview</li>
+          <li>Toggle dark mode for night usage</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-section">
+        <h3>About MoneyFlow</h3>
+        <p>A comprehensive personal finance tracking application designed for complete money management.</p>
+      </div>
+      
+      <div class="footer-section">
+        <h3>Quick Links</h3>
+        <ul>
+          <li><a href="#" onclick="openModal('#helpModal'); return false;">How to Use</a></li>
+          <li><a href="#" onclick="openModal('#profileModal'); return false;">About Developer</a></li>
+          <li><a href="#" onclick="openModal('#termsModal'); return false;">Terms & Conditions</a></li>
+          <li><a href="#" onclick="openModal('#privacyModal'); return false;">Privacy Policy</a></li>
+        </ul>
+      </div>
+      
+      <div class="footer-section">
+        <h3>Developer</h3>
+        <p><strong>Imad Khan</strong></p>
+        <p>@imxd-2025</p>
+        <p><a href="mailto:imadak999@gmail.com">imadak999@gmail.com</a></p>
+      </div>
+    </div>
+    
+    <div class="footer-bottom">
+      <p>&copy; 2025 MoneyFlow by Imad Khan. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- Bottom Navigation -->
+  <nav class="bottom-nav" data-active="0">
+    <div class="nav-liquid"></div>
+    <a href="index.html" class="nav-item active" id="nav-home">
+      <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+      <span>Home</span>
+    </a>
+    <a href="spendly.html" class="nav-item" id="nav-spend">
+      <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1.41 16.09V20h-2.67v-1.93c-1.71-.36-3.16-1.46-3.27-3.4h1.96c.1 1.05.82 1.87 2.65 1.87 1.96 0 2.4-.98 2.4-1.59 0-.83-.44-1.61-2.67-2.14-2.48-.6-4.18-1.62-4.18-3.67 0-1.72 1.39-2.84 3.11-3.21V4h2.67v1.95c1.86.45 2.79 1.86 2.85 3.39H14.3c-.05-1.11-.64-1.87-2.22-1.87-1.5 0-2.4.68-2.4 1.64 0 .84.65 1.39 2.67 1.91s4.18 1.39 4.18 3.91c-.01 1.83-1.38 2.83-3.12 3.16z"/></svg>
+      <span>Spendly</span>
+    </a>
+    <a href="nexus.html" class="nav-item" id="nav-nexus">
+      <svg viewBox="0 0 24 24"><path d="M20 6h-2.18c.11-.31.18-.65.18-1 0-1.66-1.34-3-3-3-1.05 0-1.96.54-2.5 1.35l-.5.67-.5-.68C10.96 2.54 10.05 2 9 2 7.34 2 6 3.34 6 5c0 .35.07.69.18 1H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-5-2c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zM9 4c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm11 15H4v-2h16v2zm0-5H4V8h5.08L7 10.83 8.62 12 11 8.76l1-1.36 1 1.36L15.38 12 17 10.83 14.92 8H20v6z"/></svg>
+      <span>Nexus</span>
+    </a>
+    <a href="pocketcal.html" class="nav-item" id="nav-pocket">
+      <svg viewBox="0 0 24 24"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zM9 14H7v-2h2v2zm4 0h-2v-2h2v2zm4 0h-2v-2h2v2zm-8 4H7v-2h2v2zm4 0h-2v-2h2v2zm4 0h-2v-2h2v2z"/></svg>
+      <span>PocketCal</span>
+    </a>
+  </nav>
 
   <script src="global.js"></script>
   <script src="index.js"></script>

@@ -1,129 +1,320 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Nexus</title>
-
-  <!-- Favicon -->
-  <link rel="icon" type="image/svg+xml" href="icon-512.svg">
-  <link rel="shortcut icon" href="icon-512.png" type="image/png">
-
-  <!-- Styles -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nexus - Work & Earnings Tracker</title>
   <link rel="stylesheet" href="global.css">
   <link rel="stylesheet" href="nexus.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
 <body>
-  <div class="app">
 
-    <!-- Header -->
-    <div class="card header">
-      <div class="brand">
-        <div class="logo">📊</div>
-        <div>
-          <div class="app-title">
-  <a href="index.html" style="color: inherit; text-decoration: none;">Nexus</a>
-</div>
-          <div class="small-muted">Income Tracker</div>
-        </div>
-      </div>
-      <div style="text-align:right">
-        <div id="timeNow" class="small-muted"></div>
-        <div class="small-muted">Earnings & Hours</div>
-      </div>
+  <!-- Header -->
+  <header class="header">
+    <div class="header-left">
+      <a href="index.html" style="display: flex; align-items: center; gap: 15px; text-decoration: none;">
+        <svg class="brand-logo" viewBox="0 0 100 100">
+          <defs>
+            <linearGradient id="brandGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style="stop-color:#10b981"/>
+              <stop offset="100%" style="stop-color:#3b82f6"/>
+            </linearGradient>
+          </defs>
+          <circle cx="50" cy="50" r="45" fill="url(#brandGrad)"/>
+          <text x="50" y="65" font-size="40" font-weight="800" fill="white" text-anchor="middle">₹</text>
+        </svg>
+        <h1 class="brand-name">MoneyFlow</h1>
+      </a>
     </div>
-
-    <!-- Entry Modal -->
-    <div id="nxModal" class="modal hidden">
-      <div class="modal-content card">
-        <h3 id="nxModalTitle">Add Entry</h3>
-        <input id="nxDate" type="date" class="input" />
-        <input id="nxItems" class="input" placeholder="Items picked" />
-        <input id="nxHours" class="input" placeholder="Active hours" />
-        <input id="nxBonus" class="input" placeholder="Bonus" />
-        <input id="nxPenalty" class="input" placeholder="Penalty" />
-        <input id="nxPayout" class="input" placeholder="Payout" />
-        <select id="nxCategory" class="input">
-          <option value="Normal">Normal</option>
-          <option value="Festival Surge">Festival Surge</option>
-          <option value="Cancelled Orders">Cancelled Orders</option>
-          <option value="Other">Other</option>
-        </select>
-        <input id="nxNotes" class="input" placeholder="Notes" />
-        <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:10px">
-          <button class="btn btn-danger" id="nxDelete">Delete</button>
-          <button class="btn" id="nxClose">Cancel</button>
-          <button class="btn btn-primary" id="nxSave">Save</button>
-        </div>
-      </div>
-    </div>
-
-      <!-- Summary Widgets -->
-       <div class="card">
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:8px">
-        <div class="card widget">
-          <div class="small-muted">This Month Total</div>
-          <div id="nxMonth" style="font-weight:700">₹0</div>
-        </div>
-        <div class="card widget">
-          <div class="small-muted">YTD Total</div>
-          <div id="nxYTD" style="font-weight:700">₹0</div>
-        </div>
-        <div class="card widget">
-          <div class="small-muted">Efficiency (₹/hr)</div>
-          <div id="nxEff" style="font-weight:700">0</div>
-        </div>
-        <div class="card widget">
-          <div class="small-muted">Best Day</div>
-          <div id="nxBest" style="font-weight:700">-</div>
-        </div>
-        <div class="card widget">
-          <div class="small-muted">Worst Day</div>
-          <div id="nxWorst" style="font-weight:700">-</div>
-        </div>
-      </div>
-      </div>
-
-          <!-- Controls + Summary -->
-    <div class="card">
-      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px">
-        <button class="btn btn-primary" id="btnAddN">Add Entry</button>
-        <button class="btn" id="btnExportN">Export CSV</button>
-        <button class="btn" id="btnBackupN">Backup JSON</button>
-        <input type="file" id="importFile" hidden />
-        <button class="btn" id="btnImportN">Import JSON</button>
-        <button class="btn" id="btnAllEntries">View All</button>
-      </div>
-
-      <!-- Date Range Filter -->
-      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px">
-        <input type="month" id="monthPicker" class="input" />
-        <input type="date" id="fromDate" class="input" />
-        <input type="date" id="toDate" class="input" />
-        <button class="btn" id="btnFilterRange">Filter</button>
-      </div>
-
-      <!-- Chart -->
-      <div style="margin-top:8px">
-        <canvas id="nxChart" width="360" height="140"></canvas>
-      </div>
-    </div>
-
     
-
-    <!-- Entries -->
-    <div class="card">
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <div style="font-weight:700">Entries</div>
-        <input id="searchNexus" class="input" placeholder="Search date or notes" />
+    <div class="header-center">
+      <div class="time-display" id="timeNow">Loading...</div>
+    </div>
+    
+    <div class="header-right">
+      <div class="theme-toggle">
+        <div class="theme-toggle-slider">☀️</div>
       </div>
-      <ul id="listNexus" class="list"></ul>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <div class="container">
+    
+    <!-- Page Title -->
+    <div class="page-header scroll-fade-in">
+      <h1 class="page-title">💼 Nexus</h1>
+      <p class="page-subtitle">Track your items, hours & payout</p>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="summary-grid scroll-fade-in">
+      <div class="summary-card payout-card">
+        <div class="summary-icon">💰</div>
+        <div class="summary-info">
+          <div class="summary-label">Today's Payout</div>
+          <div class="summary-value" id="todayPayout">₹0</div>
+        </div>
+      </div>
+      
+      <div class="summary-card month-card">
+        <div class="summary-icon">📅</div>
+        <div class="summary-info">
+          <div class="summary-label">This Month</div>
+          <div class="summary-value" id="monthPayout">₹0</div>
+        </div>
+      </div>
+      
+      <div class="summary-card total-card">
+        <div class="summary-icon">🏆</div>
+        <div class="summary-info">
+          <div class="summary-label">All-Time Total</div>
+          <div class="summary-value" id="totalPayout">₹0</div>
+        </div>
+      </div>
+      
+      <div class="summary-card avg-card">
+        <div class="summary-icon">📊</div>
+        <div class="summary-info">
+          <div class="summary-label">Daily Average</div>
+          <div class="summary-value" id="avgPayout">₹0</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Analytics Section -->
+    <div class="analytics-section scroll-blur">
+      <h3 class="section-title">📈 Analytics & Insights</h3>
+      
+      <div class="chart-grid">
+        <!-- Earnings Trend Chart -->
+        <div class="chart-card">
+          <h4 class="chart-title">Daily Earnings Trend (Last 14 Days)</h4>
+          <canvas id="trendChart"></canvas>
+        </div>
+        
+        <!-- Category Distribution Chart -->
+        <div class="chart-card">
+          <h4 class="chart-title">Category-wise Earnings</h4>
+          <canvas id="categoryChart"></canvas>
+        </div>
+        
+        <!-- Items vs Hours Chart -->
+        <div class="chart-card">
+          <h4 class="chart-title">Items vs Hours Comparison</h4>
+          <canvas id="itemsHoursChart"></canvas>
+        </div>
+        
+        <!-- Bonus vs Penalty Chart -->
+        <div class="chart-card">
+          <h4 class="chart-title">Bonus vs Penalty Analysis</h4>
+          <canvas id="bonusPenaltyChart"></canvas>
+        </div>
+      </div>
+      
+      <!-- Performance Metrics -->
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <div class="metric-icon">🔢</div>
+          <div class="metric-label">Total Items</div>
+          <div class="metric-value" id="totalItems">0</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-icon">⏰</div>
+          <div class="metric-label">Total Hours</div>
+          <div class="metric-value" id="totalHours">0</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-icon">🎁</div>
+          <div class="metric-label">Total Bonus</div>
+          <div class="metric-value" id="totalBonus">₹0</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-icon">⚠️</div>
+          <div class="metric-label">Total Penalty</div>
+          <div class="metric-value" id="totalPenalty">₹0</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filters & Actions -->
+    <div class="filter-section scroll-fade-in">
+      <div class="filter-group">
+        <input type="text" class="form-input" id="searchInput" placeholder="🔍 Search by date or notes...">
+      </div>
+      <div class="action-buttons">
+        <button class="btn btn-primary" onclick="openAddModal()">
+          <span>➕ Add New Entry</span>
+        </button>
+        <button class="btn btn-secondary" onclick="toggleShowAll()">
+          <span id="toggleText">Show All</span>
+        </button>
+        <button class="btn btn-secondary" onclick="exportToJSON()">
+          <span>📤 Export JSON</span>
+        </button>
+        <button class="btn btn-secondary" onclick="exportToCSV()">
+          <span>📊 Export CSV</span>
+        </button>
+        <button class="btn btn-secondary" onclick="importFromJSON()">
+          <span>📥 Import JSON</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Entry List -->
+    <div class="list-section scroll-blur">
+      <h3 class="section-title">Recent Entries</h3>
+      <ul id="listNexus" class="nexus-list"></ul>
+      <div class="empty-state" id="emptyState" style="display: none;">
+        <svg width="100" height="100" viewBox="0 0 100 100">
+          <circle cx="50" cy="50" r="40" fill="var(--glass)" stroke="var(--glass-border)" stroke-width="2"/>
+          <text x="50" y="65" font-size="40" text-anchor="middle">💼</text>
+        </svg>
+        <p>No entries yet. Start tracking your work!</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Add/Edit Modal -->
+  <div class="modal" id="nxModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title" id="modalTitle">Add Nexus Entry</h2>
+        <button class="modal-close" onclick="closeModal('#nxModal')">&times;</button>
+      </div>
+      <form id="nxForm">
+        <input type="hidden" id="editId">
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Date</label>
+            <input type="date" class="form-input" id="nxDate" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Category</label>
+            <select class="form-select" id="nxCategory" required>
+              <option value="💼 Freelance">💼 Freelance</option>
+              <option value="🛠️ Project Work">🛠️ Project Work</option>
+              <option value="📦 Delivery">📦 Delivery</option>
+              <option value="🎨 Design Work">🎨 Design Work</option>
+              <option value="💻 Development">💻 Development</option>
+              <option value="📝 Content Writing">📝 Content Writing</option>
+              <option value="🎓 Tutoring">🎓 Tutoring</option>
+              <option value="📸 Photography">📸 Photography</option>
+              <option value="🎯 Consulting">🎯 Consulting</option>
+              <option value="🔧 Maintenance">🔧 Maintenance</option>
+              <option value="🎪 Event Work">🎪 Event Work</option>
+              <option value="🎯 Other">🎯 Other</option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Items Completed</label>
+            <input type="number" class="form-input" id="nxItems" placeholder="0" min="0" step="1" value="0">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Hours Worked</label>
+            <input type="number" class="form-input" id="nxHours" placeholder="0.0" min="0" step="0.5" value="0">
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Bonus (₹)</label>
+            <input type="number" class="form-input" id="nxBonus" placeholder="0.00" min="0" step="0.01" value="0">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Penalty (₹)</label>
+            <input type="number" class="form-input" id="nxPenalty" placeholder="0.00" min="0" step="0.01" value="0">
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Total Payout (₹)</label>
+          <input type="number" class="form-input" id="nxPayout" placeholder="0.00" step="0.01" required>
+          <small class="form-hint">Auto-calculated or enter manually</small>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Notes (Optional)</label>
+          <textarea class="form-textarea" id="nxNotes" placeholder="Add any notes about this work..."></textarea>
+        </div>
+        
+        <div class="modal-actions">
+          <button type="submit" class="btn btn-primary">💾 Save Entry</button>
+          <button type="button" class="btn btn-danger" id="deleteBtn" style="display: none;" onclick="deleteEntry()">🗑️ Delete</button>
+        </div>
+      </form>
     </div>
   </div>
 
-  <!-- Scripts -->
+  <!-- Floating Action Button (FAB) -->
+  <button class="fab" onclick="openAddModal()" title="Quick Add Entry">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
+      <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+    </svg>
+  </button>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-section">
+        <h3>About Nexus</h3>
+        <p>Professional work tracking for freelancers and gig workers. Track items, hours, bonuses, and penalties with detailed analytics.</p>
+      </div>
+      
+      <div class="footer-section">
+        <h3>Features</h3>
+        <ul>
+          <li>Items & Hours tracking</li>
+          <li>Bonus & Penalty management</li>
+          <li>Advanced analytics & charts</li>
+          <li>CSV/JSON export & import</li>
+        </ul>
+      </div>
+      
+      <div class="footer-section">
+        <h3>Quick Links</h3>
+        <ul>
+          <li><a href="index.html">Dashboard</a></li>
+          <li><a href="spendly.html">Spendly</a></li>
+          <li><a href="pocketcal.html">PocketCal</a></li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="footer-bottom">
+      <p>&copy; 2025 MoneyFlow by <strong>@imxd-2025</strong>. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- Bottom Navigation -->
+  <nav class="bottom-nav" data-active="2">
+    <div class="nav-liquid"></div>
+    <a href="index.html" class="nav-item" id="nav-home">
+      <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+      <span>Home</span>
+    </a>
+    <a href="spendly.html" class="nav-item" id="nav-spend">
+      <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1.41 16.09V20h-2.67v-1.93c-1.71-.36-3.16-1.46-3.27-3.4h1.96c.1 1.05.82 1.87 2.65 1.87 1.96 0 2.4-.98 2.4-1.59 0-.83-.44-1.61-2.67-2.14-2.48-.6-4.18-1.62-4.18-3.67 0-1.72 1.39-2.84 3.11-3.21V4h2.67v1.95c1.86.45 2.79 1.86 2.85 3.39H14.3c-.05-1.11-.64-1.87-2.22-1.87-1.5 0-2.4.68-2.4 1.64 0 .84.65 1.39 2.67 1.91s4.18 1.39 4.18 3.91c-.01 1.83-1.38 2.83-3.12 3.16z"/></svg>
+      <span>Spendly</span>
+    </a>
+    <a href="nexus.html" class="nav-item active" id="nav-nexus">
+      <svg viewBox="0 0 24 24"><path d="M20 6h-2.18c.11-.31.18-.65.18-1 0-1.66-1.34-3-3-3-1.05 0-1.96.54-2.5 1.35l-.5.67-.5-.68C10.96 2.54 10.05 2 9 2 7.34 2 6 3.34 6 5c0 .35.07.69.18 1H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-5-2c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zM9 4c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm11 15H4v-2h16v2zm0-5H4V8h5.08L7 10.83 8.62 12 11 8.76l1-1.36 1 1.36L15.38 12 17 10.83 14.92 8H20v6z"/></svg>
+      <span>Nexus</span>
+    </a>
+    <a href="pocketcal.html" class="nav-item" id="nav-pocket">
+      <svg viewBox="0 0 24 24"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zM9 14H7v-2h2v2zm4 0h-2v-2h2v2zm4 0h-2v-2h2v2zm-8 4H7v-2h2v2zm4 0h-2v-2h2v2zm4 0h-2v-2h2v2z"/></svg>
+      <span>PocketCal</span>
+    </a>
+  </nav>
+
   <script src="global.js"></script>
   <script src="nexus.js"></script>
 </body>
 </html>
-

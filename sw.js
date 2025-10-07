@@ -1,14 +1,13 @@
 /* =========================
    MONEYFLOW SERVICE WORKER
-   Offline Support & Caching
+   Enhanced offline support and caching
 ========================= */
 
-const CACHE_NAME = 'moneyflow-v1.0.0';
-const STATIC_CACHE = 'moneyflow-static-v1.0.0';
-const DYNAMIC_CACHE = 'moneyflow-dynamic-v1.0.0';
+const CACHE_VERSION = 'moneyflow-v1.0.0';
+const CACHE_NAME = `${CACHE_VERSION}-cache`;
 
-// Files to cache immediately
-const STATIC_ASSETS = [
+// Assets to cache immediately
+const CORE_ASSETS = [
   './',
   './index.html',
   './spendly.html',
@@ -24,45 +23,45 @@ const STATIC_ASSETS = [
   './spendly.js',
   './nexus.js',
   './pocketcal.js',
-  './manifest.json',
-  'https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap',
-  'https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js'
+  './icon-192.png',
+  './icon-512.png',
+  './manifest.json'
 ];
 
-// Install event - cache static assets
-self.addEventListener('install', event => {
+// Install event - cache core assets
+self.addEventListener('install', (event) => {
   console.log('[SW] Installing Service Worker...');
   
   event.waitUntil(
-    caches.open(STATIC_CACHE)
-      .then(cache => {
-        console.log('[SW] Caching static assets');
-        return cache.addAll(STATIC_ASSETS);
+    caches.open(CACHE_NAME)
+      .then((cache) => {
+        console.log('[SW] Caching core assets');
+        return cache.addAll(CORE_ASSETS);
       })
       .then(() => {
-        console.log('[SW] Static assets cached successfully');
+        console.log('[SW] Core assets cached successfully');
         return self.skipWaiting();
       })
-      .catch(err => {
-        console.error('[SW] Failed to cache static assets:', err);
+      .catch((error) => {
+        console.error('[SW] Failed to cache core assets:', error);
       })
   );
 });
 
 // Activate event - clean up old caches
-self.addEventListener('activate', event => {
+self.addEventListener('activate', (event) => {
   console.log('[SW] Activating Service Worker...');
   
   event.waitUntil(
     caches.keys()
-      .then(cacheNames => {
+      .then((cacheNames) => {
         return Promise.all(
-          cacheNames.map(cacheName => {
-            if (cacheName !== STATIC_CACHE && cacheName !== DYNAMIC_CACHE) {
-              console.log('[SW] Deleting old cache:', cacheName);
-              return caches.delete(cacheName);
-            }
-          })
+          cacheNames
+            .filter((name) => name.startsWith('moneyflow-') && name !== CACHE_NAME)
+            .map((name) => {
+              console.log('[SW] Deleting old cache:', name);
+              return caches.delete(name);
+            })
         );
       })
       .then(() => {
@@ -73,7 +72,7 @@ self.addEventListener('activate', event => {
 });
 
 // Fetch event - serve from cache, fallback to network
-self.addEventListener('fetch', event => {
+self.addEventListener('fetch', (event) => {
   const { request } = event;
   
   // Skip non-GET requests
@@ -81,90 +80,140 @@ self.addEventListener('fetch', event => {
     return;
   }
   
-  // Skip chrome extension requests
-  if (request.url.startsWith('chrome-extension://')) {
+  // Skip external requests
+  if (!request.url.startsWith(self.location.origin)) {
     return;
   }
   
   event.respondWith(
     caches.match(request)
-      .then(cachedResponse => {
+      .then((cachedResponse) => {
         if (cachedResponse) {
-          // Return cached version
           console.log('[SW] Serving from cache:', request.url);
+          
+          // Update cache in background (stale-while-revalidate)
+          fetch(request)
+            .then((networkResponse) => {
+              if (networkResponse && networkResponse.status === 200) {
+                caches.open(CACHE_NAME).then((cache) => {
+                  cache.put(request, networkResponse);
+                });
+              }
+            })
+            .catch(() => {
+              // Network failed, continue using cached version
+            });
+          
           return cachedResponse;
         }
         
         // Not in cache, fetch from network
+        console.log('[SW] Fetching from network:', request.url);
         return fetch(request)
-          .then(networkResponse => {
-            // Clone the response
-            const responseClone = networkResponse.clone();
-            
-            // Cache dynamic content
-            if (networkResponse.status === 200) {
-              caches.open(DYNAMIC_CACHE)
-                .then(cache => {
-                  cache.put(request, responseClone);
-                  console.log('[SW] Cached dynamic asset:', request.url);
-                });
+          .then((networkResponse) => {
+            // Cache successful responses
+            if (networkResponse && networkResponse.status === 200) {
+              const responseToCache = networkResponse.clone();
+              caches.open(CACHE_NAME).then((cache) => {
+                cache.put(request, responseToCache);
+              });
             }
-            
             return networkResponse;
           })
-          .catch(err => {
-            console.error('[SW] Fetch failed:', err);
+          .catch((error) => {
+            console.error('[SW] Fetch failed:', error);
             
-            // Return offline fallback page if available
-            return caches.match('./index.html');
+            // Return offline page for HTML requests
+            if (request.headers.get('accept').includes('text/html')) {
+              return caches.match('./index.html');
+            }
+            
+            throw error;
           });
       })
   );
 });
 
-// Background sync for future enhancements
-self.addEventListener('sync', event => {
+// Background sync for offline data
+self.addEventListener('sync', (event) => {
   console.log('[SW] Background sync triggered:', event.tag);
   
   if (event.tag === 'sync-data') {
-    event.waitUntil(
-      // Sync logic here
-      Promise.resolve()
-    );
+    event.waitUntil(syncData());
   }
 });
 
+async function syncData() {
+  try {
+    // Implement background sync logic here
+    console.log('[SW] Syncing offline data...');
+    // This would sync any pending offline transactions
+    return Promise.resolve();
+  } catch (error) {
+    console.error('[SW] Sync failed:', error);
+    throw error;
+  }
+}
+
 // Push notification support
-self.addEventListener('push', event => {
+self.addEventListener('push', (event) => {
   console.log('[SW] Push notification received');
   
+  const data = event.data ? event.data.json() : {};
+  const title = data.title || 'MoneyFlow';
   const options = {
-    body: event.data ? event.data.text() : 'New update available!',
+    body: data.body || 'New notification',
     icon: './icon-192.png',
-    badge: './icon-96.png',
+    badge: './icon-192.png',
     vibrate: [200, 100, 200],
-    tag: 'moneyflow-notification',
-    requireInteraction: false
+    data: data.url || './',
+    actions: [
+      {
+        action: 'open',
+        title: 'Open App'
+      },
+      {
+        action: 'close',
+        title: 'Dismiss'
+      }
+    ]
   };
   
   event.waitUntil(
-    self.registration.showNotification('MoneyFlow', options)
+    self.registration.showNotification(title, options)
   );
 });
 
 // Notification click handler
-self.addEventListener('notificationclick', event => {
-  console.log('[SW] Notification clicked');
+self.addEventListener('notificationclick', (event) => {
+  console.log('[SW] Notification clicked:', event.action);
   
   event.notification.close();
   
-  event.waitUntil(
-    clients.openWindow('./')
-  );
+  if (event.action === 'open' || !event.action) {
+    const urlToOpen = event.notification.data || './';
+    
+    event.waitUntil(
+      clients.matchAll({ type: 'window', includeUncontrolled: true })
+        .then((clientList) => {
+          // Check if app is already open
+          for (const client of clientList) {
+            if (client.url === urlToOpen && 'focus' in client) {
+              return client.focus();
+            }
+          }
+          
+          // Open new window if not already open
+          if (clients.openWindow) {
+            return clients.openWindow(urlToOpen);
+          }
+        })
+    );
+  }
 });
 
-// Message handler for communication with main app
-self.addEventListener('message', event => {
+// Message handler for client communication
+self.addEventListener('message', (event) => {
   console.log('[SW] Message received:', event.data);
   
   if (event.data.type === 'SKIP_WAITING') {
@@ -173,11 +222,12 @@ self.addEventListener('message', event => {
   
   if (event.data.type === 'CLEAR_CACHE') {
     event.waitUntil(
-      caches.keys().then(cacheNames => {
-        return Promise.all(
-          cacheNames.map(cacheName => caches.delete(cacheName))
-        );
+      caches.delete(CACHE_NAME).then(() => {
+        console.log('[SW] Cache cleared');
+        event.ports[0].postMessage({ success: true });
       })
     );
   }
 });
+
+console.log('[SW] Service Worker loaded');

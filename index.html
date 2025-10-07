@@ -109,18 +109,6 @@
         </button>
       </div>
     </section>
-
-            <!-- Welcome Section -->
-         <div class="welcome-actions">
-        <button class="btn btn-secondary" onclick="openModal('#profileModal')">
-          <span>@imxd-2025</span>
-        </button>
-        <button class="btn btn-secondary" onclick="openModal('#nameModal')">
-          <span>✏️ Set Name</span>
-        </button>
-      </div>
-    </section>
-
   </div>
 
 <!-- Enhanced Profile Modal -->
@@ -144,7 +132,7 @@
       <!-- Header Info -->
       <div class="profile-header-info">
         <h3 class="profile-name">Imad Khan</h3>
-        <p class="profile-handle">@imxd12</p>
+        <a href="https://www.instagram.com/_imxd12" target="_blank" rel="noopener noreferrer"><p class="profile-handle">@imxd12</p></a>
         <p class="profile-title">Developer | MoneyFlow Creator</p>
         
         <!-- Location -->
@@ -333,9 +321,9 @@
                 <stop offset="100%" style="stop-color:#3b82f6"/>
               </linearGradient>
             </defs>
-            ircle cx="50" cy="50" r="4545" fill="url(#badgeGrad)"/>
-            <text x="50" y="65" font-size="40" font-weight="800" fill="white" text-anchor="middle">₹</text>
-          </svg>
+        <circle cx="50" cy="50" r="45" fill="url(#brandGrad)"/>
+        <text x="50" y="65" font-size="40" font-weight="800" fill="white" text-anchor="middle">₹</text>
+     </svg>
           <div>
             <strong>MoneyFlow 2025</strong>
             <p>All-in-One Finance & Productivity Web App</p>
@@ -488,7 +476,7 @@
       <h3>⌨️ Quick Actions</h3>
       <ul>
         <li><strong>FAB Button:</strong> Floating button in bottom-right for quick entry in all modules</li>
-        <li><strong>Profile Button:</strong> Click top-right profile photo or @imxd-2025 button to view developer info</li>
+        <li><strong>Profile Button:</strong> Click top-right profile photo or <a href="https://www.instagram.com/_imxd12" target="_blank" rel="noopener noreferrer"><p class="profile-handle">@imxd12</p></a>button to view developer info</li>
         <li><strong>Set Name:</strong> Customize welcome greeting with your name</li>
         <li><strong>Bottom Navigation:</strong> Swipe effect shows active tab - easy switching between modules</li>
       </ul>
@@ -517,12 +505,28 @@
       <!-- Contact & Support -->
       <h3>📞 Need Help?</h3>
       <p>If you encounter issues or have suggestions:</p>
-      <ul>
-        <li><strong>Developer:</strong> Imad Khan (@imxd-2025)</li>
-        <li><strong>Email:</strong> imadak999@gmail.com</li>
-        <li><strong>Instagram:</strong> @_imxd12</li>
-        <li><strong>Version:</strong> MoneyFlow v1.0 (2025)</li>
-      </ul>
+<ul class="contact-info">
+  <li>
+    <strong>Developer:</strong> Imad Khan 
+    <a href="https://www.instagram.com/_imxd12" target="_blank" rel="noopener noreferrer" class="contact-link">@imxd12</a>
+  </li>
+
+  <li>
+    <strong>Email:</strong> 
+    <a href="mailto:imadak999@gmail.com" class="contact-link">imadak999@gmail.com</a>
+  </li>
+
+  <li>
+    <strong>Instagram:</strong> 
+    <a href="https://www.instagram.com/_imxd12" target="_blank" rel="noopener noreferrer" class="contact-link">@_imxd12</a>
+  </li>
+
+  <li>
+    <strong>WhatsApp:</strong> 
+    <a href="https://wa.me/918097814934" target="_blank" rel="noopener noreferrer" class="contact-link">+91 80978 14934</a>
+  </li>
+   <li><strong>Version:</strong> MoneyFlow v1.0 (2025)</li>
+</ul>   
 
       <!-- Footer Note -->
       <div style="margin-top: 30px; padding: 20px; background: var(--glass); border-radius: var(--radius); border: 1px solid var(--glass-border); text-align: center;">
@@ -535,6 +539,366 @@
     </div>
   </div>
 </div>
+
+<!-- Terms & Conditions Modal -->
+<div class="modal" id="termsModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 class="modal-title">📜 Terms & Conditions</h2>
+      <button class="modal-close" onclick="closeModal('#termsModal')">&times;</button>
+    </div>
+    <div class="terms-content">
+      
+      <div class="terms-section">
+        <h3>1. Acceptance of Terms</h3>
+        <p>By accessing and using MoneyFlow ("the App"), you accept and agree to be bound by the terms and conditions of this agreement. If you do not agree to these terms, please do not use the App.</p>
+      </div>
+
+      <div class="terms-section">
+        <h3>2. Use of the Application</h3>
+        <p>MoneyFlow is provided as a personal finance tracking tool for individual use. You agree to:</p>
+        <ul>
+          <li>Use the App only for lawful purposes and personal financial management</li>
+          <li>Not attempt to reverse engineer, decompile, or disassemble the App</li>
+          <li>Not use the App to store illegal or fraudulent financial information</li>
+          <li>Not share your data exports containing sensitive financial information publicly</li>
+          <li>Take responsibility for the accuracy of data entered into the App</li>
+        </ul>
+      </div>
+
+      <div class="terms-section">
+        <h3>3. Data Storage & Responsibility</h3>
+        <p>All financial data entered into MoneyFlow is stored locally in your browser's localStorage. You acknowledge that:</p>
+        <ul>
+          <li>The developer is not responsible for data loss due to browser cache clearing</li>
+          <li>You must regularly export backups of your data</li>
+          <li>No cloud synchronization or server backup is provided</li>
+          <li>Data may be lost if you uninstall the browser or clear site data</li>
+          <li>The App does not transmit your financial data to any external servers</li>
+        </ul>
+      </div>
+
+      <div class="terms-section">
+        <h3>4. Accuracy & Reliability</h3>
+        <p>While we strive to provide accurate calculations and tracking:</p>
+        <ul>
+          <li>The App is provided "as is" without warranties of any kind</li>
+          <li>We do not guarantee 100% accuracy of calculations or analytics</li>
+          <li>Users are responsible for verifying their own financial data</li>
+          <li>The App should not be used as a substitute for professional financial advice</li>
+          <li>Currency conversion rates (if applicable) may not be real-time</li>
+        </ul>
+      </div>
+
+      <div class="terms-section">
+        <h3>5. Intellectual Property</h3>
+        <p>MoneyFlow and all its original content, features, and functionality are owned by Imad Khan (<a href="https://www.instagram.com/_imxd12" target="_blank" rel="noopener noreferrer"><p class="profile-handle">@imxd12</p></a>
+        ) and are protected by international copyright, trademark, and other intellectual property laws.</p>
+      </div>
+
+      <div class="terms-section">
+        <h3>6. Limitation of Liability</h3>
+        <p>To the maximum extent permitted by law:</p>
+        <ul>
+          <li>The developer shall not be liable for any indirect, incidental, or consequential damages</li>
+          <li>We are not responsible for financial losses resulting from use or misuse of the App</li>
+          <li>The App does not provide financial, tax, or investment advice</li>
+          <li>Users assume full responsibility for their financial decisions</li>
+        </ul>
+      </div>
+
+      <div class="terms-section">
+        <h3>7. Updates & Changes</h3>
+        <p>We reserve the right to:</p>
+        <ul>
+          <li>Modify or discontinue the App at any time without notice</li>
+          <li>Update these Terms & Conditions without prior notification</li>
+          <li>Add or remove features from the App</li>
+          <li>Change the App's functionality or user interface</li>
+        </ul>
+      </div>
+
+      <div class="terms-section">
+        <h3>8. User Conduct</h3>
+        <p>You agree not to:</p>
+        <ul>
+          <li>Use the App for any commercial purposes without permission</li>
+          <li>Attempt to gain unauthorized access to any part of the App</li>
+          <li>Introduce viruses or malicious code</li>
+          <li>Violate any applicable local, state, national, or international law</li>
+          <li>Redistribute or resell the App without written permission</li>
+        </ul>
+      </div>
+
+      <div class="terms-section">
+        <h3>9. Third-Party Services</h3>
+        <p>The App may use third-party libraries and services including:</p>
+        <ul>
+          <li>Chart.js for data visualization (MIT License)</li>
+          <li>Google Fonts for typography</li>
+          <li>Geolocation API for location services (with user permission)</li>
+          <li>These services are governed by their own terms and policies</li>
+        </ul>
+      </div>
+
+      <div class="terms-section">
+        <h3>10. Termination</h3>
+        <p>You may stop using the App at any time by:</p>
+        <ul>
+          <li>Clearing your browser's localStorage</li>
+          <li>Uninstalling the PWA (if installed)</li>
+          <li>Ceasing to access the application</li>
+        </ul>
+        <p>We reserve the right to terminate or suspend access to the App for violations of these terms.</p>
+      </div>
+
+      <div class="terms-section">
+        <h3>11. Governing Law</h3>
+        <p>These Terms & Conditions are governed by and construed in accordance with the laws of India. Any disputes shall be subject to the exclusive jurisdiction of the courts in Maharashtra, India.</p>
+      </div>
+
+      <div class="terms-section">
+        <h3>12. Contact Information</h3>
+        <p>For questions about these Terms & Conditions, contact:</p>
+<ul class="contact-info">
+  <li>
+    <strong>Developer:</strong> Imad Khan 
+    <a href="https://www.instagram.com/_imxd12" target="_blank" rel="noopener noreferrer" class="contact-link">@imxd12</a>
+  </li>
+
+  <li>
+    <strong>Email:</strong> 
+    <a href="mailto:imadak999@gmail.com" class="contact-link">imadak999@gmail.com</a>
+  </li>
+
+  <li>
+    <strong>Instagram:</strong> 
+    <a href="https://www.instagram.com/_imxd12" target="_blank" rel="noopener noreferrer" class="contact-link">@_imxd12</a>
+  </li>
+
+  <li>
+    <strong>WhatsApp:</strong> 
+    <a href="https://wa.me/918097814934" target="_blank" rel="noopener noreferrer" class="contact-link">+91 80978 14934</a>
+  </li>
+   <li><strong>Version:</strong> MoneyFlow v1.0 (2025)</li>
+</ul>  
+      </div>
+
+      <div class="terms-footer">
+        <p><strong>Last Updated:</strong> October 7, 2025</p>
+        <p>By continuing to use MoneyFlow, you acknowledge that you have read, understood, and agree to be bound by these Terms & Conditions.</p>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Privacy Policy Modal -->
+<div class="modal" id="privacyModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 class="modal-title">🔒 Privacy Policy</h2>
+      <button class="modal-close" onclick="closeModal('#privacyModal')">&times;</button>
+    </div>
+    <div class="privacy-content">
+      
+      <div class="privacy-intro">
+        <p>At MoneyFlow, we take your privacy seriously. This Privacy Policy explains how we handle your personal and financial information.</p>
+        <p><strong>TL;DR:</strong> Your data stays on YOUR device. We don't collect, store, or transmit any of your financial information to our servers.</p>
+      </div>
+
+      <div class="privacy-section">
+        <h3>1. Information We DON'T Collect</h3>
+        <p>MoneyFlow does NOT collect, store, or transmit:</p>
+        <ul>
+          <li>Your financial transactions or balances</li>
+          <li>Bank account details or credit card information</li>
+          <li>Income or expense data</li>
+          <li>Personal identification information</li>
+          <li>Email addresses or phone numbers (unless you contact us)</li>
+          <li>Browsing history or usage patterns</li>
+          <li>IP addresses or device identifiers</li>
+        </ul>
+      </div>
+
+      <div class="privacy-section">
+        <h3>2. Local Data Storage</h3>
+        <p>All your financial data is stored locally in your browser using:</p>
+        <ul>
+          <li><strong>localStorage:</strong> Browser-based storage that keeps data on your device</li>
+          <li><strong>No Cloud Sync:</strong> Data is never uploaded to any server</li>
+          <li><strong>Your Control:</strong> You can clear this data anytime via browser settings</li>
+          <li><strong>Export/Import:</strong> You control your data backups through JSON/CSV exports</li>
+        </ul>
+      </div>
+
+      <div class="privacy-section">
+        <h3>3. Optional Permissions</h3>
+        <p>MoneyFlow may request the following optional permissions:</p>
+        <ul>
+          <li><strong>Geolocation:</strong> Used only to display your city/region in profile (optional, can be denied)</li>
+          <li><strong>Notifications:</strong> For reminders and alerts (if enabled by you)</li>
+          <li><strong>File Access:</strong> Only when you import JSON backup files</li>
+        </ul>
+        <p>All permissions are optional and you can revoke them anytime through browser settings.</p>
+      </div>
+
+      <div class="privacy-section">
+        <h3>4. Third-Party Services</h3>
+        <p>MoneyFlow uses these external services:</p>
+        <ul>
+          <li><strong>Chart.js CDN:</strong> For rendering charts (no data sent, library loaded from CDN)</li>
+          <li><strong>Google Fonts:</strong> For typography (font files loaded, no tracking)</li>
+          <li><strong>BigDataCloud API:</strong> For reverse geocoding location (only coordinates sent, no personal data)</li>
+        </ul>
+        <p>These services may have their own privacy policies. We do not control their data practices.</p>
+      </div>
+
+      <div class="privacy-section">
+        <h3>5. Service Worker & PWA</h3>
+        <p>MoneyFlow includes a Service Worker for offline functionality:</p>
+        <ul>
+          <li>Caches static files (HTML, CSS, JS) locally for faster loading</li>
+          <li>Does not cache or transmit your financial data</li>
+          <li>Works entirely offline after first load</li>
+          <li>Can be uninstalled by clearing site data</li>
+        </ul>
+      </div>
+
+      <div class="privacy-section">
+        <h3>6. Cookies & Tracking</h3>
+        <p>MoneyFlow does NOT use:</p>
+        <ul>
+          <li>Cookies for tracking</li>
+          <li>Google Analytics or similar analytics tools</li>
+          <li>Advertising networks or trackers</li>
+          <li>Social media tracking pixels</li>
+          <li>Third-party marketing cookies</li>
+        </ul>
+        <p>We only use localStorage for storing your financial data locally.</p>
+      </div>
+
+      <div class="privacy-section">
+        <h3>7. Data Security</h3>
+        <p>Your data security measures:</p>
+        <ul>
+          <li>Data stored in browser's secure localStorage</li>
+          <li>No transmission over network (except CDN resources)</li>
+          <li>Theme preference saved locally</li>
+          <li>Recommended: Use browser password/PIN protection</li>
+          <li>Recommended: Export backups regularly and store securely</li>
+        </ul>
+      </div>
+
+      <div class="privacy-section">
+        <h3>8. Children's Privacy</h3>
+        <p>MoneyFlow is not directed at children under 13. We do not knowingly collect information from children. If you are a parent and believe your child has used this app, please contact us.</p>
+      </div>
+
+      <div class="privacy-section">
+        <h3>9. Data Retention</h3>
+        <p>Since all data is stored locally:</p>
+        <ul>
+          <li>Data persists until you manually delete it</li>
+          <li>Clearing browser cache/data removes all entries</li>
+          <li>We do not have access to delete or recover your data</li>
+          <li>Export backups before clearing browser data</li>
+        </ul>
+      </div>
+
+      <div class="privacy-section">
+        <h3>10. Your Rights</h3>
+        <p>You have complete control over your data:</p>
+        <ul>
+          <li><strong>Access:</strong> View all your data anytime within the app</li>
+          <li><strong>Export:</strong> Download your data as JSON or CSV</li>
+          <li><strong>Delete:</strong> Clear data via Developer Options or browser settings</li>
+          <li><strong>Modify:</strong> Edit or update any entry at any time</li>
+          <li><strong>Portability:</strong> Export and import data between devices</li>
+        </ul>
+      </div>
+
+      <div class="privacy-section">
+        <h3>11. Changes to Privacy Policy</h3>
+        <p>We may update this Privacy Policy periodically. Changes will be reflected with a new "Last Updated" date. Continued use of the app after changes constitutes acceptance of the updated policy.</p>
+      </div>
+
+      <div class="privacy-section">
+        <h3>12. Open Source Commitment</h3>
+        <p>MoneyFlow operates with transparency:</p>
+        <ul>
+          <li>All code runs locally in your browser</li>
+          <li>You can inspect the JavaScript code</li>
+          <li>No obfuscation or hidden data transmission</li>
+          <li>Community feedback is welcome</li>
+        </ul>
+      </div>
+
+      <div class="privacy-section">
+        <h3>13. Contact Us</h3>
+        <p>For privacy concerns or questions:</p>
+<ul class="contact-info">
+  <li>
+    <strong>Developer:</strong> Imad Khan 
+    <a href="https://www.instagram.com/_imxd12" target="_blank" rel="noopener noreferrer" class="contact-link">@imxd12</a>
+  </li>
+
+  <li>
+    <strong>Email:</strong> 
+    <a href="mailto:imadak999@gmail.com" class="contact-link">imadak999@gmail.com</a>
+  </li>
+
+  <li>
+    <strong>Instagram:</strong> 
+    <a href="https://www.instagram.com/_imxd12" target="_blank" rel="noopener noreferrer" class="contact-link">@_imxd12</a>
+  </li>
+
+  <li>
+    <strong>WhatsApp:</strong> 
+    <a href="https://wa.me/918097814934" target="_blank" rel="noopener noreferrer" class="contact-link">+91 80978 14934</a>
+  </li>
+   <li><strong>Version:</strong> MoneyFlow v1.0 (2025)</li>
+</ul>  
+      </div>
+
+      <div class="privacy-footer">
+        <p><strong>Last Updated:</strong> October 7, 2025</p>
+        <p><strong>Effective Date:</strong> October 7, 2025</p>
+        <p>By using MoneyFlow, you acknowledge that you have read and understood this Privacy Policy.</p>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+ <!-- ========================================
+         USER SETTINGS SECTION
+    ======================================== -->
+    <section class="user-settings-section scroll-blur">
+      <h3 class="section-title">⚙️ User Settings</h3>
+      
+      <div class="settings-grid">
+        <!-- Set Name Card -->
+        <div class="settings-card">
+          <div class="settings-icon">👤</div>
+          <h4 class="settings-title">Personalize Your Experience</h4>
+          <p class="settings-description">Set your name to see personalized greetings throughout the app.</p>
+          <button class="btn btn-secondary btn-block" onclick="openModal('#nameModal')">
+            <span>✏️ Set Your Name</span>
+          </button>
+        </div>
+        
+        <!-- Developer Profile Card -->
+        <div class="settings-card">
+          <div class="settings-icon">💻</div>
+          <h4 class="settings-title">Meet the Developer</h4>
+          <p class="settings-description">Learn more about the creator of MoneyFlow and get in touch.</p>
+          <button class="btn btn-secondary btn-block" onclick="openModal('#profileModal')">
+            <span>👋 Hi, Here!!</span>
+          </button>
+        </div>
+      </div>
+    </section>
 
 
   <!-- Footer -->
@@ -558,13 +922,13 @@
       <div class="footer-section">
         <h3>Developer</h3>
         <p><strong>Imad Khan</strong></p>
-        <p>@imxd-2025</p>
+        <a href="https://www.instagram.com/_imxd12" target="_blank" rel="noopener noreferrer"><p class="profile-handle">@imxd12</p></a>
         <p><a href="mailto:imadak999@gmail.com">imadak999@gmail.com</a></p>
       </div>
     </div>
     
     <div class="footer-bottom">
-      <p>&copy; 2025 MoneyFlow by Imad Khan. All rights reserved.</p>
+      <p>&copy; 2025 MoneyFlow by Imad Khan <a href="https://www.instagram.com/_imxd12" target="_blank" rel="noopener noreferrer"><p class="profile-handle">@imxd12</p></a> . All rights reserved.</p>
     </div>
   </footer>
 

@@ -113,9 +113,7 @@ attachBottomNav('nav-home');
   window.viewStorage = function() {
     const size = JSON.stringify(localStorage).length;
     const kb = (size / 1024).toFixed(2);
-    alert(`Storage used: ${kb} KB
-
-Keys: ${Object.keys(localStorage).join(', ')}`);
+    alert(`Storage used: ${kb} KB\n\nKeys: ${Object.keys(localStorage).join(', ')}`);
   };
 
   // Download backup
@@ -136,7 +134,7 @@ Keys: ${Object.keys(localStorage).join(', ')}`);
   // Hide splash screen
   setTimeout(() => {
     $('#splashScreen').style.display = 'none';
-  }, 500);
+  }, 3000);
 
   // Initialize
   updateWelcome();
@@ -150,4 +148,3 @@ Keys: ${Object.keys(localStorage).join(', ')}`);
   }
 
 })();
-

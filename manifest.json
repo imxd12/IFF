@@ -1,61 +1,29 @@
 {
-  "name": "MoneyFlow - Personal Finance Tracker",
+  "name": "MoneyFlow - Personal Finance Manager",
   "short_name": "MoneyFlow",
-  "description": "All-in-One Finance & Productivity Tracker - Spendly, Nexus & PocketCal with Analytics",
+  "description": "Complete personal finance management suite with Spendly, Nexus, and PocketCal for tracking income, expenses, work earnings, and pocket money",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#000000",
+  "background_color": "#ffffff",
   "theme_color": "#10b981",
-  "orientation": "portrait-primary",
+  "orientation": "portrait",
   "scope": "./",
-  "lang": "en-US",
+  "lang": "en-IN",
   "dir": "ltr",
-  "categories": ["finance", "productivity", "lifestyle"],
+  "categories": [
+    "finance",
+    "productivity",
+    "business"
+  ],
   "icons": [
     {
-      "src": "icon-72.png",
-      "sizes": "72x72",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "icon-96.png",
-      "sizes": "96x96",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "icon-128.png",
-      "sizes": "128x128",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "icon-144.png",
-      "sizes": "144x144",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "icon-152.png",
-      "sizes": "152x152",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "icon-192.png",
+      "src": "./icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "icon-384.png",
-      "sizes": "384x384",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "icon-512.png",
+      "src": "./icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
@@ -63,52 +31,52 @@
   ],
   "screenshots": [
     {
-      "src": "screenshot1.png",
+      "src": "./screenshot-mobile.png",
+      "sizes": "540x720",
+      "type": "image/png",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "./screenshot-desktop.png",
       "sizes": "1280x720",
       "type": "image/png",
       "form_factor": "wide"
-    },
-    {
-      "src": "screenshot2.png",
-      "sizes": "750x1334",
-      "type": "image/png",
-      "form_factor": "narrow"
     }
   ],
   "shortcuts": [
     {
-      "name": "Add Expense",
-      "short_name": "Expense",
-      "description": "Quickly add an expense",
+      "name": "Spendly",
+      "short_name": "Spendly",
+      "description": "Track income and expenses",
       "url": "./spendly.html",
       "icons": [
         {
-          "src": "icon-96.png",
-          "sizes": "96x96"
+          "src": "./icon-192.png",
+          "sizes": "192x192"
         }
       ]
     },
     {
-      "name": "Add Work Entry",
-      "short_name": "Work",
-      "description": "Track work earnings",
+      "name": "Nexus",
+      "short_name": "Nexus",
+      "description": "Track work and earnings",
       "url": "./nexus.html",
       "icons": [
         {
-          "src": "icon-96.png",
-          "sizes": "96x96"
+          "src": "./icon-192.png",
+          "sizes": "192x192"
         }
       ]
     },
     {
-      "name": "Add Pocket Money",
-      "short_name": "Pocket",
-      "description": "Log pocket money",
+      "name": "PocketCal",
+      "short_name": "PocketCal",
+      "description": "Track pocket money calendar",
       "url": "./pocketcal.html",
       "icons": [
         {
-          "src": "icon-96.png",
-          "sizes": "96x96"
+          "src": "./icon-192.png",
+          "sizes": "192x192"
         }
       ]
     }
@@ -118,6 +86,10 @@
   "share_target": {
     "action": "./index.html",
     "method": "GET",
-    "enctype": "application/x-www-form-urlencoded"
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url"
+    }
   }
 }

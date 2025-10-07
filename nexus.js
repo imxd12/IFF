@@ -1,146 +1,473 @@
+/* =========================
+   NEXUS - WORK & EARNINGS TRACKER
+   WITH ADVANCED ANALYTICS
+========================= */
+
 startClock('#timeNow');
 attachBottomNav('nav-nexus');
 
-(function(){
+(function() {
+  'use strict';
+
+  // Data storage
   let data = loadData('fin_nexus') || [];
   let editingId = null;
   let showAll = false;
+  
+  // Chart instances
+  let trendChart, categoryChart, itemsHoursChart, bonusPenaltyChart;
 
-  const nxModal = $('#nxModal');
-  const fields = ['nxDate','nxItems','nxHours','nxBonus','nxPenalty','nxPayout','nxCategory','nxNotes'];
+  // Set today's date
+  const today = new Date().toISOString().split('T')[0];
+  $('#nxDate').value = today;
 
-  function renderList(filter=''){
-    const list = $('#listNexus'); list.innerHTML='';
-    let items = data.slice().sort((a,b)=>a.date.localeCompare(b.date));
-    if(!showAll) items = items.slice(-30); // show last 30 entries by default
+  // Auto-calculate payout
+  function autoCalculatePayout() {
+    const items = Number($('#nxItems').value) || 0;
+    const hours = Number($('#nxHours').value) || 0;
+    const bonus = Number($('#nxBonus').value) || 0;
+    const penalty = Number($('#nxPenalty').value) || 0;
+    
+    // Example calculation: items * 10 + hours * 50 + bonus - penalty
+    // Modify this formula based on your needs
+    const calculated = (items * 10) + (hours * 50) + bonus - penalty;
+    $('#nxPayout').value = Math.max(0, calculated).toFixed(2);
+  }
 
-    items = items.reverse().filter(it=>{
-      if(!filter) return true;
-      const q = filter.toLowerCase();
-      return (it.date||'').includes(q) || (it.notes||'').toLowerCase().includes(q);
+  // Attach auto-calculate listeners
+  ['#nxItems', '#nxHours', '#nxBonus', '#nxPenalty'].forEach(id => {
+    $(id).addEventListener('input', autoCalculatePayout);
+  });
+
+  // Calculate summary statistics
+  function calcSummary() {
+    const currentMonth = new Date().toISOString().slice(0, 7);
+    
+    // Today's payout
+    const todayPayout = data
+      .filter(d => d.date === today)
+      .reduce((sum, d) => sum + Number(d.payout || 0), 0);
+    
+    // This month payout
+    const monthPayout = data
+      .filter(d => d.date.startsWith(currentMonth))
+      .reduce((sum, d) => sum + Number(d.payout || 0), 0);
+    
+    // All-time total
+    const totalPayout = data.reduce((sum, d) => sum + Number(d.payout || 0), 0);
+    
+    // Average daily payout
+    const uniqueDays = [...new Set(data.map(d => d.date))].length;
+    const avgPayout = uniqueDays > 0 ? totalPayout / uniqueDays : 0;
+    
+    // Total metrics
+    const totalItems = data.reduce((sum, d) => sum + Number(d.items || 0), 0);
+    const totalHours = data.reduce((sum, d) => sum + Number(d.hours || 0), 0);
+    const totalBonus = data.reduce((sum, d) => sum + Number(d.bonus || 0), 0);
+    const totalPenalty = data.reduce((sum, d) => sum + Number(d.penalty || 0), 0);
+    
+    // Update UI
+    $('#todayPayout').textContent = fmt(todayPayout);
+    $('#monthPayout').textContent = fmt(monthPayout);
+    $('#totalPayout').textContent = fmt(totalPayout);
+    $('#avgPayout').textContent = fmt(avgPayout);
+    
+    $('#totalItems').textContent = totalItems.toLocaleString();
+    $('#totalHours').textContent = totalHours.toFixed(1) + 'h';
+    $('#totalBonus').textContent = fmt(totalBonus);
+    $('#totalPenalty').textContent = fmt(totalPenalty);
+  }
+
+  // Render charts
+  function renderCharts() {
+    renderTrendChart();
+    renderCategoryChart();
+    renderItemsHoursChart();
+    renderBonusPenaltyChart();
+  }
+
+  // Daily Earnings Trend Chart (Last 14 Days)
+  function renderTrendChart() {
+    const canvas = $('#trendChart');
+    if (!canvas) return;
+    
+    if (trendChart) trendChart.destroy();
+    
+    // Get last 14 days
+    const last14Days = [];
+    for (let i = 13; i >= 0; i--) {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      last14Days.push(d.toISOString().split('T')[0]);
+    }
+    
+    // Calculate daily totals
+    const dailyTotals = last14Days.map(date => {
+      return data
+        .filter(d => d.date === date)
+        .reduce((sum, d) => sum + Number(d.payout || 0), 0);
     });
+    
+    const labels = last14Days.map(d => new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
+    
+    trendChart = new Chart(canvas, {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: 'Daily Earnings',
+          data: dailyTotals,
+          borderColor: '#10b981',
+          backgroundColor: 'rgba(16, 185, 129, 0.1)',
+          borderWidth: 3,
+          fill: true,
+          tension: 0.4,
+          pointRadius: 4,
+          pointBackgroundColor: '#10b981'
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+          legend: { display: false }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              callback: value => '₹' + value
+            }
+          }
+        }
+      }
+    });
+  }
 
-    items.forEach(it=>{
-      const li = document.createElement('li'); li.className='list-item';
-      li.innerHTML = `<div>
-        <div style="font-weight:700">${it.date} • ${fmt(it.payout)} • ${it.items||0} items • ${it.hours||0}h</div>
-        <div class="meta">
-          <span class="bonus">Bonus: ${fmt(it.bonus||0)}</span> • 
-          <span class="penalty">Penalty: ${fmt(it.penalty||0)}</span> • 
-          Cat: ${it.category||'Normal'} • Notes: ${it.notes||''}
+  // Category Distribution Pie Chart
+  function renderCategoryChart() {
+    const canvas = $('#categoryChart');
+    if (!canvas) return;
+    
+    if (categoryChart) categoryChart.destroy();
+    
+    // Group by category
+    const categoryData = {};
+    data.forEach(d => {
+      const cat = d.category || 'Other';
+      categoryData[cat] = (categoryData[cat] || 0) + Number(d.payout || 0);
+    });
+    
+    const labels = Object.keys(categoryData);
+    const values = Object.values(categoryData);
+    
+    if (labels.length === 0) {
+      return; // No data to show
+    }
+    
+    categoryChart = new Chart(canvas, {
+      type: 'doughnut',
+      data: {
+        labels: labels,
+        datasets: [{
+          data: values,
+          backgroundColor: [
+            '#10b981', '#3b82f6', '#f59e0b', '#ef4444', 
+            '#8b5cf6', '#ec4899', '#06b6d4', '#f97316'
+          ]
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+          legend: {
+            position: 'bottom'
+          }
+        }
+      }
+    });
+  }
+
+  // Items vs Hours Bar Chart
+  function renderItemsHoursChart() {
+    const canvas = $('#itemsHoursChart');
+    if (!canvas) return;
+    
+    if (itemsHoursChart) itemsHoursChart.destroy();
+    
+    // Last 7 entries
+    const last7 = data.slice(-7).reverse();
+    const labels = last7.map(d => new Date(d.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
+    const items = last7.map(d => Number(d.items || 0));
+    const hours = last7.map(d => Number(d.hours || 0));
+    
+    itemsHoursChart = new Chart(canvas, {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: 'Items',
+            data: items,
+            backgroundColor: '#3b82f6',
+            borderRadius: 6
+          },
+          {
+            label: 'Hours',
+            data: hours,
+            backgroundColor: '#10b981',
+            borderRadius: 6
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+          legend: {
+            position: 'bottom'
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+  }
+
+  // Bonus vs Penalty Chart
+  function renderBonusPenaltyChart() {
+    const canvas = $('#bonusPenaltyChart');
+    if (!canvas) return;
+    
+    if (bonusPenaltyChart) bonusPenaltyChart.destroy();
+    
+    // Last 7 entries
+    const last7 = data.slice(-7).reverse();
+    const labels = last7.map(d => new Date(d.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
+    const bonus = last7.map(d => Number(d.bonus || 0));
+    const penalty = last7.map(d => Number(d.penalty || 0));
+    
+    bonusPenaltyChart = new Chart(canvas, {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: 'Bonus',
+            data: bonus,
+            backgroundColor: '#10b981',
+            borderRadius: 6
+          },
+          {
+            label: 'Penalty',
+            data: penalty,
+            backgroundColor: '#ef4444',
+            borderRadius: 6
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+          legend: {
+            position: 'bottom'
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              callback: value => '₹' + value
+            }
+          }
+        }
+      }
+    });
+  }
+
+  // Render list
+  function renderList(filter = '') {
+    const list = $('#listNexus');
+    const emptyState = $('#emptyState');
+    list.innerHTML = '';
+    
+    let items = data.slice().sort((a, b) => b.date.localeCompare(a.date));
+    
+    if (!showAll) {
+      items = items.slice(0, 30);
+    }
+    
+    if (filter) {
+      const q = filter.toLowerCase();
+      items = items.filter(it => 
+        (it.date || '').includes(q) || 
+        (it.notes || '').toLowerCase().includes(q) ||
+        (it.category || '').toLowerCase().includes(q)
+      );
+    }
+    
+    if (items.length === 0) {
+      emptyState.style.display = 'block';
+      return;
+    }
+    
+    emptyState.style.display = 'none';
+    
+    items.forEach(it => {
+      const li = document.createElement('li');
+      li.className = 'list-item';
+      li.onclick = () => openEditModal(it.id);
+      
+      li.innerHTML = `
+        <div class="list-header">
+          <div class="item-category">${it.category || 'Work'}</div>
+          <div class="item-date">📅 ${it.date}</div>
         </div>
-      </div>
-      <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end">
-        <button class="btn" data-id="${it.id}" data-action="edit">Edit</button>
-        <button class="btn btn-danger" data-id="${it.id}" data-action="del">Delete</button>
-      </div>`;
+        <div class="list-body">
+          <div class="list-stat">
+            <div class="stat-label">Items</div>
+            <div class="stat-value">${it.items || 0}</div>
+          </div>
+          <div class="list-stat">
+            <div class="stat-label">Hours</div>
+            <div class="stat-value">${it.hours || 0}h</div>
+          </div>
+          <div class="list-stat">
+            <div class="stat-label">Bonus</div>
+            <div class="stat-value">${fmt(it.bonus || 0)}</div>
+          </div>
+          <div class="list-stat">
+            <div class="stat-label">Penalty</div>
+            <div class="stat-value">${fmt(it.penalty || 0)}</div>
+          </div>
+        </div>
+        <div class="list-footer">
+          <div class="item-payout">💰 ${fmt(it.payout)}</div>
+          ${it.notes ? `<div class="item-notes">📝 ${it.notes}</div>` : ''}
+        </div>
+      `;
+      
       list.appendChild(li);
     });
-    updateSummary();
   }
 
-  function openModal(entry=null){
-    editingId = entry ? entry.id : null;
-    $('#nxModalTitle').textContent = entry ? 'Edit Entry' : 'Add Entry';
-    fields.forEach(f => $(`#${f}`).value = entry ? entry[f.replace('nx','').toLowerCase()]||'' : '');
-    $('#nxDelete').style.display = entry ? 'inline-block':'none';
-    nxModal.classList.remove('hidden');
+  // Open add modal
+  window.openAddModal = function() {
+    editingId = null;
+    $('#modalTitle').textContent = 'Add Nexus Entry';
+    $('#nxForm').reset();
+    $('#nxDate').value = today;
+    $('#deleteBtn').style.display = 'none';
+    openModal('#nxModal');
+  };
+
+  // Open edit modal
+  function openEditModal(id) {
+    const item = data.find(d => d.id === id);
+    if (!item) return;
+    
+    editingId = id;
+    $('#modalTitle').textContent = 'Edit Nexus Entry';
+    $('#editId').value = id;
+    $('#nxDate').value = item.date;
+    $('#nxItems').value = item.items || 0;
+    $('#nxHours').value = item.hours || 0;
+    $('#nxBonus').value = item.bonus || 0;
+    $('#nxPenalty').value = item.penalty || 0;
+    $('#nxPayout').value = item.payout;
+    $('#nxCategory').value = item.category;
+    $('#nxNotes').value = item.notes || '';
+    $('#deleteBtn').style.display = 'block';
+    
+    openModal('#nxModal');
   }
-  function closeModal(){ nxModal.classList.add('hidden'); editingId=null; }
 
-  $('#btnAddN').onclick = () => openModal(null);
-  $('#nxClose').onclick = closeModal;
-
-  $('#nxSave').onclick = () => {
-    const entry = {};
-    fields.forEach(f => entry[f.replace('nx','').toLowerCase()] = $('#'+f).value);
-    entry.date = entry.date || new Date().toISOString().slice(0,10);
-    entry.items = Number(entry.items||0);
-    entry.hours = Number(entry.hours||0);
-    entry.bonus = Number(entry.bonus||0);
-    entry.penalty = Number(entry.penalty||0);
-    entry.payout = Number(entry.payout||0);
-    entry.category = entry.category || 'Normal';
-
-    if(editingId){ 
-      const idx = data.findIndex(d=>d.id===editingId);
-      if(idx>=0) data[idx] = {...entry,id:editingId};
+  // Form submission
+  $('#nxForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    
+    const entry = {
+      id: editingId || Date.now(),
+      date: $('#nxDate').value,
+      items: Number($('#nxItems').value) || 0,
+      hours: Number($('#nxHours').value) || 0,
+      bonus: Number($('#nxBonus').value) || 0,
+      penalty: Number($('#nxPenalty').value) || 0,
+      payout: Number($('#nxPayout').value),
+      category: $('#nxCategory').value,
+      notes: $('#nxNotes').value
+    };
+    
+    if (editingId) {
+      const idx = data.findIndex(d => d.id === editingId);
+      if (idx !== -1) data[idx] = entry;
     } else {
-      const idx = data.findIndex(d=>d.date===entry.date);
-      if(idx>=0 && !confirm('Replace existing entry for this date?')) return;
-      if(idx>=0) data.splice(idx,1);
-      entry.id = Date.now().toString();
       data.push(entry);
     }
+    
     saveData('fin_nexus', data);
-    snack('Saved'); closeModal(); renderList($('#searchNexus').value);
-  };
+    calcSummary();
+    renderList();
+    renderCharts();
+    closeModal('#nxModal');
+    showSnackbar(editingId ? 'Entry updated! ✅' : 'Entry added! 💼');
+  });
 
-  $('#nxDelete').onclick = () => {
-    if(!editingId) return;
-    data = data.filter(d=>d.id!==editingId);
+  // Delete entry
+  window.deleteEntry = function() {
+    if (!confirm('Delete this entry?')) return;
+    
+    data = data.filter(d => d.id !== editingId);
     saveData('fin_nexus', data);
-    snack('Deleted'); closeModal(); renderList($('#searchNexus').value);
+    calcSummary();
+    renderList();
+    renderCharts();
+    closeModal('#nxModal');
+    showSnackbar('Entry deleted! 🗑️');
   };
 
-  $('#listNexus').onclick = e => {
-    const btn = e.target.closest('button'); if(!btn) return;
-    const id = btn.dataset.id;
-    const action = btn.dataset.action;
-    const entry = data.find(d=>d.id===id);
-    if(!entry) return;
-    if(action==='edit') openModal(entry);
-    if(action==='del'){ if(confirm('Delete entry?')){ data=data.filter(d=>d.id!==id); saveData('fin_nexus', data); snack('Deleted'); renderList($('#searchNexus').value); } }
+  // Toggle show all
+  window.toggleShowAll = function() {
+    showAll = !showAll;
+    $('#toggleText').textContent = showAll ? 'Show Less' : 'Show All';
+    renderList($('#searchInput').value);
   };
 
-  $('#searchNexus').oninput = e => renderList(e.target.value);
-  $('#btnAllEntries').onclick = ()=>{ showAll=!showAll; renderList($('#searchNexus').value); };
+  // Export functions
+  window.exportToJSON = function() {
+    exportJSON(data, 'nexus-entries.json');
+  };
 
-  $('#btnFilterRange').onclick = ()=>{
-    const from = $('#fromDate').value;
-    const to = $('#toDate').value;
-    if(!from || !to){ renderList(); return; }
-    const list = $('#listNexus'); list.innerHTML='';
-    const items = data.filter(d=> d.date>=from && d.date<=to);
-    items.forEach(it=>{
-      const li = document.createElement('li'); li.className='list-item';
-      li.innerHTML = `<div><div style="font-weight:700">${it.date} • ${fmt(it.payout)}</div></div>`;
-      list.appendChild(li);
+  window.exportToCSV = function() {
+    const headers = ['date', 'category', 'items', 'hours', 'bonus', 'penalty', 'payout', 'notes'];
+    exportCSV(data, 'nexus-entries.csv', headers);
+  };
+
+  window.importFromJSON = function() {
+    importJSON((imported) => {
+      if (Array.isArray(imported)) {
+        data = [...data, ...imported];
+        saveData('fin_nexus', data);
+        calcSummary();
+        renderList();
+        renderCharts();
+      }
     });
   };
 
-  $('#btnExportN').onclick = ()=> exportCSV(data,'nexus.csv');
-  $('#btnBackupN').onclick = ()=> downloadJSON(data,'nexus-backup.json');
-  $('#btnImportN').onclick = ()=> $('#importFile').click();
-  $('#importFile').onchange = e=>{
-    const file = e.target.files[0]; if(!file) return;
-    const reader = new FileReader();
-    reader.onload = ()=>{ data=JSON.parse(reader.result); saveData('fin_nexus',data); renderList(); snack('Imported'); };
-    reader.readAsText(file);
-  };
+  // Search functionality
+  $('#searchInput').addEventListener('input', (e) => {
+    renderList(e.target.value);
+  });
 
-  function updateSummary(){
-    const now = new Date();
-    const monthStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
-    const monthTotal = data.filter(d=>d.date.startsWith(monthStr)).reduce((a,b)=>a+b.payout,0);
-    $('#nxMonth').textContent = fmt(monthTotal);
-
-    const ytd = data.reduce((a,b)=>a+b.payout,0);
-    $('#nxYTD').textContent = fmt(ytd);
-
-    const totalHours = data.reduce((a,b)=>a+b.hours,0);
-    $('#nxEff').textContent = totalHours? (ytd/totalHours).toFixed(2):0;
-
-    const best = data.reduce((max,d)=> d.payout>(max?.payout||0)?d:max,null);
-    $('#nxBest').textContent = best? `${best.date} • ${fmt(best.payout)}`:'-';
-    const worst = data.reduce((min,d)=> d.payout<(min?.payout||Infinity)?d:min,null);
-    $('#nxWorst').textContent = worst? `${worst.date} • ${fmt(worst.payout)}`:'-';
-
-    const last = data.slice().sort((a,b)=>a.date.localeCompare(b.date)).slice(-12);
-    const labels = last.map(i=> i.date.slice(5));
-    const values = last.map(i=> i.payout);
-    drawBar($('#nxChart'), labels, values);
-  }
-
+  // Initialize
+  calcSummary();
   renderList();
+  renderCharts();
+
 })();

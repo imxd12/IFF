@@ -97,15 +97,14 @@ attachBottomNav('nav-home');
     
     const totalExpense = spendly
       .filter(t => t.type === 'expense')
-      .reduce((sum, t) => sum + Number(t.amount || 0), 0);
-    
+      .reduce((sum, t) => sum + Number(t.amount || 0), 0);    
     const totalNexus = nexus
       .reduce((sum, n) => sum + Number(n.payout || 0), 0);
     
     const totalPocket = pocket
       .reduce((sum, p) => sum + Number(p.amount || 0), 0);
     
-    const balance = totalIncome - totalExpense + totalNexus + totalPocket;
+    const balance = totalIncome - totalExpense ;
     
     // Update UI elements with smooth animation
     updateValueWithAnimation('#todayExpense', todayExpense);
@@ -554,3 +553,4 @@ attachBottomNav('nav-home');
   }
 
 })();
+

@@ -693,3 +693,65 @@
   };
 
 })();
+
+// ========================================
+// PWA INSTALL PROMPT
+// ========================================
+let deferredPrompt;
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  console.log('Install prompt triggered');
+  e.preventDefault();
+  deferredPrompt = e;
+  
+  const installPrompt = $('#installPrompt');
+  if (installPrompt) {
+    installPrompt.style.display = 'block';
+  }
+});
+
+// Install button click
+const installBtn = $('#installBtn');
+if (installBtn) {
+  installBtn.addEventListener('click', async () => {
+    if (!deferredPrompt) {
+      showSnackbar('Installation not available', 'warning');
+      return;
+    }
+    
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    
+    if (outcome === 'accepted') {
+      showSnackbar('App installed successfully! 🎉');
+    }
+    
+    deferredPrompt = null;
+    const installPrompt = $('#installPrompt');
+    if (installPrompt) {
+      installPrompt.style.display = 'none';
+    }
+  });
+}
+
+// Dismiss button
+const dismissBtn = $('#dismissBtn');
+if (dismissBtn) {
+  dismissBtn.addEventListener('click', () => {
+    const installPrompt = $('#installPrompt');
+    if (installPrompt) {
+      installPrompt.style.display = 'none';
+    }
+    localStorage.setItem('installDismissed', 'true');
+  });
+}
+
+// Check if already installed
+window.addEventListener('appinstalled', () => {
+  console.log('PWA installed');
+  showSnackbar('MoneyFlow installed! 🎉');
+  const installPrompt = $('#installPrompt');
+  if (installPrompt) {
+    installPrompt.style.display = 'none';
+  }
+});

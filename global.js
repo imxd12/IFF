@@ -1,152 +1,282 @@
-/* global.js - shared functions */
-(function(){
-  /* Utility */
-  window.$ = (s, r=document) => r.querySelector(s);
-  window.$$ = (s, r=document) => Array.from(r.querySelectorAll(s));
-  // format currency (INR). change as needed
-  window.fmt = n => {
-    n = Number(n)||0;
-    return '₹' + n.toLocaleString('en-IN', {maximumFractionDigits:2});
+/* =========================
+   MONEYFLOW - GLOBAL UTILITIES
+   Theme, Navigation, Storage, Exports
+========================= */
+
+(function() {
+  'use strict';
+
+  // DOM Selectors
+  window.$ = (selector, parent = document) => parent.querySelector(selector);
+  window.$$ = (selector, parent = document) => Array.from(parent.querySelectorAll(selector));
+
+  // Currency Formatter (INR)
+  window.fmt = (amount) => {
+    const num = Number(amount) || 0;
+    return '₹' + num.toLocaleString('en-IN', { maximumFractionDigits: 2 });
   };
 
-  // header time updater - call on each page
-  function startClock(selector='#timeNow'){
-    const el = document.querySelector(selector);
-    if(!el) return;
-    function update(){
-      const d = new Date();
-      const hh = String(d.getHours()).padStart(2,'0');
-      const mm = String(d.getMinutes()).padStart(2,'0');
-      const ss = String(d.getSeconds()).padStart(2,'0');
-      const dateStr = d.toLocaleDateString();
-      el.textContent = `${dateStr} • ${hh}:${mm}:${ss}`;
-    }
-    update();
-    setInterval(update,1000);
-  }
-  window.startClock = startClock;
-
-  // Storage helpers
-  window.saveData = (key, obj) => localStorage.setItem(key, JSON.stringify(obj||[]));
-  window.loadData = (key) => {
-    try { return JSON.parse(localStorage.getItem(key))||[]; }
-    catch(e){ return []; }
-  };
-
-  // Export CSV
-  window.exportCSV = function(filename, rows){
-    if(!rows || !rows.length) return alert('No data to export');
-    const keys = Object.keys(rows[0]);
-    const csv = [keys.join(',')].concat(rows.map(r => keys.map(k => `"${String(r[k]||'').replace(/"/g,'""')}"`).join(','))).join('\n');
-    const blob = new Blob([csv], {type:'text/csv'});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url; a.download = filename||'data.csv'; document.body.appendChild(a); a.click(); a.remove();
-    URL.revokeObjectURL(url);
-  };
-
-  // Export JSON
-  window.exportJSON = function(filename, data){
-    const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url; a.download = filename||'backup.json'; document.body.appendChild(a); a.click(); a.remove();
-    URL.revokeObjectURL(url);
-  };
-
-  // Import JSON file
-  window.importJSONFile = function(cb){
-    const inp = document.createElement('input');
-    inp.type='file'; inp.accept='application/json';
-    inp.onchange = e => {
-      const f = e.target.files[0];
-      if(!f) return;
-      const reader = new FileReader();
-      reader.onload = ev => {
-        try {
-          const data = JSON.parse(ev.target.result);
-          cb(null, data);
-        } catch(err){ cb(err); }
-      };
-      reader.readAsText(f);
+  // ===== THEME TOGGLE =====
+  window.initThemeToggle = function() {
+    const theme = localStorage.getItem('fin_theme') || 'light';
+    document.documentElement.setAttribute('data-theme', theme);
+    
+    const toggle = $('.theme-toggle');
+    if (!toggle) return;
+    
+    const updateIcon = () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const slider = $('.theme-toggle-slider');
+      if (slider) {
+        slider.innerHTML = currentTheme === 'dark' ? '🌙' : '☀️';
+      }
     };
-    inp.click();
+    
+    updateIcon();
+    
+    toggle.addEventListener('click', () => {
+      const current = document.documentElement.getAttribute('data-theme');
+      const newTheme = current === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('fin_theme', newTheme);
+      updateIcon();
+    });
   };
 
-  // small snackbar
-  window.snack = function(msg, t=2200){
-    let s = document.getElementById('finSnack');
-    if(!s){
-      s = document.createElement('div'); s.id='finSnack';
-      s.style.position='fixed'; s.style.left='50%'; s.style.bottom='84px'; s.style.transform='translateX(-50%)';
-      s.style.background='rgba(255,255,255,0.06)'; s.style.border='1px solid rgba(255,255,255,0.12)';
-      s.style.padding='8px 12px'; s.style.borderRadius='10px'; s.style.boxShadow='0 8px 20px rgba(0,0,0,0.6)';
-      s.style.color='var(--text)'; document.body.appendChild(s);
+  // ===== LIVE CLOCK =====
+  window.startClock = function(selector = '#timeNow') {
+    const el = $(selector);
+    if (!el) return;
+    
+    function update() {
+      const now = new Date();
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const seconds = String(now.getSeconds()).padStart(2, '0');
+      const date = now.toLocaleDateString('en-IN', { 
+        day: '2-digit', 
+        month: 'short', 
+        year: 'numeric' 
+      });
+      el.textContent = `${date} • ${hours}:${minutes}:${seconds}`;
     }
-    s.textContent = msg; s.style.opacity=1;
-    setTimeout(()=> s.style.opacity=0, t);
+    
+    update();
+    setInterval(update, 1000);
   };
 
-  // Attach nav clicks (use in each page)
-  window.attachBottomNav = function(activeId){
-    const btns = document.querySelectorAll('.nav-btn');
-    btns.forEach(b=>{
-      b.onclick = () => {
-        const dest = b.dataset.href;
-        if(dest) location.href = dest;
+  // ===== BOTTOM NAVIGATION =====
+  window.attachBottomNav = function(activeId) {
+    const nav = $('.bottom-nav');
+    if (!nav) return;
+    
+    const items = $$('.nav-item', nav);
+    items.forEach((item, index) => {
+      if (item.id === activeId) {
+        item.classList.add('active');
+        nav.setAttribute('data-active', index);
+      }
+    });
+  };
+
+  // ===== LOCAL STORAGE =====
+  window.saveData = (key, data) => {
+    try {
+      localStorage.setItem(key, JSON.stringify(data || []));
+    } catch (e) {
+      console.error('Storage error:', e);
+    }
+  };
+
+  window.loadData = (key) => {
+    try {
+      const data = localStorage.getItem(key);
+      return data ? JSON.parse(data) : [];
+    } catch (e) {
+      console.error('Load error:', e);
+      return [];
+    }
+  };
+
+  // ===== MODAL HELPERS =====
+  window.openModal = (modalId) => {
+    const modal = $(modalId);
+    if (modal) {
+      modal.classList.add('show');
+      document.body.style.overflow = 'hidden';
+    }
+  };
+
+  window.closeModal = (modalId) => {
+    const modal = $(modalId);
+    if (modal) {
+      modal.classList.remove('show');
+      document.body.style.overflow = '';
+    }
+  };
+
+  // ===== SNACKBAR NOTIFICATIONS =====
+  window.showSnackbar = function(message, type = 'success') {
+    const existing = $('.snackbar');
+    if (existing) existing.remove();
+    
+    const snackbar = document.createElement('div');
+    snackbar.className = 'snackbar';
+    snackbar.textContent = message;
+    snackbar.style.cssText = `
+      position: fixed;
+      bottom: calc(var(--navbar-height) + 20px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: ${type === 'success' ? 'var(--accent)' : 'var(--danger)'};
+      color: white;
+      padding: 15px 25px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-hover);
+      z-index: 3000;
+      animation: slideInUp 0.3s ease;
+      font-weight: 600;
+    `;
+    
+    document.body.appendChild(snackbar);
+    
+    setTimeout(() => {
+      snackbar.style.animation = 'fadeOut 0.3s ease';
+      setTimeout(() => snackbar.remove(), 300);
+    }, 3000);
+  };
+
+  // ===== EXPORT TO JSON =====
+  window.exportJSON = function(data, filename) {
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(url);
+    showSnackbar('Exported successfully!');
+  };
+
+  // ===== EXPORT TO CSV =====
+  window.exportCSV = function(data, filename, headers) {
+    if (!data.length) {
+      showSnackbar('No data to export', 'error');
+      return;
+    }
+    
+    const csv = [
+      headers.join(','),
+      ...data.map(row => headers.map(h => `"${row[h] || ''}"`).join(','))
+    ].join('
+');
+    
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(url);
+    showSnackbar('CSV exported!');
+  };
+
+  // ===== IMPORT JSON =====
+  window.importJSON = function(callback) {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.json';
+    input.onchange = (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        try {
+          const data = JSON.parse(event.target.result);
+          callback(data);
+          showSnackbar('Imported successfully!');
+        } catch (err) {
+          showSnackbar('Invalid JSON file', 'error');
+        }
       };
-      b.classList.remove('active');
-      if(b.id === activeId) b.classList.add('active');
-    });
+      reader.readAsText(file);
+    };
+    input.click();
   };
 
-  // Simple chart helpers for canvas
-  window.drawBar = function(canvas, labels, values){
-    const c = canvas; const ctx = c.getContext('2d'); const W=c.width; const H=c.height;
-    ctx.clearRect(0,0,W,H);
-    const max = Math.max(...values,1);
-    const pad = 28; const barW = (W - pad*2) / values.length * 0.7;
-    values.forEach((v,i)=>{
-      const x = pad + i * ((W - pad*2)/values.length) + ((W - pad*2)/values.length - barW)/2;
-      const h = (v/max) * (H - 40);
-      ctx.fillStyle = 'rgba(255,255,255,0.9)';
-      ctx.fillRect(x, H - 20 - h, barW, h);
-      ctx.fillStyle = 'rgba(255,255,255,0.6)';
-      ctx.font = '11px sans-serif';
-      ctx.fillText(labels[i], x, H - 4);
-    });
+  // ===== SCROLL ANIMATIONS =====
+  window.initScrollAnimations = function() {
+    const observers = [];
+    
+    // Fade in animation
+    const fadeElements = $$('.scroll-fade-in');
+    const fadeObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.1 });
+    
+    fadeElements.forEach(el => fadeObserver.observe(el));
+    observers.push(fadeObserver);
+    
+    // Blur animation
+    const blurElements = $$('.scroll-blur');
+    const blurObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.1 });
+    
+    blurElements.forEach(el => blurObserver.observe(el));
+    observers.push(blurObserver);
+    
+    return observers;
   };
 
-  window.drawPie = function(canvas, map){
-    const c = canvas; const ctx = c.getContext('2d'); const W=c.width; const H=c.height; const cx=W/2; const cy=H/2; const r=Math.min(W,H)/2 - 10;
-    ctx.clearRect(0,0,W,H);
-    const vals = Object.values(map); const keys = Object.keys(map);
-    const total = vals.reduce((a,b)=>a+b,0)||1;
-    let angle= -Math.PI/2;
-    keys.forEach((k,i)=>{
-      const v = map[k];
-      const slice = v/total * Math.PI*2;
-      ctx.beginPath();
-      ctx.moveTo(cx,cy);
-      ctx.arc(cx,cy,r,angle, angle+slice);
-      angle += slice;
-      ctx.closePath();
-      const alpha = 0.6 + (i%4)*0.08;
-      ctx.fillStyle = `rgba(255,255,255,${alpha})`;
-      ctx.fill();
-    });
-    // legend
-    ctx.font='12px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.85)';
-    keys.forEach((k,i)=> ctx.fillText(`${k} • ${Math.round(map[k]*100)/100}`, 8, 16 + i*16));
+  // ===== GEOLOCATION =====
+  window.getLocation = function(callback) {
+    if ('geolocation' in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`)
+            .then(res => res.json())
+            .then(data => {
+              callback({
+                city: data.city || data.locality,
+                region: data.principalSubdivision,
+                country: data.countryName,
+                lat: latitude,
+                lng: longitude
+              });
+            })
+            .catch(() => callback(null));
+        },
+        () => callback(null)
+      );
+    } else {
+      callback(null);
+    }
   };
 
-  // expose nothing else
-})();
+  // ===== SERVICE WORKER =====
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js')
+        .then(() => console.log('SW registered'))
+        .catch(err => console.log('SW error:', err));
+    });
+  }
 
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js')
-      .then(reg => console.log('Service Worker registered', reg))
-      .catch(err => console.log('Service Worker registration failed', err));
+  // Auto-init on load
+  document.addEventListener('DOMContentLoaded', () => {
+    initThemeToggle();
+    initScrollAnimations();
   });
-}
+
+})();

@@ -726,3 +726,28 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--accent-dark);
 }
+
+.contact-info {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.8;
+}
+
+.contact-info li {
+  margin-bottom: 8px;
+}
+
+.contact-link {
+  color: #007bff;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.contact-link:hover {
+  color: #00d4ff;
+  text-decoration: underline;
+  transform: scale(1.05);
+}

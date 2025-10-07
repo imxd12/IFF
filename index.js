@@ -136,7 +136,7 @@ Keys: ${Object.keys(localStorage).join(', ')}`);
   // Hide splash screen
   setTimeout(() => {
     $('#splashScreen').style.display = 'none';
-  }, 3000);
+  }, 500);
 
   // Initialize
   updateWelcome();
@@ -150,3 +150,4 @@ Keys: ${Object.keys(localStorage).join(', ')}`);
   }
 
 })();
+

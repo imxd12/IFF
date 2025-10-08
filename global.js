@@ -1,13 +1,13 @@
 /* =========================
-   MONEYFLOW - ULTRA SMOOTH GLOBAL UTILITIES
-   Enhanced Animations | Haptic Feedback | Performance Optimized
+   MONEYFLOW - GLOBAL UTILITIES
+   Enhanced with error handling and animations
 ========================= */
 
 (function() {
   'use strict';
 
   // ========================================
-  // DOM SELECTORS (Optimized)
+  // DOM SELECTORS
   // ========================================
   window.$ = (selector, parent = document) => {
     try {
@@ -77,7 +77,7 @@
   };
 
   // ========================================
-  // THEME TOGGLE - Ultra Smooth
+  // THEME TOGGLE
   // ========================================
   window.initThemeToggle = function() {
     try {
@@ -100,29 +100,18 @@
       toggle.addEventListener('click', () => {
         const current = document.documentElement.getAttribute('data-theme');
         const newTheme = current === 'dark' ? 'light' : 'dark';
-        
-        // Add transition class for smooth theme change
-        document.body.classList.add('theme-transitioning');
-        
         document.documentElement.setAttribute('data-theme', newTheme);
         localStorage.setItem('fin_theme', newTheme);
         updateIcon();
         
-        // Haptic feedback
-        haptic('light');
-        
-        // Remove transition class after animation
+        // Add smooth transition
+        document.body.style.transition = 'background 0.4s ease, color 0.4s ease';
         setTimeout(() => {
-          document.body.classList.remove('theme-transitioning');
-        }, 600);
+          document.body.style.transition = '';
+        }, 400);
         
         // Trigger custom event for chart updates
-        document.dispatchEvent(new CustomEvent('themeChanged', { 
-          detail: { theme: newTheme } 
-        }));
-        
-        // Show confirmation
-        showSnackbar(`${newTheme === 'dark' ? '🌙' : '☀️'} ${newTheme.charAt(0).toUpperCase() + newTheme.slice(1)} mode activated`);
+        document.dispatchEvent(new CustomEvent('themeChanged', { detail: { theme: newTheme } }));
       });
     } catch (e) {
       console.error('Theme toggle error:', e);
@@ -130,7 +119,7 @@
   };
 
   // ========================================
-  // LIVE CLOCK - Smooth Updates
+  // LIVE CLOCK
   // ========================================
   window.startClock = function(selector = '#timeNow') {
     try {
@@ -148,13 +137,7 @@
             month: 'short', 
             year: 'numeric' 
           });
-          
-          // Add fade animation
-          el.style.opacity = '0.7';
-          setTimeout(() => {
-            el.textContent = `${date} • ${hours}:${minutes}:${seconds}`;
-            el.style.opacity = '1';
-          }, 100);
+          el.textContent = `${date} • ${hours}:${minutes}:${seconds}`;
         } catch (e) {
           console.error('Clock update error:', e);
         }
@@ -171,7 +154,7 @@
   };
 
   // ========================================
-  // BOTTOM NAVIGATION - Liquid Smooth
+  // BOTTOM NAVIGATION
   // ========================================
   window.attachBottomNav = function(activeId) {
     try {
@@ -187,88 +170,54 @@
           nav.setAttribute('data-active', index);
         }
         
-        // Enhanced click animation
+        // Add click animation
         item.addEventListener('click', function(e) {
+          // Don't prevent navigation
           items.forEach(i => i.classList.remove('active'));
           this.classList.add('active');
           nav.setAttribute('data-active', index);
           
-          // Haptic feedback
-          haptic('light');
+          // Haptic feedback (if supported)
+          if ('vibrate' in navigator) {
+            navigator.vibrate(10);
+          }
           
           // Add ripple effect
-          createRipple(this, e);
-          
-          // Add bounce effect
-          this.style.transform = 'scale(0.9)';
-          setTimeout(() => {
-            this.style.transform = '';
-          }, 150);
-        });
-        
-        // Hover effect
-        item.addEventListener('mouseenter', function() {
-          if (!this.classList.contains('active')) {
-            this.style.transform = 'scale(1.05) translateY(-3px)';
-          }
-        });
-        
-        item.addEventListener('mouseleave', function() {
-          if (!this.classList.contains('active')) {
-            this.style.transform = '';
-          }
+          const ripple = document.createElement('span');
+          ripple.style.cssText = `
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(16, 185, 129, 0.5);
+            width: 100px;
+            height: 100px;
+            margin-top: -50px;
+            margin-left: -50px;
+            animation: ripple 0.6s;
+            pointer-events: none;
+          `;
+          this.appendChild(ripple);
+          setTimeout(() => ripple.remove(), 600);
         });
       });
+      
+      // Add ripple animation
+      if (!document.getElementById('ripple-style')) {
+        const style = document.createElement('style');
+        style.id = 'ripple-style';
+        style.textContent = `
+          @keyframes ripple {
+            to {
+              transform: scale(4);
+              opacity: 0;
+            }
+          }
+        `;
+        document.head.appendChild(style);
+      }
     } catch (e) {
       console.error('Navigation error:', e);
     }
   };
-
-  // ========================================
-  // RIPPLE EFFECT CREATOR
-  // ========================================
-  function createRipple(element, event) {
-    const ripple = document.createElement('span');
-    const rect = element.getBoundingClientRect();
-    const size = Math.max(rect.width, rect.height);
-    const x = event.clientX - rect.left - size / 2;
-    const y = event.clientY - rect.top - size / 2;
-    
-    ripple.style.cssText = `
-      position: absolute;
-      border-radius: 50%;
-      background: rgba(16, 185, 129, 0.6);
-      width: ${size}px;
-      height: ${size}px;
-      left: ${x}px;
-      top: ${y}px;
-      transform: scale(0);
-      animation: rippleEffect 0.6s ease-out;
-      pointer-events: none;
-      z-index: 0;
-    `;
-    
-    // Add ripple keyframes if not exists
-    if (!document.getElementById('ripple-keyframes')) {
-      const style = document.createElement('style');
-      style.id = 'ripple-keyframes';
-      style.textContent = `
-        @keyframes rippleEffect {
-          to {
-            transform: scale(4);
-            opacity: 0;
-          }
-        }
-      `;
-      document.head.appendChild(style);
-    }
-    
-    element.style.position = 'relative';
-    element.style.overflow = 'hidden';
-    element.appendChild(ripple);
-    
-    setTimeout(() => ripple.remove(), 600);
-  }
 
   // ========================================
   // LOCAL STORAGE
@@ -300,25 +249,14 @@
   };
 
   // ========================================
-  // MODAL HELPERS - Enhanced
+  // MODAL HELPERS
   // ========================================
   window.openModal = (modalId) => {
     try {
       const modal = $(modalId);
       if (modal) {
-        // Add opening animation
-        modal.style.display = 'flex';
-        modal.style.opacity = '0';
-        
-        requestAnimationFrame(() => {
-          modal.classList.add('show');
-          modal.style.opacity = '1';
-        });
-        
+        modal.classList.add('show');
         document.body.style.overflow = 'hidden';
-        
-        // Haptic feedback
-        haptic('medium');
         
         // Focus trap
         const focusableElements = $$('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])', modal);
@@ -335,17 +273,8 @@
     try {
       const modal = $(modalId);
       if (modal) {
-        // Add closing animation
-        modal.style.opacity = '0';
-        
-        setTimeout(() => {
-          modal.classList.remove('show');
-          modal.style.display = 'none';
-          document.body.style.overflow = '';
-        }, 300);
-        
-        // Haptic feedback
-        haptic('light');
+        modal.classList.remove('show');
+        document.body.style.overflow = '';
       }
     } catch (e) {
       console.error('Modal close error:', e);
@@ -370,77 +299,53 @@
   });
 
   // ========================================
-  // SNACKBAR NOTIFICATIONS - Ultra Smooth
+  // SNACKBAR NOTIFICATIONS
   // ========================================
   window.showSnackbar = function(message, type = 'success') {
     try {
       // Remove existing snackbar
       const existing = $('.snackbar');
-      if (existing) {
-        existing.style.transform = 'translateX(-50%) translateY(100px) scale(0.8)';
-        existing.style.opacity = '0';
-        setTimeout(() => existing.remove(), 300);
-      }
+      if (existing) existing.remove();
       
       const snackbar = document.createElement('div');
       snackbar.className = 'snackbar';
+      snackbar.textContent = message;
       
-      // Add icon based on type
-      const icons = {
-        success: '✅',
-        error: '❌',
-        warning: '⚠️',
-        info: 'ℹ️'
-      };
-      
-      snackbar.innerHTML = `<span>${icons[type] || '💬'}</span> ${message}`;
-      
-      const colors = {
-        success: 'var(--accent)',
-        error: 'var(--danger)',
-        warning: 'var(--warning)',
-        info: 'var(--info)'
-      };
+      const bgColor = type === 'success' ? 'var(--accent)' : 
+                      type === 'error' ? 'var(--danger)' : 
+                      type === 'warning' ? 'var(--warning)' : 
+                      'var(--info)';
       
       snackbar.style.cssText = `
         position: fixed;
         bottom: calc(var(--navbar-height) + 20px);
         left: 50%;
-        transform: translateX(-50%) translateY(100px) scale(0.8);
-        background: ${colors[type] || 'var(--accent)'};
+        transform: translateX(-50%) translateY(100px);
+        background: ${bgColor};
         color: white;
         padding: 15px 25px;
-        border-radius: var(--radius-lg);
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow-hover);
         z-index: 3000;
         font-weight: 600;
         font-size: 14px;
         max-width: 90%;
         text-align: center;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        opacity: 0;
-        transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55), opacity 0.3s;
       `;
       
       document.body.appendChild(snackbar);
       
-      // Haptic feedback based on type
-      const hapticType = type === 'success' ? 'success' : type === 'error' ? 'error' : 'light';
-      haptic(hapticType);
-      
       // Animate in
-      requestAnimationFrame(() => {
-        snackbar.style.transform = 'translateX(-50%) translateY(0) scale(1)';
-        snackbar.style.opacity = '1';
-      });
+      setTimeout(() => {
+        snackbar.style.transform = 'translateX(-50%) translateY(0)';
+      }, 10);
       
       // Animate out and remove
       setTimeout(() => {
-        snackbar.style.transform = 'translateX(-50%) translateY(100px) scale(0.8)';
+        snackbar.style.transform = 'translateX(-50%) translateY(100px)';
         snackbar.style.opacity = '0';
-        setTimeout(() => snackbar.remove(), 400);
+        setTimeout(() => snackbar.remove(), 300);
       }, 3000);
     } catch (e) {
       console.error('Snackbar error:', e);
@@ -458,12 +363,9 @@
       const a = document.createElement('a');
       a.href = url;
       a.download = filename || 'export.json';
-      document.body.appendChild(a);
       a.click();
-      document.body.removeChild(a);
       URL.revokeObjectURL(url);
       showSnackbar('Exported successfully! 📤');
-      haptic('success');
     } catch (e) {
       console.error('Export error:', e);
       showSnackbar('Failed to export data', 'error');
@@ -480,6 +382,7 @@
         return;
       }
       
+      // Escape CSV values
       const escapeCSV = (value) => {
         if (value === null || value === undefined) return '';
         const str = String(value);
@@ -499,12 +402,9 @@
       const a = document.createElement('a');
       a.href = url;
       a.download = filename || 'export.csv';
-      document.body.appendChild(a);
       a.click();
-      document.body.removeChild(a);
       URL.revokeObjectURL(url);
       showSnackbar('CSV exported! 📊');
-      haptic('success');
     } catch (e) {
       console.error('CSV export error:', e);
       showSnackbar('Failed to export CSV', 'error');
@@ -524,6 +424,7 @@
         const file = e.target.files[0];
         if (!file) return;
         
+        // Check file size (max 10MB)
         if (file.size > 10 * 1024 * 1024) {
           showSnackbar('File too large (max 10MB)', 'error');
           return;
@@ -536,7 +437,6 @@
             const data = JSON.parse(event.target.result);
             callback(data);
             showSnackbar('Imported successfully! 📥');
-            haptic('success');
           } catch (err) {
             console.error('JSON parse error:', err);
             showSnackbar('Invalid JSON file', 'error');
@@ -558,20 +458,19 @@
   };
 
   // ========================================
-  // SCROLL ANIMATIONS - Smooth Observer
+  // SCROLL ANIMATIONS
   // ========================================
   window.initScrollAnimations = function() {
     try {
       const observers = [];
       
+      // Fade in animation
       const fadeElements = $$('.scroll-fade-in');
       if (fadeElements.length > 0) {
         const fadeObserver = new IntersectionObserver((entries) => {
-          entries.forEach((entry, index) => {
+          entries.forEach(entry => {
             if (entry.isIntersecting) {
-              setTimeout(() => {
-                entry.target.classList.add('visible');
-              }, index * 100); // Stagger animation
+              entry.target.classList.add('visible');
             }
           });
         }, { 
@@ -583,14 +482,13 @@
         observers.push(fadeObserver);
       }
       
+      // Blur animation
       const blurElements = $$('.scroll-blur');
       if (blurElements.length > 0) {
         const blurObserver = new IntersectionObserver((entries) => {
-          entries.forEach((entry, index) => {
+          entries.forEach(entry => {
             if (entry.isIntersecting) {
-              setTimeout(() => {
-                entry.target.classList.add('visible');
-              }, index * 150);
+              entry.target.classList.add('visible');
             }
           });
         }, { 
@@ -623,6 +521,7 @@
         (position) => {
           const { latitude, longitude } = position.coords;
           
+          // Fetch location details from BigDataCloud API
           fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`)
             .then(res => res.json())
             .then(data => {
@@ -678,6 +577,8 @@
   // ========================================
   // PERFORMANCE OPTIMIZATION
   // ========================================
+  
+  // Debounce function for performance
   window.debounce = function(func, wait) {
     let timeout;
     return function executedFunction(...args) {
@@ -690,6 +591,7 @@
     };
   };
 
+  // Throttle function for scroll events
   window.throttle = function(func, limit) {
     let inThrottle;
     return function(...args) {
@@ -709,7 +611,6 @@
       if (navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard.writeText(text).then(() => {
           showSnackbar('Copied to clipboard! 📋');
-          haptic('light');
         }).catch(() => {
           fallbackCopy(text);
         });
@@ -732,7 +633,6 @@
     try {
       document.execCommand('copy');
       showSnackbar('Copied to clipboard! 📋');
-      haptic('light');
     } catch (e) {
       showSnackbar('Failed to copy', 'error');
     }
@@ -740,48 +640,14 @@
   }
 
   // ========================================
-  // HAPTIC FEEDBACK - Enhanced
-  // ========================================
-  window.haptic = function(type = 'light') {
-    try {
-      if ('vibrate' in navigator) {
-        const patterns = {
-          light: 10,
-          medium: 20,
-          heavy: 30,
-          success: [10, 50, 10],
-          error: [20, 50, 20, 50, 20],
-          double: [10, 100, 10]
-        };
-        navigator.vibrate(patterns[type] || 10);
-      }
-    } catch (e) {
-      // Fail silently
-    }
-  };
-
-  // ========================================
   // NETWORK STATUS DETECTION
   // ========================================
   window.addEventListener('online', () => {
-    showSnackbar('Back online! 🌐', 'success');
+    showSnackbar('Back online! 🌐');
   });
 
   window.addEventListener('offline', () => {
-    showSnackbar('You are offline ⚠️', 'warning');
-  });
-
-  // ========================================
-  // PAGE VISIBILITY - Pause animations when hidden
-  // ========================================
-  document.addEventListener('visibilitychange', () => {
-    if (document.hidden) {
-      // Pause animations when tab is hidden
-      document.body.classList.add('page-hidden');
-    } else {
-      // Resume animations
-      document.body.classList.remove('page-hidden');
-    }
+    showSnackbar('You are offline', 'warning');
   });
 
   // ========================================
@@ -791,10 +657,6 @@
     try {
       initThemeToggle();
       initScrollAnimations();
-      
-      // Add smooth transition class
-      document.body.classList.add('loaded');
-      
       console.log('✅ MoneyFlow Global initialized');
     } catch (e) {
       console.error('Initialization error:', e);
@@ -811,115 +673,85 @@
   });
 
   // ========================================
-  // PWA INSTALL PROMPT
+  // HAPTIC FEEDBACK (for supported devices)
   // ========================================
-  let deferredPrompt;
+  window.haptic = function(type = 'light') {
+    try {
+      if ('vibrate' in navigator) {
+        const patterns = {
+          light: 10,
+          medium: 20,
+          heavy: 30,
+          success: [10, 50, 10],
+          error: [20, 50, 20, 50, 20]
+        };
+        navigator.vibrate(patterns[type] || 10);
+      }
+    } catch (e) {
+      // Fail silently
+    }
+  };
 
-  window.addEventListener('beforeinstallprompt', (e) => {
-    console.log('Install prompt triggered');
-    e.preventDefault();
-    deferredPrompt = e;
+})();
+
+// ========================================
+// PWA INSTALL PROMPT
+// ========================================
+let deferredPrompt;
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  console.log('Install prompt triggered');
+  e.preventDefault();
+  deferredPrompt = e;
+  
+  const installPrompt = $('#installPrompt');
+  if (installPrompt) {
+    installPrompt.style.display = 'block';
+  }
+});
+
+// Install button click
+const installBtn = $('#installBtn');
+if (installBtn) {
+  installBtn.addEventListener('click', async () => {
+    if (!deferredPrompt) {
+      showSnackbar('Installation not available', 'warning');
+      return;
+    }
     
-    const installPrompt = $('#installPrompt');
-    if (installPrompt) {
-      installPrompt.style.display = 'block';
-      installPrompt.style.opacity = '0';
-      installPrompt.style.transform = 'translateY(50px) scale(0.9)';
-      
-      requestAnimationFrame(() => {
-        installPrompt.style.transition = 'all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
-        installPrompt.style.opacity = '1';
-        installPrompt.style.transform = 'translateY(0) scale(1)';
-      });
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    
+    if (outcome === 'accepted') {
+      showSnackbar('App installed successfully! 🎉');
     }
-  });
-
-  // Install button click
-  window.addEventListener('load', () => {
-    const installBtn = $('#installBtn');
-    if (installBtn) {
-      installBtn.addEventListener('click', async () => {
-        if (!deferredPrompt) {
-          showSnackbar('Installation not available', 'warning');
-          return;
-        }
-        
-        deferredPrompt.prompt();
-        const { outcome } = await deferredPrompt.userChoice;
-        
-        if (outcome === 'accepted') {
-          showSnackbar('App installed successfully! 🎉', 'success');
-          haptic('success');
-        }
-        
-        deferredPrompt = null;
-        const installPrompt = $('#installPrompt');
-        if (installPrompt) {
-          installPrompt.style.opacity = '0';
-          installPrompt.style.transform = 'translateY(50px) scale(0.9)';
-          setTimeout(() => {
-            installPrompt.style.display = 'none';
-          }, 400);
-        }
-      });
-    }
-
-    // Dismiss button
-    const dismissBtn = $('#dismissBtn');
-    if (dismissBtn) {
-      dismissBtn.addEventListener('click', () => {
-        const installPrompt = $('#installPrompt');
-        if (installPrompt) {
-          installPrompt.style.opacity = '0';
-          installPrompt.style.transform = 'translateY(50px) scale(0.9)';
-          setTimeout(() => {
-            installPrompt.style.display = 'none';
-          }, 400);
-        }
-        localStorage.setItem('installDismissed', 'true');
-        haptic('light');
-      });
-    }
-  });
-
-  // Check if already installed
-  window.addEventListener('appinstalled', () => {
-    console.log('PWA installed');
-    showSnackbar('MoneyFlow installed! 🎉', 'success');
-    haptic('success');
+    
+    deferredPrompt = null;
     const installPrompt = $('#installPrompt');
     if (installPrompt) {
       installPrompt.style.display = 'none';
     }
   });
+}
 
-  // Add CSS for smooth transitions
-  const style = document.createElement('style');
-  style.textContent = `
-    body.theme-transitioning * {
-      transition: background-color 0.6s ease, 
-                  color 0.6s ease, 
-                  border-color 0.6s ease,
-                  box-shadow 0.6s ease !important;
+// Dismiss button
+const dismissBtn = $('#dismissBtn');
+if (dismissBtn) {
+  dismissBtn.addEventListener('click', () => {
+    const installPrompt = $('#installPrompt');
+    if (installPrompt) {
+      installPrompt.style.display = 'none';
     }
-    
-    body.loaded {
-      animation: bodyFadeIn 0.6s ease;
-    }
-    
-    @keyframes bodyFadeIn {
-      from {
-        opacity: 0;
-      }
-      to {
-        opacity: 1;
-      }
-    }
-    
-    body.page-hidden * {
-      animation-play-state: paused !important;
-    }
-  `;
-  document.head.appendChild(style);
+    localStorage.setItem('installDismissed', 'true');
+  });
+}
 
-})();
+// Check if already installed
+window.addEventListener('appinstalled', () => {
+  console.log('PWA installed');
+  showSnackbar('MoneyFlow installed! 🎉');
+  const installPrompt = $('#installPrompt');
+  if (installPrompt) {
+    installPrompt.style.display = 'none';
+  }
+});

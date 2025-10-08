@@ -22,29 +22,31 @@ attachBottomNav('nav-home');
 
   // ========================================
   // PERSONALIZED GREETING
-  // ========================================
-  function updateWelcome() {
-    const hour = new Date().getHours();
-    let greeting;
+// ========================================  
+// PERSONALIZED GREETING (CUTE EDITION)  
+// ========================================  
+function updateWelcome() {  
+  const hour = new Date().getHours();  
+  let greeting;  
     
-    // Dynamic greeting based on time of day
-    if (hour >= 0 && hour < 3) greeting = `Good midnight 🌙, ${username}❤️`;
-    else if (hour >= 3 && hour < 5) greeting = `Early dawn 🌌, ${username}❤️`;
-    else if (hour >= 5 && hour < 7) greeting = `Good early morning 🌅, ${username}❤️`;
-    else if (hour >= 7 && hour < 9) greeting = `Good morning ☀️, ${username}❤️`;
-    else if (hour >= 9 && hour < 12) greeting = `Late morning 🌤️, ${username}❤️`;
-    else if (hour >= 12 && hour < 14) greeting = `Good noon 🌞, ${username}❤️`;
-    else if (hour >= 14 && hour < 16) greeting = `Early afternoon 🌤️, ${username}❤️`;
-    else if (hour >= 16 && hour < 18) greeting = `Late afternoon 🌇, ${username}❤️`;
-    else if (hour >= 18 && hour < 20) greeting = `Good evening 🌙, ${username}❤️`;
-    else if (hour >= 20 && hour < 22) greeting = `Good Night 🌃, ${username}❤️`;
-    else greeting = `Late night 🌌, ${username}❤️`;
+  // Cute & cozy greetings 💫  
+  if (hour >= 0 && hour < 3) greeting = `Midnight Vibes 🌙, ${username}💤`;  
+  else if (hour >= 3 && hour < 5) greeting = `Sleepy Hours 🌌, ${username}🥱`;  
+  else if (hour >= 5 && hour < 7) greeting = `Sunrise Glow 🌅, ${username}🌸`;  
+  else if (hour >= 7 && hour < 9) greeting = `Mornyy ☀️, ${username}🩵`;  
+  else if (hour >= 9 && hour < 12) greeting = `Late Mornin’ 🌤️, ${username}🌼`;  
+  else if (hour >= 12 && hour < 14) greeting = `Noonie 🌞, ${username}🍱`;  
+  else if (hour >= 14 && hour < 16) greeting = `Aftery ☁️, ${username}💫`;  
+  else if (hour >= 16 && hour < 18) greeting = `Sunset Babe 🌇, ${username}🧡`;  
+  else if (hour >= 18 && hour < 20) greeting = `Evenyy 🌙, ${username}💖`;  
+  else if (hour >= 20 && hour < 22) greeting = `Nighty ✨, ${username}🌌`;  
+  else greeting = `Dreamy Time 🌃, ${username}💤`;  
     
-    const welcomeEl = $('#welcomeText');
-    if (welcomeEl) {
-      welcomeEl.textContent = greeting;
-    }
-  }
+  const welcomeEl = document.querySelector('#welcomeText');  
+  if (welcomeEl) {  
+    welcomeEl.textContent = greeting;  
+  }  
+}
 
   // ========================================
   // LOAD DASHBOARD DATA
@@ -553,4 +555,5 @@ attachBottomNav('nav-home');
   }
 
 })();
+
 

@@ -416,7 +416,7 @@ function updateWelcome() {
       if (splash) {
         splash.style.display = 'none';
       }
-    }, 3000);
+    }, 2000);
   }
 
   // ========================================
@@ -555,5 +555,6 @@ function updateWelcome() {
   }
 
 })();
+
 
 

@@ -46,7 +46,7 @@ const categoryMap = {
   ],
   
   Bills: [
-    '💡 Electricity', '🌊 Water', '🌐 WiFi', '📞 Phone', '📺 OTT',
+    '🛜 Airtel Recharge Own','💡 Electricity', '🌊 Water', '🌐 WiFi', '📞 Phone', '📺 OTT',
     '🧾 Insurance', '🎫 Railway Pass', '📦 Subscriptions', '💳 Credit Card', '📱 Postpaid',
     '🔥 Gas Cylinder', '📡 DTH', '☁️ Cloud Storage', '🎵 Music App', '🎬 Netflix/Prime',
     '🎮 Gaming Pass', '📰 News Subscription', '💻 Software License', '🏋️ Gym Membership', '🚗 Car Insurance',
@@ -1093,3 +1093,4 @@ const categoryMap = {
   });
 
 })();
+

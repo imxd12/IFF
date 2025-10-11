@@ -20,6 +20,10 @@
   
   <!-- Chart.js for Analytics -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  
+  <!-- jsPDF and AutoTable for PDF Export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
 </head>
 <body>
 
@@ -27,7 +31,6 @@
        HEADER - Navigation & Clock
   ======================================== -->
   <header class="header">
-    <!-- Left: Back Button -->
     <div class="header-left">
       <a href="index.html" class="back-btn" title="Back to Dashboard">
         <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
@@ -41,12 +44,10 @@
       </div>
     </div>
     
-    <!-- Center: Live Clock -->
     <div class="header-center">
       <div class="time-display" id="timeNow">Loading...</div>
     </div>
     
-    <!-- Right: Theme Toggle -->
     <div class="header-right">
       <div class="theme-toggle">
         <div class="theme-toggle-slider">☀️</div>
@@ -170,7 +171,7 @@
     </div>
 
     <!-- ========================================
-         FILTERS & SEARCH (Below Forms)
+         FILTERS & SEARCH
     ======================================== -->
     <div class="filter-section scroll-blur">
       <div class="filter-group">
@@ -180,6 +181,9 @@
       <div class="action-buttons">
         <button class="btn btn-secondary" onclick="toggleShowAll()">
           <span id="toggleText">Show All</span>
+        </button>
+        <button class="btn btn-secondary" onclick="openPDFModal()">
+          <span>📄 Export PDF</span>
         </button>
         <button class="btn btn-secondary" onclick="exportToCSV()">
           <span>📊 Export CSV</span>
@@ -207,32 +211,32 @@
 
   </div>
 
-      <!-- ========================================
-         CHARTS & ANALYTICS SECTION
-    ======================================== -->
-    <section class="analytics-section scroll-blur">
-      <h3 class="section-title">📊 Analytics</h3>
-      
-      <div class="charts-grid">
-        <!-- Income vs Expense Chart -->
-        <div class="chart-card">
-          <h4 class="chart-title">Income vs Expense</h4>
-          <canvas id="incomeExpenseChart"></canvas>
-        </div>
-        
-        <!-- Category Distribution -->
-        <div class="chart-card">
-          <h4 class="chart-title">Expense by Category</h4>
-          <canvas id="categoryChart"></canvas>
-        </div>
+  <!-- ========================================
+       CHARTS & ANALYTICS SECTION
+  ======================================== -->
+  <section class="analytics-section scroll-blur">
+    <h3 class="section-title">📊 Analytics</h3>
+    
+    <div class="charts-grid">
+      <!-- Income vs Expense Chart -->
+      <div class="chart-card">
+        <h4 class="chart-title">Income vs Expense</h4>
+        <canvas id="incomeExpenseChart"></canvas>
       </div>
       
-      <!-- Monthly Trend -->
-      <div class="chart-card chart-full">
-        <h4 class="chart-title">Monthly Trend</h4>
-        <canvas id="trendChart"></canvas>
+      <!-- Category Distribution -->
+      <div class="chart-card">
+        <h4 class="chart-title">Expense by Category</h4>
+        <canvas id="categoryChart"></canvas>
       </div>
-    </section>
+    </div>
+    
+    <!-- Monthly Trend -->
+    <div class="chart-card chart-full">
+      <h4 class="chart-title">Monthly Trend</h4>
+      <canvas id="trendChart"></canvas>
+    </div>
+  </section>
 
   <!-- ========================================
        EDIT MODAL
@@ -283,8 +287,81 @@
   </div>
 
   <!-- ========================================
+       PDF EXPORT MODAL
+  ======================================== -->
+  <div class="modal" id="pdfModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title">📄 Export PDF Report</h2>
+        <button class="modal-close" onclick="closeModal('#pdfModal')">&times;</button>
+      </div>
+      <div class="pdf-options">
+        <h3 class="form-title">Select Report Period</h3>
+        
+        <div class="radio-group">
+          <label class="radio-option">
+            <input type="radio" name="pdfRange" value="today" checked>
+            <span class="radio-label">
+              <strong>📅 Today</strong>
+              <small>All transactions from today</small>
+            </span>
+          </label>
+          
+          <label class="radio-option">
+            <input type="radio" name="pdfRange" value="week">
+            <span class="radio-label">
+              <strong>📆 This Week</strong>
+              <small>Last 7 days</small>
+            </span>
+          </label>
+          
+          <label class="radio-option">
+            <input type="radio" name="pdfRange" value="month">
+            <span class="radio-label">
+              <strong>📊 This Month</strong>
+              <small>Current month transactions</small>
+            </span>
+          </label>
+          
+          <label class="radio-option">
+            <input type="radio" name="pdfRange" value="year">
+            <span class="radio-label">
+              <strong>📈 This Year</strong>
+              <small>Year to date</small>
+            </span>
+          </label>
+          
+          <label class="radio-option">
+            <input type="radio" name="pdfRange" value="custom">
+            <span class="radio-label">
+              <strong>🔧 Custom Range</strong>
+              <small>Select specific dates</small>
+            </span>
+          </label>
+        </div>
+        
+        <div id="customDateRange" class="custom-date-range" style="display: none;">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Start Date</label>
+              <input type="date" class="form-input" id="pdfStartDate">
+            </div>
+            <div class="form-group">
+              <label class="form-label">End Date</label>
+              <input type="date" class="form-input" id="pdfEndDate">
+            </div>
+          </div>
+        </div>
+        
+        <button class="btn btn-primary btn-block" onclick="generatePDF()">
+          <span>📥 Download PDF Report</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================
        FLOATING ACTION BUTTON (FAB)
-       Quick add expense - scrolls to expense form
   ======================================== -->
   <button class="fab" onclick="quickAddExpense()" title="Quick Add Expense">
     <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
@@ -321,6 +398,7 @@
           <li>📊 Visual analytics & charts</li>
           <li>🗂️ 11 main categories with subcategories</li>
           <li>🔍 Advanced search & filtering</li>
+          <li>📄 Professional PDF reports</li>
           <li>📥 CSV export & JSON import</li>
           <li>📱 PWA - Install as app</li>
           <li>🌓 Dark mode support</li>
@@ -332,9 +410,9 @@
       <div class="footer-section">
         <h3>Quick Actions</h3>
         <div class="footer-actions">
+          <button class="btn btn-secondary btn-sm" onclick="openPDFModal()">📄 Export PDF</button>
           <button class="btn btn-secondary btn-sm" onclick="exportToCSV()">📊 Export CSV</button>
           <button class="btn btn-secondary btn-sm" onclick="importFromJSON()">📥 Import Data</button>
-          <button class="btn btn-secondary btn-sm" onclick="openModal('#statsModal')">📈 View Stats</button>
           <button class="btn btn-secondary btn-sm" onclick="clearAllData()">🗑️ Clear All</button>
         </div>
       </div>
@@ -352,7 +430,7 @@
         <div class="footer-social">
           <h4>Developer</h4>
           <p><strong>Imad Khan</strong></p>
-          <p class="footer-handle"><a href="https://www.instagram.com/_imxd12" target="_blank" rel="noopener noreferrer"><p class="profile-handle">@imxd12</p></a></p>
+          <p class="footer-handle"><a href="https://www.instagram.com/_imxd12" target="_blank" rel="noopener noreferrer">@imxd12</a></p>
           <div class="social-links">
             <a href="mailto:imadak999@gmail.com" title="Email">📧</a>
             <a href="https://instagram.com/_imxd12" target="_blank" title="Instagram">📷</a>
@@ -363,9 +441,9 @@
     
     <!-- Footer Bottom -->
     <div class="footer-bottom">
-      <p>&copy; 2025 MoneyFlow by <strong>Imad Khan <a href="https://www.instagram.com/_imxd12" target="_blank" rel="noopener noreferrer"><p class="profile-handle">@imxd12</p></a></strong>. All rights reserved.</p>
+      <p>&copy; 2025 MoneyFlow by <strong>Imad Khan</strong> <a href="https://www.instagram.com/_imxd12" target="_blank" rel="noopener noreferrer">@imxd12</a>. All rights reserved.</p>
       <p class="footer-version">Spendly v1.0.0 | Last Updated: October 2025</p>
-      </div>
+    </div>
   </footer>
 
   <!-- Scripts -->

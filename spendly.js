@@ -20,7 +20,7 @@ startClock('#timeNow');
     Bills: ['💡 Electricity','🌊 Water','🌐 WiFi','📞 Phone','📺 OTT','🧾 Insurance','🎫 Railway Pass','📦 Subscriptions','All'],
     Health: ['💊 Medicines','🩺 Doctor','🏋️ Gym','🦷 Dental','💆 Spa','🧘 Yoga','All'],
     Entertainment: ['🎬 Movies','🎮 Games','🎵 Music','📚 Books','🎤 Shows','🎲 Board Games','🎯 Hobbies','All'],
-    Education: ['📚 Tuition','📝 Exams','💻 Online Course','📖 Books','🖋️ Stationary','🎓 Certifications','All'],
+    Education: ['📚 Tuition','📝 Exams','💻 Online Course','📖 Books','🖋️ Stationary','🎓 Certifications','🖨️ Print Out','All'],
     Savings: ['🏦 Bank Deposit','📈 Investments','💎 Assets','🪙 Crypto','💰 Cash Savings','All'],
     Family: ['👨‍👩‍👧 Kids','🎂 Celebrations','🎁 Gifts','👵👴 Elder Care','All'],
     Other: ['🛠️ Miscellaneous','💵 Charity','🌱 Donations','🎟️ Tickets','All']
@@ -659,3 +659,4 @@ startClock('#timeNow');
   });
 
 })();
+

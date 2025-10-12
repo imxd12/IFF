@@ -21,23 +21,85 @@
 </head>
 <body>
   
-  <!-- Splash Screen -->
-  <div class="splash-screen" id="splashScreen">
-    <svg class="splash-logo" width="120" height="120" viewBox="0 0 120 120">
-      <defs>
-        <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" style="stop-color:#10b981;stop-opacity:1" />
-          <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
-        </linearGradient>
-      </defs>
-      <circle cx="60" cy="60" r="50" fill="none" stroke="url(#logoGrad)" stroke-width="4">
-        <animate attributeName="stroke-dasharray" from="0 314" to="314 0" dur="2s" repeatCount="indefinite"/>
-      </circle>
-      <text x="60" y="70" font-family="Inter" font-size="32" font-weight="800" fill="url(#logoGrad)" text-anchor="middle">₹</text>
-    </svg>
-    <h2 class="splash-text">MoneyFlow</h2>
+<!-- Splash Screen -->
+<div class="splash-screen" id="splashScreen">
+  <div class="splash-container">
+    <!-- Animated Background -->
+    <div class="splash-bg-circles">
+      <div class="circle circle-1"></div>
+      <div class="circle circle-2"></div>
+      <div class="circle circle-3"></div>
+    </div>
+    
+    <!-- Logo Container -->
+    <div class="splash-logo-wrapper">
+      <svg class="splash-logo" width="120" height="120" viewBox="0 0 120 120">
+        <defs>
+          <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#10b981;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+          </linearGradient>
+          <filter id="glow">
+            <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+            <feMerge>
+              <feMergeNode in="coloredBlur"/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
+        </defs>
+        
+        <!-- Outer rotating ring -->
+        <circle cx="60" cy="60" r="54" fill="none" stroke="url(#logoGrad)" stroke-width="2" opacity="0.3.3">
+          <animateTransform
+            attributeName="transform"
+            attributeType="XML"
+            type="rotate"
+            from="0 60 60"
+            to="360 60 60"
+            dur="3s"
+            repeatCount="indefinite"/>
+        </circle>
+        
+        <!-- Main circle with animation -->
+        <circle cx="60" cy="60" r="50" fill="none" stroke="url(#logoGrad)" stroke-width="4" filterer="url(#glow)">
+          <animate attributeName="stroke-dasharray" from="0 314" to="314 0" dur="2s" repeatCount="indefinite"/>
+        </circle>
+        
+        <!-- Inner glow circle -->
+        <circle cx="60" cy="60" r="46" fill="none" stroke="url(#logoGrad)" stroke-e-width="1" opacity="0.5">
+          <animate attributeName="r" values="46;48;46" dur="2s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" values="0.5;0.8;0.5" dur="2s" repeatCount="indefinite"/>
+        </circle>
+        
+        <!-- Rupee symbol -->
+        <text x="60" y="75" font-family="Inter" font-size="36" font-weight="800" fill="url(#logoGrad)" text-anchor="middle" filter="url(#glow)">₹</text>
+      </svg>
+      
+      <!-- Pulse rings around logo -->
+      <div class="pulse-ring pulse-ring-1"></div>
+      <div class="pulse-ring pulse-ring-2"></div>
+      <div class="pulse-ring pulse-ring-3"></div>
+    </div>
+    
+    <!-- Brand Text -->
+    <h2 class="splash-text">
+      <span class="text-word text-word-1">Money</span><span class="text-word text-word-2">Flow</span>
+    </h2>
+    
+    <!-- Tagline -->
+    <p class="splash-tagline">Track. Analyze. Grow.</p>
+    
+    <!-- Loading Bar -->
+    <div class="loading-bar-container">
+      <div class="loading-bar"></div>
+    </div>
+    
+    <!-- Loading Text -->
+    <p class="loading-text">
+      <span class="loading-dots">Loading</span>
+    </p>
   </div>
-
+</div>
 
   <!-- Header -->
   <header class="header">

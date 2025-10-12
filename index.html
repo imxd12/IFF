@@ -30,13 +30,14 @@
           <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
         </linearGradient>
       </defs>
-      <circle cx="60" cy="60" r="50" fill="none" stroke="url(#logoGrad)" stroke-width="4">
+      ircle cx="60" cy="60" r="50" fill="none" stroke="url(#logoGrad)" stroke-width="4"4">
         <animate attributeName="stroke-dasharray" from="0 314" to="314 0" dur="2s" repeatCount="indefinite"/>
       </circle>
       <text x="60" y="70" font-family="Inter" font-size="32" font-weight="800" fill="url(#logoGrad)" text-anchor="middle">₹</text>
     </svg>
     <h2 class="splash-text">MoneyFlow</h2>
   </div>
+
 
   <!-- Header -->
   <header class="header">
@@ -48,7 +49,7 @@
             <stop offset="100%" style="stop-color:#3b82f6"/>
           </linearGradient>
         </defs>
-        <circle cx="50" cy="50" r="45" fill="url(#brandGrad)"/>
+        ircle cx="50" cy="50" r="45" fill="url(#brandGdGrad)"/>
         <text x="50" y="65" font-size="40" font-weight="800" fill="white" text-anchor="middle">₹</text>
       </svg>
       <h1 class="brand-name">MoneyFlow</h1>
@@ -68,6 +69,7 @@
     </div>
   </header>
 
+
   <!-- Main Container -->
   <div class="container">
     
@@ -76,6 +78,7 @@
       <h2 class="welcome-greeting" id="welcomeText">Welcome back!</h2>
       <p class="text-muted">Your financial overview at a glance</p>
     </section>
+
 
     <!-- Install Prompt -->
     <div class="install-prompt" id="installPrompt" style="display: none;">
@@ -89,6 +92,7 @@
         <button class="btn btn-secondary" id="dismissBtn">Later</button>
       </div>
     </div>
+
 
     <!-- Summary Cards -->
     <div class="widget-grid">
@@ -117,6 +121,7 @@
       </div>
     </div>
 
+
     <!-- Quick Actions -->
     <section class="quick-actions scroll-blur">
       <h3 class="section-title">Quick Actions</h3>
@@ -133,6 +138,7 @@
       </div>
     </section>
 
+
     <!-- User Settings Section -->
     <section class="user-settings-section scroll-blur">
       <h3 class="section-title">⚙️ User Settings</h3>
@@ -148,17 +154,29 @@
           </button>
         </div>
         
-<!-- Developer Profile Card -->
-<div class="settings-card">
-  <div class="settings-icon">💻</div>
-  <h4 class="settings-title">Meet the Developer</h4>
-  <p class="settings-description">Learn more about the creator of MoneyFlow and get in touch.</p>
-  <button class="btn btn-secondary btn-block" onclick="window.location.href='profile.html'">
-    <span>👋 Hi, Here!!</span>
-  </button>
-</div>
+        <!-- Developer Profile Card -->
+        <div class="settings-card">
+          <div class="settings-icon">💻</div>
+          <h4 class="settings-title">Meet the Developer</h4>
+          <p class="settings-description">Learn more about the creator of MoneyFlow and get in touch.</p>
+          <button class="btn btn-secondary btn-block" onclick="window.location.href='profile.html'">
+            <span>👋 Hi, Here!!</span>
+          </button>
+        </div>
+
+        <!-- Feedback Card -->
+        <div class="settings-card">
+          <div class="settings-icon">💬</div>
+          <h4 class="settings-title">Share Your Feedback</h4>
+          <p class="settings-description">Help us improve! Share your reviews, suggestions, or report issues.</p>
+          <button class="btn btn-secondary btn-block" onclick="window.location.href='feedback.html'">
+            <span>📝 Give Feedback</span>
+          </button>
+        </div>
+      </div>
     </section>
   </div>
+
 
   <!-- Set Name Modal -->
   <div class="modal" id="nameModal">
@@ -177,6 +195,7 @@
     </div>
   </div>
 
+
   <!-- Developer Modal -->
   <div class="modal" id="devModal">
     <div class="modal-content">
@@ -192,6 +211,7 @@
     </div>
   </div>
 
+
   <!-- Footer -->
   <footer class="footer">
     <div class="footer-content">
@@ -205,6 +225,7 @@
         <ul>
           <li><a href="howtouse.html">How To Use</a></li>
           <li><a href="profile.html">About Developer</a></li>
+          <li><a href="feedback.html">Give Feedback</a></li>
           <li><a href="terms-conditions.html">Terms & Conditions</a></li>
           <li><a href="privacy-policy.html">Privacy Policy</a></li>
         </ul>
@@ -222,6 +243,7 @@
       <p>&copy; 2025 MoneyFlow by Imad Khan. All rights reserved.</p>
     </div>
   </footer>
+
 
   <!-- Bottom Navigation -->
   <nav class="bottom-nav" data-active="0">
@@ -243,6 +265,7 @@
       <span>PocketCal</span>
     </a>
   </nav>
+
 
   <script src="global.js"></script>
   <script src="index.js"></script>

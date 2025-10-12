@@ -1199,3 +1199,384 @@
   }
 }
 
+/* ========================================
+   INSTALL PROMPT - ULTRA BUTTER-SMOOTH
+   60fps Guaranteed | Hardware Accelerated
+======================================== */
+.install-prompt {
+  position: fixed;
+  bottom: calc(var(--navbar-height) + 28px);
+  left: 50%;
+  transform: translateX(-50%) translateZ(0);
+  z-index: 1500;
+  width: 90%;
+  max-width: 450px;
+  animation: installBounceIn 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  /* Hardware acceleration */
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+@keyframes installBounceIn {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(150px) scale(0.8) translateZ(0);
+    filter: blur(10px);
+  }
+  50% {
+    transform: translateX(-50%) translateY(-15px) scale(1.05) translateZ(0);
+  }
+  70% {
+    transform: translateX(-50%) translateY(5px) scale(0.98) translateZ(0);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1) translateZ(0);
+    filter: blur(0);
+  }
+}
+
+.install-card {
+  background: var(--bg);
+  border: 3px solid var(--accent);
+  border-radius: var(--radius-xl);
+  padding: clamp(24px, 5vw, 32px);
+  box-shadow: 
+    0 20px 60px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(16, 185, 129, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  position: relative;
+  overflow: hidden;
+  /* Hardware acceleration */
+  transform: translateZ(0);
+  will-change: transform;
+  backface-visibility: hidden;
+  transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Animated gradient background */
+.install-card::before {
+  content: '';
+  position: absolute;
+  top: -100%;
+  left: -100%;
+  width: 300%;
+  height: 300%;
+  background: radial-gradient(
+    circle at center,
+    var(--accent-light) 0%,
+    transparent 50%,
+    transparent 100%
+  );
+  animation: installRotate 20s linear infinite;
+  opacity: 0.5;
+  /* Hardware acceleration */
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+/* Shimmer effect on top */
+.install-card::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    120deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.15) 40%,
+    rgba(255, 255, 255, 0.3) 50%,
+    rgba(255, 255, 255, 0.15) 60%,
+    transparent 100%
+  );
+  animation: shimmerMove 3s ease-in-out infinite;
+  /* Hardware acceleration */
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+@keyframes installRotate {
+  0% { transform: rotate(0deg) translateZ(0); }
+  100% { transform: rotate(360deg) translateZ(0); }
+}
+
+@keyframes shimmerMove {
+  0% {
+    transform: translateX(-100%) translateY(-100%) rotate(30deg) translateZ(0);
+  }
+  100% {
+    transform: translateX(100%) translateY(100%) rotate(30deg) translateZ(0);
+  }
+}
+
+/* Hover effect on card */
+.install-card:hover {
+  transform: translateY(-8px) scale(1.02) translateZ(0);
+  box-shadow: 
+    0 30px 80px rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(16, 185, 129, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  border-color: var(--accent-dark);
+}
+
+/* Icon with smooth pulse */
+.install-icon {
+  font-size: clamp(52px, 11vw, 68px);
+  text-align: center;
+  animation: installPulse 2s ease-in-out infinite;
+  position: relative;
+  z-index: 1;
+  /* Hardware acceleration */
+  transform: translateZ(0);
+  will-change: transform, filter;
+  backface-visibility: hidden;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.install-icon:hover {
+  transform: scale(1.2) rotate(10deg) translateZ(0);
+  filter: drop-shadow(0 0 30px var(--accent));
+}
+
+@keyframes installPulse {
+  0%, 100% {
+    transform: scale(1) translateZ(0);
+    filter: drop-shadow(0 0 0 transparent);
+  }
+  50% {
+    transform: scale(1.12) translateZ(0);
+    filter: drop-shadow(0 0 20px var(--accent));
+  }
+}
+
+/* Breathing glow effect */
+@keyframes installGlow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(16, 185, 129, 0.6);
+  }
+}
+
+.install-icon::before {
+  content: '';
+  position: absolute;
+  inset: -20%;
+  background: radial-gradient(circle, var(--accent-light), transparent 70%);
+  animation: installGlow 2s ease-in-out infinite;
+  border-radius: 50%;
+  z-index: -1;
+  /* Hardware acceleration */
+  transform: translateZ(0);
+  will-change: box-shadow;
+}
+
+/* Content with smooth fade-in */
+.install-content {
+  position: relative;
+  z-index: 1;
+  animation: contentFadeIn 0.8s ease 0.3s backwards;
+  /* Hardware acceleration */
+  transform: translateZ(0);
+  will-change: opacity, transform;
+}
+
+@keyframes contentFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px) translateZ(0);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) translateZ(0);
+  }
+}
+
+.install-content h3 {
+  margin: 0;
+  font-size: clamp(20px, 4.5vw, 26px);
+  color: var(--text);
+  font-weight: 800;
+  background: var(--gradient-primary);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradientFlow 4s ease infinite;
+  /* Hardware acceleration */
+  transform: translateZ(0);
+  will-change: background-position;
+}
+
+.install-content p {
+  margin: 10px 0 0;
+  font-size: clamp(14px, 3vw, 17px);
+  color: var(--text-secondary);
+  line-height: 1.7;
+  animation: contentFadeIn 0.8s ease 0.5s backwards;
+}
+
+/* Buttons with smooth morphing */
+.install-prompt .btn {
+  /* Hardware acceleration */
+  transform: translateZ(0);
+  will-change: transform, box-shadow;
+  backface-visibility: hidden;
+  animation: buttonSlideIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+  position: relative;
+  overflow: hidden;
+}
+
+.install-prompt .btn-primary {
+  animation-delay: 0.7s;
+}
+
+.install-prompt .btn-secondary {
+  animation-delay: 0.8s;
+}
+
+@keyframes buttonSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.9) translateZ(0);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1) translateZ(0);
+  }
+}
+
+/* Ripple effect on button click */
+.install-prompt .btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.6);
+  transform: translate(-50%, -50%);
+  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1), 
+              height 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  /* Hardware acceleration */
+  will-change: width, height;
+}
+
+.install-prompt .btn:active::before {
+  width: 500px;
+  height: 500px;
+}
+
+/* Smooth hover effects */
+.install-prompt .btn:hover {
+  transform: translateY(-6px) scale(1.05) translateZ(0);
+  box-shadow: 0 15px 40px rgba(16, 185, 129, 0.4);
+}
+
+.install-prompt .btn:active {
+  transform: translateY(-2px) scale(0.98) translateZ(0);
+  transition: transform 0.1s ease;
+}
+
+/* Floating animation for entire prompt */
+@keyframes floatPrompt {
+  0%, 100% {
+    transform: translateX(-50%) translateY(0) translateZ(0);
+  }
+  50% {
+    transform: translateX(-50%) translateY(-8px) translateZ(0);
+  }
+}
+
+.install-prompt {
+  animation: 
+    installBounceIn 1.2s cubic-bezier(0.34, 1.56, 0.64, 1),
+    floatPrompt 4s ease-in-out 1.5s infinite;
+}
+
+/* Slide out animation when dismissed */
+@keyframes slideOutDown {
+  from {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1) translateZ(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-50%) translateY(200px) scale(0.8) translateZ(0);
+    filter: blur(10px);
+  }
+}
+
+.install-prompt.dismissed {
+  animation: slideOutDown 0.6s cubic-bezier(0.55, 0.055, 0.675, 0.19) forwards;
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+  .install-prompt {
+    width: 95%;
+    bottom: calc(var(--navbar-height) + 15px);
+  }
+  
+  .install-card {
+    padding: clamp(18px, 4vw, 24px);
+    gap: 15px;
+  }
+  
+  .install-icon {
+    font-size: clamp(44px, 10vw, 56px);
+  }
+}
+
+/* Landscape mode optimization */
+@media (orientation: landscape) and (max-height: 600px) {
+  .install-prompt {
+    bottom: calc(var(--navbar-height) + 10px);
+  }
+  
+  .install-card {
+    padding: 16px;
+    gap: 12px;
+  }
+  
+  .install-icon {
+    font-size: clamp(36px, 8vw, 44px);
+  }
+  
+  .install-content h3 {
+    font-size: clamp(16px, 3.5vw, 20px);
+  }
+  
+  .install-content p {
+    font-size: clamp(12px, 2.5vw, 14px);
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .install-prompt,
+  .install-card::before,
+  .install-card::after,
+  .install-icon,
+  .install-icon::before {
+    animation: none !important;
+  }
+  
+  .install-prompt {
+    animation: installBounceInSimple 0.3s ease !important;
+  }
+  
+  @keyframes installBounceInSimple {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+}

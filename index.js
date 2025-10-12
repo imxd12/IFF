@@ -20,32 +20,95 @@ attachBottomNav('nav-home');
     pocketcal: []
   };
 
-  // ========================================
-  // PERSONALIZED GREETING
-// ========================================  
-// PERSONALIZED GREETING (CUTE EDITION)  
-// ========================================  
-function updateWelcome() {  
-  const hour = new Date().getHours();  
-  let greeting;  
-    
-  // Cute & cozy greetings 💫  
-  if (hour >= 0 && hour < 3) greeting = `Midnight Vibes 🌙, ${username}💤`;  
-  else if (hour >= 3 && hour < 5) greeting = `Sleepy Hours 🌌, ${username}🥱`;  
-  else if (hour >= 5 && hour < 7) greeting = `Sunrise Glow 🌅, ${username}🌸`;  
-  else if (hour >= 7 && hour < 9) greeting = `Mornyy ☀️, ${username}🩵`;  
-  else if (hour >= 9 && hour < 12) greeting = `Late Mornin’ 🌤️, ${username}🌼`;  
-  else if (hour >= 12 && hour < 14) greeting = `Noonie 🌞, ${username}🍱`;  
-  else if (hour >= 14 && hour < 16) greeting = `Aftery ☁️, ${username}💫`;  
-  else if (hour >= 16 && hour < 18) greeting = `Sunset Babe 🌇, ${username}🧡`;  
-  else if (hour >= 18 && hour < 20) greeting = `Evenyy 🌙, ${username}💖`;  
-  else if (hour >= 20 && hour < 22) greeting = `Nighty ✨, ${username}🌌`;  
-  else greeting = `Dreamy Time 🌃, ${username}💤`;  
-    
-  const welcomeEl = document.querySelector('#welcomeText');  
-  if (welcomeEl) {  
-    welcomeEl.textContent = greeting;  
-  }  
+// ========================================
+// PERSONALIZED GREETING - HOURLY CASUAL GREETINGS
+// ========================================
+function updateWelcome() {
+  const hour = new Date().getHours();
+  let greeting;
+  
+  // Dynamic casual greeting for every hour (0-23)
+  switch(hour) {
+    case 0:
+      greeting = `Late nite 🌙, ${username}❤️`;
+      break;
+    case 1:
+      greeting = `Midnight vibes 🌌, ${username}❤️`;
+      break;
+    case 2:
+      greeting = `Past midnight 🌃, ${username}❤️`;
+      break;
+    case 3:
+      greeting = `Early dawn 🌆, ${username}❤️`;
+      break;
+    case 4:
+      greeting = `Pre-sunrise 🌄, ${username}❤️`;
+      break;
+    case 5:
+      greeting = `Early mornin' 🌅, ${username}❤️`;
+      break;
+    case 6:
+      greeting = `Gudd mrnggg' ☀️, ${username}❤️`;
+      break;
+    case 7:
+      greeting = `Rise n' shine ☀️, ${username}❤️`;
+      break;
+    case 8:
+      greeting = `Mornin' champ 🌤️, ${username}❤️`;
+      break;
+    case 9:
+      greeting = `Late mornin' 🌞, ${username}❤️`;
+      break;
+    case 10:
+      greeting = `Mid-mornin' ☀️, ${username}❤️`;
+      break;
+    case 11:
+      greeting = `Almost noon 🌤️, ${username}❤️`;
+      break;
+    case 12:
+      greeting = `Gudd noon 🌞, ${username}❤️`;
+      break;
+    case 13:
+      greeting = `Early noon 🌤️, ${username}❤️`;
+      break;
+    case 14:
+      greeting = `Noon vibes ☀️, ${username}❤️`;
+      break;
+    case 15:
+      greeting = `Mid rnoon 🌤️, ${username}❤️`;
+      break;
+    case 16:
+      greeting = `Late noon 🌅, ${username}❤️`;
+      break;
+    case 17:
+      greeting = `Early eve' 🌆, ${username}❤️`;
+      break;
+    case 18:
+      greeting = `Gudd even' 🌇, ${username}❤️`;
+      break;
+    case 19:
+      greeting = `Evenin' time 🌙, ${username}❤️`;
+      break;
+    case 20:
+      greeting = `Gudd nite 🌃, ${username}❤️`;
+      break;
+    case 21:
+      greeting = `Late evenin' 🌌, ${username}❤️`;
+      break;
+    case 22:
+      greeting = `Nite time 🌙, ${username}❤️`;
+      break;
+    case 23:
+      greeting = `Almost midnight 🌃, ${username}❤️`;
+      break;
+    default:
+      greeting = `Hey there, ${username}❤️`;
+  }
+  
+  const welcomeEl = $('#welcomeText');
+  if (welcomeEl) {
+    welcomeEl.textContent = greeting;
+  }
 }
 
   // ========================================
@@ -99,14 +162,9 @@ function updateWelcome() {
     
     const totalExpense = spendly
       .filter(t => t.type === 'expense')
-      .reduce((sum, t) => sum + Number(t.amount || 0), 0);    
-    const totalNexus = nexus
-      .reduce((sum, n) => sum + Number(n.payout || 0), 0);
+      .reduce((sum, t) => sum + Number(t.amount || 0), 0);
     
-    const totalPocket = pocket
-      .reduce((sum, p) => sum + Number(p.amount || 0), 0);
-    
-    const balance = totalIncome - totalExpense ;
+    const balance = totalIncome - totalExpense;
     
     // Update UI elements with smooth animation
     updateValueWithAnimation('#todayExpense', todayExpense);
@@ -416,7 +474,7 @@ function updateWelcome() {
       if (splash) {
         splash.style.display = 'none';
       }
-    }, 2000);
+    }, 10000);
   }
 
   // ========================================
@@ -555,6 +613,3 @@ function updateWelcome() {
   }
 
 })();
-
-
-

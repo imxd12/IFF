@@ -6,12 +6,23 @@
   <title>Terms & Conditions - MoneyFlow</title>
   <link rel="stylesheet" href="global.css">
   <link rel="stylesheet" href="index.css">
+  <link rel="stylesheet" href="terms.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
   
   <!-- PWA Meta Tags -->
   <meta name="theme-color" content="#10b981">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="MoneyFlow">
   <link rel="apple-touch-icon" href="./icon-192.png">
   <link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="./icon-512.png">
+  
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="MoneyFlow Terms & Conditions - Review our terms of service for using the personal finance tracking application.">
+  <meta name="keywords" content="terms, conditions, MoneyFlow, finance app, terms of service">
+  <meta name="author" content="Imad Khan">
 </head>
 <body>
 
@@ -39,7 +50,7 @@
       <div class="theme-toggle">
         <div class="theme-toggle-slider">☀️</div>
       </div>
-      <div class="profile-btn" onclick="window.location.href='profile.html'">
+      <div class="profile-btn" onclick="window.location.href='index.html'">
         <img src="Imad.jpg" alt="Profile" id="profileImage">
       </div>
     </div>
@@ -49,16 +60,44 @@
   <div class="container">
     
     <section class="terms-page">
-      <h2 class="page-title">📜 Terms & Conditions</h2>
+      <div class="page-header">
+        <div class="page-icon">📜</div>
+        <h2 class="page-title">Terms & Conditions</h2>
+        <p class="page-subtitle">Please read these terms carefully before using MoneyFlow</p>
+      </div>
       
       <div class="terms-content">
         
-        <div class="terms-section">
-          <h3>1. Acceptance of Terms</h3>
-          <p>By accessing and using MoneyFlow ("the App"), you accept and agree to be bound by the terms and conditions of this agreement. If you do not agree to these terms, please do not use the App.</p>
+        <!-- Terms Intro -->
+        <div class="terms-intro">
+          <div class="intro-icon">⚖️</div>
+          <p>Welcome to MoneyFlow! These Terms & Conditions govern your use of our personal finance tracking application. By using MoneyFlow, you agree to comply with and be bound by these terms.</p>
+          <p class="effective-date"><strong>Effective Date:</strong> October 12, 2025</p>
         </div>
 
-        <div class="terms-section">
+        <!-- Quick Navigation -->
+        <div class="quick-nav">
+          <h3>Quick Navigation</h3>
+          <div class="nav-links">
+            <a href="#section-1" class="nav-link">Acceptance of Terms</a>
+            <a href="#section-2" class="nav-link">Use of Application</a>
+            <a href="#section-3" class="nav-link">Data Responsibility</a>
+            <a href="#section-4" class="nav-link">Liability</a>
+            <a href="#section-5" class="nav-link">Contact Info</a>
+          </div>
+        </div>
+
+        <!-- Section 1 -->
+        <div class="terms-section" id="section-1">
+          <h3>1. Acceptance of Terms</h3>
+          <p>By accessing and using MoneyFlow ("the App"), you accept and agree to be bound by the terms and conditions of this agreement. If you do not agree to these terms, please do not use the App.</p>
+          <div class="highlight-box">
+            <p><strong>Important:</strong> Your continued use of the App constitutes acceptance of these terms and any future modifications.</p>
+          </div>
+        </div>
+
+        <!-- Section 2 -->
+        <div class="terms-section" id="section-2">
           <h3>2. Use of the Application</h3>
           <p>MoneyFlow is provided as a personal finance tracking tool for individual use. You agree to:</p>
           <ul>
@@ -67,10 +106,12 @@
             <li>Not use the App to store illegal or fraudulent financial information</li>
             <li>Not share your data exports containing sensitive financial information publicly</li>
             <li>Take responsibility for the accuracy of data entered into the App</li>
+            <li>Not use the App for commercial purposes without written permission</li>
           </ul>
         </div>
 
-        <div class="terms-section">
+        <!-- Section 3 -->
+        <div class="terms-section" id="section-3">
           <h3>3. Data Storage & Responsibility</h3>
           <p>All financial data entered into MoneyFlow is stored locally in your browser's localStorage. You acknowledge that:</p>
           <ul>
@@ -79,10 +120,18 @@
             <li>No cloud synchronization or server backup is provided</li>
             <li>Data may be lost if you uninstall the browser or clear site data</li>
             <li>The App does not transmit your financial data to any external servers</li>
+            <li>You are solely responsible for maintaining copies of your financial records</li>
           </ul>
+          <div class="warning-box">
+            <div class="warning-icon">⚠️</div>
+            <div class="warning-text">
+              <strong>Important Warning:</strong> Always export and backup your data regularly. Clearing browser data will permanently delete all your financial records stored in MoneyFlow.
+            </div>
+          </div>
         </div>
 
-        <div class="terms-section">
+        <!-- Section 4 -->
+        <div class="terms-section" id="section-4">
           <h3>4. Accuracy & Reliability</h3>
           <p>While we strive to provide accurate calculations and tracking:</p>
           <ul>
@@ -91,14 +140,24 @@
             <li>Users are responsible for verifying their own financial data</li>
             <li>The App should not be used as a substitute for professional financial advice</li>
             <li>Currency conversion rates (if applicable) may not be real-time</li>
+            <li>Charts and analytics are for reference purposes only</li>
           </ul>
         </div>
 
+        <!-- Section 5 -->
         <div class="terms-section">
           <h3>5. Intellectual Property</h3>
-          <p>MoneyFlow and all its original content, features, and functionality are owned by Imad Khan (@imxd12) and are protected by international copyright, trademark, and other intellectual property laws.</p>
+          <p>MoneyFlow and all its original content, features, and functionality are owned by <strong>Imad Khan (@imxd12)</strong> and are protected by international copyright, trademark, and other intellectual property laws.</p>
+          <p>You may not:</p>
+          <ul>
+            <li>Copy, modify, or distribute the App's code without permission</li>
+            <li>Remove or alter any copyright notices or branding</li>
+            <li>Create derivative works based on the App</li>
+            <li>Use the MoneyFlow name or logo without authorization</li>
+          </ul>
         </div>
 
+        <!-- Section 6 -->
         <div class="terms-section">
           <h3>6. Limitation of Liability</h3>
           <p>To the maximum extent permitted by law:</p>
@@ -107,9 +166,17 @@
             <li>We are not responsible for financial losses resulting from use or misuse of the App</li>
             <li>The App does not provide financial, tax, or investment advice</li>
             <li>Users assume full responsibility for their financial decisions</li>
+            <li>Maximum liability is limited to the amount paid for the App (currently free)</li>
           </ul>
+          <div class="info-box">
+            <div class="info-icon">ℹ️</div>
+            <div class="info-text">
+              <strong>Disclaimer:</strong> MoneyFlow is a tracking tool, not a financial advisor. Always consult qualified professionals for financial advice.
+            </div>
+          </div>
         </div>
 
+        <!-- Section 7 -->
         <div class="terms-section">
           <h3>7. Updates & Changes</h3>
           <p>We reserve the right to:</p>
@@ -118,9 +185,12 @@
             <li>Update these Terms & Conditions without prior notification</li>
             <li>Add or remove features from the App</li>
             <li>Change the App's functionality or user interface</li>
+            <li>Implement new features or services</li>
           </ul>
+          <p>Continued use of the App after changes constitutes acceptance of the modified terms.</p>
         </div>
 
+        <!-- Section 8 -->
         <div class="terms-section">
           <h3>8. User Conduct</h3>
           <p>You agree not to:</p>
@@ -130,20 +200,36 @@
             <li>Introduce viruses or malicious code</li>
             <li>Violate any applicable local, state, national, or international law</li>
             <li>Redistribute or resell the App without written permission</li>
+            <li>Use automated systems to access the App</li>
+            <li>Interfere with the proper functioning of the App</li>
           </ul>
         </div>
 
+        <!-- Section 9 -->
         <div class="terms-section">
           <h3>9. Third-Party Services</h3>
           <p>The App may use third-party libraries and services including:</p>
-          <ul>
-            <li>Chart.js for data visualization (MIT License)</li>
-            <li>Google Fonts for typography</li>
-            <li>Geolocation API for location services (with user permission)</li>
-            <li>These services are governed by their own terms and policies</li>
-          </ul>
+          <div class="service-grid">
+            <div class="service-card">
+              <div class="service-icon">📊</div>
+              <h4>Chart.js</h4>
+              <p>For data visualization (MIT License)</p>
+            </div>
+            <div class="service-card">
+              <div class="service-icon">🔤</div>
+              <h4>Google Fonts</h4>
+              <p>For typography styling</p>
+            </div>
+            <div class="service-card">
+              <div class="service-icon">📍</div>
+              <h4>Geolocation API</h4>
+              <p>For location services (with permission)</p>
+            </div>
+          </div>
+          <p>These services are governed by their own terms and policies, which you should review separately.</p>
         </div>
 
+        <!-- Section 10 -->
         <div class="terms-section">
           <h3>10. Termination</h3>
           <p>You may stop using the App at any time by:</p>
@@ -151,45 +237,118 @@
             <li>Clearing your browser's localStorage</li>
             <li>Uninstalling the PWA (if installed)</li>
             <li>Ceasing to access the application</li>
+            <li>Using the "Clear All Data" option in Developer Options</li>
           </ul>
-          <p>We reserve the right to terminate or suspend access to the App for violations of these terms.</p>
+          <p>We reserve the right to terminate or suspend access to the App for violations of these terms, although enforcement may be limited given the local-only nature of the App.</p>
         </div>
 
+        <!-- Section 11 -->
         <div class="terms-section">
           <h3>11. Governing Law</h3>
-          <p>These Terms & Conditions are governed by and construed in accordance with the laws of India. Any disputes shall be subject to the exclusive jurisdiction of the courts in Maharashtra, India.</p>
+          <p>These Terms & Conditions are governed by and construed in accordance with the laws of <strong>India</strong>. Any disputes shall be subject to the exclusive jurisdiction of the courts in <strong>Maharashtra, India</strong>.</p>
         </div>
 
+        <!-- Section 12 -->
         <div class="terms-section">
-          <h3>12. Contact Information</h3>
-          <p>For questions about these Terms & Conditions, contact:</p>
-          <ul class="contact-info">
-            <li>
-              <strong>Developer:</strong> Imad Khan 
-              <a href="https://www.instagram.com/_imxd12" target="_blank" rel="noopener noreferrer" class="contact-link">@imxd12</a>
-            </li>
-
-            <li>
-              <strong>Email:</strong> 
-              <a href="mailto:imadak999@gmail.com" class="contact-link">imadak999@gmail.com</a>
-            </li>
-
-            <li>
-              <strong>Instagram:</strong> 
-              <a href="https://www.instagram.com/_imxd12" target="_blank" rel="noopener noreferrer" class="contact-link">@_imxd12</a>
-            </li>
-
-            <li>
-              <strong>WhatsApp:</strong> 
-              <a href="https://wa.me/918097814934" target="_blank" rel="noopener noreferrer" class="contact-link">+91 80978 14934</a>
-            </li>
-            <li><strong>Version:</strong> MoneyFlow v1.0 (2025)</li>
-          </ul>  
+          <h3>12. Severability</h3>
+          <p>If any provision of these Terms is found to be unenforceable or invalid, that provision shall be limited or eliminated to the minimum extent necessary so that these Terms shall otherwise remain in full force and effect.</p>
         </div>
 
+        <!-- Section 13 -->
+        <div class="terms-section">
+          <h3>13. Entire Agreement</h3>
+          <p>These Terms & Conditions, together with the Privacy Policy, constitute the entire agreement between you and MoneyFlow regarding the use of the App, superseding any prior agreements.</p>
+        </div>
+
+        <!-- Section 14 -->
+        <div class="terms-section" id="section-5">
+          <h3>14. Contact Information</h3>
+          <p>For questions about these Terms & Conditions, contact:</p>
+          
+          <div class="contact-cards">
+            <div class="contact-card">
+              <div class="contact-icon">👨‍💻</div>
+              <div class="contact-info">
+                <strong>Developer</strong>
+                <p>Imad Khan</p>
+                <a href="https://www.instagram.com/_imxd12" target="_blank" rel="noopener noreferrer" class="contact-link">@imxd12</a>
+              </div>
+            </div>
+            
+            <div class="contact-card">
+              <div class="contact-icon">📧</div>
+              <div class="contact-info">
+                <strong>Email</strong>
+                <a href="mailto:imadak999@gmail.com" class="contact-link">imadak999@gmail.com</a>
+              </div>
+            </div>
+            
+            <div class="contact-card">
+              <div class="contact-icon">📱</div>
+              <div class="contact-info">
+                <strong>Instagram</strong>
+                <a href="https://www.instagram.com/_imxd12" target="_blank" rel="noopener noreferrer" class="contact-link">@_imxd12</a>
+              </div>
+            </div>
+            
+            <div class="contact-card">
+              <div class="contact-icon">💬</div>
+              <div class="contact-info">
+                <strong>WhatsApp</strong>
+                <a href="https://wa.me/918097814934" target="_blank" rel="noopener noreferrer" class="contact-link">+91 80978 14934</a>
+              </div>
+            </div>
+          </div>
+          
+          <div class="version-info">
+            <p><strong>App Version:</strong> MoneyFlow v1.0 (2025)</p>
+            <p><strong>Terms Version:</strong> 1.0</p>
+          </div>
+        </div>
+
+        <!-- Terms Footer -->
         <div class="terms-footer">
-          <p><strong>Last Updated:</strong> October 7, 2025</p>
-          <p>By continuing to use MoneyFlow, you acknowledge that you have read, understood, and agree to be bound by these Terms & Conditions.</p>
+          <div class="footer-update">
+            <p><strong>Last Updated:</strong> October 12, 2025</p>
+            <p><strong>Effective Date:</strong> October 12, 2025</p>
+          </div>
+          
+          <div class="acceptance-box">
+            <h4>📋 Your Agreement</h4>
+            <p>By continuing to use MoneyFlow, you acknowledge that you have:</p>
+            <ul class="acceptance-list">
+              <li>
+                <span class="check-icon">✅</span>
+                <span>Read and understood these Terms & Conditions</span>
+              </li>
+              <li>
+                <span class="check-icon">✅</span>
+                <span>Agreed to be bound by these terms</span>
+              </li>
+              <li>
+                <span class="check-icon">✅</span>
+                <span>Understood your rights and responsibilities</span>
+              </li>
+              <li>
+                <span class="check-icon">✅</span>
+                <span>Reviewed our Privacy Policy</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- CTA Section -->
+          <div class="cta-section">
+            <h4>Need More Information?</h4>
+            <p>Review our other policies or get in touch with us.</p>
+            <div class="cta-buttons">
+              <a href="privacy-policy.html" class="btn btn-primary">
+                <span>🔒 Privacy Policy</span>
+              </a>
+              <a href="feedback.html" class="btn btn-secondary">
+                <span>📝 Contact Us</span>
+              </a>
+            </div>
+          </div>
         </div>
 
       </div>
@@ -201,14 +360,16 @@
     <div class="footer-content">
       <div class="footer-section">
         <h3>About MoneyFlow</h3>
-        <p>A comprehensive personal finance tracking application designed for complete money management.</p>
+        <p>A comprehensive personal finance tracking application designed for complete money management with your privacy in mind.</p>
       </div>
       
       <div class="footer-section">
         <h3>Quick Links</h3>
         <ul>
+          <li><a href="index.html">Home</a></li>
           <li><a href="howtouse.html">How to Use</a></li>
           <li><a href="profile.html">About Developer</a></li>
+          <li><a href="feedback.html">Give Feedback</a></li>
           <li><a href="terms-conditions.html">Terms & Conditions</a></li>
           <li><a href="privacy-policy.html">Privacy Policy</a></li>
         </ul>
@@ -219,11 +380,13 @@
         <p><strong>Imad Khan</strong></p>
         <a href="https://www.instagram.com/_imxd12" target="_blank" rel="noopener noreferrer"><p class="profile-handle">@imxd12</p></a>
         <p><a href="mailto:imadak999@gmail.com">imadak999@gmail.com</a></p>
+        <p><a href="https://wa.me/918097814934" target="_blank" rel="noopener noreferrer">WhatsApp</a></p>
       </div>
     </div>
     
     <div class="footer-bottom">
       <p>&copy; 2025 MoneyFlow by Imad Khan. All rights reserved.</p>
+      <p class="footer-terms">By using this app, you agree to our Terms & Conditions and Privacy Policy</p>
     </div>
   </footer>
 

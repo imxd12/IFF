@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="PocketCal - Visual calendar-based pocket money tracker with powerful analytics">
-  <meta name="author" content="Imad Khan (@imxd-2025)">
+  <meta name="author" content="Imad Khan (@imxd12)">
   <meta name="theme-color" content="#10b981">
   
   <title>PocketCal - Calendar Money Tracker | MoneyFlow</title>
@@ -20,6 +20,10 @@
   
   <!-- Chart.js for Analytics -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  
+  <!-- jsPDF for PDF Export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 </head>
 <body>
 
@@ -136,6 +140,9 @@
         <input type="date" class="form-input date-picker" id="pcSearch" placeholder="Jump to date" title="Jump to specific date">
         <button class="btn btn-primary" id="btnAddToday">
           <span>➕ Add Today</span>
+        </button>
+        <button class="btn btn-secondary" onclick="openPDFModal()">
+          <span>📄 Export PDF</span>
         </button>
         <button class="btn btn-secondary" onclick="exportData()">
           <span>📊 Export CSV</span>
@@ -257,6 +264,83 @@
   </div>
 
   <!-- ========================================
+       PDF EXPORT OPTIONS MODAL
+  ======================================== -->
+  <div class="modal" id="pdfModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title">📄 Export PDF Report</h2>
+        <button class="modal-close" onclick="closePDFModal()">&times;</button>
+      </div>
+      
+      <div class="pdf-options">
+        <p class="modal-subtitle">Select the time period for your report:</p>
+        
+        <div class="pdf-option-grid">
+          <button class="pdf-option-btn" onclick="exportPDF('today')">
+            <div class="option-icon">📅</div>
+            <div class="option-label">Today</div>
+            <div class="option-desc">Current day report</div>
+          </button>
+          
+          <button class="pdf-option-btn" onclick="exportPDF('week')">
+            <div class="option-icon">📆</div>
+            <div class="option-label">This Week</div>
+            <div class="option-desc">Last 7 days</div>
+          </button>
+          
+          <button class="pdf-option-btn" onclick="exportPDF('month')">
+            <div class="option-icon">📊</div>
+            <div class="option-label">This Month</div>
+            <div class="option-desc">Current month</div>
+          </button>
+          
+          <button class="pdf-option-btn" onclick="exportPDF('year')">
+            <div class="option-icon">📈</div>
+            <div class="option-label">This Year</div>
+            <div class="option-desc">Current year</div>
+          </button>
+          
+          <button class="pdf-option-btn" onclick="exportPDF('all')">
+            <div class="option-icon">💎</div>
+            <div class="option-label">All Time</div>
+            <div class="option-desc">Complete history</div>
+          </button>
+          
+          <button class="pdf-option-btn" onclick="showDateRangeForm()">
+            <div class="option-icon">🗓️</div>
+            <div class="option-label">Date Range</div>
+            <div class="option-desc">Custom period</div>
+          </button>
+        </div>
+        
+        <!-- Date Range Form (Hidden by default) -->
+        <div class="date-range-form" id="dateRangeForm" style="display: none;">
+          <h3>Select Custom Date Range</h3>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">From Date</label>
+              <input type="date" class="form-input" id="pdfFromDate" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">To Date</label>
+              <input type="date" class="form-input" id="pdfToDate" required>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button class="btn btn-primary" onclick="exportPDFDateRange()">
+              <span>📄 Generate PDF</span>
+            </button>
+            <button class="btn btn-secondary" onclick="hideDateRangeForm()">
+              <span>Cancel</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================
        FLOATING ACTION BUTTON (FAB)
   ======================================== -->
   <button class="fab" onclick="quickAddToday()" title="Quick Add Today">
@@ -273,7 +357,7 @@
       <!-- About PocketCal -->
       <div class="footer-section">
         <h3>About PocketCal</h3>
-        <p>Visual calendar-based tracking for pocket money from Dad. See daily earnings at a glance with powerful analytics and beautiful charts.</p>
+        <p>Visual calendar-based tracking for pocket money. See daily earnings at a glance with powerful analytics and beautiful charts.</p>
         <div class="footer-stats">
           <div class="stat-item">
             <strong id="footerEntries">0</strong>
@@ -295,7 +379,7 @@
           <li>📅 Month/week/day tracking</li>
           <li>🗂️ 8 spending categories</li>
           <li>📈 6-month trend analysis</li>
-          <li>📥 CSV/JSON export & import</li>
+          <li>📥 CSV/JSON/PDF export</li>
           <li>🌓 Dark mode support</li>
           <li>💾 Auto-save to localStorage</li>
         </ul>
@@ -306,8 +390,9 @@
         <h3>Quick Actions</h3>
         <div class="footer-actions">
           <button class="btn btn-secondary btn-sm" onclick="quickAddToday()">➕ Quick Add</button>
-          <button class="btn btn-secondary btn-sm" onclick="exportData()">📊 Export CSV</button>
-          <button class="btn btn-secondary btn-sm" onclick="exportJSON()">📤 Export JSON</button>
+          <button class="btn btn-secondary btn-sm" onclick="openPDFModal()">📄 PDF</button>
+          <button class="btn btn-secondary btn-sm" onclick="exportData()">📊 CSV</button>
+          <button class="btn btn-secondary btn-sm" onclick="exportJSON()">📤 JSON</button>
           <button class="btn btn-secondary btn-sm" onclick="clearAllData()">🗑️ Clear All</button>
         </div>
       </div>
@@ -325,7 +410,9 @@
         <div class="footer-social">
           <h4>Developer</h4>
           <p><strong>Imad Khan</strong></p>
-          <p class="footer-handle"><a href="https://www.instagram.com/_imxd12" target="_blank" rel="noopener noreferrer"><p class="profile-handle">@imxd12</p></a></p>
+          <p class="footer-handle">
+            <a href="https://www.instagram.com/_imxd12" target="_blank" rel="noopener noreferrer">@imxd12</a>
+          </p>
           <div class="social-links">
             <a href="mailto:imadak999@gmail.com" title="Email">📧</a>
             <a href="https://instagram.com/_imxd12" target="_blank" title="Instagram">📷</a>
@@ -336,10 +423,11 @@
     
     <!-- Footer Bottom -->
     <div class="footer-bottom">
-      <p>&copy; 2025 MoneyFlow by <strong>Imad Khan <a href="https://www.instagram.com/_imxd12" target="_blank" rel="noopener noreferrer"><p class="profile-handle">@imxd12</p></a>
-        </strong>. All rights reserved.</p>
+      <p>&copy; 2025 MoneyFlow by <strong>Imad Khan 
+        <a href="https://www.instagram.com/_imxd12" target="_blank" rel="noopener noreferrer">@imxd12</a>
+      </strong>. All rights reserved.</p>
       <p class="footer-version">PocketCal v1.0.0 | Last Updated: October 2025</p>
-     </div>
+    </div>
   </footer>
 
   <!-- Scripts -->

@@ -849,3 +849,696 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ========================================
+   PDF EXPORT MODAL - ULTRA SMOOTH
+======================================== */
+
+/* PDF Modal Specific Styles */
+#pdfModal .modal-content {
+  max-width: 700px;
+  animation: pdfModalSlideIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transform: translateZ(0);
+}
+
+@keyframes pdfModalSlideIn {
+  0% {
+    opacity: 0;
+    filter: blur(20px);
+    transform: scale(0.8) translateY(-50px) translateZ(0);
+  }
+  100% {
+    opacity: 1;
+    filter: blur(0);
+    transform: scale(1) translateY(0) translateZ(0);
+  }
+}
+
+/* Modal Header for PDF */
+#pdfModal .modal-header {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(59, 130, 246, 0.1) 100%);
+  border-bottom: 2px solid var(--accent);
+  position: relative;
+  overflow: hidden;
+}
+
+#pdfModal .modal-header::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.1) 0%, transparent 70%);
+  animation: headerPulse 4s ease-in-out infinite;
+}
+
+@keyframes headerPulse {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.5;
+  }
+  50% {
+    transform: translate(-10%, -10%) scale(1.1);
+    opacity: 0.8;
+  }
+}
+
+#pdfModal .modal-title {
+  position: relative;
+  z-index: 1;
+  background: linear-gradient(135deg, var(--accent) 0%, #3b82f6 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: titleShimmer 3s ease-in-out infinite;
+}
+
+@keyframes titleShimmer {
+  0%, 100% {
+    filter: brightness(1);
+  }
+  50% {
+    filter: brightness(1.3);
+  }
+}
+
+/* PDF Options Container */
+.pdf-options {
+  padding: clamp(15px, 3vw, 25px);
+  animation: optionsSlideIn 0.9s cubic-bezier(0.19, 1, 0.22, 1) 0.2s backwards;
+}
+
+@keyframes optionsSlideIn {
+  from {
+    opacity: 0;
+    filter: blur(15px);
+    transform: translateY(30px) translateZ(0);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(0) translateZ(0);
+  }
+}
+
+/* Modal Subtitle */
+.modal-subtitle {
+  font-size: clamp(14px, 2.5vw, 16px);
+  color: var(--text-secondary);
+  margin-bottom: clamp(20px, 3vw, 25px);
+  text-align: center;
+  line-height: 1.6;
+  animation: subtitleFadeIn 0.8s cubic-bezier(0.19, 1, 0.22, 1) 0.3s backwards;
+  position: relative;
+}
+
+@keyframes subtitleFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(15px) translateZ(0);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) translateZ(0);
+  }
+}
+
+.modal-subtitle::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  border-radius: 2px;
+  animation: lineExpand 1s cubic-bezier(0.19, 1, 0.22, 1) 0.5s backwards;
+}
+
+@keyframes lineExpand {
+  from {
+    width: 0;
+    opacity: 0;
+  }
+  to {
+    width: 60px;
+    opacity: 1;
+  }
+}
+
+/* PDF Option Grid */
+.pdf-option-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr));
+  gap: clamp(14px, 2.5vw, 18px);
+  margin-bottom: clamp(20px, 3vw, 25px);
+  animation: gridFadeIn 1s cubic-bezier(0.19, 1, 0.22, 1) 0.4s backwards;
+}
+
+@keyframes gridFadeIn {
+  from {
+    opacity: 0;
+    filter: blur(20px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+
+/* PDF Option Button */
+.pdf-option-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(8px, 1.5vw, 12px);
+  padding: clamp(18px, 3vw, 24px) clamp(12px, 2vw, 16px);
+  background: var(--glass);
+  border: 2px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  position: relative;
+  overflow: hidden;
+  animation: btnSlideIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) backwards;
+  transform: translateZ(0);
+}
+
+@keyframes btnSlideIn {
+  from {
+    opacity: 0;
+    filter: blur(12px);
+    transform: scale(0.7) translateY(30px) translateZ(0);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: scale(1) translateY(0) translateZ(0);
+  }
+}
+
+/* Staggered animation delays */
+.pdf-option-btn:nth-child(1) { animation-delay: 0.1s; }
+.pdf-option-btn:nth-child(2) { animation-delay: 0.15s; }
+.pdf-option-btn:nth-child(3) { animation-delay: 0.2s; }
+.pdf-option-btn:nth-child(4) { animation-delay: 0.25s; }
+.pdf-option-btn:nth-child(5) { animation-delay: 0.3s; }
+.pdf-option-btn:nth-child(6) { animation-delay: 0.35s; }
+
+/* Button gradient overlay */
+.pdf-option-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, var(--accent) 0%, #3b82f6 100%);
+  opacity: 0;
+  transition: opacity 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+  pointer-events: none;
+}
+
+.pdf-option-btn:hover::before {
+  opacity: 0.1;
+}
+
+/* Button shine effect */
+.pdf-option-btn::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    45deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.3) 50%,
+    transparent 70%
+  );
+  transform: translateX(-100%) translateY(-100%) rotate(45deg);
+  transition: transform 0.8s cubic-bezier(0.19, 1, 0.22, 1);
+  pointer-events: none;
+}
+
+.pdf-option-btn:hover::after {
+  transform: translateX(100%) translateY(100%) rotate(45deg);
+}
+
+/* Hover state */
+.pdf-option-btn:hover {
+  transform: translateY(-8px) scale(1.08) translateZ(0);
+  box-shadow: 
+    0 15px 45px rgba(16, 185, 129, 0.25),
+    0 0 60px rgba(16, 185, 129, 0.1);
+  border-color: var(--accent);
+  background: var(--bg);
+}
+
+/* Active/Click state */
+.pdf-option-btn:active {
+  transform: translateY(-4px) scale(1.02) translateZ(0);
+  box-shadow: 0 8px 25px rgba(16, 185, 129, 0.2);
+}
+
+/* Option Icon */
+.option-icon {
+  font-size: clamp(32px, 6vw, 44px);
+  transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  filter: drop-shadow(0 4px 12px rgba(16, 185, 129, 0.2));
+  position: relative;
+  z-index: 1;
+}
+
+.pdf-option-btn:hover .option-icon {
+  transform: scale(1.3) rotate(15deg) translateY(-5px) translateZ(0);
+  filter: drop-shadow(0 8px 20px rgba(16, 185, 129, 0.4));
+}
+
+/* Option Label */
+.option-label {
+  font-size: clamp(14px, 2.5vw, 16px);
+  font-weight: 700;
+  color: var(--text);
+  transition: all 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+  position: relative;
+  z-index: 1;
+  text-align: center;
+}
+
+.pdf-option-btn:hover .option-label {
+  color: var(--accent);
+  transform: translateY(-2px) translateZ(0);
+}
+
+/* Option Description */
+.option-desc {
+  font-size: clamp(11px, 2vw, 12px);
+  color: var(--text-secondary);
+  text-align: center;
+  transition: all 0.3s ease;
+  position: relative;
+  z-index: 1;
+  line-height: 1.4;
+}
+
+.pdf-option-btn:hover .option-desc {
+  color: var(--text);
+}
+
+/* ========================================
+   DATE RANGE FORM
+======================================== */
+.date-range-form {
+  margin-top: clamp(25px, 4vw, 35px);
+  padding: clamp(20px, 3.5vw, 28px);
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(59, 130, 246, 0.05) 100%);
+  border-radius: var(--radius-lg);
+  border: 3px solid var(--accent);
+  position: relative;
+  overflow: hidden;
+  animation: formSlideIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 10px 40px rgba(16, 185, 129, 0.15);
+  transform: translateZ(0);
+}
+
+@keyframes formSlideIn {
+  from {
+    opacity: 0;
+    filter: blur(20px);
+    transform: scale(0.9) translateY(40px) translateZ(0);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: scale(1) translateY(0) translateZ(0);
+  }
+}
+
+/* Form background decoration */
+.date-range-form::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.1) 0%, transparent 60%);
+  animation: formPulse 5s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes formPulse {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(-5%, -5%) scale(1.05);
+  }
+}
+
+/* Form heading */
+.date-range-form h3 {
+  font-size: clamp(17px, 3.2vw, 20px);
+  font-weight: 800;
+  color: var(--accent);
+  margin-bottom: clamp(18px, 3vw, 24px);
+  text-align: center;
+  position: relative;
+  z-index: 1;
+  animation: formHeadingSlide 0.7s cubic-bezier(0.19, 1, 0.22, 1) 0.2s backwards;
+}
+
+@keyframes formHeadingSlide {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) translateZ(0);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) translateZ(0);
+  }
+}
+
+/* Form Row */
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
+  gap: clamp(15px, 2.5vw, 20px);
+  margin-bottom: clamp(18px, 3vw, 24px);
+  position: relative;
+  z-index: 1;
+  animation: formRowSlide 0.7s cubic-bezier(0.19, 1, 0.22, 1) 0.3s backwards;
+}
+
+@keyframes formRowSlide {
+  from {
+    opacity: 0;
+    filter: blur(10px);
+    transform: translateX(-30px) translateZ(0);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateX(0) translateZ(0);
+  }
+}
+
+/* Form Group in Date Range */
+.date-range-form .form-group {
+  margin-bottom: 0;
+  animation: formGroupPop 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) backwards;
+}
+
+.date-range-form .form-group:nth-child(1) { animation-delay: 0.1s; }
+.date-range-form .form-group:nth-child(2) { animation-delay: 0.2s; }
+
+@keyframes formGroupPop {
+  from {
+    opacity: 0;
+    transform: scale(0.8) translateZ(0);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateZ(0);
+  }
+}
+
+/* Form Label in Date Range */
+.date-range-form .form-label {
+  font-size: clamp(13px, 2.3vw, 14px);
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 8px;
+  display: block;
+}
+
+/* Form Input in Date Range */
+.date-range-form .form-input {
+  width: 100%;
+  padding: clamp(10px, 2vw, 12px) clamp(12px, 2.5vw, 16px);
+  border: 2px solid var(--glass-border);
+  border-radius: var(--radius);
+  background: var(--bg);
+  color: var(--text);
+  font-size: clamp(14px, 2.5vw, 15px);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  font-family: 'Inter', sans-serif;
+}
+
+.date-range-form .form-input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 
+    0 0 0 4px rgba(16, 185, 129, 0.1),
+    0 4px 20px rgba(16, 185, 129, 0.2);
+  transform: translateY(-2px) translateZ(0);
+  background: var(--glass);
+}
+
+.date-range-form .form-input:hover {
+  border-color: var(--accent);
+  background: var(--glass);
+}
+
+/* Form Actions */
+.form-actions {
+  display: flex;
+  gap: clamp(12px, 2vw, 15px);
+  justify-content: center;
+  flex-wrap: wrap;
+  position: relative;
+  z-index: 1;
+  animation: formActionsSlide 0.7s cubic-bezier(0.19, 1, 0.22, 1) 0.4s backwards;
+}
+
+@keyframes formActionsSlide {
+  from {
+    opacity: 0;
+    filter: blur(12px);
+    transform: translateY(30px) translateZ(0);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(0) translateZ(0);
+  }
+}
+
+/* Form Buttons */
+.form-actions .btn {
+  min-width: clamp(140px, 25vw, 170px);
+  padding: clamp(12px, 2.5vw, 14px) clamp(20px, 4vw, 28px);
+  font-size: clamp(14px, 2.5vw, 15px);
+  font-weight: 700;
+  transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  position: relative;
+  overflow: hidden;
+}
+
+.form-actions .btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.form-actions .btn:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+.form-actions .btn:hover {
+  transform: translateY(-4px) scale(1.05) translateZ(0);
+  box-shadow: 0 12px 35px rgba(16, 185, 129, 0.3);
+}
+
+.form-actions .btn:active {
+  transform: translateY(-2px) scale(1.02) translateZ(0);
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.2);
+}
+
+.form-actions .btn-primary {
+  background: linear-gradient(135deg, var(--accent) 0%, #059669 100%);
+  border: none;
+  color: white;
+  box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
+}
+
+.form-actions .btn-primary:hover {
+  background: linear-gradient(135deg, #059669 0%, var(--accent) 100%);
+  box-shadow: 0 12px 35px rgba(16, 185, 129, 0.4);
+}
+
+.form-actions .btn-secondary {
+  background: var(--glass);
+  border: 2px solid var(--glass-border);
+  color: var(--text);
+}
+
+.form-actions .btn-secondary:hover {
+  background: var(--bg);
+  border-color: var(--accent);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.1);
+}
+
+/* ========================================
+   MOBILE RESPONSIVE
+======================================== */
+
+/* Extra Small Mobile */
+@media (max-width: 374px) {
+  .pdf-option-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  
+  .pdf-option-btn {
+    padding: 16px 12px;
+  }
+  
+  .option-icon {
+    font-size: 32px;
+  }
+  
+  .date-range-form {
+    padding: 16px;
+  }
+  
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  
+  .form-actions {
+    flex-direction: column;
+  }
+  
+  .form-actions .btn {
+    width: 100%;
+  }
+}
+
+/* Small Mobile */
+@media (min-width: 375px) and (max-width: 480px) {
+  .pdf-option-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Tablet */
+@media (min-width: 481px) and (max-width: 768px) {
+  .pdf-option-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Desktop */
+@media (min-width: 769px) {
+  #pdfModal .modal-content {
+    max-width: 750px;
+  }
+  
+  .pdf-option-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* ========================================
+   ACCESSIBILITY
+======================================== */
+.pdf-option-btn:focus-visible,
+.form-actions .btn:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 4px;
+}
+
+/* ========================================
+   DARK MODE ADJUSTMENTS
+======================================== */
+@media (prefers-color-scheme: dark) {
+  .date-range-form {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.12) 0%, rgba(59, 130, 246, 0.08) 100%);
+  }
+  
+  .pdf-option-btn {
+    background: rgba(16, 185, 129, 0.05);
+  }
+  
+  .pdf-option-btn:hover {
+    background: rgba(16, 185, 129, 0.1);
+  }
+}
+
+/* ========================================
+   REDUCE MOTION
+======================================== */
+@media (prefers-reduced-motion: reduce) {
+  .pdf-option-btn,
+  .date-range-form,
+  .pdf-options,
+  .modal-subtitle,
+  .form-row,
+  .form-actions {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.15s !important;
+  }
+  
+  .pdf-option-btn::after,
+  .date-range-form::before,
+  #pdfModal .modal-header::before {
+    animation: none !important;
+  }
+}
+
+/* ========================================
+   LOADING STATE (OPTIONAL)
+======================================== */
+.pdf-option-btn.loading {
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+.pdf-option-btn.loading .option-icon {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ========================================
+   SUCCESS STATE (OPTIONAL)
+======================================== */
+.pdf-option-btn.success {
+  border-color: #10b981;
+  background: rgba(16, 185, 129, 0.1);
+}
+
+.pdf-option-btn.success .option-icon {
+  animation: successBounce 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes successBounce {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.3);
+  }
+}

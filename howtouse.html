@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>How to Use - MoneyFlow</title>
+  <link rel="stylesheet" href="global.css">
+  <link rel="stylesheet" href="index.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- PWA Meta Tags -->
+  <meta name="theme-color" content="#10b981">
+  <link rel="apple-touch-icon" href="./icon-192.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png">
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="header-left">
+      <svg class="brand-logo" viewBox="0 0 100 100">
+        <defs>
+          <linearGradient id="brandGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#10b981"/>
+            <stop offset="100%" style="stop-color:#3b82f6"/>
+          </linearGradient>
+        </defs>
+        <circle cx="50" cy="50" r="45" fill="url(#brandGrad)"/>
+        <text x="50" y="65" font-size="40" font-weight="800" fill="white" text-anchor="middle">₹</text>
+      </svg>
+      <h1 class="brand-name">MoneyFlow</h1>
+    </div>
+    
+    <div class="header-center">
+      <div class="time-display" id="timeNow">Loading...</div>
+    </div>
+    
+    <div class="header-right">
+      <div class="theme-toggle">
+        <div class="theme-toggle-slider">☀️</div>
+      </div>
+      <div class="profile-btn" onclick="window.location.href='profile.html'">
+        <img src="Imad.jpg" alt="Profile" id="profileImage">
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <div class="container">
+    
+    <section class="help-page">
+      <h2 class="page-title">📖 Complete Guide to MoneyFlow</h2>
+      
+      <div class="help-content">
+        
+        <!-- Spendly Section -->
+        <h3>💰 Spendly - Income & Expense Tracker</h3>
+        <p>Track daily income and expenses with detailed categories. View balance and export reports.</p>
+        
+        <h4>How to Use Spendly:</h4>
+        <ul>
+          <li><strong>Adding Income:</strong> Click the "Income" tab, select date, amount, category (Salary, Business, Gift, etc.), add notes, and save</li>
+          <li><strong>Adding Expense:</strong> Click the "Expense" tab, choose from 11 categories (Food, Travel, Shopping, Bills, etc.), select subcategory, enter amount and save</li>
+          <li><strong>View Transactions:</strong> All entries appear in the list below with type, date, category, and amount</li>
+          <li><strong>Edit/Delete:</strong> Click any transaction to edit details or delete it</li>
+          <li><strong>Quick Add:</strong> Use the floating action button (FAB) in bottom-right for quick expense entry</li>
+          <li><strong>Filter Data:</strong> Use date picker or search box to find specific transactions</li>
+          <li><strong>Export Data:</strong> Click "Export CSV" to download your data for backup or analysis</li>
+          <li><strong>Import Data:</strong> Use "Import JSON" to restore previously backed up data</li>
+        </ul>
+
+        <h4>Available Categories:</h4>
+        <p>Food, Travel, Rent, Shopping, Bills, Health, Entertainment, Education, Savings, Family, Other - each with multiple subcategories</p>
+
+        <!-- Nexus Section -->
+        <h3>💼 Nexus - Work & Earnings Tracker</h3>
+        <p>Log work items, hours, bonuses, and penalties. Perfect for gig workers and freelancers.</p>
+        
+        <h4>How to Use Nexus:</h4>
+        <ul>
+          <li><strong>Create Entry:</strong> Click "Add New Entry" button or use FAB</li>
+          <li><strong>Fill Details:</strong> Enter date, select work category (Freelance, Delivery, Design, Development, etc.)</li>
+          <li><strong>Track Metrics:</strong> Input items completed, hours worked, bonus earned, and any penalties</li>
+          <li><strong>Auto Calculate:</strong> Payout is calculated automatically as: (Items × 10) + (Hours × 50) + Bonus - Penalty</li>
+          <li><strong>Manual Override:</strong> You can manually enter payout amount if calculation doesn't fit your work</li>
+          <li><strong>Add Notes:</strong> Describe the work done for future reference</li>
+          <li><strong>View Analytics:</strong> Check daily earnings trend, category distribution, items vs hours comparison, and bonus/penalty analysis</li>
+          <li><strong>Export Reports:</strong> Download JSON or CSV files for record keeping</li>
+        </ul>
+
+        <h4>Analytics Features:</h4>
+        <ul>
+          <li>Daily Earnings Trend Chart (Last 14 Days)</li>
+          <li>Category-wise Earnings Distribution</li>
+          <li>Items vs Hours Comparison</li>
+          <li>Bonus vs Penalty Analysis</li>
+          <li>Total Items, Hours, Bonus, Penalty metrics</li>
+        </ul>
+
+        <!-- PocketCal Section -->
+        <h3>📅 PocketCal - Calendar Money Tracker</h3>
+        <p>Calendar view of pocket money received. See monthly totals and daily averages.</p>
+        
+        <h4>How to Use PocketCal:</h4>
+        <ul>
+          <li><strong>Navigate Calendar:</strong> Use Previous/Next buttons to switch months</li>
+          <li><strong>Add Entry:</strong> Click any date on calendar to add/edit entry for that day</li>
+          <li><strong>Quick Add Today:</strong> Use "Add Today" button or FAB to quickly log today's amount</li>
+          <li><strong>Jump to Date:</strong> Use date picker to navigate to specific date quickly</li>
+          <li><strong>View at Glance:</strong> Days with entries show green highlight and amount below date</li>
+          <li><strong>Today's Date:</strong> Current date highlighted with blue border</li>
+          <li><strong>Categories:</strong> Choose from Pocket Money, Gift, Allowance, Reward, Work, Education, Festival, Other</li>
+          <li><strong>View Charts:</strong> Analyze daily amounts, category distribution, weekly comparison, and 6-month trend</li>
+        </ul>
+
+        <h4>Summary Statistics:</h4>
+        <ul>
+          <li>This Month Total - Total amount received this month</li>
+          <li>All-Time Total - Cumulative amount since tracking started</li>
+          <li>Highest Day - Maximum amount received in a single day</li>
+          <li>Average/Day - Average daily amount for entries logged</li>
+          <li>Days Tracked - Total number of days with entries</li>
+          <li>This Week Total - Amount received in current week</li>
+          <li>Best Month - Highest monthly total ever recorded</li>
+        </ul>
+
+        <!-- General Tips -->
+        <h3>💡 Essential Tips & Best Practices</h3>
+        <ul>
+          <li><strong>Regular Backups:</strong> Export your data weekly using "Export" buttons in each module</li>
+          <li><strong>Consistent Categorization:</strong> Use categories consistently for accurate analytics</li>
+          <li><strong>Daily Updates:</strong> Update entries daily to maintain accurate financial picture</li>
+          <li><strong>Dashboard Overview:</strong> Check main dashboard for quick overview of all modules</li>
+          <li><strong>Theme Toggle:</strong> Switch to dark mode (moon icon) for comfortable night usage</li>
+          <li><strong>Search & Filter:</strong> Use search boxes and date filters to find old transactions quickly</li>
+          <li><strong>Notes Field:</strong> Always add notes for better tracking and memory recall</li>
+          <li><strong>Edit Entries:</strong> Click any entry to edit if you made a mistake</li>
+        </ul>
+
+        <!-- Data Management -->
+        <h3>💾 Data Management</h3>
+        <ul>
+          <li><strong>Local Storage:</strong> All data stored locally in your browser - no server uploads</li>
+          <li><strong>Privacy:</strong> Your financial data stays on your device only</li>
+          <li><strong>Export Formats:</strong> CSV for spreadsheets, JSON for backup/restore</li>
+          <li><strong>Import Data:</strong> Restore from JSON backup if you clear browser data</li>
+          <li><strong>Multiple Devices:</strong> Use export/import to transfer data between devices</li>
+          <li><strong>Clear Data:</strong> Use Developer Options to clear all data (caution: irreversible)</li>
+        </ul>
+
+        <!-- Keyboard Shortcuts -->
+        <h3>⌨️ Quick Actions</h3>
+        <ul>
+          <li><strong>FAB Button:</strong> Floating button in bottom-right for quick entry in all modules</li>
+          <li><strong>Profile Button:</strong> Click top-right profile photo to view developer info</li>
+          <li><strong>Set Name:</strong> Customize welcome greeting with your name</li>
+          <li><strong>Bottom Navigation:</strong> Swipe effect shows active tab - easy switching between modules</li>
+        </ul>
+
+        <!-- Troubleshooting -->
+        <h3>🔧 Troubleshooting</h3>
+        <ul>
+          <li><strong>Data Not Saving?</strong> Check browser settings - ensure localStorage is enabled</li>
+          <li><strong>Charts Not Loading?</strong> Refresh page or check internet connection (Chart.js requires CDN)</li>
+          <li><strong>Lost Data?</strong> Always keep export backups - data clears if browser cache is cleared</li>
+          <li><strong>Modal Not Closing?</strong> Click outside modal area or use X button</li>
+          <li><strong>Theme Not Switching?</strong> Clear cache and reload page</li>
+        </ul>
+
+        <!-- Advanced Features -->
+        <h3>🚀 Advanced Features</h3>
+        <ul>
+          <li><strong>PWA Support:</strong> Install as app on mobile for offline access (manifest.json included)</li>
+          <li><strong>Service Worker:</strong> Caches files for faster loading and offline functionality</li>
+          <li><strong>Responsive Design:</strong> Works perfectly on mobile, tablet, and desktop</li>
+          <li><strong>Geolocation:</strong> Profile shows your current location (requires permission)</li>
+          <li><strong>Scroll Animations:</strong> Smooth fade-in and blur effects as you scroll</li>
+          <li><strong>Liquid Navigation:</strong> Bottom nav bar with flowing liquid animation</li>
+        </ul>
+
+        <!-- Contact & Support -->
+        <h3>📞 Need Help?</h3>
+        <p>If you encounter issues or have suggestions:</p>
+        <ul class="contact-info">
+          <li>
+            <strong>Developer:</strong> Imad Khan 
+            <a href="https://www.instagram.com/_imxd12" target="_blank" rel="noopener noreferrer" class="contact-link">@imxd12</a>
+          </li>
+
+          <li>
+            <strong>Email:</strong> 
+            <a href="mailto:imadak999@gmail.com" class="contact-link">imadak999@gmail.com</a>
+          </li>
+
+          <li>
+            <strong>Instagram:</strong> 
+            <a href="https://www.instagram.com/_imxd12" target="_blank" rel="noopener noreferrer" class="contact-link">@_imxd12</a>
+          </li>
+
+          <li>
+            <strong>WhatsApp:</strong> 
+            <a href="https://wa.me/918097814934" target="_blank" rel="noopener noreferrer" class="contact-link">+91 80978 14934</a>
+          </li>
+          <li><strong>Version:</strong> MoneyFlow v1.0 (2025)</li>
+        </ul>   
+
+        <!-- Footer Note -->
+        <div style="margin-top: 30px; padding: 20px; background: var(--glass); border-radius: var(--radius); border: 1px solid var(--glass-border); text-align: center;">
+          <p style="font-size: 14px; color: var(--text-secondary); margin: 0;">
+            <strong>💡 Pro Tip:</strong> Bookmark this page and make it your daily habit to track finances. 
+            Consistency is the key to financial awareness! 🎯
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+  
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-section">
+        <h3>About MoneyFlow</h3>
+        <p>A comprehensive personal finance tracking application designed for complete money management.</p>
+      </div>
+      
+      <div class="footer-section">
+        <h3>Quick Links</h3>
+        <ul>
+          <li><a href="howtouse.html">How to Use</a></li>
+          <li><a href="profile.html">About Developer</a></li>
+          <li><a href="terms-conditions.html">Terms & Conditions</a></li>
+          <li><a href="privacy-policy.html">Privacy Policy</a></li>
+        </ul>
+      </div>
+      
+      <div class="footer-section">
+        <h3>Developer</h3>
+        <p><strong>Imad Khan</strong></p>
+        <a href="https://www.instagram.com/_imxd12" target="_blank" rel="noopener noreferrer"><p class="profile-handle">@imxd12</p></a>
+        <p><a href="mailto:imadak999@gmail.com">imadak999@gmail.com</a></p>
+      </div>
+    </div>
+    
+    <div class="footer-bottom">
+      <p>&copy; 2025 MoneyFlow by Imad Khan. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- Bottom Navigation -->
+  <nav class="bottom-nav" data-active="0">
+    <div class="nav-liquid"></div>
+    <a href="index.html" class="nav-item" id="nav-home">
+      <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+      <span>Home</span>
+    </a>
+    <a href="spendly.html" class="nav-item" id="nav-spend">
+      <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1.41 16.09V20h-2.67v-1.93c-1.71-.36-3.16-1.46-3.27-3.4h1.96c.1 1.05.82 1.87 2.65 1.87 1.96 0 2.4-.98 2.4-1.59 0-.83-.44-1.61-2.67-2.14-2.48-.6-4.18-1.62-4.18-3.67 0-1.72 1.39-2.84 3.11-3.21V4h2.67v1.95c1.86.45 2.79 1.86 2.85 3.39H14.3c-.05-1.11-.64-1.87-2.22-1.87-1.5 0-2.4.68-2.4 1.64 0 .84.65 1.39 2.67 1.91s4.18 1.39 4.18 3.91c-.01 1.83-1.38 2.83-3.12 3.16z"/></svg>
+      <span>Spendly</span>
+    </a>
+    <a href="nexus.html" class="nav-item" id="nav-nexus">
+      <svg viewBox="0 0 24 24"><path d="M20 6h-2.18c.11-.31.18-.65.18-1 0-1.66-1.34-3-3-3-1.05 0-1.96.54-2.5 1.35l-.5.67-.5-.68C10.96 2.54 10.05 2 9 2 7.34 2 6 3.34 6 5c0 .35.07.69.18 1H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-5-2c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zM9 4c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm11 15H4v-2h16v2zm0-5H4V8h5.08L7 10.83 8.62 12 11 8.76l1-1.36 1 1.36L15.38 12 17 10.83 14.92 8H20v6z"/></svg>
+      <span>Nexus</span>
+    </a>
+    <a href="pocketcal.html" class="nav-item" id="nav-pocket">
+      <svg viewBox="0 0 24 24"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zM9 14H7v-2h2v2zm4 0h-2v-2h2v2zm4 0h-2v-2h2v2zm-8 4H7v-2h2v2zm4 0h-2v-2h2v2zm4 0h-2v-2h2v2z"/></svg>
+      <span>PocketCal</span>
+    </a>
+  </nav>
+
+  <script src="global.js"></script>
+  <script src="index.js"></script>
+</body>
+</html>

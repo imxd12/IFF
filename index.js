@@ -33,73 +33,73 @@ function updateWelcome() {
       greeting = `Late night 🌙, ${username}❤️`;
       break;
     case 1:
-      greeting = `Midnight vibes 🌌, ${username}❤️`;
+      greeting = `Midnight vibes 🌌, ${username}💜`;
       break;
     case 2:
-      greeting = `Past midnight 🌃, ${username}❤️`;
+      greeting = `Past midnight 🌃, ${username}💙`;
       break;
     case 3:
-      greeting = `Early dawn 🌆, ${username}❤️`;
+      greeting = `Early dawn 🌆, ${username}🧡`;
       break;
     case 4:
-      greeting = `Pre-sunrise 🌄, ${username}❤️`;
+      greeting = `Pre-sunrise 🌄, ${username}💚`;
       break;
     case 5:
-      greeting = `Early morning' 🌅, ${username}❤️`;
+      greeting = `Early morning' 🌅, ${username}💛`;
       break;
     case 6:
-      greeting = `Gudd morning' ☀️, ${username}❤️`;
+      greeting = `Gudd morning' ☀️, ${username}🧡`;
       break;
     case 7:
-      greeting = `Rise n' shine ☀️, ${username}❤️`;
+      greeting = `Rise n' shine ☀️, ${username}💖`;
       break;
     case 8:
-      greeting = `Morning' champ 🌤️, ${username}❤️`;
+      greeting = `Morning' champ 🌤️, ${username}💜`;
       break;
     case 9:
-      greeting = `Late morning' 🌞, ${username}❤️`;
+      greeting = `Late morning' 🌞, ${username}💙`;
       break;
     case 10:
       greeting = `Mid-morning' ☀️, ${username}❤️`;
       break;
     case 11:
-      greeting = `Almost noon 🌤️, ${username}❤️`;
+      greeting = `Almost noon 🌤️, ${username}💚`;
       break;
     case 12:
-      greeting = `Gudd noon 🌞, ${username}❤️`;
+      greeting = `Gudd noon 🌞, ${username}💛`;
       break;
     case 13:
-      greeting = `Early noon 🌤️, ${username}❤️`;
+      greeting = `Early noon 🌤️, ${username}💙`;
       break;
     case 14:
-      greeting = `Noon vibes ☀️, ${username}❤️`;
+      greeting = `Noon vibes ☀️, ${username}💜`;
       break;
     case 15:
-      greeting = `Mid noon 🌤️, ${username}❤️`;
+      greeting = `Mid noon 🌤️, ${username}💖`;
       break;
     case 16:
-      greeting = `Late noon 🌅, ${username}❤️`;
+      greeting = `Late noon 🌅, ${username}💚`;
       break;
     case 17:
       greeting = `Early eve' 🌆, ${username}❤️`;
       break;
     case 18:
-      greeting = `Gudd eve' 🌇, ${username}❤️`;
+      greeting = `Gudd eve' 🌇, ${username}🧡`;
       break;
     case 19:
-      greeting = `Evenin' time 🌙, ${username}❤️`;
+      greeting = `Evenin' time 🌙, ${username}💙`;
       break;
     case 20:
       greeting = `Gudd night 🌃, ${username}❤️`;
       break;
     case 21:
-      greeting = `Late Night' 🌌, ${username}❤️`;
+      greeting = `Late Night 🌌, ${username}💛`;
       break;
     case 22:
-      greeting = `Sleepsy' time 🌙, ${username}❤️`;
+      greeting = `Sleepsy' time 🌙, ${username}💖`;
       break;
     case 23:
-      greeting = `Almost midnight 🌃, ${username}❤️`;
+      greeting = `Almost midnight 🌃, ${username}💚`;
       break;
     default:
       greeting = `Hey there, ${username}❤️`;

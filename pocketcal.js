@@ -1,6 +1,6 @@
 /* =========================
    POCKETCAL - COMPLETE LOGIC
-   Calendar Money Tracker with Advanced Analytics
+   Calendar Money Tracker with Advanced Analytics & PDF Export
 ========================= */
 
 // Initialize global functions
@@ -671,6 +671,398 @@ startClock('#timeNow');
       showSnackbar('Failed to import', 'error');
     }
   };
+
+  // ========================================
+  // PDF MODAL FUNCTIONS
+  // ========================================
+  window.openPDFModal = function() {
+    try {
+      if (data.length === 0) {
+        showSnackbar('No data to export', 'error');
+        return;
+      }
+      openModal('#pdfModal');
+      hideDateRangeForm();
+    } catch (e) {
+      console.error('Open PDF modal error:', e);
+    }
+  };
+
+  window.closePDFModal = function() {
+    try {
+      closeModal('#pdfModal');
+      hideDateRangeForm();
+    } catch (e) {
+      console.error('Close PDF modal error:', e);
+    }
+  };
+
+  window.showDateRangeForm = function() {
+    const form = $('#dateRangeForm');
+    if (form) {
+      form.style.display = 'block';
+      
+      // Set default dates
+      const today = new Date();
+      const lastMonth = new Date();
+      lastMonth.setMonth(today.getMonth() - 1);
+      
+      $('#pdfToDate').value = today.toISOString().split('T')[0];
+      $('#pdfFromDate').value = lastMonth.toISOString().split('T')[0];
+    }
+  };
+
+  window.hideDateRangeForm = function() {
+    const form = $('#dateRangeForm');
+    if (form) form.style.display = 'none';
+  };
+
+  // ========================================
+  // PDF EXPORT FUNCTION
+  // ========================================
+  window.exportPDF = function(period) {
+    try {
+      // Check if jsPDF is loaded
+      if (typeof window.jspdf === 'undefined') {
+        showSnackbar('PDF library not loaded. Please refresh.', 'error');
+        return;
+      }
+
+      const { jsPDF } = window.jspdf;
+      
+      // Filter data based on period
+      let filteredData = [];
+      let periodLabel = '';
+      const now = new Date();
+      
+      switch(period) {
+        case 'today':
+          const today = now.toISOString().split('T')[0];
+          filteredData = data.filter(d => d.date === today);
+          periodLabel = 'Today';
+          break;
+          
+        case 'week':
+          const weekStart = new Date(now);
+          weekStart.setDate(now.getDate() - now.getDay());
+          const weekStartStr = weekStart.toISOString().split('T')[0];
+          filteredData = data.filter(d => d.date >= weekStartStr);
+          periodLabel = 'This Week';
+          break;
+          
+        case 'month':
+          const monthStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+          filteredData = data.filter(d => d.date && d.date.startsWith(monthStr));
+          periodLabel = now.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+          break;
+          
+        case 'year':
+          const yearStr = now.getFullYear().toString();
+          filteredData = data.filter(d => d.date && d.date.startsWith(yearStr));
+          periodLabel = yearStr;
+          break;
+          
+        case 'all':
+          filteredData = [...data];
+          periodLabel = 'All Time';
+          break;
+          
+        default:
+          filteredData = [...data];
+          periodLabel = 'All Time';
+      }
+      
+      if (filteredData.length === 0) {
+        showSnackbar(`No entries found for ${periodLabel}`, 'error');
+        return;
+      }
+      
+      // Sort by date descending
+      filteredData.sort((a, b) => new Date(b.date) - new Date(a.date));
+      
+      generatePDF(filteredData, periodLabel);
+      closePDFModal();
+      showSnackbar('PDF exported successfully! 📄', 'success');
+      
+    } catch (e) {
+      console.error('Export PDF error:', e);
+      showSnackbar('Failed to export PDF', 'error');
+    }
+  };
+
+  // ========================================
+  // PDF DATE RANGE EXPORT
+  // ========================================
+  window.exportPDFDateRange = function() {
+    try {
+      const fromDate = $('#pdfFromDate').value;
+      const toDate = $('#pdfToDate').value;
+      
+      if (!fromDate || !toDate) {
+        showSnackbar('Please select both dates', 'error');
+        return;
+      }
+      
+      if (fromDate > toDate) {
+        showSnackbar('From date must be before To date', 'error');
+        return;
+      }
+      
+      const filteredData = data.filter(d => d.date >= fromDate && d.date <= toDate);
+      
+      if (filteredData.length === 0) {
+        showSnackbar('No entries found in selected range', 'error');
+        return;
+      }
+      
+      filteredData.sort((a, b) => new Date(b.date) - new Date(a.date));
+      
+      const periodLabel = `${new Date(fromDate).toLocaleDateString('en-IN')} to ${new Date(toDate).toLocaleDateString('en-IN')}`;
+      
+      generatePDF(filteredData, periodLabel);
+      closePDFModal();
+      showSnackbar('PDF exported successfully! 📄', 'success');
+      
+    } catch (e) {
+      console.error('Export PDF date range error:', e);
+      showSnackbar('Failed to export PDF', 'error');
+    }
+  };
+
+  // ========================================
+  // GENERATE PDF FUNCTION
+  // ========================================
+  function generatePDF(entries, periodLabel) {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    
+    const now = new Date();
+    const reportDate = now.toLocaleDateString('en-IN', { 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric' 
+    });
+    
+    // Colors
+    const primaryColor = [16, 185, 129]; // #10b981
+    const secondaryColor = [59, 130, 246]; // #3b82f6
+    const accentColor = [245, 158, 11]; // #f59e0b
+    const textColor = [55, 65, 81];
+    
+    let yPos = 20;
+    
+    // ===== HEADER WITH GRADIENT =====
+    doc.setFillColor(...primaryColor);
+    doc.rect(0, 0, 210, 40, 'F');
+    
+    // Add decorative circles
+    doc.setFillColor(255, 255, 255);
+    doc.setGState(new doc.GState({ opacity: 0.1 }));
+    doc.circle(180, 10, 15, 'F');
+    doc.circle(200, 30, 20, 'F');
+    doc.setGState(new doc.GState({ opacity: 1 }));
+    
+    // Header text
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(26);
+    doc.setFont('helvetica', 'bold');
+    doc.text('💰 PocketCal Report', 15, 22);
+    
+    doc.setFontSize(12);
+    doc.setFont('helvetica', 'normal');
+    doc.text(`Period: ${periodLabel}`, 15, 30);
+    
+    doc.setFontSize(9);
+    doc.text(`Generated: ${reportDate}`, 15, 36);
+    
+    yPos = 50;
+    
+    // ===== SUMMARY STATISTICS BOX =====
+    doc.setTextColor(...textColor);
+    doc.setFontSize(18);
+    doc.setFont('helvetica', 'bold');
+    doc.text('📊 Summary Statistics', 15, yPos);
+    
+    yPos += 5;
+    
+    // Calculate statistics
+    const total = entries.reduce((sum, e) => sum + Number(e.amount || 0), 0);
+    const highest = Math.max(...entries.map(e => Number(e.amount || 0)));
+    const average = total / entries.length;
+    const lowest = Math.min(...entries.map(e => Number(e.amount || 0)));
+    
+    // Statistics cards
+    doc.autoTable({
+      startY: yPos,
+      head: [['Metric', 'Value']],
+      body: [
+        ['Total Amount', `₹${total.toFixed(2)}`],
+        ['Number of Entries', entries.length.toString()],
+        ['Highest Amount', `₹${highest.toFixed(2)}`],
+        ['Lowest Amount', `₹${lowest.toFixed(2)}`],
+        ['Average per Entry', `₹${average.toFixed(2)}`]
+      ],
+      headStyles: {
+        fillColor: primaryColor,
+        fontSize: 11,
+        fontStyle: 'bold',
+        halign: 'left',
+        textColor: [255, 255, 255]
+      },
+      bodyStyles: {
+        fontSize: 10,
+        textColor: textColor
+      },
+      alternateRowStyles: {
+        fillColor: [249, 250, 251]
+      },
+      columnStyles: {
+        0: { fontStyle: 'bold', cellWidth: 90 },
+        1: { halign: 'right', cellWidth: 'auto', textColor: primaryColor, fontStyle: 'bold' }
+      },
+      margin: { left: 15, right: 15 },
+      theme: 'grid'
+    });
+    
+    yPos = doc.lastAutoTable.finalY + 12;
+    
+    // ===== CATEGORY BREAKDOWN =====
+    const categoryTotals = {};
+    entries.forEach(e => {
+      const cat = e.category || '💵 Pocket Money';
+      categoryTotals[cat] = (categoryTotals[cat] || 0) + Number(e.amount || 0);
+    });
+    
+    if (Object.keys(categoryTotals).length > 0) {
+      // Check if we need new page
+      if (yPos > 230) {
+        doc.addPage();
+        yPos = 20;
+      }
+      
+      doc.setFontSize(18);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(...textColor);
+      doc.text('🗂️ Category Breakdown', 15, yPos);
+      
+      yPos += 5;
+      
+      const categoryData = Object.entries(categoryTotals)
+        .sort((a, b) => b[1] - a[1])
+        .map(([category, amount]) => {
+          const percentage = ((amount / total) * 100).toFixed(1);
+          return [category, `₹${amount.toFixed(2)}`, `${percentage}%`];
+        });
+      
+      doc.autoTable({
+        startY: yPos,
+        head: [['Category', 'Amount', 'Percentage']],
+        body: categoryData,
+        headStyles: {
+          fillColor: secondaryColor,
+          fontSize: 11,
+          fontStyle: 'bold',
+          textColor: [255, 255, 255]
+        },
+        bodyStyles: {
+          fontSize: 10,
+          textColor: textColor
+        },
+        alternateRowStyles: {
+          fillColor: [249, 250, 251]
+        },
+        columnStyles: {
+          0: { cellWidth: 75 },
+          1: { halign: 'right', cellWidth: 55, textColor: secondaryColor, fontStyle: 'bold' },
+          2: { halign: 'right', cellWidth: 'auto' }
+        },
+        margin: { left: 15, right: 15 },
+        theme: 'grid'
+      });
+      
+      yPos = doc.lastAutoTable.finalY + 12;
+    }
+    
+    // ===== TRANSACTION DETAILS =====
+    if (yPos > 230) {
+      doc.addPage();
+      yPos = 20;
+    }
+    
+    doc.setFontSize(18);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(...textColor);
+    doc.text('📅 Transaction Details', 15, yPos);
+    
+    yPos += 5;
+    
+    const transactionData = entries.map(e => {
+      const formattedDate = new Date(e.date).toLocaleDateString('en-IN', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric'
+      });
+      return [
+        formattedDate,
+        e.category || '💵 Pocket Money',
+        `₹${Number(e.amount).toFixed(2)}`,
+        e.notes ? e.notes.substring(0, 35) + (e.notes.length > 35 ? '...' : '') : '-'
+      ];
+    });
+    
+    doc.autoTable({
+      startY: yPos,
+      head: [['Date', 'Category', 'Amount', 'Notes']],
+      body: transactionData,
+      headStyles: {
+        fillColor: accentColor,
+        fontSize: 10,
+        fontStyle: 'bold',
+        textColor: [255, 255, 255]
+      },
+      bodyStyles: {
+        fontSize: 9,
+        textColor: textColor
+      },
+      alternateRowStyles: {
+        fillColor: [249, 250, 251]
+      },
+      columnStyles: {
+        0: { cellWidth: 32 },
+        1: { cellWidth: 45 },
+        2: { halign: 'right', cellWidth: 30, textColor: accentColor, fontStyle: 'bold' },
+        3: { cellWidth: 'auto' }
+      },
+      margin: { left: 15, right: 15 },
+      theme: 'grid'
+    });
+    
+    // ===== FOOTER ON ALL PAGES =====
+    const pageCount = doc.internal.getNumberOfPages();
+    
+    for (let i = 1; i <= pageCount; i++) {
+      doc.setPage(i);
+      
+      // Footer gradient bar
+      doc.setFillColor(...primaryColor);
+      doc.rect(0, 282, 210, 15, 'F');
+      
+      // Footer text
+      doc.setFontSize(9);
+      doc.setTextColor(255, 255, 255);
+      doc.setFont('helvetica', 'normal');
+      doc.text('MoneyFlow PocketCal - Pocket Money Tracker', 15, 289);
+      doc.text(`Page ${i} of ${pageCount}`, 195, 289, { align: 'right' });
+      
+      // Developer info
+      doc.setFontSize(8);
+      doc.text('Developed by Imad Khan (@imxd12) | imadak999@gmail.com', 105, 293, { align: 'center' });
+    }
+    
+    // Save PDF
+    const fileName = `PocketCal_${periodLabel.replace(/\s+/g, '_')}_${now.toISOString().split('T')[0]}.pdf`;
+    doc.save(fileName);
+  }
 
   // ========================================
   // CLEAR ALL DATA

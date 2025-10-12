@@ -6,6 +6,7 @@
   <title>Privacy Policy - MoneyFlow</title>
   <link rel="stylesheet" href="global.css">
   <link rel="stylesheet" href="index.css">
+  <link rel="stylesheet" href="privacy.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
   
   <!-- PWA Meta Tags -->
@@ -17,6 +18,11 @@
   <link rel="apple-touch-icon" href="./icon-192.png">
   <link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png">
   <link rel="icon" type="image/png" sizes="512x512" href="./icon-512.png">
+  
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="MoneyFlow Privacy Policy - Your data stays on your device. We don't collect, store, or transmit any financial information.">
+  <meta name="keywords" content="privacy policy, data privacy, MoneyFlow, finance app, local storage">
+  <meta name="author" content="Imad Khan">
 </head>
 <body>
 
@@ -44,7 +50,7 @@
       <div class="theme-toggle">
         <div class="theme-toggle-slider">☀️</div>
       </div>
-      <div class="profile-btn" onclick="window.location.href='profile.html'">
+      <div class="profile-btn" onclick="window.location.href='index.html'">
         <img src="Imad.jpg" alt="Profile" id="profileImage">
       </div>
     </div>
@@ -54,16 +60,35 @@
   <div class="container">
     
     <section class="privacy-page">
-      <h2 class="page-title">🔒 Privacy Policy</h2>
+      <div class="page-header">
+        <div class="page-icon">🔒</div>
+        <h2 class="page-title">Privacy Policy</h2>
+        <p class="page-subtitle">Your privacy is our top priority. Learn how we protect your data.</p>
+      </div>
       
       <div class="privacy-content">
         
+        <!-- Privacy Intro Box -->
         <div class="privacy-intro">
+          <div class="intro-icon">🛡️</div>
           <p>At MoneyFlow, we take your privacy seriously. This Privacy Policy explains how we handle your personal and financial information.</p>
-          <p><strong>TL;DR:</strong> Your data stays on YOUR device. We don't collect, store, or transmit any of your financial information to our servers.</p>
+          <p class="tldr"><strong>TL;DR:</strong> Your data stays on <strong>YOUR device</strong>. We don't collect, store, or transmit any of your financial information to our servers.</p>
         </div>
 
-        <div class="privacy-section">
+        <!-- Quick Navigation -->
+        <div class="quick-nav">
+          <h3>Quick Navigation</h3>
+          <div class="nav-links">
+            <a href="#section-1" class="nav-link">What We DON'T Collect</a>
+            <a href="#section-2" class="nav-link">Local Data Storage</a>
+            <a href="#section-3" class="nav-link">Data You Control</a>
+            <a href="#section-4" class="nav-link">Your Rights</a>
+            <a href="#section-5" class="nav-link">Contact Us</a>
+          </div>
+        </div>
+
+        <!-- Section 1 -->
+        <div class="privacy-section" id="section-1">
           <h3>1. Information We DON'T Collect</h3>
           <p>MoneyFlow does NOT collect, store, or transmit:</p>
           <ul>
@@ -77,7 +102,8 @@
           </ul>
         </div>
 
-        <div class="privacy-section">
+        <!-- Section 2 -->
+        <div class="privacy-section" id="section-2">
           <h3>2. Local Data Storage</h3>
           <p>All your financial data is stored locally in your browser using:</p>
           <ul>
@@ -86,10 +112,16 @@
             <li><strong>Device-Specific:</strong> Data is tied to the specific browser and device you use</li>
             <li><strong>User Control:</strong> You can delete all data at any time using browser settings or Developer Options</li>
           </ul>
-          <p><strong>Important:</strong> If you clear your browser cache or site data, all your MoneyFlow data will be permanently deleted.</p>
+          <div class="info-box warning">
+            <div class="info-icon">⚠️</div>
+            <div class="info-text">
+              <strong>Important:</strong> If you clear your browser cache or site data, all your MoneyFlow data will be permanently deleted.
+            </div>
+          </div>
         </div>
 
-        <div class="privacy-section">
+        <!-- Section 3 -->
+        <div class="privacy-section" id="section-3">
           <h3>3. Data You Can Choose to Share</h3>
           <p>The only data that leaves your device is when YOU explicitly choose to:</p>
           <ul>
@@ -100,6 +132,7 @@
           <p>These actions are completely voluntary and under your control.</p>
         </div>
 
+        <!-- Section 4 -->
         <div class="privacy-section">
           <h3>4. Geolocation Data</h3>
           <p>MoneyFlow requests access to your location for the Profile page feature only:</p>
@@ -111,27 +144,48 @@
           </ul>
         </div>
 
+        <!-- Section 5 -->
         <div class="privacy-section">
           <h3>5. Third-Party Services</h3>
           <p>MoneyFlow uses the following third-party services that may have their own privacy policies:</p>
-          <ul>
+          <ul class="service-list">
             <li>
-              <strong>Google Fonts:</strong> Loads font files from Google's CDN (may collect basic usage data)
-              <br>
-              <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" class="external-link">Google Privacy Policy</a>
+              <div class="service-name">
+                <strong>Google Fonts:</strong>
+                <span class="service-badge">CDN</span>
+              </div>
+              <p>Loads font files from Google's CDN (may collect basic usage data)</p>
+              <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" class="external-link">
+                View Google Privacy Policy →
+              </a>
             </li>
             <li>
-              <strong>Chart.js CDN:</strong> Loads charting library from jsDelivr (may log CDN requests)
-              <br>
-              <a href="https://www.jsdelivr.com/terms/privacy-policy-jsdelivr-net" target="_blank" rel="noopener noreferrer" class="external-link">jsDelivr Privacy Policy</a>
+              <div class="service-name">
+                <strong>Chart.js CDN:</strong>
+                <span class="service-badge">Library</span>
+              </div>
+              <p>Loads charting library from jsDelivr (may log CDN requests)</p>
+              <a href="https://www.jsdelivr.com/terms/privacy-policy-jsdelivr-net" target="_blank" rel="noopener noreferrer" class="external-link">
+                View jsDelivr Privacy Policy →
+              </a>
             </li>
             <li>
-              <strong>Browser APIs:</strong> Uses standard browser APIs (localStorage, Geolocation) governed by browser privacy policies
+              <div class="service-name">
+                <strong>Browser APIs:</strong>
+                <span class="service-badge">Native</span>
+              </div>
+              <p>Uses standard browser APIs (localStorage, Geolocation) governed by browser privacy policies</p>
             </li>
           </ul>
-          <p><strong>Note:</strong> These services are necessary for app functionality but do not have access to your financial data.</p>
+          <div class="info-box info">
+            <div class="info-icon">ℹ️</div>
+            <div class="info-text">
+              <strong>Note:</strong> These services are necessary for app functionality but do not have access to your financial data.
+            </div>
+          </div>
         </div>
 
+        <!-- Section 6 -->
         <div class="privacy-section">
           <h3>6. Cookies & Tracking</h3>
           <p>MoneyFlow does NOT use:</p>
@@ -145,6 +199,7 @@
           <p>The only "cookie-like" storage is localStorage, which stores your app data locally for functionality purposes only.</p>
         </div>
 
+        <!-- Section 7 -->
         <div class="privacy-section">
           <h3>7. Data Security</h3>
           <p>We implement security measures to protect your data:</p>
@@ -155,26 +210,49 @@
             <li><strong>HTTPS Only:</strong> App should be served over HTTPS for encrypted connections</li>
             <li><strong>No External APIs:</strong> Financial data is never sent to external services</li>
           </ul>
-          <p><strong>Your Responsibility:</strong> Keep your device secure with screen locks and don't share export files containing sensitive data publicly.</p>
+          <div class="info-box warning">
+            <div class="info-icon">🔐</div>
+            <div class="info-text">
+              <strong>Your Responsibility:</strong> Keep your device secure with screen locks and don't share export files containing sensitive data publicly.
+            </div>
+          </div>
         </div>
 
+        <!-- Section 8 -->
         <div class="privacy-section">
           <h3>8. Children's Privacy</h3>
           <p>MoneyFlow does not knowingly collect personal information from children under 13. The app is designed for personal finance management and is suitable for all ages. Since no data is collected or stored on our servers, there are no special provisions for children's data.</p>
         </div>
 
-        <div class="privacy-section">
+        <!-- Section 9 -->
+        <div class="privacy-section" id="section-4">
           <h3>9. Your Rights & Control</h3>
           <p>You have complete control over your data:</p>
-          <ul>
-            <li><strong>Access:</strong> View all your data anytime within the app</li>
-            <li><strong>Export:</strong> Download your data in CSV or JSON format</li>
-            <li><strong>Delete:</strong> Clear all data using Developer Options or browser settings</li>
-            <li><strong>Portability:</strong> Export and import data to move between devices</li>
-            <li><strong>No Account Deletion Needed:</strong> Since we don't store your data, simply stop using the app</li>
-          </ul>
+          <div class="rights-grid">
+            <div class="right-card">
+              <div class="right-icon">👁️</div>
+              <h4>Access</h4>
+              <p>View all your data anytime within the app</p>
+            </div>
+            <div class="right-card">
+              <div class="right-icon">📤</div>
+              <h4>Export</h4>
+              <p>Download your data in CSV or JSON format</p>
+            </div>
+            <div class="right-card">
+              <div class="right-icon">🗑️</div>
+              <h4>Delete</h4>
+              <p>Clear all data using Developer Options</p>
+            </div>
+            <div class="right-card">
+              <div class="right-icon">🔄</div>
+              <h4>Portability</h4>
+              <p>Export and import data between devices</p>
+            </div>
+          </div>
         </div>
 
+        <!-- Section 10 -->
         <div class="privacy-section">
           <h3>10. Progressive Web App (PWA) Installation</h3>
           <p>If you install MoneyFlow as a PWA on your device:</p>
@@ -187,11 +265,13 @@
           </ul>
         </div>
 
+        <!-- Section 11 -->
         <div class="privacy-section">
           <h3>11. Changes to Privacy Policy</h3>
           <p>We may update this Privacy Policy from time to time. Changes will be reflected on this page with an updated "Last Updated" date. Since we don't collect contact information, we cannot notify you directly. We encourage you to review this policy periodically.</p>
         </div>
 
+        <!-- Section 12 -->
         <div class="privacy-section">
           <h3>12. International Users</h3>
           <p>MoneyFlow is accessible worldwide. Since all data is stored locally on your device:</p>
@@ -202,33 +282,55 @@
           </ul>
         </div>
 
-        <div class="privacy-section">
+        <!-- Section 13 -->
+        <div class="privacy-section" id="section-5">
           <h3>13. Contact & Data Requests</h3>
           <p>If you have questions about this Privacy Policy or data practices:</p>
-          <ul class="contact-info">
-            <li>
-              <strong>Developer:</strong> Imad Khan 
-              <a href="https://www.instagram.com/_imxd12" target="_blank" rel="noopener noreferrer" class="contact-link">@imxd12</a>
-            </li>
-
-            <li>
-              <strong>Email:</strong> 
-              <a href="mailto:imadak999@gmail.com" class="contact-link">imadak999@gmail.com</a>
-            </li>
-
-            <li>
-              <strong>Instagram:</strong> 
-              <a href="https://www.instagram.com/_imxd12" target="_blank" rel="noopener noreferrer" class="contact-link">@_imxd12</a>
-            </li>
-
-            <li>
-              <strong>WhatsApp:</strong> 
-              <a href="https://wa.me/918097814934" target="_blank" rel="noopener noreferrer" class="contact-link">+91 80978 14934</a>
-            </li>
-          </ul>
-          <p><strong>Note:</strong> Since we don't collect or store your data on our servers, we cannot fulfill data access or deletion requests as there is no data on our end to access or delete.</p>
+          
+          <div class="contact-cards">
+            <div class="contact-card">
+              <div class="contact-icon">👨‍💻</div>
+              <div class="contact-info">
+                <strong>Developer</strong>
+                <p>Imad Khan</p>
+                <a href="https://www.instagram.com/_imxd12" target="_blank" rel="noopener noreferrer" class="contact-link">@imxd12</a>
+              </div>
+            </div>
+            
+            <div class="contact-card">
+              <div class="contact-icon">📧</div>
+              <div class="contact-info">
+                <strong>Email</strong>
+                <a href="mailto:imadak999@gmail.com" class="contact-link">imadak999@gmail.com</a>
+              </div>
+            </div>
+            
+            <div class="contact-card">
+              <div class="contact-icon">📱</div>
+              <div class="contact-info">
+                <strong>Instagram</strong>
+                <a href="https://www.instagram.com/_imxd12" target="_blank" rel="noopener noreferrer" class="contact-link">@_imxd12</a>
+              </div>
+            </div>
+            
+            <div class="contact-card">
+              <div class="contact-icon">💬</div>
+              <div class="contact-info">
+                <strong>WhatsApp</strong>
+                <a href="https://wa.me/918097814934" target="_blank" rel="noopener noreferrer" class="contact-link">+91 80978 14934</a>
+              </div>
+            </div>
+          </div>
+          
+          <div class="info-box info">
+            <div class="info-icon">ℹ️</div>
+            <div class="info-text">
+              <strong>Note:</strong> Since we don't collect or store your data on our servers, we cannot fulfill data access or deletion requests as there is no data on our end to access or delete.
+            </div>
+          </div>
         </div>
 
+        <!-- Section 14 -->
         <div class="privacy-section">
           <h3>14. Open Source & Transparency</h3>
           <p>MoneyFlow is committed to transparency:</p>
@@ -240,20 +342,57 @@
           </ul>
         </div>
 
+        <!-- Privacy Footer -->
         <div class="privacy-footer">
-          <p><strong>Last Updated:</strong> October 12, 2025</p>
-          <p><strong>Summary:</strong> MoneyFlow is designed with privacy as the top priority. Your financial data is yours alone, stored on your device, and never shared with us or anyone else unless you explicitly choose to export and share it.</p>
+          <div class="footer-update">
+            <p><strong>Last Updated:</strong> October 12, 2025</p>
+            <p><strong>Effective Date:</strong> October 12, 2025</p>
+          </div>
+          
+          <div class="footer-summary">
+            <h4>📋 Summary</h4>
+            <p>MoneyFlow is designed with privacy as the top priority. Your financial data is yours alone, stored on your device, and never shared with us or anyone else unless you explicitly choose to export and share it.</p>
+          </div>
           
           <div class="privacy-guarantee">
             <h4>🛡️ Our Privacy Guarantee</h4>
             <p>We, the developers of MoneyFlow, guarantee that:</p>
-            <ul>
-              <li>✅ We will NEVER collect your financial data</li>
-              <li>✅ We will NEVER sell your information</li>
-              <li>✅ We will NEVER use tracking or analytics on your data</li>
-              <li>✅ We will NEVER require account creation or login</li>
-              <li>✅ Your data will ALWAYS remain on your device only</li>
+            <ul class="guarantee-list">
+              <li>
+                <span class="check-icon">✅</span>
+                <span>We will NEVER collect your financial data</span>
+              </li>
+              <li>
+                <span class="check-icon">✅</span>
+                <span>We will NEVER sell your information</span>
+              </li>
+              <li>
+                <span class="check-icon">✅</span>
+                <span>We will NEVER use tracking or analytics on your data</span>
+              </li>
+              <li>
+                <span class="check-icon">✅</span>
+                <span>We will NEVER require account creation or login</span>
+              </li>
+              <li>
+                <span class="check-icon">✅</span>
+                <span>Your data will ALWAYS remain on your device only</span>
+              </li>
             </ul>
+          </div>
+
+          <!-- Call to Action -->
+          <div class="cta-section">
+            <h4>Have Questions?</h4>
+            <p>We're here to help clarify any privacy concerns.</p>
+            <div class="cta-buttons">
+              <a href="feedback.html" class="btn btn-primary">
+                <span>📝 Contact Us</span>
+              </a>
+              <a href="terms-conditions.html" class="btn btn-secondary">
+                <span>📄 View Terms</span>
+              </a>
+            </div>
           </div>
         </div>
 
@@ -266,14 +405,16 @@
     <div class="footer-content">
       <div class="footer-section">
         <h3>About MoneyFlow</h3>
-        <p>A comprehensive personal finance tracking application designed for complete money management.</p>
+        <p>A comprehensive personal finance tracking application designed for complete money management with privacy as the top priority.</p>
       </div>
       
       <div class="footer-section">
         <h3>Quick Links</h3>
         <ul>
+          <li><a href="index.html">Home</a></li>
           <li><a href="howtouse.html">How to Use</a></li>
           <li><a href="profile.html">About Developer</a></li>
+          <li><a href="feedback.html">Give Feedback</a></li>
           <li><a href="terms-conditions.html">Terms & Conditions</a></li>
           <li><a href="privacy-policy.html">Privacy Policy</a></li>
         </ul>
@@ -284,11 +425,13 @@
         <p><strong>Imad Khan</strong></p>
         <a href="https://www.instagram.com/_imxd12" target="_blank" rel="noopener noreferrer"><p class="profile-handle">@imxd12</p></a>
         <p><a href="mailto:imadak999@gmail.com">imadak999@gmail.com</a></p>
+        <p><a href="https://wa.me/918097814934" target="_blank" rel="noopener noreferrer">WhatsApp</a></p>
       </div>
     </div>
     
     <div class="footer-bottom">
       <p>&copy; 2025 MoneyFlow by Imad Khan. All rights reserved.</p>
+      <p class="footer-privacy">🔒 Your privacy is our priority | All data stored locally on your device</p>
     </div>
   </footer>
 

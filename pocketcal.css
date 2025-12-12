@@ -563,7 +563,7 @@
 ======================================== */
 .fab {
   position: fixed;
-  bottom: clamp(20px, 4vw, 30px);
+  bottom: clamp(80px, 4vw, 30px);
   right: clamp(20px, 4vw, 30px);
   width: clamp(55px, 10vw, 60px);
   height: clamp(55px, 10vw, 60px);
@@ -1542,3 +1542,4 @@
     transform: scale(1.3);
   }
 }
+

@@ -49,7 +49,7 @@
         </defs>
         
         <!-- Outer rotating ring -->
-        <circle cx="60" cy="60" r="54" fill="none" stroke="url(#logoGrad)" stroke-width="2" opacity="0.3.3">
+        <circle cx="60" cy="60" r="54" fill="none" stroke="url(#logoGrad)" stroke-width="2" opacity="0.3">
           <animateTransform
             attributeName="transform"
             attributeType="XML"
@@ -61,12 +61,12 @@
         </circle>
         
         <!-- Main circle with animation -->
-        <circle cx="60" cy="60" r="50" fill="none" stroke="url(#logoGrad)" stroke-width="4" filterer="url(#glow)">
+        <circle cx="60" cy="60" r="50" fill="none" stroke="url(#logoGrad)" stroke-width="4" filter="url(#glow)">
           <animate attributeName="stroke-dasharray" from="0 314" to="314 0" dur="2s" repeatCount="indefinite"/>
         </circle>
         
         <!-- Inner glow circle -->
-        <circle cx="60" cy="60" r="46" fill="none" stroke="url(#logoGrad)" stroke-e-width="1" opacity="0.5">
+        <circle cx="60" cy="60" r="46" fill="none" stroke="url(#logoGrad)" stroke-width="1" opacity="0.5">
           <animate attributeName="r" values="46;48;46" dur="2s" repeatCount="indefinite"/>
           <animate attributeName="opacity" values="0.5;0.8;0.5" dur="2s" repeatCount="indefinite"/>
         </circle>
@@ -74,7 +74,7 @@
         <!-- Rupee symbol -->
         <text x="60" y="75" font-family="Inter" font-size="36" font-weight="800" fill="url(#logoGrad)" text-anchor="middle" filter="url(#glow)">₹</text>
       </svg>
-      
+     
       <!-- Pulse rings around logo -->
       <div class="pulse-ring pulse-ring-1"></div>
       <div class="pulse-ring pulse-ring-2"></div>
@@ -101,232 +101,255 @@
   </div>
 </div>
 
-  <!-- Header -->
-  <header class="header">
-    <div class="header-left">
-      <svg class="brand-logo" viewBox="0 0 100 100">
-        <defs>
-          <linearGradient id="brandGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" style="stop-color:#10b981"/>
-            <stop offset="100%" style="stop-color:#3b82f6"/>
-          </linearGradient>
-        </defs>
-        <circle cx="50" cy="50" r="45" fill="url(#brandGrad)"/>
-        <text x="50" y="65" font-size="40" font-weight="800" fill="white" text-anchor="middle">₹</text>
-      </svg>
-      <h1 class="brand-name">MoneyFlow</h1>
-    <div class="header-center">
-      <div class="time-display" id="timeNow">Loading...</div>
-    </div>
-    
-    <div class="header-right">
-      <div class="theme-toggle">
-        <div class="theme-toggle-slider">☀️</div>
-      </div>
-      <div class="profile-btn" onclick="window.location.href='profile.html'">
-        <img src="Imad.jpg" alt="Profile" id="profileImage">
-      </div>
-    </div>
-  </header>
 
+ <!-- Header -->
+ <header class="header">
+   <div class="header-left">
+     <svg class="brand-logo" viewBox="0 0 100 100">
+       <defs>
+         <linearGradient id="brandGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+           <stop offset="0%" style="stop-color:#10b981"/>
+           <stop offset="100%" style="stop-color:#3b82f6"/>
+         </linearGradient>
+       </defs>
+       <circle cx="50" cy="50" r="45" fill="url(#brandGrad)"/>
+       <text x="50" y="65" font-size="40" font-weight="800" fill="white" text-anchor="middle">₹</text>
+     </svg>
+     <h1 class="brand-name">MoneyFlow</h1>
+   <div class="header-center">
+     <div class="time-display" id="timeNow">Loading...</div>
+   </div>
+   
+   <div class="header-right">
+     <div class="theme-toggle">
+       <div class="theme-toggle-slider">☀️</div>
+     </div>
+     <div class="profile-btn" onclick="window.location.href='profile.html'">
+       <img src="Imad.jpg" alt="Profile" id="profileImage">
+     </div>
+   </div>
+ </header>
 
-  <!-- Main Container -->
-  <div class="container">
-    
-    <!-- Welcome Section -->
-    <section class="welcome-section scroll-fade-in">
-      <h2 class="welcome-greeting" id="welcomeText">Welcome back!</h2>
-      <p class="text-muted">Your financial overview at a glance</p>
-    </section>
+ <!-- Main Container -->
+ <div class="container">
+   
+   <!-- Welcome Section -->
+   <section class="welcome-section scroll-fade-in">
+     <h2 class="welcome-greeting" id="welcomeText">Welcome back!</h2>
+     <p class="text-muted">Your financial overview at a glance</p>
+   </section>
 
+   <!-- Install Prompt -->
+   <div class="install-prompt" id="installPrompt" style="display: none;">
+     <div class="install-card">
+       <div class="install-icon">📱</div>
+       <div class="install-content">
+         <h3>Install MoneyFlow App</h3>
+         <p>Add to your home screen for quick access</p>
+       </div>
+       <button class="btn btn-primary" id="installBtn">Install</button>
+       <button class="btn btn-secondary" id="dismissBtn">Later</button>
+     </div>
+   </div>
 
-    <!-- Install Prompt -->
-    <div class="install-prompt" id="installPrompt" style="display: none;">
-      <div class="install-card">
-        <div class="install-icon">📱</div>
-        <div class="install-content">
-          <h3>Install MoneyFlow App</h3>
-          <p>Add to your home screen for quick access</p>
-        </div>
-        <button class="btn btn-primary" id="installBtn">Install</button>
-        <button class="btn btn-secondary" id="dismissBtn">Later</button>
-      </div>
-    </div>
+   <!-- Summary Cards -->
+   <div class="widget-grid">
+     <div class="card scroll-fade-in" style="animation-delay: 0.1s">
+       <div class="summary-icon">💰</div>
+       <div class="summary-label">Today's Expense</div>
+       <div class="summary-value" id="todayExpense">₹0</div>
+     </div>
+     
+     <div class="card scroll-fade-in" style="animation-delay: 0.2s">
+       <div class="summary-icon">📅</div>
+       <div class="summary-label">This Month Pocket</div>
+       <div class="summary-value" id="monthPocket">₹0</div>
+     </div>
+     
+     <div class="card scroll-fade-in" style="animation-delay: 0.4s">
+       <div class="summary-icon">💎</div>
+       <div class="summary-label">All-Time Balance</div>
+       <div class="summary-value" id="totalBalance">₹0</div>
+     </div>
+   </div>
 
+   <!-- Data Management Section -->
+   <section class="data-management-section scroll-blur">
+     <h3 class="section-title">💾 Data Management</h3>
+     <div class="action-grid">
+       <button class="btn btn-primary" onclick="exportAllData()">
+         <span>📤 Export All Data</span>
+       </button>
+       <button class="btn btn-secondary" onclick="openModal('#importModal')">
+         <span>📥 Import Data</span>
+       </button>
+       <button class="btn btn-danger" onclick="openModal('#devModal')">
+         <span>🛠️ Developer Options</span>
+       </button>
+     </div>
+   </section>
 
-    <!-- Summary Cards -->
-    <div class="widget-grid">
-      <div class="card scroll-fade-in" style="animation-delay: 0.1s">
-        <div class="summary-icon">💰</div>
-        <div class="summary-label">Today's Expense</div>
-        <div class="summary-value" id="todayExpense">₹0</div>
-      </div>
-      
-      <div class="card scroll-fade-in" style="animation-delay: 0.2s">
-        <div class="summary-icon">📅</div>
-        <div class="summary-label">This Month Pocket</div>
-        <div class="summary-value" id="monthPocket">₹0</div>
-      </div>
-      
-      <div class="card scroll-fade-in" style="animation-delay: 0.3s">
-        <div class="summary-icon">💼</div>
-        <div class="summary-label">This Month Nexus</div>
-        <div class="summary-value" id="monthNexus">₹0</div>
-      </div>
-      
-      <div class="card scroll-fade-in" style="animation-delay: 0.4s">
-        <div class="summary-icon">💎</div>
-        <div class="summary-label">All-Time Balance</div>
-        <div class="summary-value" id="totalBalance">₹0</div>
-      </div>
-    </div>
-
-
-    <!-- Quick Actions -->
-    <section class="quick-actions scroll-blur">
-      <h3 class="section-title">Quick Actions</h3>
-      <div class="action-grid">
-        <button class="btn btn-primary" onclick="openModal('#devModal')">
-          <span>🛠️ Developer Options</span>
-        </button>
-        <button class="btn btn-primary" onclick="window.location.href='howtouse.html'">
-          <span>❓ How to Use</span>
-        </button>
-        <button class="btn btn-primary" onclick="exportAllData()">
-          <span>📤 Export All Data</span>
-        </button>
-      </div>
-    </section>
-
-
-    <!-- User Settings Section -->
-    <section class="user-settings-section scroll-blur">
-      <h3 class="section-title">⚙️ User Settings</h3>
-      
-      <div class="settings-grid">
-        <!-- Set Name Card -->
-        <div class="settings-card">
-          <div class="settings-icon">👤</div>
-          <h4 class="settings-title">Personalize Your Experience</h4>
-          <p class="settings-description">Set your name to see personalized greetings throughout the app.</p>
-          <button class="btn btn-secondary btn-block" onclick="openModal('#nameModal')">
-            <span>✏️ Set Your Name</span>
-          </button>
-        </div>
-        
-        <!-- Developer Profile Card -->
-        <div class="settings-card">
-          <div class="settings-icon">💻</div>
-          <h4 class="settings-title">Meet the Developer</h4>
-          <p class="settings-description">Learn more about the creator of MoneyFlow and get in touch.</p>
-          <button class="btn btn-secondary btn-block" onclick="window.location.href='profile.html'">
-            <span>👋 Hi, Here!!</span>
-          </button>
-        </div>
-
-        <!-- Feedback Card -->
-        <div class="settings-card">
-          <div class="settings-icon">💬</div>
-          <h4 class="settings-title">Share Your Feedback</h4>
-          <p class="settings-description">Help us improve! Share your reviews, suggestions, or report issues.</p>
-          <button class="btn btn-secondary btn-block" onclick="window.location.href='feedback.html'">
-            <span>📝 Give Feedback</span>
-          </button>
-        </div>
-      </div>
-    </section>
+<!-- Quick Actions -->
+<section class="quick-actions scroll-blur">
+  <h3 class="section-title">Quick Actions</h3>
+  <div class="action-grid">
+    <button class="btn btn-primary" onclick="window.location.href='howtouse.html'">
+      <span>❓ How to Use</span>
+    </button>
+    <button class="btn btn-primary" onclick="window.location.href='profile.html'">
+      <span>👋 About Developer</span>
+    </button>
+    <button class="btn btn-primary" onclick="window.location.href='feedback.html'">
+      <span>📝 Give Feedback</span>
+    </button>
+    <button class="btn btn-secondary" onclick="window.location.href='terms-conditions.html'">
+      <span>📋 Terms & Conditions</span>
+    </button>
+    <button class="btn btn-secondary" onclick="window.location.href='privacy-policy.html'">
+      <span>🔒 Privacy Policy</span>
+    </button>
   </div>
+</section>
 
+   <!-- User Settings Section -->
+   <section class="user-settings-section scroll-blur">
+     <h3 class="section-title">⚙️ User Settings</h3>
+     
+     <div class="settings-grid">
+       <!-- Set Name Card -->
+       <div class="settings-card">
+         <div class="settings-icon">👤</div>
+         <h4 class="settings-title">Personalize Your Experience</h4>
+         <p class="settings-description">Set your name to see personalized greetings throughout the app.</p>
+         <button class="btn btn-secondary btn-block" onclick="openModal('#nameModal')">
+           <span>✏️ Set Your Name</span>
+         </button>
+       </div>
+       
+       <!-- Developer Profile Card -->
+       <div class="settings-card">
+         <div class="settings-icon">💻</div>
+         <h4 class="settings-title">Meet the Developer</h4>
+         <p class="settings-description">Learn more about the creator of MoneyFlow and get in touch.</p>
+         <button class="btn btn-secondary btn-block" onclick="window.location.href='profile.html'">
+           <span>👋 Hi, Here!!</span>
+         </button>
+       </div>
 
-  <!-- Set Name Modal -->
-  <div class="modal" id="nameModal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2 class="modal-title">Set Your Name</h2>
-        <button class="modal-close" onclick="closeModal('#nameModal')">&times;</button>
-      </div>
-      <form onsubmit="saveName(event)">
-        <div class="form-group">
-          <label class="form-label">Enter Your Name</label>
-          <input type="text" class="form-input" id="userName" placeholder="Your Name" required>
-        </div>
-        <button type="submit" class="btn btn-primary">Save Name</button>
-      </form>
-    </div>
-  </div>
+       <!-- Feedback Card -->
+       <div class="settings-card">
+         <div class="settings-icon">💬</div>
+         <h4 class="settings-title">Share Your Feedback</h4>
+         <p class="settings-description">Help us improve! Share your reviews, suggestions, or report issues.</p>
+         <button class="btn btn-secondary btn-block" onclick="window.location.href='feedback.html'">
+           <span>📝 Give Feedback</span>
+         </button>
+       </div>
+     </div>
+   </section>
+ </div>
 
+ <!-- Set Name Modal -->
+ <div class="modal" id="nameModal">
+   <div class="modal-content">
+     <div class="modal-header">
+       <h2 class="modal-title">Set Your Name</h2>
+       <button class="modal-close" onclick="closeModal('#nameModal')">&times;</button>
+     </div>
+     <form onsubmit="saveName(event)">
+       <div class="form-group">
+         <label class="form-label">Enter Your Name</label>
+         <input type="text" class="form-input" id="userName" placeholder="Your Name" required>
+       </div>
+       <button type="submit" class="btn btn-primary">Save Name</button>
+     </form>
+   </div>
+ </div>
 
-  <!-- Developer Modal -->
-  <div class="modal" id="devModal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2 class="modal-title">Developer Options</h2>
-        <button class="modal-close" onclick="closeModal('#devModal')">&times;</button>
-      </div>
-      <div class="dev-options">
-        <button class="btn btn-danger" onclick="clearAllData()">🗑️ Clear All Data</button>
-        <button class="btn btn-secondary" onclick="viewStorage()">📊 View Storage</button>
-        <button class="btn btn-secondary" onclick="downloadBackup()">💾 Download Backup</button>
-      </div>
-    </div>
-  </div>
+ <!-- Import Data Modal -->
+ <div class="modal" id="importModal">
+   <div class="modal-content">
+     <div class="modal-header">
+       <h2 class="modal-title">📥 Import Data</h2>
+       <button class="modal-close" onclick="closeModal('#importModal')">&times;</button>
+     </div>
+     <div class="import-section">
+       <p class="import-info">Select a MoneyFlow backup file (.json) to restore your data.</p>
+       <div class="form-group">
+         <input type="file" id="importFile" class="form-input" accept=".json" required>
+       </div>
+       <div class="import-preview" id="importPreview" style="display: none;"></div>
+       <button type="button" class="btn btn-primary" onclick="processImport()" id="confirmImportBtn" disabled>Import Data</button>
+       <p class="import-warning text-muted">⚠️ This will replace all existing data</p>
+     </div>
+   </div>
+ </div>
 
+ <!-- Developer Modal -->
+ <div class="modal" id="devModal">
+   <div class="modal-content">
+     <div class="modal-header">
+       <h2 class="modal-title">Developer Options</h2>
+       <button class="modal-close" onclick="closeModal('#devModal')">&times;</button>
+     </div>
+     <div class="dev-options">
+       <button class="btn btn-danger" onclick="clearAllData()">🗑️ Clear All Data</button>
+       <button class="btn btn-secondary" onclick="viewStorage()">📊 View Storage</button>
+       <button class="btn btn-secondary" onclick="downloadBackup()">💾 Download Backup</button>
+     </div>
+   </div>
+ </div>
 
-  <!-- Footer -->
-  <footer class="footer">
-    <div class="footer-content">
-      <div class="footer-section">
-        <h3>About MoneyFlow</h3>
-        <p>A comprehensive personal finance tracking application designed for complete money management.</p>
-      </div>
-      
-      <div class="footer-section">
-        <h3>Quick Links</h3>
-        <ul>
-          <li><a href="howtouse.html">How To Use</a></li>
-          <li><a href="profile.html">About Developer</a></li>
-          <li><a href="feedback.html">Give Feedback</a></li>
-          <li><a href="terms-conditions.html">Terms & Conditions</a></li>
-          <li><a href="privacy-policy.html">Privacy Policy</a></li>
-        </ul>
-      </div>
-      
-      <div class="footer-section">
-        <h3>Developer</h3>
-        <p><strong>Imad Khan</strong></p>
-        <a href="https://www.instagram.com/_imxd12" target="_blank" rel="noopener noreferrer"><p class="profile-handle">@imxd12</p></a>
-        <p><a href="mailto:imadak999@gmail.com">imadak999@gmail.com</a></p>
-      </div>
-    </div>
-    
-    <div class="footer-bottom">
-      <p>&copy; 2025 MoneyFlow by Imad Khan. All rights reserved.</p>
-    </div>
-  </footer>
+ <!-- Footer -->
+ <footer class="footer">
+   <div class="footer-content">
+     <div class="footer-section">
+       <h3>About MoneyFlow</h3>
+       <p>A comprehensive personal finance tracking application designed for complete money management.</p>
+     </div>
+     
+     <div class="footer-section">
+       <h3>Quick Links</h3>
+       <ul>
+         <li><a href="howtouse.html">How To Use</a></li>
+         <li><a href="profile.html">About Developer</a></li>
+         <li><a href="feedback.html">Give Feedback</a></li>
+         <li><a href="terms-conditions.html">Terms & Conditions</a></li>
+         <li><a href="privacy-policy.html">Privacy Policy</a></li>
+       </ul>
+     </div>
+     
+     <div class="footer-section">
+       <h3>Developer</h3>
+       <p><strong>Imad Khan</strong></p>
+       <a href="https://www.instagram.com/_imxd12" target="_blank" rel="noopener noreferrer"><p class="profile-handle">@imxd12</p></a>
+       <p><a href="mailto:imadak999@gmail.com">imadak999@gmail.com</a></p>
+     </div>
+   </div>
+   
+   <div class="footer-bottom">
+     <p>&copy; 2025 MoneyFlow by Imad Khan. All rights reserved.</p>
+   </div>
+ </footer>
 
+ <!-- Bottom Navigation -->
+ <nav class="bottom-nav" data-active="0">
+   <div class="nav-liquid"></div>
+   <a href="index.html" class="nav-item active" id="nav-home">
+     <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+     <span>Home</span>
+   </a>
+   <a href="spendly.html" class="nav-item" id="nav-spend">
+     <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1.41 16.09V20h-2.67v-1.93c-1.71-.36-3.16-1.46-3.27-3.4h1.96c.1 1.05.82 1.87 2.65 1.87 1.96 0 2.4-.98 2.4-1.59 0-.83-.44-1.61-2.67-2.14-2.48-.6-4.18-1.62-4.18-3.67 0-1.72 1.39-2.84 3.11-3.21V4h2.67v1.95c1.86.45 2.79 1.86 2.85 3.39H14.3c-.05-1.11-.64-1.87-2.22-1.87-1.5 0-2.4.68-2.4 1.64 0 .84.65 1.39 2.67 1.91s4.18 1.39 4.18 3.91c-.01 1.83-1.38 2.83-3.12 3.16z"/></svg>
+     <span>Spendly</span>
+   </a>
+   <a href="pocketcal.html" class="nav-item" id="nav-pocket">
+     <svg viewBox="0 0 24 24"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zM9 14H7v-2h2v2zm4 0h-2v-2h2v2zm4 0h-2v-2h2v2zm-8 4H7v-2h2v2zm4 0h-2v-2h2v2zm4 0h-2v-2h2v2z"/></svg>
+     <span>PocketCal</span>
+   </a>
+ </nav>
 
-  <!-- Bottom Navigation -->
-  <nav class="bottom-nav" data-active="0">
-    <div class="nav-liquid"></div>
-    <a href="index.html" class="nav-item active" id="nav-home">
-      <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
-      <span>Home</span>
-    </a>
-    <a href="spendly.html" class="nav-item" id="nav-spend">
-      <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1.41 16.09V20h-2.67v-1.93c-1.71-.36-3.16-1.46-3.27-3.4h1.96c.1 1.05.82 1.87 2.65 1.87 1.96 0 2.4-.98 2.4-1.59 0-.83-.44-1.61-2.67-2.14-2.48-.6-4.18-1.62-4.18-3.67 0-1.72 1.39-2.84 3.11-3.21V4h2.67v1.95c1.86.45 2.79 1.86 2.85 3.39H14.3c-.05-1.11-.64-1.87-2.22-1.87-1.5 0-2.4.68-2.4 1.64 0 .84.65 1.39 2.67 1.91s4.18 1.39 4.18 3.91c-.01 1.83-1.38 2.83-3.12 3.16z"/></svg>
-      <span>Spendly</span>
-    </a>
-    <a href="pocketcal.html" class="nav-item" id="nav-pocket">
-      <svg viewBox="0 0 24 24"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zM9 14H7v-2h2v2zm4 0h-2v-2h2v2zm4 0h-2v-2h2v2zm-8 4H7v-2h2v2zm4 0h-2v-2h2v2zm4 0h-2v-2h2v2z"/></svg>
-      <span>PocketCal</span>
-    </a>
-  </nav>
-
-
-  <script src="global.js"></script>
-  <script src="index.js"></script>
+ <script src="global.js"></script>
+ <script src="index.js"></script>
 </body>
 </html>
-
-
-

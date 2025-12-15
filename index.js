@@ -595,7 +595,7 @@ attachBottomNav('nav-home');
       if (splash) {
         splash.style.display = 'none';
       }
-    }, 10000);
+    }, 2000);
   }
 
   // ========================================

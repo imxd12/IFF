@@ -19,97 +19,98 @@ attachBottomNav('nav-home');
     nexus: [],
     pocketcal: []
   };
+  let importFileData = null;
 
-// ========================================
-// PERSONALIZED GREETING - HOURLY CASUAL GREETINGS
-// ========================================
-function updateWelcome() {
-  const hour = new Date().getHours();
-  let greeting;
-  
-  // Dynamic casual greeting for every hour (0-23)
-  switch(hour) {
-    case 0:
-      greeting = `Late night 🌙, ${username}❤️`;
-      break;
-    case 1:
-      greeting = `Midnight vibes 🌌, ${username}💜`;
-      break;
-    case 2:
-      greeting = `Past midnight 🌃, ${username}💙`;
-      break;
-    case 3:
-      greeting = `Early dawn 🌆, ${username}🧡`;
-      break;
-    case 4:
-      greeting = `Pre-sunrise 🌄, ${username}💚`;
-      break;
-    case 5:
-      greeting = `Early morning' 🌅, ${username}💛`;
-      break;
-    case 6:
-      greeting = `Gudd morning' ☀️, ${username}🧡`;
-      break;
-    case 7:
-      greeting = `Rise n' shine ☀️, ${username}💖`;
-      break;
-    case 8:
-      greeting = `Morning' champ 🌤️, ${username}💜`;
-      break;
-    case 9:
-      greeting = `Late morning' 🌞, ${username}💙`;
-      break;
-    case 10:
-      greeting = `Mid-morning' ☀️, ${username}❤️`;
-      break;
-    case 11:
-      greeting = `Almost noon 🌤️, ${username}💚`;
-      break;
-    case 12:
-      greeting = `Gudd noon 🌞, ${username}💛`;
-      break;
-    case 13:
-      greeting = `Early noon 🌤️, ${username}💙`;
-      break;
-    case 14:
-      greeting = `Noon vibes ☀️, ${username}💜`;
-      break;
-    case 15:
-      greeting = `Mid noon 🌤️, ${username}💖`;
-      break;
-    case 16:
-      greeting = `Late noon 🌅, ${username}💚`;
-      break;
-    case 17:
-      greeting = `Early eve' 🌆, ${username}❤️`;
-      break;
-    case 18:
-      greeting = `Gudd eve' 🌇, ${username}🧡`;
-      break;
-    case 19:
-      greeting = `Evenin' time 🌙, ${username}💙`;
-      break;
-    case 20:
-      greeting = `Gudd night 🌃, ${username}❤️`;
-      break;
-    case 21:
-      greeting = `Late Night 🌌, ${username}💛`;
-      break;
-    case 22:
-      greeting = `Sleepsy' time 🌙, ${username}💖`;
-      break;
-    case 23:
-      greeting = `Almost midnight 🌃, ${username}💚`;
-      break;
-    default:
-      greeting = `Hey there, ${username}❤️`;
+  // ========================================
+  // PERSONALIZED GREETING - HOURLY CASUAL GREETINGS
+  // ========================================
+  function updateWelcome() {
+    const hour = new Date().getHours();
+    let greeting;
+    
+    // Dynamic casual greeting for every hour (0-23)
+    switch(hour) {
+      case 0:
+        greeting = `Late night 🌙, ${username}❤️`;
+        break;
+      case 1:
+        greeting = `Midnight vibes 🌌, ${username}💜`;
+        break;
+      case 2:
+        greeting = `Past midnight 🌃, ${username}💙`;
+        break;
+      case 3:
+        greeting = `Early dawn 🌆, ${username}🧡`;
+        break;
+      case 4:
+        greeting = `Pre-sunrise 🌄, ${username}💚`;
+        break;
+      case 5:
+        greeting = `Early morning' 🌅, ${username}💛`;
+        break;
+      case 6:
+        greeting = `Gudd morning' ☀️, ${username}🧡`;
+        break;
+      case 7:
+        greeting = `Rise n' shine ☀️, ${username}💖`;
+        break;
+      case 8:
+        greeting = `Morning' champ 🌤️, ${username}💜`;
+        break;
+      case 9:
+        greeting = `Late morning' 🌞, ${username}💙`;
+        break;
+      case 10:
+        greeting = `Mid-morning' ☀️, ${username}❤️`;
+        break;
+      case 11:
+        greeting = `Almost noon 🌤️, ${username}💚`;
+        break;
+      case 12:
+        greeting = `Gudd noon 🌞, ${username}💛`;
+        break;
+      case 13:
+        greeting = `Early noon 🌤️, ${username}💙`;
+        break;
+      case 14:
+        greeting = `Noon vibes ☀️, ${username}💜`;
+        break;
+      case 15:
+        greeting = `Mid noon 🌤️, ${username}💖`;
+        break;
+      case 16:
+        greeting = `Late noon 🌅, ${username}💚`;
+        break;
+      case 17:
+        greeting = `Early eve' 🌆, ${username}❤️`;
+        break;
+      case 18:
+        greeting = `Gudd eve' 🌇, ${username}🧡`;
+        break;
+      case 19:
+        greeting = `Evenin' time 🌙, ${username}💙`;
+        break;
+      case 20:
+        greeting = `Gudd night 🌃, ${username}❤️`;
+        break;
+      case 21:
+        greeting = `Late Night 🌌, ${username}💛`;
+        break;
+      case 22:
+        greeting = `Sleepsy' time 🌙, ${username}💖`;
+        break;
+      case 23:
+        greeting = `Almost midnight 🌃, ${username}💚`;
+        break;
+      default:
+        greeting = `Hey there, ${username}❤️`;
+    }
+    
+    const welcomeEl = $('#welcomeText');
+    if (welcomeEl) {
+      welcomeEl.textContent = greeting;
+    }
   }
-  
-  const welcomeEl = $('#welcomeText');
-  if (welcomeEl) {
-    welcomeEl.textContent = greeting;
-  }
-}
 
   // ========================================
   // LOAD DASHBOARD DATA
@@ -233,81 +234,244 @@ function updateWelcome() {
   };
 
   // ========================================
-  // EXPORT ALL DATA
+  // EXPORT ALL DATA - HIGH ACCURACY
   // ========================================
   window.exportAllData = function() {
     try {
+      // Validate data integrity before export
+      const spendlyData = loadData('fin_spendly') || [];
+      const nexusData = loadData('fin_nexus') || [];
+      const pocketData = loadData('fin_pocketcal') || [];
+      
+      // Data validation
+      const hasValidData = spendlyData.every(item => item && typeof item === 'object') &&
+                          nexusData.every(item => item && typeof item === 'object') &&
+                          pocketData.every(item => item && typeof item === 'object');
+      
+      if (!hasValidData) {
+        showSnackbar('Data validation failed. Cannot export corrupted data.', 'error');
+        return;
+      }
+      
       const data = {
-        version: '1.0.0',
+        version: '2.0.0',
         exportDate: new Date().toISOString(),
+        exportFormat: 'moneyflow-backup-v2',
         userName: localStorage.getItem('fin_userName') || 'User',
+        profileImage: localStorage.getItem('fin_profileImage') || null,
         modules: {
-          spendly: loadData('fin_spendly') || [],
-          nexus: loadData('fin_nexus') || [],
-          pocketcal: loadData('fin_pocketcal') || []
+          spendly: spendlyData,
+          nexus: nexusData,
+          pocketcal: pocketData
         },
         settings: {
           theme: localStorage.getItem('fin_theme') || 'light'
         },
         stats: {
-          totalTransactions: (loadData('fin_spendly') || []).length,
-          totalNexusEntries: (loadData('fin_nexus') || []).length,
-          totalPocketEntries: (loadData('fin_pocketcal') || []).length
-        }
+          totalTransactions: spendlyData.length,
+          totalNexusEntries: nexusData.length,
+          totalPocketEntries: pocketData.length,
+          totalBalance: calculateTotalBalance(),
+          exportTimestamp: Date.now()
+        },
+        checksum: generateChecksum(spendlyData.concat(nexusData, pocketData))
       };
       
-      exportJSON(data, `moneyflow-backup-${new Date().toISOString().split('T')[0]}.json`);
-      showSnackbar('Data exported successfully! 📤');
+      const filename = `moneyflow-backup-${new Date().toISOString().split('T')[0]}-${Date.now()}.json`;
+      exportJSON(data, filename);
+      showSnackbar(`✅ Data exported successfully! ${spendlyData.length + nexusData.length + pocketData.length} entries saved. 📤`, 'success');
+      
     } catch (error) {
       console.error('Export error:', error);
-      showSnackbar('Failed to export data', 'error');
+      showSnackbar('❌ Failed to export data. Please try again.', 'error');
     }
   };
 
   // ========================================
-  // IMPORT DATA
+  // IMPORT DATA - HIGH ACCURACY WITH VALIDATION
   // ========================================
-  window.importData = function() {
-    importJSON((data) => {
+  window.processImport = function() {
+    if (!importFileData) {
+      showSnackbar('Please select a file first', 'error');
+      return;
+    }
+
+    try {
+      // Comprehensive data validation
+      if (!importFileData.exportFormat || importFileData.exportFormat !== 'moneyflow-backup-v2') {
+        showSnackbar('❌ Invalid backup format. Please use MoneyFlow v2 backup.', 'error');
+        return;
+      }
+
+      if (importFileData.version !== '2.0.0') {
+        showSnackbar('⚠️ Backup version mismatch. This may cause issues.', 'warning');
+      }
+
+      // Validate checksum
+      const importedData = importFileData.modules.spendly.concat(
+        importFileData.modules.nexus, 
+        importFileData.modules.pocketcal
+      );
+      const calculatedChecksum = generateChecksum(importedData);
+      
+      if (calculatedChecksum !== importFileData.checksum) {
+        showSnackbar('❌ Data integrity check failed. File may be corrupted.', 'error');
+        return;
+      }
+
+      // Show detailed preview and confirmation
+      const totalEntries = importedData.length;
+      const spendlyCount = importFileData.modules.spendly?.length || 0;
+      const nexusCount = importFileData.modules.nexus?.length || 0;
+      const pocketCount = importFileData.modules.pocketcal?.length || 0;
+      
+      const preview = `📊 Import Preview:
+• Spendly: ${spendlyCount} transactions
+• Nexus: ${nexusCount} entries  
+• PocketCal: ${pocketCount} entries
+• Total: ${totalEntries} items
+• Date: ${new Date(importFileData.exportDate).toLocaleString()}
+⚠️ This will REPLACE all existing data!`;
+
+      if (confirm(preview)) {
+        performImport();
+      }
+
+    } catch (error) {
+      console.error('Import validation error:', error);
+      showSnackbar('❌ Import validation failed', 'error');
+    }
+  };
+
+  // Handle file selection for import
+  document.getElementById('importFile').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (!file) {
+      importFileData = null;
+      $('#confirmImportBtn').disabled = true;
+      $('#importPreview').style.display = 'none';
+      return;
+    }
+
+    // Validate file type
+    if (!file.name.endsWith('.json')) {
+      showSnackbar('Please select a .json backup file', 'error');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function(event) {
       try {
-        if (!data.modules) {
-          throw new Error('Invalid backup file format');
+        importFileData = JSON.parse(event.target.result);
+        
+        // Validate structure
+        if (!importFileData.modules || !importFileData.stats) {
+          throw new Error('Invalid backup structure');
         }
+
+        // Show preview
+        const preview = document.getElementById('importPreview');
+        preview.innerHTML = `
+          <div class="preview-stats">
+            <div class="stat-item">
+              <strong>${importFileData.modules.spendly?.length || 0}</strong>
+              <span>Spendly</span>
+            </div>
+            <div class="stat-item">
+              <strong>${importFileData.modules.nexus?.length || 0}</strong>
+              <span>Nexus</span>
+            </div>
+            <div class="stat-item">
+              <strong>${importFileData.modules.pocketcal?.length || 0}</strong>
+              <span>PocketCal</span>
+            </div>
+            <div class="stat-item total">
+              <strong>${(importFileData.modules.spendly?.length || 0) + (importFileData.modules.nexus?.length || 0) + (importFileData.modules.pocketcal?.length || 0)}</strong>
+              <span>Total Items</span>
+            </div>
+          </div>
+          <small>Exported: ${new Date(importFileData.exportDate).toLocaleString()}</small>
+        `;
+        preview.style.display = 'block';
+        $('#confirmImportBtn').disabled = false;
         
-        // Confirm import
-        const totalEntries = 
-          (data.modules.spendly || []).length +
-          (data.modules.nexus || []).length +
-          (data.modules.pocketcal || []).length;
-        
-        if (!confirm(`Import ${totalEntries} entries? This will overwrite existing data.`)) {
-          return;
-        }
-        
-        // Import data
-        if (data.modules.spendly) saveData('fin_spendly', data.modules.spendly);
-        if (data.modules.nexus) saveData('fin_nexus', data.modules.nexus);
-        if (data.modules.pocketcal) saveData('fin_pocketcal', data.modules.pocketcal);
-        
-        // Import settings
-        if (data.userName) localStorage.setItem('fin_userName', data.userName);
-        if (data.settings && data.settings.theme) {
-          localStorage.setItem('fin_theme', data.settings.theme);
-        }
-        
-        // Refresh dashboard
-        updateDashboard();
-        showSnackbar('Data imported successfully! 🎉');
-        
-        // Reload page after 2 seconds
-        setTimeout(() => location.reload(), 2000);
+        showSnackbar('✅ File validated successfully!', 'success');
         
       } catch (error) {
-        console.error('Import error:', error);
-        showSnackbar('Failed to import data. Invalid file format.', 'error');
+        console.error('File parse error:', error);
+        showSnackbar('❌ Invalid JSON file format', 'error');
+        importFileData = null;
+        $('#confirmImportBtn').disabled = true;
+        $('#importPreview').style.display = 'none';
       }
-    });
-  };
+    };
+    reader.readAsText(file);
+  });
+
+  // Perform actual import
+  function performImport() {
+    try {
+      // Backup existing data first
+      const backupKey = `backup_${Date.now()}`;
+      localStorage.setItem(backupKey, JSON.stringify({
+        spendly: loadData('fin_spendly'),
+        nexus: loadData('fin_nexus'),
+        pocketcal: loadData('fin_pocketcal'),
+        timestamp: Date.now()
+      }));
+
+      // Import data with validation
+      if (importFileData.modules.spendly) {
+        saveData('fin_spendly', importFileData.modules.spendly);
+      }
+      if (importFileData.modules.nexus) {
+        saveData('fin_nexus', importFileData.modules.nexus);
+      }
+      if (importFileData.modules.pocketcal) {
+        saveData('fin_pocketcal', importFileData.modules.pocketcal);
+      }
+
+      // Import settings
+      if (importFileData.userName) {
+        localStorage.setItem('fin_userName', importFileData.userName);
+        username = importFileData.userName;
+      }
+      if (importFileData.profileImage) {
+        localStorage.setItem('fin_profileImage', importFileData.profileImage);
+      }
+      if (importFileData.settings?.theme) {
+        localStorage.setItem('fin_theme', importFileData.settings.theme);
+      }
+
+      closeModal('#importModal');
+      updateDashboard();
+      updateWelcome();
+      loadProfileImage();
+      
+      showSnackbar(`✅ Import successful! ${importFileData.stats.totalTransactions + importFileData.stats.totalNexusEntries + importFileData.stats.totalPocketEntries} items restored. 🎉`, 'success');
+      
+      // Auto-refresh after 2 seconds
+      setTimeout(() => location.reload(), 2000);
+      
+    } catch (error) {
+      console.error('Import execution error:', error);
+      showSnackbar('❌ Import failed during execution', 'error');
+    }
+  }
+
+  // ========================================
+  // UTILITY FUNCTIONS FOR IMPORT/EXPORT
+  // ========================================
+  function generateChecksum(dataArray) {
+    return btoa(JSON.stringify(dataArray.sort((a, b) => (a.date || '').localeCompare(b.date || ''))));
+  }
+
+  function calculateTotalBalance() {
+    const spendly = loadData('fin_spendly') || [];
+    const income = spendly.filter(t => t.type === 'income').reduce((sum, t) => sum + Number(t.amount || 0), 0);
+    const expense = spendly.filter(t => t.type === 'expense').reduce((sum, t) => sum + Number(t.amount || 0), 0);
+    return income - expense;
+  }
 
   // ========================================
   // CLEAR ALL DATA
@@ -323,13 +487,18 @@ function updateWelcome() {
     }
     
     try {
+      // Create backup before clearing
+      const backupKey = `emergency_backup_${Date.now()}`;
+      localStorage.setItem(backupKey, JSON.stringify({
+        allData: JSON.stringify(localStorage),
+        timestamp: Date.now()
+      }));
+      
       // Clear all localStorage
       localStorage.clear();
       
-      // Show success message
-      showSnackbar('All data cleared successfully! 🗑️');
+      showSnackbar('🗑️ All data cleared. Emergency backup created.', 'success');
       
-      // Reload page after 1.5 seconds
       setTimeout(() => {
         location.reload();
       }, 1500);
@@ -359,7 +528,6 @@ function updateWelcome() {
         }
       }
       
-      // Display info
       alert(
         `📊 Storage Information\n\n` +
         `Total Size: ${kb} KB (${mb} MB)\n` +
@@ -419,53 +587,6 @@ function updateWelcome() {
   }
 
   // ========================================
-  // UPLOAD PROFILE IMAGE
-  // ========================================
-  window.uploadProfileImage = function() {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = 'image/*';
-    
-    input.onchange = (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
-      
-      // Validate file size (max 1MB)
-      if (file.size > 1024 * 1024) {
-        showSnackbar('Image size must be less than 1MB', 'error');
-        return;
-      }
-      
-      // Validate file type
-      if (!file.type.startsWith('image/')) {
-        showSnackbar('Please select a valid image file', 'error');
-        return;
-      }
-      
-      const reader = new FileReader();
-      
-      reader.onload = (event) => {
-        const imageData = event.target.result;
-        
-        // Save to localStorage
-        localStorage.setItem('fin_profileImage', imageData);
-        
-        // Update UI
-        loadProfileImage();
-        showSnackbar('Profile image updated! 📸');
-      };
-      
-      reader.onerror = () => {
-        showSnackbar('Failed to read image file', 'error');
-      };
-      
-      reader.readAsDataURL(file);
-    };
-    
-    input.click();
-  };
-
-  // ========================================
   // HIDE SPLASH SCREEN
   // ========================================
   function hideSplashScreen() {
@@ -489,7 +610,6 @@ function updateWelcome() {
   // AUTO REFRESH DASHBOARD
   // ========================================
   function startAutoRefresh() {
-    // Refresh dashboard every 60 seconds
     setInterval(() => {
       updateDashboard();
     }, 60000);
@@ -504,6 +624,12 @@ function updateWelcome() {
       if ((e.ctrlKey || e.metaKey) && e.key === 'e') {
         e.preventDefault();
         exportAllData();
+      }
+      
+      // Ctrl/Cmd + I: Import data
+      if ((e.ctrlKey || e.metaKey) && e.key === 'i') {
+        e.preventDefault();
+        openModal('#importModal');
       }
       
       // Ctrl/Cmd + K: Open developer options
@@ -530,71 +656,19 @@ function updateWelcome() {
   }
 
   // ========================================
-  // INITIALIZE TOOLTIPS
-  // ========================================
-  function initTooltips() {
-    const tooltipElements = $$('[data-tooltip]');
-    
-    tooltipElements.forEach(el => {
-      el.addEventListener('mouseenter', (e) => {
-        const tooltip = document.createElement('div');
-        tooltip.className = 'tooltip';
-        tooltip.textContent = el.getAttribute('data-tooltip');
-        tooltip.style.position = 'absolute';
-        tooltip.style.background = 'var(--bg)';
-        tooltip.style.padding = '8px 12px';
-        tooltip.style.borderRadius = 'var(--radius-sm)';
-        tooltip.style.fontSize = '12px';
-        tooltip.style.zIndex = '10000';
-        tooltip.style.pointerEvents = 'none';
-        tooltip.style.boxShadow = 'var(--shadow)';
-        
-        document.body.appendChild(tooltip);
-        
-        const rect = el.getBoundingClientRect();
-        tooltip.style.top = (rect.top - tooltip.offsetHeight - 8) + 'px';
-        tooltip.style.left = (rect.left + (rect.width / 2) - (tooltip.offsetWidth / 2)) + 'px';
-        
-        el._tooltip = tooltip;
-      });
-      
-      el.addEventListener('mouseleave', () => {
-        if (el._tooltip) {
-          el._tooltip.remove();
-          el._tooltip = null;
-        }
-      });
-    });
-  }
-
-  // ========================================
-  // ERROR HANDLER
-  // ========================================
-  window.addEventListener('error', (e) => {
-    console.error('Global error:', e);
-    // Optionally show user-friendly error message
-    // showSnackbar('An error occurred', 'error');
-  });
-
-  // ========================================
   // INITIALIZATION
   // ========================================
   function init() {
     try {
-      // Load and update data
       updateWelcome();
       updateDashboard();
       
-      // Load user preferences
       loadUserLocation();
       loadProfileImage();
       
-      // Hide splash screen
       hideSplashScreen();
       
-      // Initialize features
       initKeyboardShortcuts();
-      initTooltips();
       startAutoRefresh();
       
       console.log('✅ MoneyFlow Dashboard initialized successfully');

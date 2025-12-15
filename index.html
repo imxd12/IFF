@@ -101,9 +101,8 @@
   </div>
 </div>
 
-
- <!-- Header -->
- <header class="header">
+<!-- Header -->
+<header class="header">
    <div class="header-left">
      <svg class="brand-logo" viewBox="0 0 100 100">
        <defs>
@@ -125,22 +124,22 @@
        <div class="theme-toggle-slider">☀️</div>
      </div>
      <div class="profile-btn" onclick="window.location.href='profile.html'">
-       <img src="Imad.jpg" alt="Profile" id="profileImage">
+       <img src="Imad.jpg" alt="Profile" id="profileImage" loading="lazy">
      </div>
    </div>
- </header>
+</header>
 
- <!-- Main Container -->
- <div class="container">
-   
-   <!-- Welcome Section -->
-   <section class="welcome-section scroll-fade-in">
+<!-- Main Container -->
+<div class="container">
+  
+  <!-- Welcome Section -->
+  <section class="welcome-section scroll-fade-in">
      <h2 class="welcome-greeting" id="welcomeText">Welcome back!</h2>
      <p class="text-muted">Your financial overview at a glance</p>
-   </section>
+  </section>
 
-   <!-- Install Prompt -->
-   <div class="install-prompt" id="installPrompt" style="display: none;">
+  <!-- Install Prompt -->
+  <div class="install-prompt" id="installPrompt" style="display: none;">
      <div class="install-card">
        <div class="install-icon">📱</div>
        <div class="install-content">
@@ -150,10 +149,10 @@
        <button class="btn btn-primary" id="installBtn">Install</button>
        <button class="btn btn-secondary" id="dismissBtn">Later</button>
      </div>
-   </div>
+  </div>
 
-   <!-- Summary Cards -->
-   <div class="widget-grid">
+  <!-- Summary Cards -->
+  <div class="widget-grid">
      <div class="card scroll-fade-in" style="animation-delay: 0.1s">
        <div class="summary-icon">💰</div>
        <div class="summary-label">Today's Expense</div>
@@ -171,10 +170,10 @@
        <div class="summary-label">All-Time Balance</div>
        <div class="summary-value" id="totalBalance">₹0</div>
      </div>
-   </div>
+  </div>
 
-   <!-- Data Management Section -->
-   <section class="data-management-section scroll-blur">
+  <!-- Data Management Section -->
+  <section class="data-management-section scroll-blur">
      <h3 class="section-title">💾 Data Management</h3>
      <div class="action-grid">
        <button class="btn btn-primary" onclick="exportAllData()">
@@ -187,7 +186,7 @@
          <span>🛠️ Developer Options</span>
        </button>
      </div>
-   </section>
+  </section>
 
 <!-- Quick Actions -->
 <section class="quick-actions scroll-blur">
@@ -213,8 +212,8 @@
   </div>
 </section>
 
-   <!-- User Settings Section -->
-   <section class="user-settings-section scroll-blur">
+  <!-- User Settings Section -->
+  <section class="user-settings-section scroll-blur">
      <h3 class="section-title">⚙️ User Settings</h3>
      
      <div class="settings-grid">
@@ -248,12 +247,12 @@
          </button>
        </div>
      </div>
-   </section>
- </div>
+  </section>
+</div>
 
- <!-- Set Name Modal -->
- <div class="modal" id="nameModal">
-   <div class="modal-content">
+<!-- Set Name Modal -->
+<div class="modal" id="nameModal">
+  <div class="modal-content">
      <div class="modal-header">
        <h2 class="modal-title">Set Your Name</h2>
        <button class="modal-close" onclick="closeModal('#nameModal')">&times;</button>
@@ -265,12 +264,12 @@
        </div>
        <button type="submit" class="btn btn-primary">Save Name</button>
      </form>
-   </div>
- </div>
+  </div>
+</div>
 
- <!-- Import Data Modal -->
- <div class="modal" id="importModal">
-   <div class="modal-content">
+<!-- Import Data Modal -->
+<div class="modal" id="importModal">
+  <div class="modal-content">
      <div class="modal-header">
        <h2 class="modal-title">📥 Import Data</h2>
        <button class="modal-close" onclick="closeModal('#importModal')">&times;</button>
@@ -284,12 +283,12 @@
        <button type="button" class="btn btn-primary" onclick="processImport()" id="confirmImportBtn" disabled>Import Data</button>
        <p class="import-warning text-muted">⚠️ This will replace all existing data</p>
      </div>
-   </div>
- </div>
+  </div>
+</div>
 
- <!-- Developer Modal -->
- <div class="modal" id="devModal">
-   <div class="modal-content">
+<!-- Developer Modal -->
+<div class="modal" id="devModal">
+  <div class="modal-content">
      <div class="modal-header">
        <h2 class="modal-title">Developer Options</h2>
        <button class="modal-close" onclick="closeModal('#devModal')">&times;</button>
@@ -299,11 +298,11 @@
        <button class="btn btn-secondary" onclick="viewStorage()">📊 View Storage</button>
        <button class="btn btn-secondary" onclick="downloadBackup()">💾 Download Backup</button>
      </div>
-   </div>
- </div>
+  </div>
+</div>
 
- <!-- Footer -->
- <footer class="footer">
+<!-- Footer -->
+<footer class="footer">
    <div class="footer-content">
      <div class="footer-section">
        <h3>About MoneyFlow</h3>
@@ -330,12 +329,12 @@
    </div>
    
    <div class="footer-bottom">
-     <p>&copy; 2025 MoneyFlow by Imad Khan. All rights reserved.</p>
+     <p>&copy; <span id="currentYear"></span> MoneyFlow by Imad Khan. All rights reserved.</p>
    </div>
- </footer>
+</footer>
 
- <!-- Bottom Navigation -->
- <nav class="bottom-nav" data-active="0">
+<!-- Bottom Navigation -->
+<nav class="bottom-nav" data-active="0">
    <div class="nav-liquid"></div>
    <a href="index.html" class="nav-item active" id="nav-home">
      <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
@@ -349,9 +348,9 @@
      <svg viewBox="0 0 24 24"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zM9 14H7v-2h2v2zm4 0h-2v-2h2v2zm4 0h-2v-2h2v2zm-8 4H7v-2h2v2zm4 0h-2v-2h2v2zm4 0h-2v-2h2v2z"/></svg>
      <span>PocketCal</span>
    </a>
- </nav>
+</nav>
 
- <script src="global.js"></script>
- <script src="index.js"></script>
+<script src="global.js"></script>
+<script src="index.js"></script>
 </body>
 </html>

@@ -14,7 +14,7 @@ startClock('#timeNow');
   // ========================================
   let data = loadData('fin_pocketcal') || [];
   let current = new Date();
-  current.setDate(1); // Set to first day of month
+  current.setDate(1); // first day of month
   let selectedDate = null;
   let charts = {};
 
@@ -44,7 +44,7 @@ startClock('#timeNow');
       const firstDay = new Date(year, month, 1).getDay();
       const daysInMonth = new Date(year, month + 1, 0).getDate();
       
-      // Blank cells for days before month starts
+      // Blank cells
       for (let i = 0; i < firstDay; i++) {
         const blank = document.createElement('div');
         blank.className = 'day blank';
@@ -529,15 +529,21 @@ startClock('#timeNow');
         data = data.filter(d => d.date !== date);
         
         // Add new entry
-        data.push({
+        const newEntry = {
           id: Date.now().toString(),
           date: date,
           amount: amount,
           category: category,
-          notes: notes
-        });
+          notes: notes,
+          source: 'pocketcal'
+        };
+        data.push(newEntry);
         
         saveData('fin_pocketcal', data);
+
+        // OPTIONAL: if you want PocketCal → Spendly sync,
+        // you can also update fin_spendly here in future.
+        
         renderCalendar();
         closeEntryModal();
         showSnackbar('Entry saved! 💾');
@@ -601,12 +607,10 @@ startClock('#timeNow');
       if (!dateStr) return;
       
       try {
-        // Navigate to that month
-        const selectedDate = new Date(dateStr);
-        current = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1);
+        const selected = new Date(dateStr);
+        current = new Date(selected.getFullYear(), selected.getMonth(), 1);
         renderCalendar();
         
-        // Open modal for that date
         const entry = data.find(d => d.date === dateStr);
         openEntryModal(dateStr, entry);
       } catch (e) {
@@ -702,7 +706,6 @@ startClock('#timeNow');
     if (form) {
       form.style.display = 'block';
       
-      // Set default dates
       const today = new Date();
       const lastMonth = new Date();
       lastMonth.setMonth(today.getMonth() - 1);
@@ -718,11 +721,10 @@ startClock('#timeNow');
   };
 
   // ========================================
-  // PDF EXPORT FUNCTION
+  // PDF EXPORT FUNCTION (period presets)
   // ========================================
   window.exportPDF = function(period) {
     try {
-      // Check if jsPDF is loaded
       if (typeof window.jspdf === 'undefined') {
         showSnackbar('PDF library not loaded. Please refresh.', 'error');
         return;
@@ -730,46 +732,46 @@ startClock('#timeNow');
 
       const { jsPDF } = window.jspdf;
       
-      // Filter data based on period
       let filteredData = [];
       let periodLabel = '';
       const now = new Date();
       
       switch(period) {
-        case 'today':
+        case 'today': {
           const today = now.toISOString().split('T')[0];
           filteredData = data.filter(d => d.date === today);
           periodLabel = 'Today';
           break;
-          
-        case 'week':
+        }
+        case 'week': {
           const weekStart = new Date(now);
           weekStart.setDate(now.getDate() - now.getDay());
           const weekStartStr = weekStart.toISOString().split('T')[0];
           filteredData = data.filter(d => d.date >= weekStartStr);
           periodLabel = 'This Week';
           break;
-          
-        case 'month':
+        }
+        case 'month': {
           const monthStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
           filteredData = data.filter(d => d.date && d.date.startsWith(monthStr));
           periodLabel = now.toLocaleString('en-US', { month: 'long', year: 'numeric' });
           break;
-          
-        case 'year':
+        }
+        case 'year': {
           const yearStr = now.getFullYear().toString();
           filteredData = data.filter(d => d.date && d.date.startsWith(yearStr));
           periodLabel = yearStr;
           break;
-          
-        case 'all':
+        }
+        case 'all': {
           filteredData = [...data];
           periodLabel = 'All Time';
           break;
-          
-        default:
+        }
+        default: {
           filteredData = [...data];
           periodLabel = 'All Time';
+        }
       }
       
       if (filteredData.length === 0) {
@@ -777,7 +779,6 @@ startClock('#timeNow');
         return;
       }
       
-      // Sort by date descending
       filteredData.sort((a, b) => new Date(b.date) - new Date(a.date));
       
       generatePDF(filteredData, periodLabel);
@@ -843,26 +844,23 @@ startClock('#timeNow');
       day: 'numeric' 
     });
     
-    // Colors
-    const primaryColor = [16, 185, 129]; // #10b981
-    const secondaryColor = [59, 130, 246]; // #3b82f6
-    const accentColor = [245, 158, 11]; // #f59e0b
+    const primaryColor = [16, 185, 129];
+    const secondaryColor = [59, 130, 246];
+    const accentColor = [245, 158, 11];
     const textColor = [55, 65, 81];
     
     let yPos = 20;
     
-    // ===== HEADER WITH GRADIENT =====
+    // HEADER GRADIENT BAR
     doc.setFillColor(...primaryColor);
     doc.rect(0, 0, 210, 40, 'F');
     
-    // Add decorative circles
     doc.setFillColor(255, 255, 255);
     doc.setGState(new doc.GState({ opacity: 0.1 }));
     doc.circle(180, 10, 15, 'F');
     doc.circle(200, 30, 20, 'F');
     doc.setGState(new doc.GState({ opacity: 1 }));
     
-    // Header text
     doc.setTextColor(255, 255, 255);
     doc.setFontSize(26);
     doc.setFont('helvetica', 'bold');
@@ -877,7 +875,7 @@ startClock('#timeNow');
     
     yPos = 50;
     
-    // ===== SUMMARY STATISTICS BOX =====
+    // SUMMARY
     doc.setTextColor(...textColor);
     doc.setFontSize(18);
     doc.setFont('helvetica', 'bold');
@@ -885,13 +883,11 @@ startClock('#timeNow');
     
     yPos += 5;
     
-    // Calculate statistics
     const total = entries.reduce((sum, e) => sum + Number(e.amount || 0), 0);
     const highest = Math.max(...entries.map(e => Number(e.amount || 0)));
     const average = total / entries.length;
     const lowest = Math.min(...entries.map(e => Number(e.amount || 0)));
     
-    // Statistics cards
     doc.autoTable({
       startY: yPos,
       head: [['Metric', 'Value']],
@@ -926,7 +922,7 @@ startClock('#timeNow');
     
     yPos = doc.lastAutoTable.finalY + 12;
     
-    // ===== CATEGORY BREAKDOWN =====
+    // CATEGORY BREAKDOWN
     const categoryTotals = {};
     entries.forEach(e => {
       const cat = e.category || '💵 Pocket Money';
@@ -934,7 +930,6 @@ startClock('#timeNow');
     });
     
     if (Object.keys(categoryTotals).length > 0) {
-      // Check if we need new page
       if (yPos > 230) {
         doc.addPage();
         yPos = 20;
@@ -983,7 +978,7 @@ startClock('#timeNow');
       yPos = doc.lastAutoTable.finalY + 12;
     }
     
-    // ===== TRANSACTION DETAILS =====
+    // TRANSACTION DETAILS
     if (yPos > 230) {
       doc.addPage();
       yPos = 20;
@@ -1037,29 +1032,25 @@ startClock('#timeNow');
       theme: 'grid'
     });
     
-    // ===== FOOTER ON ALL PAGES =====
+    // FOOTER ON ALL PAGES
     const pageCount = doc.internal.getNumberOfPages();
     
     for (let i = 1; i <= pageCount; i++) {
       doc.setPage(i);
       
-      // Footer gradient bar
       doc.setFillColor(...primaryColor);
       doc.rect(0, 282, 210, 15, 'F');
       
-      // Footer text
       doc.setFontSize(9);
       doc.setTextColor(255, 255, 255);
       doc.setFont('helvetica', 'normal');
       doc.text('MoneyFlow PocketCal - Pocket Money Tracker', 15, 289);
       doc.text(`Page ${i} of ${pageCount}`, 195, 289, { align: 'right' });
       
-      // Developer info
       doc.setFontSize(8);
       doc.text('Developed by Imad Khan (@imxd12) | imadak999@gmail.com', 105, 293, { align: 'center' });
     }
     
-    // Save PDF
     const fileName = `PocketCal_${periodLabel.replace(/\s+/g, '_')}_${now.toISOString().split('T')[0]}.pdf`;
     doc.save(fileName);
   }
@@ -1094,7 +1085,6 @@ startClock('#timeNow');
     }
   }
 
-  // Start initialization
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
   } else {

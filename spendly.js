@@ -1,6 +1,6 @@
 /* =========================
-   SPENDLY - COMPLETE LOGIC WITH PDF EXPORT
-   Income & Expense Tracker with Analytics
+   SPENDLY - COMPLETE LOGIC WITH ENHANCED PDF EXPORT & POCKETCAL SYNC
+   Income & Expense Tracker with Analytics - Professional PDF Reports
 ========================= */
 
 // Initialize global functions
@@ -10,97 +10,109 @@ startClock('#timeNow');
   'use strict';
 
 // ========================================
-// CATEGORY CONFIGURATION - ENHANCED
-// ========================================
-const categoryMap = {
-  Food: [
-    '🍳 Breakfast', '🥪 Lunch', '🍝 Dinner', '🍿 Snacks', '☕ Beverages',
-    '🍰 Desserts', '🛒 Groceries', '🥤 Drinks', '🍔 Fast Food', '🥗 Healthy Meals',
-    '🍕 Pizza', '🍜 Noodles', '🍛 Curry', '🥙 Street Food', '🍦 Ice Cream',
-    '🧃 Juice', '🥛 Dairy Products', '🍞 Bakery', '🥩 Meat', '🐟 Seafood',
-    'All'
-  ],
-  
-  Travel: [
-    '🚌 Bus', '🚗 Taxi', '🚖 Local Transport', '✈️ Flights', '🚆 Train',
-    '⛴️ Ferry', '🛣️ Fuel', '🚲 Bicycle', '🏍️ Bike', '🛺 Rickshaw',
-    '🚇 Metro', '🚕 Ola/Uber', '🛵 Scooter Rental', '🚠 Cable Car', '🚁 Helicopter',
-    '🚢 Ship', '🚗 Car Rental', '🅿️ Parking', '🛤️ Road Tax', '🎫 Travel Pass',
-    'All'
-  ],
-  
-  Rent: [
-    '🏠 House Rent', '📱 Mobile Recharge', '💡 Utilities', '🌐 Internet', '🏢 Workspace',
-    '🛋️ Furniture Rent', '🏨 Hotel', '🏡 PG/Hostel', '🚗 Vehicle Rent', '📺 TV Cable',
-    '💧 Water Bill', '⚡ Electricity Bill', '🔥 Gas Bill', '🧹 Maintenance', '🏘️ Society Fee',
-    '🔒 Security Deposit', '🛠️ Repair Charges', '🧰 Equipment Rental', '📦 Storage Rent', '🏪 Shop Rent',
-    'All'
-  ],
-  
-  Shopping: [
-    '👕 Clothes', '👗 Fashion', '🛍️ Online', '📺 Electronics', '🎁 Gifts',
-    '🖊️ Stationary', '👟 Shoes', '💄 Cosmetics', '👔 Formal Wear', '👖 Casual Wear',
-    '🧥 Winter Wear', '🩳 Summer Wear', '👜 Bags', '⌚ Watches', '💍 Jewelry',
-    '🕶️ Accessories', '🧴 Skincare', '💅 Makeup', '🧢 Headwear', '🧦 Innerwear',
-    'All'
-  ],
-  
-  Bills: [
-    '🛜 Airtel Recharge Own','💡 Electricity', '🌊 Water', '🌐 WiFi', '📞 Phone', '📺 OTT',
-    '🧾 Insurance', '🎫 Railway Pass', '📦 Subscriptions', '💳 Credit Card', '📱 Postpaid',
-    '🔥 Gas Cylinder', '📡 DTH', '☁️ Cloud Storage', '🎵 Music App', '🎬 Netflix/Prime',
-    '🎮 Gaming Pass', '📰 News Subscription', '💻 Software License', '🏋️ Gym Membership', '🚗 Car Insurance',
-    'All'
-  ],
-  
-  Health: [
-    '💊 Medicines', '🩺 Doctor', '🏋️ Gym', '🦷 Dental', '💆 Spa',
-    '🧘 Yoga', '🏥 Hospital', '🔬 Lab Tests', '👓 Eye Care', '🩹 First Aid',
-    '💉 Vaccination', '🧠 Mental Health', '🧘‍♂️ Meditation', '🤰 Maternity', '👶 Baby Care',
-    '🦴 Physiotherapy', '💪 Fitness', '🏃 Sports', '🧴 Health Supplements', '🩺 Health Checkup',
-    'All'
-  ],
-  
-  Entertainment: [
-    '🎬 Movies', '🎮 Games', '🎵 Music', '📚 Books', '🎤 Shows',
-    '🎲 Board Games', '🎯 Hobbies', '🎪 Events', '🎭 Theatre', '🎨 Art Supplies',
-    '🎸 Musical Instruments', '🎧 Headphones', '🎮 Gaming Console', '🎱 Pool/Snooker', '🎳 Bowling',
-    '🎢 Amusement Park', '🎡 Fun Activities', '🎰 Casino', '🎪 Circus', '📖 Magazines',
-    'All'
-  ],
-  
-  Education: [
-    '📚 Tuition', '📝 Exams', '💻 Online Course', '📖 Books', '🖋️ Stationary',
-    '🎓 Certifications', '📄 Print Out', '🏫 School Fees', '🎒 School Supplies', '📓 Notebooks',
-    '✏️ Pens/Pencils', '📐 Geometry Box', '🖨️ Printing', '📱 Learning Apps', '👨‍🏫 Coaching',
-    '🧑‍💻 Workshops', '📜 Study Material', '🗂️ Reference Books', '🎓 Exam Fees', '📚 Library Fees',
-    'All'
-  ],
-  
-  Savings: [
-    '🏦 Bank Deposit', '📈 Investments', '💎 Assets', '🪙 Crypto', '💰 Cash Savings',
-    '📊 Stocks', '💹 Mutual Funds', '🏅 Gold', '🏠 Property', '📉 Bonds',
-    '💵 Fixed Deposit', '💳 SIP', '🏦 Recurring Deposit', '💼 PPF', '🔐 NSC',
-    '🪙 NFT', '🌾 Commodities', '💱 Forex', '🏛️ Real Estate', '💎 Precious Metals',
-    'All'
-  ],
-  
-  Family: [
-    '👨‍👩‍👧 Kids', '🎂 Celebrations', '🎁 Gifts', '👵👴 Elder Care', '👶 Baby Products',
-    '🎉 Birthday Party', '💒 Wedding', '🎊 Anniversary', '🎈 Festivals', '🍰 Cake',
-    '💐 Flowers', '🎀 Decorations', '👗 Family Clothing', '🧸 Toys', '📸 Photography',
-    '🍽️ Family Dinner', '🏖️ Family Trip', '🎓 Education Support', '💊 Medical Care', '🏡 Home Improvement',
-    'All'
-  ],
-  
-  Other: [
-    '🛠️ Miscellaneous', '💵 Charity', '🌱 Donations', '🎟️ Tickets', '🐕 Pet Care',
-    '🐈 Pet Food', '🐾 Vet Visit', '🧼 Cleaning Supplies', '🧹 Household Items', '🔧 Tools',
-    '🪴 Plants', '🌿 Gardening', '🎁 Random Gifts', '📮 Courier', '📦 Packaging',
-    '🔑 Keys/Locks', '🚪 Home Decor', '🖼️ Paintings', '🕯️ Candles', '💡 Light Bulbs', '💇 Haircut',
-    'All'
-  ]
-};
+  // CATEGORY CONFIGURATION - ENHANCED (30+ items each)
+  // ========================================
+  const categoryMap = {
+    Food: [
+      '🍳 Breakfast', '🥪 Lunch', '🍝 Dinner', '🍿 Snacks', '☕ Beverages',
+      '🍰 Desserts', '🛒 Groceries', '🥤 Drinks', '🍔 Fast Food', '🥗 Healthy Meals',
+      '🍕 Pizza', '🍜 Noodles', '🍛 Curry', '🥙 Street Food', '🍦 Ice Cream',
+      '🧃 Juice', '🥛 Dairy Products', '🍞 Bakery', '🥩 Meat', '🐟 Seafood',
+      '🍲 Home Cooked', '🍜 Chinese', '🍱 Japanese', '🌮 Mexican', '🍝 Italian',
+      '🥘 South Indian', '🥘 North Indian', '🍲 Biryani', '🥘 Dal', '🍗 Chicken',
+      '🥚 Eggs', '🍎 Fruits', '🥬 Vegetables', 'All'
+    ],
+    Travel: [
+      '🚌 Bus', '🚗 Taxi', '🚖 Local Transport', '✈️ Flights', '🚆 Train',
+      '⛴️ Ferry', '🛣️ Fuel', '🚲 Bicycle', '🏍️ Bike', '🛺 Rickshaw',
+      '🚇 Metro', '🚕 Ola/Uber', '🛵 Scooter Rental', '🚠 Cable Car', '🚁 Helicopter',
+      '🚢 Ship', '🚗 Car Rental', '🅿️ Parking', '🛤️ Road Tax', '🎫 Travel Pass',
+      '🛫 International', '🛬 Domestic', '🚗 Self Drive', '🚙 Road Trip', '🏖️ Vacation',
+      '🏔️ Adventure', '🏰 Pilgrimage', '🎡 Sightseeing', '🗺️ Local Tour', '🚤 Cruise',
+      '🛤️ Toll Plaza', '🛒 Travel Insurance', '📱 Roaming Pack', 'All'
+    ],
+    Rent: [
+      '🏠 House Rent', '📱 Mobile Recharge', '💡 Utilities', '🌐 Internet', '🏢 Workspace',
+      '🛋️ Furniture Rent', '🏨 Hotel', '🏡 PG/Hostel', '🚗 Vehicle Rent', '📺 TV Cable',
+      '💧 Water Bill', '⚡ Electricity Bill', '🔥 Gas Bill', '🧹 Maintenance', '🏘️ Society Fee',
+      '🔒 Security Deposit', '🛠️ Repair Charges', '🧰 Equipment Rental', '📦 Storage Rent', '🏪 Shop Rent',
+      '🏠 Apartment', '🏘️ Villa', '🏢 Office Space', '🏪 Commercial', '🛥️ Boat Rent',
+      '🎪 Event Space', '📚 Study Room', '💼 Meeting Room', '🏋️ Gym Locker', '🎸 Music Room',
+      '🖥️ Server Hosting', '☁️ Cloud Hosting', '📡 Satellite', 'All'
+    ],
+    Shopping: [
+      '👕 Clothes', '👗 Fashion', '🛍️ Online', '📺 Electronics', '🎁 Gifts',
+      '🖊️ Stationary', '👟 Shoes', '💄 Cosmetics', '👔 Formal Wear', '👖 Casual Wear',
+      '🧥 Winter Wear', '🩳 Summer Wear', '👜 Bags', '⌚ Watches', '💍 Jewelry',
+      '🕶️ Accessories', '🧴 Skincare', '💅 Makeup', '🧢 Headwear', '🧦 Innerwear',
+      '👓 Eyewear', '💰 Wallet', '🧳 Luggage', '🎒 Backpack', '👒 Hats',
+      '🧳 Travel Gear', '🏃 Sports Wear', '🏋️ Fitness Gear', '🎮 Gaming', '📱 Mobile',
+      '💻 Laptop', '📷 Camera', '🎧 Audio Gear', 'All'
+    ],
+    Bills: [
+      '🛜 Airtel Recharge Own', '💡 Electricity', '🌊 Water', '🌐 WiFi', '📞 Phone', 
+      '📺 OTT', '🧾 Insurance', '🎫 Railway Pass', '📦 Subscriptions', '💳 Credit Card',
+      '📱 Postpaid', '🔥 Gas Cylinder', '📡 DTH', '☁️ Cloud Storage', '🎵 Music App',
+      '🎬 Netflix/Prime', '🎮 Gaming Pass', '📰 News Subscription', '💻 Software License',
+      '🏋️ Gym Membership', '🚗 Car Insurance', '🏠 Home Insurance', '👨‍⚕️ Health Insurance',
+      '👨‍💼 Life Insurance', '🏦 Loan EMI', '💳 Credit EMI', '📚 Education Loan',
+      '🏠 Mortgage', '💰 SIP Auto Debit', '🪙 Crypto Auto Buy', '📈 Stock SIP',
+      '🏦 Bank Charges', '💳 ATM Charges', '📱 App Charges', 'All'
+    ],
+    Health: [
+      '💊 Medicines', '🩺 Doctor', '🏋️ Gym', '🦷 Dental', '💆 Spa',
+      '🧘 Yoga', '🏥 Hospital', '🔬 Lab Tests', '👓 Eye Care', '🩹 First Aid',
+      '💉 Vaccination', '🧠 Mental Health', '🧘‍♂️ Meditation', '🤰 Maternity', '👶 Baby Care',
+      '🦴 Physiotherapy', '💪 Fitness', '🏃 Sports', '🧴 Health Supplements', '🩺 Health Checkup',
+      '🥗 Nutritionist', '💊 Pharmacy', '🩺 Specialist', '🩺 Cardiologist', '🧠 Neurologist',
+      '👂 ENT', '🦷 Orthodontist', '🏥 Emergency', '🩹 Bandages', '🥛 Protein',
+      '💊 Vitamins', '🩺 Annual Checkup', '🏃 Marathon Fee', '🏋️ Personal Trainer', 'All'
+    ],
+    Entertainment: [
+      '🎬 Movies', '🎮 Games', '🎵 Music', '📚 Books', '🎤 Shows',
+      '🎲 Board Games', '🎯 Hobbies', '🎪 Events', '🎭 Theatre', '🎨 Art Supplies',
+      '🎸 Musical Instruments', '🎧 Headphones', '🎮 Gaming Console', '🎱 Pool/Snooker', '🎳 Bowling',
+      '🎢 Amusement Park', '🎡 Fun Activities', '🎰 Casino', '🎪 Circus', '📖 Magazines',
+      '🎤 Live Concert', '🎪 Comedy Show', '🎨 Painting Class', '📚 Book Fair', '🎮 Esports',
+      '🎵 Music Festival', '🎬 Premiere', '🎭 Drama', '🎪 Magic Show', '🎲 Puzzle',
+      '🎯 Archery', '🎸 Guitar Lessons', '🎨 Art Exhibition', 'All'
+    ],
+    Education: [
+      '📚 Tuition', '📝 Exams', '💻 Online Course', '📖 Books', '🖋️ Stationary',
+      '🎓 Certifications', '📄 Print Out', '🏫 School Fees', '🎒 School Supplies', '📓 Notebooks',
+      '✏️ Pens/Pencils', '📐 Geometry Box', '🖨️ Printing', '📱 Learning Apps', '👨‍🏫 Coaching',
+      '🧑‍💻 Workshops', '📜 Study Material', '🗂️ Reference Books', '🎓 Exam Fees', '📚 Library Fees',
+      '🎓 College Fees', '📚 Textbooks', '💻 Laptop for Study', '📱 Tablet', '🎒 School Bag',
+      '🖥️ Software Courses', '🎓 Degree Fees', '🏆 Competition Fees', '📚 Language Course',
+      '💻 Coding Bootcamp', '🎓 Seminar', '📚 Ebooks', '🧑‍🏫 Private Tutor', 'All'
+    ],
+    Savings: [
+      '🏦 Bank Deposit', '📈 Investments', '💎 Assets', '🪙 Crypto', '💰 Cash Savings',
+      '📊 Stocks', '💹 Mutual Funds', '🏅 Gold', '🏠 Property', '📉 Bonds',
+      '💵 Fixed Deposit', '💳 SIP', '🏦 Recurring Deposit', '💼 PPF', '🔐 NSC',
+      '🪙 NFT', '🌾 Commodities', '💱 Forex', '🏛️ Real Estate', '💎 Precious Metals',
+      '💰 Emergency Fund', '👨‍💼 Retirement Fund', '👶 Child Education', '🏠 Home Downpayment',
+      '💳 Credit Card Points', '🎁 Gift Cards', '🏦 Fixed Maturity Plan', '💼 EPF',
+      '💰 Sovereign Gold Bonds', '📈 Index Funds', '🏦 Senior Citizen FD', 'All'
+    ],
+    Family: [
+      '👨‍👩‍👧 Kids', '🎂 Celebrations', '🎁 Gifts', '👵👴 Elder Care', '👶 Baby Products',
+      '🎉 Birthday Party', '💒 Wedding', '🎊 Anniversary', '🎈 Festivals', '🍰 Cake',
+      '💐 Flowers', '🎀 Decorations', '👗 Family Clothing', '🧸 Toys', '📸 Photography',
+      '🍽️ Family Dinner', '🏖️ Family Trip', '🎓 Education Support', '💊 Medical Care', '🏡 Home Improvement',
+      '👨‍👩‍👧‍👦 Family Outing', '🎁 Diwali Gifts', '🎄 Christmas', '🕌 Eid', '🎊 Housewarming',
+      '👨‍👩‍👧‍👦 School Trip', '👵👴 Medical', '👶 Diapers', '🍼 Baby Food', 'All'
+    ],
+    Other: [
+      '🛠️ Miscellaneous', '💵 Charity', '🌱 Donations', '🎟️ Tickets', '🐕 Pet Care',
+      '🐈 Pet Food', '🐾 Vet Visit', '🧼 Cleaning Supplies', '🧹 Household Items', '🔧 Tools',
+      '🪴 Plants', '🌿 Gardening', '🎁 Random Gifts', '📮 Courier', '📦 Packaging',
+      '🔑 Keys/Locks', '🚪 Home Decor', '🖼️ Paintings', '🕯️ Candles', '💡 Light Bulbs', 
+      '💇 Haircut', '💅 Salon', '🚬 Smoking', '🍺 Alcohol', '🎰 Lottery',
+      '📱 Repair', '👕 Laundry', '🧺 Dry Cleaning', '🚲 Bike Service', '🚗 Car Service',
+      '🏠 Housekeeping', '🌸 Florist', '🎨 Interior Decor', 'All'
+    ]
+  };
 
   // ========================================
   // STATE MANAGEMENT
@@ -108,7 +120,6 @@ const categoryMap = {
   let data = loadData('fin_spendly') || [];
   let showLimit = 6;
   let showAll = false;
-  let editingId = null;
   let charts = {};
 
   // Setup expense category dropdowns
@@ -149,7 +160,50 @@ const categoryMap = {
   if (expenseDateEl) expenseDateEl.value = today;
 
   // ========================================
-  // CALCULATE TOTALS
+  // HELPER: SYNC INCOME → POCKETCAL
+  // Only for incomes with category "💵 Pocket Money"
+  // ========================================
+  function syncIncomeToPocketCal(entry) {
+    try {
+      if (entry.type !== 'income') return;
+      if (entry.category !== '💵 Pocket Money') return;
+
+      let pcData = loadData('fin_pocketcal') || [];
+
+      // One entry per date for PocketCal
+      pcData = pcData.filter(d => d.date !== entry.date);
+
+      pcData.push({
+        id: entry.id.toString(),
+        date: entry.date,
+        amount: Number(entry.amount),
+        category: '💵 Pocket Money',
+        notes: entry.notes || '',
+        source: 'spendly'
+      });
+
+      saveData('fin_pocketcal', pcData);
+    } catch (e) {
+      console.error('Sync income to PocketCal error:', e);
+    }
+  }
+
+  // When deleting income, also clear PocketCal entry for that date (if source=spendly)
+  function deletePocketCalForSpendly(dateStr) {
+    try {
+      let pcData = loadData('fin_pocketcal') || [];
+      const beforeLen = pcData.length;
+      pcData = pcData.filter(d => !(d.date === dateStr && d.source === 'spendly'));
+      if (pcData.length !== beforeLen) {
+        saveData('fin_pocketcal', pcData);
+      }
+    } catch (e) {
+      console.error('Delete PocketCal sync entry error:', e);
+    }
+  }
+
+  // ========================================
+  // CALCULATE TOTALS (with month income)
   // ========================================
   function calcTotals() {
     try {
@@ -162,14 +216,22 @@ const categoryMap = {
         .reduce((sum, d) => sum + Number(d.amount || 0), 0);
       
       const balance = totalIncome - totalExpense;
+
+      // This month income
+      const currentMonth = today.slice(0, 7);
+      const monthIncome = data
+        .filter(d => d.type === 'income' && d.date && d.date.startsWith(currentMonth))
+        .reduce((sum, d) => sum + Number(d.amount || 0), 0);
       
       const incomeEl = $('#totalIncome');
       const expenseEl = $('#totalExpense');
       const balanceEl = $('#balance');
+      const monthIncomeEl = $('#monthIncome');
       
       if (incomeEl) incomeEl.textContent = fmt(totalIncome);
       if (expenseEl) expenseEl.textContent = fmt(totalExpense);
       if (balanceEl) balanceEl.textContent = fmt(balance);
+      if (monthIncomeEl) monthIncomeEl.textContent = fmt(monthIncome);
       
       const footerTransactions = $('#footerTransactions');
       if (footerTransactions) {
@@ -442,6 +504,9 @@ const categoryMap = {
         
         data.push(entry);
         saveData('fin_spendly', data);
+
+        // SYNC to PocketCal if Pocket Money
+        syncIncomeToPocketCal(entry);
         
         incomeForm.reset();
         if (incomeDateEl) incomeDateEl.value = today;
@@ -525,7 +590,6 @@ const categoryMap = {
       const item = data.find(d => d.id === id);
       if (!item) return;
       
-      editingId = id;
       $('#editId').value = id;
       $('#editType').value = item.type;
       $('#editDate').value = item.date;
@@ -553,6 +617,8 @@ const categoryMap = {
         const idx = data.findIndex(d => d.id === id);
         
         if (idx !== -1) {
+          const oldEntry = { ...data[idx] };
+
           data[idx].date = $('#editDate').value;
           data[idx].amount = $('#editAmount').value;
           data[idx].category = $('#editCategory').value;
@@ -560,6 +626,15 @@ const categoryMap = {
           data[idx].notes = $('#editNotes').value;
           
           saveData('fin_spendly', data);
+
+          // If it was or is a Pocket Money income, resync PocketCal entry
+          if (oldEntry.type === 'income') {
+            // clear old date mapping
+            deletePocketCalForSpendly(oldEntry.date);
+            // sync new version if category matches
+            syncIncomeToPocketCal(data[idx]);
+          }
+
           calcTotals();
           renderList();
           renderCharts();
@@ -581,9 +656,16 @@ const categoryMap = {
     
     try {
       const id = Number($('#editId').value);
+      const tx = data.find(d => d.id === id);
+
       data = data.filter(d => d.id !== id);
-      
       saveData('fin_spendly', data);
+
+      // If this was pocket money income, remove from PocketCal
+      if (tx && tx.type === 'income' && tx.category === '💵 Pocket Money') {
+        deletePocketCalForSpendly(tx.date);
+      }
+
       calcTotals();
       renderList();
       renderCharts();
@@ -614,7 +696,7 @@ const categoryMap = {
   };
 
   // ========================================
-  // PDF MODAL FUNCTIONS
+  // ENHANCED PDF MODAL FUNCTIONS
   // ========================================
   window.openPDFModal = function() {
     try {
@@ -642,37 +724,36 @@ const categoryMap = {
   };
 
   // ========================================
-  // GENERATE PDF REPORT
+  // PROFESSIONAL ENHANCED PDF GENERATION
   // ========================================
   window.generatePDF = function() {
     try {
       const { jsPDF } = window.jspdf;
+      const { autoTable } = window.autotable;
       
-      // Get selected range
       const selectedRange = document.querySelector('input[name="pdfRange"]:checked').value;
       
-      // Filter data based on range
       let filteredData = [];
       let rangeText = '';
       const currentDate = new Date();
       
       if (selectedRange === 'today') {
         filteredData = data.filter(d => d.date === today);
-        rangeText = `Today - ${formatDate(today)}`;
+        rangeText = `📅 Today - ${formatDate(today)}`;
       } else if (selectedRange === 'week') {
         const weekAgo = new Date(currentDate);
         weekAgo.setDate(currentDate.getDate() - 7);
         const weekAgoStr = weekAgo.toISOString().split('T')[0];
         filteredData = data.filter(d => d.date >= weekAgoStr && d.date <= today);
-        rangeText = `Last 7 Days (${formatDate(weekAgoStr)} to ${formatDate(today)})`;
+        rangeText = `📊 Last 7 Days (${formatDate(weekAgoStr)} → ${formatDate(today)})`;
       } else if (selectedRange === 'month') {
         const currentMonth = today.slice(0, 7);
         filteredData = data.filter(d => d.date.startsWith(currentMonth));
-        rangeText = `This Month - ${formatMonthYear(currentMonth)}`;
+        rangeText = `📈 This Month - ${formatMonthYear(currentMonth)}`;
       } else if (selectedRange === 'year') {
         const currentYear = today.slice(0, 4);
         filteredData = data.filter(d => d.date.startsWith(currentYear));
-        rangeText = `This Year - ${currentYear}`;
+        rangeText = `📉 This Year - ${currentYear}`;
       } else if (selectedRange === 'custom') {
         const startDate = $('#pdfStartDate').value;
         const endDate = $('#pdfEndDate').value;
@@ -683,7 +764,7 @@ const categoryMap = {
         }
         
         filteredData = data.filter(d => d.date >= startDate && d.date <= endDate);
-        rangeText = `${formatDate(startDate)} to ${formatDate(endDate)}`;
+        rangeText = `🎯 Custom Period: ${formatDate(startDate)} → ${formatDate(endDate)}`;
       }
       
       if (filteredData.length === 0) {
@@ -691,213 +772,224 @@ const categoryMap = {
         return;
       }
       
-      // Calculate totals for filtered data
       const income = filteredData.filter(d => d.type === 'income').reduce((sum, d) => sum + Number(d.amount), 0);
       const expense = filteredData.filter(d => d.type === 'expense').reduce((sum, d) => sum + Number(d.amount), 0);
       const balance = income - expense;
       
-      // Initialize PDF
       const doc = new jsPDF('p', 'mm', 'a4');
       const pageWidth = doc.internal.pageSize.getWidth();
       const pageHeight = doc.internal.pageSize.getHeight();
-      let yPos = 20;
       
-      // ========================================
-      // HEADER SECTION
-      // ========================================
+      // 🎨 ENHANCED HEADER WITH GRADIENT & LOGO
+      // Background gradient
+      const gradient = doc.linearGradient(0, 0, 0, 40, [
+        [0.1, '#10b981'],
+        [0.5, '#059669'],
+        [1.0, '#047857']
+      ]);
+      doc.setFillColor(gradient);
+      doc.rect(0, 0, pageWidth, 50, 'F');
       
-      // App Title with emoji
-      doc.setFontSize(24);
-      doc.setTextColor(16, 185, 129);
-      doc.setFont(undefined, 'bold');
-      doc.text('💰 SPENDLY', pageWidth / 2, yPos, { align: 'center' });
+      // Logo/Header
+      doc.setFontSize(28);
+      doc.setTextColor(255, 255, 255);
+      doc.setFont('helvetica', 'bold');
+      doc.text('💰 SPENDLY', 20, 28, { charSpace: 0.5 });
       
-      yPos += 8;
+      // Subtitle
       doc.setFontSize(12);
-      doc.setTextColor(100, 100, 100);
-      doc.setFont(undefined, 'normal');
-      doc.text('Income & Expense Tracker Report', pageWidth / 2, yPos, { align: 'center' });
+      doc.setFont('helvetica', 'normal');
+      doc.text('Professional Income & Expense Analytics', 20, 38);
       
-      // Separator line
-      yPos += 5;
-      doc.setDrawColor(16, 185, 129);
-      doc.setLineWidth(0.5);
-      doc.line(20, yPos, pageWidth - 20, yPos);
+      // Header line
+      doc.setDrawColor(255, 255, 255, 0.3);
+      doc.setLineWidth(1);
+      doc.line(20, 45, pageWidth - 20, 45);
       
-      // Report Info
-      yPos += 8;
-      doc.setFontSize(10);
-      doc.setTextColor(60, 60, 60);
-      doc.setFont(undefined, 'bold');
-      doc.text('Report Period:', 20, yPos);
-      doc.setFont(undefined, 'normal');
-      doc.text(rangeText, 55, yPos);
+      let yPos = 65;
       
-      yPos += 6;
-      doc.setFont(undefined, 'bold');
-      doc.text('Generated On:', 20, yPos);
-      doc.setFont(undefined, 'normal');
-      doc.text(formatDateTime(new Date()), 55, yPos);
+      // 📊 EXECUTIVE SUMMARY BOX
+      doc.setFillColor(248, 250, 252);
+      doc.roundedRect(20, yPos, pageWidth - 40, 35, 8, 8, 'F');
+      doc.setDrawColor(203, 213, 225);
+      doc.roundedRect(20, yPos, pageWidth - 40, 35, 8, 8, 'S');
       
-      yPos += 6;
-      doc.setFont(undefined, 'bold');
-      doc.text('Total Transactions:', 20, yPos);
-      doc.setFont(undefined, 'normal');
-      doc.text(filteredData.length.toString(), 55, yPos);
-      
-      // ========================================
-      // SUMMARY CARDS
-      // ========================================
-      yPos += 10;
-      
-      const cardWidth = (pageWidth - 50) / 3;
-      const cardHeight = 20;
-      const cardStartX = 20;
-      
-      // Income Card
-      doc.setFillColor(220, 252, 231);
-      doc.roundedRect(cardStartX, yPos, cardWidth, cardHeight, 2, 2, 'F');
-      doc.setFontSize(9);
-      doc.setTextColor(80, 80, 80);
-      doc.text('TOTAL INCOME', cardStartX + cardWidth / 2, yPos + 6, { align: 'center' });
       doc.setFontSize(14);
-      doc.setTextColor(16, 185, 129);
-      doc.setFont(undefined, 'bold');
-      doc.text('₹' + income.toFixed(2), cardStartX + cardWidth / 2, yPos + 14, { align: 'center' });
+      doc.setTextColor(30, 41, 59);
+      doc.setFont('helvetica', 'bold');
+      doc.text('📊 EXECUTIVE SUMMARY', 30, yPos + 12);
       
-      // Expense Card
-      doc.setFillColor(254, 226, 226);
-      doc.roundedRect(cardStartX + cardWidth + 5, yPos, cardWidth, cardHeight, 2, 2, 'F');
-      doc.setFontSize(9);
-      doc.setTextColor(80, 80, 80);
-      doc.setFont(undefined, 'normal');
-      doc.text('TOTAL EXPENSE', cardStartX + cardWidth + 5 + cardWidth / 2, yPos + 6, { align: 'center' });
-      doc.setFontSize(14);
-      doc.setTextColor(239, 68, 68);
-      doc.setFont(undefined, 'bold');
-      doc.text('₹' + expense.toFixed(2), cardStartX + cardWidth + 5 + cardWidth / 2, yPos + 14, { align: 'center' });
+      // Summary Cards - Enhanced Design
+      const cardWidth = (pageWidth - 80) / 3;
+      const cardHeight = 18;
+      const cardStartX = 30;
       
-      // Balance Card
-      const balanceColor = balance >= 0 ? [16, 185, 129] : [239, 68, 68];
-      const balanceBg = balance >= 0 ? [219, 234, 254] : [254, 226, 226];
+      // INCOME CARD
+      doc.setFillColor(34, 197, 94);
+      doc.roundedRect(cardStartX, yPos + 18, cardWidth, cardHeight, 6, 6, 'F');
+      doc.setFillColor(16, 185, 129, 0.1);
+      doc.roundedRect(cardStartX + 2, yPos + 20, cardWidth - 4, cardHeight - 4, 4, 4, 'F');
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(11);
+      doc.setFont('helvetica', 'bold');
+      doc.text('INCOME', cardStartX + cardWidth/2, yPos + 27, { align: 'center' });
+      doc.setFontSize(18);
+      doc.text('₹' + fmtNum(income), cardStartX + cardWidth/2, yPos + 40, { align: 'center' });
+      
+      // EXPENSE CARD
+      doc.setFillColor(239, 68, 68);
+      doc.roundedRect(cardStartX + cardWidth + 8, yPos + 18, cardWidth, cardHeight, 6, 6, 'F');
+      doc.setFillColor(220, 38, 38, 0.1);
+      doc.roundedRect(cardStartX + cardWidth + 10, yPos + 20, cardWidth - 4, cardHeight - 4, 4, 4, 'F');
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(11);
+      doc.setFont('helvetica', 'bold');
+      doc.text('EXPENSE', cardStartX + cardWidth + 8 + cardWidth/2, yPos + 27, { align: 'center' });
+      doc.setFontSize(18);
+      doc.text('₹' + fmtNum(expense), cardStartX + cardWidth + 8 + cardWidth/2, yPos + 40, { align: 'center' });
+      
+      // BALANCE CARD
+      const isPositive = balance >= 0;
+      const balanceColor = isPositive ? [34, 197, 94] : [239, 68, 68];
+      const balanceBg = isPositive ? [16, 185, 129, 0.15] : [220, 38, 38, 0.15];
+      doc.setFillColor(...balanceColor);
+      doc.roundedRect(cardStartX + (cardWidth + 8) * 2, yPos + 18, cardWidth, cardHeight, 6, 6, 'F');
       doc.setFillColor(...balanceBg);
-      doc.roundedRect(cardStartX + (cardWidth + 5) * 2, yPos, cardWidth, cardHeight, 2, 2, 'F');
-      doc.setFontSize(9);
-      doc.setTextColor(80, 80, 80);
-      doc.setFont(undefined, 'normal');
-      doc.text('NET BALANCE', cardStartX + (cardWidth + 5) * 2 + cardWidth / 2, yPos + 6, { align: 'center' });
-      doc.setFontSize(14);
-      doc.setTextColor(...balanceColor);
-      doc.setFont(undefined, 'bold');
-      doc.text('₹' + balance.toFixed(2), cardStartX + (cardWidth + 5) * 2 + cardWidth / 2, yPos + 14, { align: 'center' });
+      doc.roundedRect(cardStartX + (cardWidth + 8) * 2 + 2, yPos + 20, cardWidth - 4, cardHeight - 4, 4, 4, 'F');
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(11);
+      doc.setFont('helvetica', 'bold');
+      doc.text('BALANCE', cardStartX + (cardWidth + 8) * 2 + cardWidth/2, yPos + 27, { align: 'center' });
+      doc.setFontSize(18);
+      doc.text((isPositive ? '+ ' : '- ') + '₹' + fmtNum(Math.abs(balance)), cardStartX + (cardWidth + 8) * 2 + cardWidth/2, yPos + 40, { align: 'center' });
       
-      // ========================================
-      // TRANSACTION TABLE
-      // ========================================
-      yPos += cardHeight + 10;
+      yPos += 65;
       
-      doc.setFontSize(12);
-      doc.setTextColor(40, 40, 40);
-      doc.setFont(undefined, 'bold');
-      doc.text('Transaction Details', 20, yPos);
+      // 📋 PERIOD & METRICS INFO
+      doc.setFillColor(255, 255, 255);
+      doc.roundedRect(20, yPos, pageWidth - 40, 22, 6, 6, 'F');
+      doc.setDrawColor(229, 231, 235);
+      doc.roundedRect(20, yPos, pageWidth - 40, 22, 6, 6, 'S');
       
-      yPos += 5;
+      doc.setFontSize(10);
+      doc.setTextColor(75, 85, 99);
+      doc.setFont('helvetica', 'normal');
       
-      // Prepare table data
-      const tableData = filteredData.map(item => {
+      doc.text(rangeText, 30, yPos + 10);
+      doc.text(`📅 Generated: ${formatDateTime(new Date())}`, 30, yPos + 17);
+      doc.text(`📊 Total Transactions: ${filteredData.length}`, pageWidth - 60, yPos + 10, { align: 'right' });
+      doc.text(`💹 Net Savings: ${isPositive ? '+' : ''}${fmtNum(balance)}`, pageWidth - 60, yPos + 17, { align: 'right' });
+      
+      yPos += 35;
+      
+      // 📈 TRANSACTION DETAILS TABLE - PROFESSIONAL
+      doc.setFontSize(13);
+      doc.setTextColor(17, 24, 39);
+      doc.setFont('helvetica', 'bold');
+      doc.text('📈 TRANSACTION DETAILS', 20, yPos);
+      
+      yPos += 8;
+      
+      const tableData = filteredData.slice().reverse().map(item => {
         const category = item.type === 'income' 
           ? item.category 
-          : `${item.category} - ${item.sub}`;
+          : `${item.category} → ${item.sub}`;
         
+        const emoji = item.type === 'income' ? '💰' : '💸';
         return [
+          emoji,
           formatDate(item.date),
           item.type.toUpperCase(),
-          category,
-          '₹' + Number(item.amount).toFixed(2),
-          item.notes || '-'
+          category.substring(0, 35) + (category.length > 35 ? '...' : ''),
+          '₹' + Number(item.amount).toFixed(0),
+          item.notes ? item.notes.substring(0, 25) + (item.notes.length > 25 ? '...' : '') : '-'
         ];
       });
       
-      // Generate table
-      doc.autoTable({
+      autoTable(doc, {
         startY: yPos,
-        head: [['Date', 'Type', 'Category', 'Amount', 'Notes']],
+        head: [['', 'Date', 'Type', 'Category', 'Amount', 'Notes']],
         body: tableData,
         theme: 'grid',
         headStyles: {
-          fillColor: [16, 185, 129],
+          fillColor: [34, 197, 94],
           textColor: [255, 255, 255],
           fontStyle: 'bold',
-          fontSize: 9,
-          halign: 'center'
+          fontSize: 10,
+          halign: 'center',
+          lineWidth: 0.5,
+          lineColor: [255, 255, 255]
         },
         bodyStyles: {
-          fontSize: 8,
-          textColor: [50, 50, 50]
-        },
-        columnStyles: {
-          0: { halign: 'center', cellWidth: 25 },
-          1: { halign: 'center', cellWidth: 20 },
-          2: { halign: 'left', cellWidth: 55 },
-          3: { halign: 'right', cellWidth: 30 },
-          4: { halign: 'left', cellWidth: 'auto' }
+          fontSize: 9,
+          textColor: [55, 65, 81],
+          lineWidth: 0.3,
+          lineColor: [243, 244, 246]
         },
         alternateRowStyles: {
-          fillColor: [245, 245, 245]
+          fillColor: [248, 250, 252]
+        },
+        columnStyles: {
+          0: { halign: 'center', cellWidth: 12, fillColor: [249, 250, 251] },
+          1: { halign: 'center', cellWidth: 25 },
+          2: { halign: 'center', cellWidth: 18 },
+          3: { halign: 'left', cellWidth: 55 },
+          4: { halign: 'right', cellWidth: 25, fontStyle: 'bold' },
+          5: { halign: 'left', cellWidth: 35 }
         },
         didParseCell: function(data) {
-          // Color code type column
-          if (data.column.index === 1 && data.section === 'body') {
+          if (data.column.index === 2 && data.section === 'body') {
             const type = data.cell.raw.toLowerCase();
             if (type === 'income') {
-              data.cell.styles.textColor = [16, 185, 129];
+              data.cell.styles.textColor = [34, 197, 94];
               data.cell.styles.fontStyle = 'bold';
-            } else if (type === 'expense') {
-              data.cell.styles.textColor = [239, 68, 68];
-              data.cell.styles.fontStyle = 'bold';
-            }
-          }
-          
-          // Color code amount column
-          if (data.column.index === 3 && data.section === 'body') {
-            const rowType = tableData[data.row.index][1].toLowerCase();
-            if (rowType === 'income') {
-              data.cell.styles.textColor = [16, 185, 129];
-              data.cell.styles.fontStyle = 'bold';
+              data.cell.styles.fillColor = [240, 253, 244];
             } else {
               data.cell.styles.textColor = [239, 68, 68];
               data.cell.styles.fontStyle = 'bold';
+              data.cell.styles.fillColor = [254, 242, 242];
+            }
+          }
+          
+          if (data.column.index === 4 && data.section === 'body') {
+            const rowType = tableData[data.row.index][2].toLowerCase();
+            if (rowType === 'income') {
+              data.cell.styles.textColor = [34, 197, 94];
+            } else {
+              data.cell.styles.textColor = [239, 68, 68];
             }
           }
         },
-        margin: { top: 10, left: 20, right: 20 },
+        margin: { top: 5, left: 20, right: 20 },
         didDrawPage: function(data) {
-          // Footer on each page
-          const footerY = pageHeight - 15;
+          // Enhanced Footer
+          const footerY = pageHeight - 25;
           
-          doc.setFontSize(8);
-          doc.setTextColor(120, 120, 120);
-          doc.setFont(undefined, 'normal');
+          // Footer gradient line
+          doc.setFillColor(34, 197, 94, 0.1);
+          doc.rect(0, footerY - 5, pageWidth, 8, 'F');
           
-          // Page number
-          const pageNum = 'Page ' + doc.internal.getCurrentPageInfo().pageNumber + ' of ' + doc.internal.getNumberOfPages();
+          doc.setFontSize(9);
+          doc.setTextColor(100, 116, 139);
+          doc.setFont('helvetica', 'normal');
+          
+          const pageNum = `Page ${doc.internal.getCurrentPageInfo().pageNumber}`;
           doc.text(pageNum, pageWidth / 2, footerY, { align: 'center' });
           
-          // Developer info
-          doc.text('Developed by Imad Khan (@imxd12)', 20, footerY);
+          doc.setFont('helvetica', 'bold');
+          doc.setTextColor(34, 197, 94);
+          doc.text('💰 SPENDLY', 20, footerY);
           
-          // Copyright
-          doc.text('© 2025 MoneyFlow', pageWidth - 20, footerY, { align: 'right' });
+          doc.setFont('helvetica', 'normal');
+          doc.setTextColor(100, 116, 139);
+          doc.text('Developed by Imad Khan (@imxd12) | © 2025 Spendly Pro', pageWidth - 35, footerY, { align: 'right' });
         }
       });
       
-      // ========================================
-      // CATEGORY BREAKDOWN (if space available)
-      // ========================================
       const finalY = doc.lastAutoTable.finalY;
       
-      if (finalY < pageHeight - 60) {
-        // Calculate category totals
+      // 🎯 TOP CATEGORIES INSIGHTS (if space available)
+      if (finalY < pageHeight - 80) {
         const categoryTotals = {};
         filteredData.filter(d => d.type === 'expense').forEach(d => {
           categoryTotals[d.category] = (categoryTotals[d.category] || 0) + Number(d.amount);
@@ -905,52 +997,58 @@ const categoryMap = {
         
         const sortedCategories = Object.entries(categoryTotals)
           .sort((a, b) => b[1] - a[1])
-          .slice(0, 5);
+          .slice(0, 6);
         
         if (sortedCategories.length > 0) {
-          doc.setFontSize(11);
-          doc.setTextColor(40, 40, 40);
-          doc.setFont(undefined, 'bold');
-          doc.text('Top 5 Expense Categories', 20, finalY + 15);
+          yPos = finalY + 20;
           
-          const categoryTableData = sortedCategories.map(([cat, amt]) => [
-            cat,
-            '₹' + amt.toFixed(2),
-            ((amt / expense) * 100).toFixed(1) + '%'
+          // Insights Header
+          doc.setFillColor(59, 130, 246);
+          doc.roundedRect(20, yPos, pageWidth - 40, 28, 8, 8, 'F');
+          doc.setTextColor(255, 255, 255);
+          doc.setFontSize(14);
+          doc.setFont('helvetica', 'bold');
+          doc.text('🎯 TOP SPENDING INSIGHTS', 30, yPos + 14);
+          
+          yPos += 32;
+          
+          const insightsData = sortedCategories.map(([cat, amt]) => [
+            `📊 ${cat}`,
+            '₹' + fmtNum(amt),
+            `${((amt / expense) * 100).toFixed(1)}%`
           ]);
           
-          doc.autoTable({
-            startY: finalY + 20,
-            head: [['Category', 'Amount', 'Percentage']],
-            body: categoryTableData,
+          autoTable(doc, {
+            startY: yPos,
+            head: [['Category', 'Amount', '% of Total']],
+            body: insightsData,
             theme: 'striped',
             headStyles: {
               fillColor: [59, 130, 246],
               textColor: [255, 255, 255],
               fontStyle: 'bold',
-              fontSize: 9
+              fontSize: 10
             },
             bodyStyles: {
-              fontSize: 9
+              fontSize: 9.5,
+              lineWidth: 0.5,
+              lineColor: [229, 231, 235]
             },
             columnStyles: {
-              0: { halign: 'left', cellWidth: 100 },
-              1: { halign: 'right', cellWidth: 40 },
-              2: { halign: 'center', cellWidth: 'auto' }
+              0: { cellWidth: 90 },
+              1: { halign: 'right', cellWidth: 40, fontStyle: 'bold' },
+              2: { halign: 'center', cellWidth: 30 }
             },
             margin: { left: 20, right: 20 }
           });
         }
       }
       
-      // ========================================
-      // SAVE PDF
-      // ========================================
-      const filename = `Spendly_Report_${selectedRange}_${today.replace(/-/g, '')}.pdf`;
+      const filename = `Spendly_Pro_Report_${selectedRange}_${today.replace(/-/g, '')}.pdf`;
       doc.save(filename);
       
       closeModal('#pdfModal');
-      showSnackbar('PDF report downloaded successfully! 📄');
+      showSnackbar('🏆 Professional PDF Report Downloaded! 📄✨', 'success');
       
     } catch (e) {
       console.error('Generate PDF error:', e);
@@ -959,8 +1057,15 @@ const categoryMap = {
   };
 
   // ========================================
-  // HELPER FUNCTIONS
+  // HELPER FUNCTIONS (Enhanced)
   // ========================================
+  function fmtNum(num) {
+    return Number(num).toLocaleString('en-IN', { 
+      maximumFractionDigits: 0,
+      minimumFractionDigits: 0 
+    });
+  }
+
   function formatDate(dateStr) {
     const d = new Date(dateStr);
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -970,7 +1075,7 @@ const categoryMap = {
   function formatMonthYear(monthStr) {
     const [year, month] = monthStr.split('-');
     const months = ['January', 'February', 'March', 'April', 'May', 'June', 
-                    'July', 'August', 'September', 'October', 'November', 'December'];
+                   'July', 'August', 'September', 'October', 'November', 'December'];
     return `${months[parseInt(month) - 1]} ${year}`;
   }
   
@@ -979,7 +1084,7 @@ const categoryMap = {
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     const hours = d.getHours().toString().padStart(2, '0');
     const minutes = d.getMinutes().toString().padStart(2, '0');
-    return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()} at ${hours}:${minutes}`;
+    return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()} • ${hours}:${minutes}`;
   }
 
   // ========================================
@@ -1074,7 +1179,7 @@ const categoryMap = {
         renderCharts();
       }, 100);
       
-      console.log('✅ Spendly initialized successfully');
+      console.log('✅ Spendly Pro initialized successfully with Enhanced PDF');
     } catch (e) {
       console.error('Initialization error:', e);
     }
@@ -1093,5 +1198,3 @@ const categoryMap = {
   });
 
 })();
-
-

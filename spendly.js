@@ -728,298 +728,267 @@ startClock('#timeNow');
     return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()} • ${h}:${m}`;
   }
 
-  // =========================
-  // CLEAN PDF GENERATION (NO window.autotable, NO gradient)
-  // =========================
-  window.generatePDF = function () {
-    try {
-      if (!window.jspdf || !window.jspdf.jsPDF) {
-        showSnackbar('jsPDF not loaded. Please include jspdf library.', 'error');
-        return;
-      }
-      const jsPDF = window.jspdf.jsPDF;
+// =========================
+// ULTRA CLEAN PROFESSIONAL PDF EXPORT
+// =========================
+window.generatePDF = function () {
+  try {
+    if (!window.jspdf || !window.jspdf.jsPDF) {
+      showSnackbar('jsPDF not loaded', 'error');
+      return;
+    }
 
-      const selectedRangeEl = document.querySelector('input[name="pdfRange"]:checked');
-      const selectedRange = selectedRangeEl ? selectedRangeEl.value : 'today';
+    const jsPDF = window.jspdf.jsPDF;
+    const doc = new jsPDF('p', 'mm', 'a4');
 
-      let filteredData = [];
-      let rangeText = '';
-      const now = new Date();
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
 
-      if (selectedRange === 'today') {
-        filteredData = data.filter((d) => d.date === today);
-        rangeText = `📅 Today - ${formatDate(today)}`;
-      } else if (selectedRange === 'week') {
-        const weekAgo = new Date(now);
-        weekAgo.setDate(now.getDate() - 7);
-        const weekAgoStr = weekAgo.toISOString().split('T')[0];
-        filteredData = data.filter((d) => d.date >= weekAgoStr && d.date <= today);
-        rangeText = `📊 Last 7 Days (${formatDate(weekAgoStr)} → ${formatDate(today)})`;
-      } else if (selectedRange === 'month') {
-        const currentMonth = today.slice(0, 7);
-        filteredData = data.filter((d) => d.date.startsWith(currentMonth));
-        rangeText = `📈 This Month - ${formatMonthYear(currentMonth)}`;
-      } else if (selectedRange === 'year') {
-        const currentYear = today.slice(0, 4);
-        filteredData = data.filter((d) => d.date.startsWith(currentYear));
-        rangeText = `📉 This Year - ${currentYear}`;
-      } else if (selectedRange === 'custom') {
-        const startDate = $('#pdfStartDate').value;
-        const endDate = $('#pdfEndDate').value;
-        if (!startDate || !endDate) {
-          showSnackbar('Please select both start and end dates', 'error');
-          return;
+    const selectedRangeEl = document.querySelector('input[name="pdfRange"]:checked');
+    const selectedRange = selectedRangeEl ? selectedRangeEl.value : 'today';
+
+    let filteredData = [];
+    let rangeText = '';
+    const now = new Date();
+
+    // ===== RANGE FILTER =====
+    if (selectedRange === 'today') {
+      filteredData = data.filter(d => d.date === today);
+      rangeText = `Today • ${formatDate(today)}`;
+    } else if (selectedRange === 'week') {
+      const w = new Date();
+      w.setDate(now.getDate() - 7);
+      const ws = w.toISOString().split('T')[0];
+      filteredData = data.filter(d => d.date >= ws && d.date <= today);
+      rangeText = `Last 7 Days • ${formatDate(ws)} → ${formatDate(today)}`;
+    } else if (selectedRange === 'month') {
+      const m = today.slice(0, 7);
+      filteredData = data.filter(d => d.date.startsWith(m));
+      rangeText = `Month • ${formatMonthYear(m)}`;
+    } else if (selectedRange === 'year') {
+      const y = today.slice(0, 4);
+      filteredData = data.filter(d => d.date.startsWith(y));
+      rangeText = `Year • ${y}`;
+    } else {
+      const s = $('#pdfStartDate').value;
+      const e = $('#pdfEndDate').value;
+      filteredData = data.filter(d => d.date >= s && d.date <= e);
+      rangeText = `Custom • ${formatDate(s)} → ${formatDate(e)}`;
+    }
+
+    if (filteredData.length === 0) {
+      showSnackbar('No transactions', 'error');
+      return;
+    }
+
+    const income = filteredData
+      .filter(d => d.type === 'income')
+      .reduce((s, d) => s + Number(d.amount), 0);
+
+    const expense = filteredData
+      .filter(d => d.type === 'expense')
+      .reduce((s, d) => s + Number(d.amount), 0);
+
+    const balance = income - expense;
+
+    let y = 0;
+
+    // =========================
+    // HEADER BAR
+    // =========================
+    doc.setFillColor(22, 163, 74);
+    doc.rect(0, 0, pageWidth, 28, 'F');
+
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(18);
+    doc.setTextColor(255, 255, 255);
+    doc.text('SPENDLY FINANCIAL REPORT', pageWidth / 2, 14, { align: 'center' });
+
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+    doc.text('Income & Expense Statement', pageWidth / 2, 21, { align: 'center' });
+
+    y = 34;
+
+    // =========================
+    // PERIOD BOX
+    // =========================
+    doc.setDrawColor(200);
+    doc.roundedRect(12, y, pageWidth - 24, 18, 3, 3);
+
+    doc.setFontSize(9);
+    doc.setTextColor(40);
+    doc.text(rangeText, 16, y + 7);
+    doc.text(`Generated: ${formatDateTime(now)}`, 16, y + 13);
+
+    doc.text(`Transactions: ${filteredData.length}`, pageWidth - 16, y + 7, { align: 'right' });
+
+    y += 26;
+
+    // =========================
+    // SUMMARY CARDS
+    // =========================
+    const cardW = (pageWidth - 32) / 3;
+
+    function drawCard(x, title, value, color) {
+      doc.setDrawColor(220);
+      doc.roundedRect(x, y, cardW, 20, 3, 3);
+
+      doc.setFontSize(9);
+      doc.setTextColor(90);
+      doc.text(title, x + 4, y + 7);
+
+      doc.setFontSize(13);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(...color);
+      doc.text(`₹ ${fmtNum(value)}`, x + 4, y + 15);
+    }
+
+    drawCard(12, 'Income', income, [22, 163, 74]);
+    drawCard(16 + cardW, 'Expense', expense, [220, 38, 38]);
+    drawCard(20 + cardW * 2, balance >= 0 ? 'Savings' : 'Loss', Math.abs(balance), balance >= 0 ? [37, 99, 235] : [220, 38, 38]);
+
+    y += 30;
+
+    // =========================
+    // TRANSACTION TABLE
+    // =========================
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(12);
+    doc.setTextColor(30);
+    doc.text('Transactions', 12, y);
+
+    y += 4;
+
+    const rows = filteredData.slice().reverse().map(d => {
+      const cat = d.type === 'income'
+        ? d.category
+        : `${d.category} - ${d.sub}`;
+
+      return [
+        formatDate(d.date),
+        d.type.toUpperCase(),
+        cat,
+        `₹ ${fmtNum(d.amount)}`
+      ];
+    });
+
+    doc.autoTable({
+      startY: y,
+      head: [['Date', 'Type', 'Category', 'Amount']],
+      body: rows,
+      theme: 'grid',
+
+      headStyles: {
+        fillColor: [22, 163, 74],
+        textColor: 255,
+        fontStyle: 'bold',
+        halign: 'center'
+      },
+
+      bodyStyles: {
+        fontSize: 9,
+        textColor: 40
+      },
+
+      alternateRowStyles: {
+        fillColor: [245, 247, 250]
+      },
+
+      columnStyles: {
+        0: { cellWidth: 28, halign: 'center' },
+        1: { cellWidth: 24, halign: 'center' },
+        2: { cellWidth: 78 },
+        3: { cellWidth: 32, halign: 'right', fontStyle: 'bold' }
+      },
+
+      didParseCell: function (cell) {
+        if (cell.section === 'body' && cell.column.index === 1) {
+          if (cell.cell.raw === 'INCOME') {
+            cell.cell.styles.textColor = [22, 163, 74];
+          } else {
+            cell.cell.styles.textColor = [220, 38, 38];
+          }
         }
-        filteredData = data.filter((d) => d.date >= startDate && d.date <= endDate);
-        rangeText = `🎯 Custom Period: ${formatDate(startDate)} → ${formatDate(endDate)}`;
+      },
+
+      didDrawPage: function () {
+        const pageNum = doc.internal.getCurrentPageInfo().pageNumber;
+        doc.setFontSize(8);
+        doc.setTextColor(150);
+        doc.text(`Page ${pageNum}`, pageWidth / 2, pageHeight - 6, { align: 'center' });
       }
+    });
 
-      if (filteredData.length === 0) {
-        showSnackbar('No transactions found for selected period', 'error');
-        return;
-      }
+    // =========================
+    // TOTAL ROW
+    // =========================
+    const finalY = doc.lastAutoTable.finalY + 4;
 
-      const income = filteredData
-        .filter((d) => d.type === 'income')
-        .reduce((s, d) => s + Number(d.amount), 0);
-      const expense = filteredData
-        .filter((d) => d.type === 'expense')
-        .reduce((s, d) => s + Number(d.amount), 0);
-      const balance = income - expense;
+    doc.setDrawColor(180);
+    doc.line(12, finalY, pageWidth - 12, finalY);
 
-      const doc = new jsPDF('p', 'mm', 'a4');
-      const pageWidth = doc.internal.pageSize.getWidth();
-      const pageHeight = doc.internal.pageSize.getHeight();
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(10);
+    doc.text('TOTAL EXPENSE', pageWidth - 60, finalY + 6);
 
-      // HEADER
-      doc.setFillColor(16, 185, 129);
-      doc.rect(0, 0, pageWidth, 30, 'F');
+    doc.setTextColor(220, 38, 38);
+    doc.text(`₹ ${fmtNum(expense)}`, pageWidth - 12, finalY + 6, { align: 'right' });
 
-      doc.setFont('helvetica', 'bold');
-      doc.setFontSize(18);
-      doc.setTextColor(255, 255, 255);
-      doc.text('SPENDLY FINANCIAL REPORT', pageWidth / 2, 16, { align: 'center' });
+    // =========================
+    // CATEGORY INSIGHTS
+    // =========================
+    let iy = finalY + 16;
 
-      doc.setFont('helvetica', 'normal');
-      doc.setFontSize(10);
-      doc.text('Income & Expense Summary', pageWidth / 2, 24, { align: 'center' });
-
-      let yPos = 38;
-
-      // SUMMARY BLOCK
-      doc.setFillColor(248, 250, 252);
-      doc.roundedRect(10, yPos, pageWidth - 20, 30, 4, 4, 'F');
-      doc.setDrawColor(209, 213, 219);
-      doc.roundedRect(10, yPos, pageWidth - 20, 30, 4, 4, 'S');
-
-      doc.setFontSize(12);
-      doc.setFont('helvetica', 'bold');
-      doc.setTextColor(30, 41, 59);
-      doc.text('Overview', 14, yPos + 8);
-
-      const colWidth = (pageWidth - 30) / 3;
-      const sx = 14;
-      const sy = yPos + 18;
-
-      doc.setFontSize(9);
-      doc.setFont('helvetica', 'normal');
-      doc.setTextColor(75, 85, 99);
-      // Income
-      doc.text('Income', sx, sy);
-      doc.setFont('helvetica', 'bold');
-      doc.text('₹ ' + fmtNum(income), sx, sy + 6);
-      // Expense
-      doc.setFont('helvetica', 'normal');
-      doc.text('Expense', sx + colWidth, sy);
-      doc.setFont('helvetica', 'bold');
-      doc.text('₹ ' + fmtNum(expense), sx + colWidth, sy + 6);
-      // Balance
-      const balLabel = balance >= 0 ? 'Net Savings' : 'Net Loss';
-      doc.setFont('helvetica', 'normal');
-      doc.text(balLabel, sx + colWidth * 2, sy);
-      doc.setFont('helvetica', 'bold');
-      doc.text(
-        `${balance >= 0 ? '+' : '-'}₹ ${fmtNum(Math.abs(balance))}`,
-        sx + colWidth * 2,
-        sy + 6
-      );
-
-      yPos += 40;
-
-      // PERIOD INFO
-      doc.setFillColor(255, 255, 255);
-      doc.roundedRect(10, yPos, pageWidth - 20, 18, 4, 4, 'F');
-      doc.setDrawColor(229, 231, 235);
-      doc.roundedRect(10, yPos, pageWidth - 20, 18, 4, 4, 'S');
-
-      doc.setFontSize(9);
-      doc.setFont('helvetica', 'normal');
-      doc.setTextColor(75, 85, 99);
-      doc.text(rangeText, 14, yPos + 7);
-      doc.text(`Generated: ${formatDateTime(new Date())}`, 14, yPos + 13);
-
-      doc.text(`Transactions: ${filteredData.length}`, pageWidth - 14, yPos + 7, {
-        align: 'right'
-      });
-      doc.text(`${balLabel}: ${balance >= 0 ? '+' : ''}${fmtNum(balance)}`, pageWidth - 14, yPos + 13, {
-        align: 'right'
+    const catTotals = {};
+    filteredData
+      .filter(d => d.type === 'expense')
+      .forEach(d => {
+        catTotals[d.category] = (catTotals[d.category] || 0) + Number(d.amount);
       });
 
-      yPos += 25;
+    const top = Object.entries(catTotals)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 5);
 
-      // TRANSACTIONS TABLE HEADING
+    if (top.length > 0) {
       doc.setFontSize(11);
-      doc.setFont('helvetica', 'bold');
-      doc.setTextColor(31, 41, 55);
-      doc.text('Transactions', 10, yPos);
+      doc.setTextColor(37, 99, 235);
+      doc.text('Top Expense Categories', 12, iy);
 
-      yPos += 5;
-
-      const tableData = filteredData
-        .slice()
-        .reverse()
-        .map((item) => {
-          const category =
-            item.type === 'income' ? item.category : `${item.category} → ${item.sub}`;
-          const emoji = item.type === 'income' ? '💰' : '💸';
-          return [
-            emoji,
-            formatDate(item.date),
-            item.type.toUpperCase(),
-            category.length > 30 ? category.slice(0, 30) + '…' : category,
-            '₹ ' + Number(item.amount).toFixed(0),
-            item.notes
-              ? item.notes.length > 25
-                ? item.notes.slice(0, 25) + '…'
-                : item.notes
-              : '-'
-          ];
-        });
+      const body = top.map(([c, a]) => [
+        c,
+        `₹ ${fmtNum(a)}`,
+        expense > 0 ? ((a / expense) * 100).toFixed(1) + '%' : '0%'
+      ]);
 
       doc.autoTable({
-        startY: yPos,
-        head: [['', 'Date', 'Type', 'Category', 'Amount', 'Notes']],
-        body: tableData,
+        startY: iy + 3,
+        head: [['Category', 'Amount', '%']],
+        body,
         theme: 'grid',
-        headStyles: {
-          fillColor: [34, 197, 94],
-          textColor: [255, 255, 255],
-          fontStyle: 'bold',
-          fontSize: 9,
-          halign: 'center'
-        },
-        bodyStyles: {
-          fontSize: 8,
-          textColor: [55, 65, 81],
-          lineWidth: 0.25,
-          lineColor: [229, 231, 235]
-        },
-        alternateRowStyles: {
-          fillColor: [248, 250, 252]
-        },
+        headStyles: { fillColor: [37, 99, 235], textColor: 255 },
         columnStyles: {
-          0: { cellWidth: 8, halign: 'center' },
-          1: { cellWidth: 23, halign: 'center' },
-          2: { cellWidth: 18, halign: 'center' },
-          3: { cellWidth: 55, halign: 'left' },
-          4: { cellWidth: 20, halign: 'right', fontStyle: 'bold' },
-          5: { cellWidth: 40, halign: 'left' }
-        },
-        didParseCell: function (dCell) {
-          if (dCell.section === 'body' && dCell.column.index === 2) {
-            const type = dCell.cell.raw.toLowerCase();
-            if (type === 'income') {
-              dCell.cell.styles.textColor = [34, 197, 94];
-              dCell.cell.styles.fontStyle = 'bold';
-            } else {
-              dCell.cell.styles.textColor = [239, 68, 68];
-              dCell.cell.styles.fontStyle = 'bold';
-            }
-          }
-          if (dCell.section === 'body' && dCell.column.index === 4) {
-            const type = tableData[dCell.row.index][2].toLowerCase();
-            dCell.cell.styles.textColor = type === 'income' ? [34, 197, 94] : [239, 68, 68];
-          }
-        },
-        margin: { top: 5, left: 10, right: 10 },
-        didDrawPage: function () {
-          const footerY = pageHeight - 8;
-          doc.setFontSize(8);
-          doc.setTextColor(148, 163, 184);
-          const pageNum = `Page ${doc.internal.getCurrentPageInfo().pageNumber}`;
-          doc.text(pageNum, pageWidth / 2, footerY, { align: 'center' });
+          1: { halign: 'right' },
+          2: { halign: 'center' }
         }
       });
-
-      const finalY = doc.lastAutoTable.finalY;
-      if (finalY < pageHeight - 40) {
-        const categoryTotals = {};
-        filteredData
-          .filter((d) => d.type === 'expense')
-          .forEach((d) => {
-            categoryTotals[d.category] = (categoryTotals[d.category] || 0) + Number(d.amount);
-          });
-
-        const topCategories = Object.entries(categoryTotals)
-          .sort((a, b) => b[1] - a[1])
-          .slice(0, 5);
-
-        if (topCategories.length > 0) {
-          const insightsY = finalY + 8;
-          doc.setFontSize(10);
-          doc.setFont('helvetica', 'bold');
-          doc.setTextColor(37, 99, 235);
-          doc.text('Top Expense Categories', 10, insightsY);
-
-          const insightsData = topCategories.map(([cat, amt]) => [
-            cat,
-            '₹ ' + fmtNum(amt),
-            expense > 0 ? ((amt / expense) * 100).toFixed(1) + '%' : '0%'
-          ]);
-
-          doc.autoTable({
-            startY: insightsY + 4,
-            head: [['Category', 'Amount', '% of Expense']],
-            body: insightsData,
-            theme: 'striped',
-            headStyles: {
-              fillColor: [59, 130, 246],
-              textColor: [255, 255, 255],
-              fontSize: 9
-            },
-            bodyStyles: {
-              fontSize: 8,
-              lineWidth: 0.25,
-              lineColor: [229, 231, 235]
-            },
-            columnStyles: {
-              0: { cellWidth: 70 },
-              1: { cellWidth: 30, halign: 'right' },
-              2: { cellWidth: 25, halign: 'center' }
-            },
-            margin: { left: 10, right: 10 }
-          });
-        }
-      }
-
-      const stampDate = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(
-        2,
-        '0'
-      )}${String(now.getDate()).padStart(2, '0')}`;
-      const stampTime = `${String(now.getHours()).padStart(2, '0')}${String(
-        now.getMinutes()
-      ).padStart(2, '0')}`;
-      const filename = `Spendly_Report_${selectedRange}_${stampDate}_${stampTime}.pdf`;
-
-      doc.save(filename);
-
-      closeModal('#pdfModal');
-      showSnackbar('PDF report downloaded! 📄', 'success');
-    } catch (e) {
-      console.error('Generate PDF error:', e);
-      showSnackbar('Failed to generate PDF: ' + e.message, 'error');
     }
-  };
+
+    // =========================
+    // SAVE
+    // =========================
+    const stamp = `${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}`;
+    doc.save(`Spendly_Report_${stamp}.pdf`);
+
+    closeModal('#pdfModal');
+    showSnackbar('PDF generated ✔', 'success');
+
+  } catch (e) {
+    console.error(e);
+    showSnackbar('PDF failed: ' + e.message, 'error');
+  }
+};
 
   // =========================
   // CSV / JSON

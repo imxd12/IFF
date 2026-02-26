@@ -1,671 +1,1021 @@
 /* =========================
-   POCKETCAL - COMPLETE LOGIC
-   Calendar Money Tracker with Advanced Analytics & PDF Export
+   SPENDLY - COMPLETE LOGIC WITH CLEAN PDF EXPORT
+   Income & Expense Tracker with Analytics - Professional PDF Reports
 ========================= */
 
-// Initialize global functions
+// Initialize global functions (already defined elsewhere in your project)
 startClock('#timeNow');
 
-(function() {
+(function () {
   'use strict';
 
-  // ========================================
-  // STATE MANAGEMENT
-  // ========================================
-  let data = loadData('fin_pocketcal') || [];
-  let current = new Date();
-  current.setDate(1); // first day of month
-  let selectedDate = null;
+  // =========================
+  // SMALL HELPERS
+  // =========================
+  const $ = (s) => document.querySelector(s);
+  const $$ = (s) => document.querySelectorAll(s);
+
+  function loadData(key) {
+    try {
+      const raw = localStorage.getItem(key);
+      return raw ? JSON.parse(raw) : null;
+    } catch (e) {
+      console.error('loadData error:', e);
+      return null;
+    }
+  }
+
+  function saveData(key, value) {
+    try {
+      localStorage.setItem(key, JSON.stringify(value));
+    } catch (e) {
+      console.error('saveData error:', e);
+    }
+  }
+
+  function fmt(num) {
+    return Number(num || 0).toLocaleString('en-IN', {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    });
+  }
+
+  // =========================
+  // CATEGORY CONFIGURATION (same as original)
+  // =========================
+  const categoryMap = {
+    Food: [
+      '🍳 Breakfast', '🥪 Lunch', '🍝 Dinner', '🍿 Snacks', '☕ Beverages',
+      '🍰 Desserts', '🛒 Groceries', '🥤 Drinks', '🍔 Fast Food', '🥗 Healthy Meals',
+      '🍕 Pizza', '🍜 Noodles', '🍛 Curry', '🥙 Street Food', '🍦 Ice Cream',
+      '🧃 Juice', '🥛 Dairy Products', '🍞 Bakery', '🥩 Meat', '🐟 Seafood',
+      '🍲 Home Cooked', '🍜 Chinese', '🍱 Japanese', '🌮 Mexican', '🍝 Italian',
+      '🥘 South Indian', '🥘 North Indian', '🍲 Biryani', '🥘 Dal', '🍗 Chicken',
+      '🥚 Eggs', '🍎 Fruits', '🥬 Vegetables', 'All'
+    ],
+    Travel: [
+      '🚌 Bus', '🚗 Taxi', '🚖 Local Transport', '✈️ Flights', '🚆 Train',
+      '⛴️ Ferry', '🛣️ Fuel', '🚲 Bicycle', '🏍️ Bike', '🛺 Rickshaw',
+      '🚇 Metro', '🚕 Ola/Uber', '🛵 Scooter Rental', '🚠 Cable Car', '🚁 Helicopter',
+      '🚢 Ship', '🚗 Car Rental', '🅿️ Parking', '🛤️ Road Tax', '🎫 Travel Pass',
+      '🛫 International', '🛬 Domestic', '🚗 Self Drive', '🚙 Road Trip', '🏖️ Vacation',
+      '🏔️ Adventure', '🏰 Pilgrimage', '🎡 Sightseeing', '🗺️ Local Tour', '🚤 Cruise',
+      '🛤️ Toll Plaza', '🛒 Travel Insurance', '📱 Roaming Pack', 'All'
+    ],
+    Rent: [
+      '🏠 House Rent', '📱 Mobile Recharge', '💡 Utilities', '🌐 Internet', '🏢 Workspace',
+      '🛋️ Furniture Rent', '🏨 Hotel', '🏡 PG/Hostel', '🚗 Vehicle Rent', '📺 TV Cable',
+      '💧 Water Bill', '⚡ Electricity Bill', '🔥 Gas Bill', '🧹 Maintenance', '🏘️ Society Fee',
+      '🔒 Security Deposit', '🛠️ Repair Charges', '🧰 Equipment Rental', '📦 Storage Rent', '🏪 Shop Rent',
+      '🏠 Apartment', '🏘️ Villa', '🏢 Office Space', '🏪 Commercial', '🛥️ Boat Rent',
+      '🎪 Event Space', '📚 Study Room', '💼 Meeting Room', '🏋️ Gym Locker', '🎸 Music Room',
+      '🖥️ Server Hosting', '☁️ Cloud Hosting', '📡 Satellite', 'All'
+    ],
+    Shopping: [
+      '👕 Clothes', '👗 Fashion', '🛍️ Online', '📺 Electronics', '🎁 Gifts',
+      '🖊️ Stationary', '👟 Shoes', '💄 Cosmetics', '👔 Formal Wear', '👖 Casual Wear',
+      '🧥 Winter Wear', '🩳 Summer Wear', '👜 Bags', '⌚ Watches', '💍 Jewelry',
+      '🕶️ Accessories', '🧴 Skincare', '💅 Makeup', '🧢 Headwear', '🧦 Innerwear',
+      '👓 Eyewear', '💰 Wallet', '🧳 Luggage', '🎒 Backpack', '👒 Hats',
+      '🧳 Travel Gear', '🏃 Sports Wear', '🏋️ Fitness Gear', '🎮 Gaming', '📱 Mobile',
+      '💻 Laptop', '📷 Camera', '🎧 Audio Gear', 'All'
+    ],
+    Bills: [
+      '🛜 Airtel Recharge Own', '💡 Electricity', '🌊 Water', '🌐 WiFi', '📞 Phone',
+      '📺 OTT', '🧾 Insurance', '🎫 Railway Pass', '📦 Subscriptions', '💳 Credit Card',
+      '📱 Postpaid', '🔥 Gas Cylinder', '📡 DTH', '☁️ Cloud Storage', '🎵 Music App',
+      '🎬 Netflix/Prime', '🎮 Gaming Pass', '📰 News Subscription', '💻 Software License',
+      '🏋️ Gym Membership', '🚗 Car Insurance', '🏠 Home Insurance', '👨‍⚕️ Health Insurance',
+      '👨‍💼 Life Insurance', '🏦 Loan EMI', '💳 Credit EMI', '📚 Education Loan',
+      '🏠 Mortgage', '💰 SIP Auto Debit', '🪙 Crypto Auto Buy', '📈 Stock SIP',
+      '🏦 Bank Charges', '💳 ATM Charges', '📱 App Charges', 'All'
+    ],
+    Health: [
+      '💊 Medicines', '🩺 Doctor', '🏋️ Gym', '🦷 Dental', '💆 Spa',
+      '🧘 Yoga', '🏥 Hospital', '🔬 Lab Tests', '👓 Eye Care', '🩹 First Aid',
+      '💉 Vaccination', '🧠 Mental Health', '🧘‍♂️ Meditation', '🤰 Maternity', '👶 Baby Care',
+      '🦴 Physiotherapy', '💪 Fitness', '🏃 Sports', '🧴 Health Supplements', '🩺 Health Checkup',
+      '🥗 Nutritionist', '💊 Pharmacy', '🩺 Specialist', '🩺 Cardiologist', '🧠 Neurologist',
+      '👂 ENT', '🦷 Orthodontist', '🏥 Emergency', '🩹 Bandages', '🥛 Protein',
+      '💊 Vitamins', '🩺 Annual Checkup', '🏃 Marathon Fee', '🏋️ Personal Trainer', 'All'
+    ],
+    Entertainment: [
+      '🎬 Movies', '🎮 Games', '🎵 Music', '📚 Books', '🎤 Shows',
+      '🎲 Board Games', '🎯 Hobbies', '🎪 Events', '🎭 Theatre', '🎨 Art Supplies',
+      '🎸 Musical Instruments', '🎧 Headphones', '🎮 Gaming Console', '🎱 Pool/Snooker', '🎳 Bowling',
+      '🎢 Amusement Park', '🎡 Fun Activities', '🎰 Casino', '🎪 Circus', '📖 Magazines',
+      '🎤 Live Concert', '🎪 Comedy Show', '🎨 Painting Class', '📚 Book Fair', '🎮 Esports',
+      '🎵 Music Festival', '🎬 Premiere', '🎭 Drama', '🎪 Magic Show', '🎲 Puzzle',
+      '🎯 Archery', '🎸 Guitar Lessons', '🎨 Art Exhibition', 'All'
+    ],
+    Education: [
+      '📚 Tuition', '📝 Exams', '💻 Online Course', '📖 Books', '🖋️ Stationary',
+      '🎓 Certifications', '📄 Print Out', '🏫 School Fees', '🎒 School Supplies', '📓 Notebooks',
+      '✏️ Pens/Pencils', '📐 Geometry Box', '🖨️ Printing', '📱 Learning Apps', '👨‍🏫 Coaching',
+      '🧑‍💻 Workshops', '📜 Study Material', '🗂️ Reference Books', '🎓 Exam Fees', '📚 Library Fees',
+      '🎓 College Fees', '📚 Textbooks', '💻 Laptop for Study', '📱 Tablet', '🎒 School Bag',
+      '🖥️ Software Courses', '🎓 Degree Fees', '🏆 Competition Fees', '📚 Language Course',
+      '💻 Coding Bootcamp', '🎓 Seminar', '📚 Ebooks', '🧑‍🏫 Private Tutor', 'All'
+    ],
+    Savings: [
+      '🏦 Bank Deposit', '📈 Investments', '💎 Assets', '🪙 Crypto', '💰 Cash Savings',
+      '📊 Stocks', '💹 Mutual Funds', '🏅 Gold', '🏠 Property', '📉 Bonds',
+      '💵 Fixed Deposit', '💳 SIP', '🏦 Recurring Deposit', '💼 PPF', '🔐 NSC',
+      '🪙 NFT', '🌾 Commodities', '💱 Forex', '🏛️ Real Estate', '💎 Precious Metals',
+      '💰 Emergency Fund', '👨‍💼 Retirement Fund', '👶 Child Education', '🏠 Home Downpayment',
+      '💳 Credit Card Points', '🎁 Gift Cards', '🏦 Fixed Maturity Plan', '💼 EPF',
+      '💰 Sovereign Gold Bonds', '📈 Index Funds', '🏦 Senior Citizen FD', 'All'
+    ],
+    Family: [
+      '👨‍👩‍👧 Kids', '🎂 Celebrations', '🎁 Gifts', '👵👴 Elder Care', '👶 Baby Products',
+      '🎉 Birthday Party', '💒 Wedding', '🎊 Anniversary', '🎈 Festivals', '🍰 Cake',
+      '💐 Flowers', '🎀 Decorations', '👗 Family Clothing', '🧸 Toys', '📸 Photography',
+      '🍽️ Family Dinner', '🏖️ Family Trip', '🎓 Education Support', '💊 Medical Care', '🏡 Home Improvement',
+      '👨‍👩‍👧‍👦 Family Outing', '🎁 Diwali Gifts', '🎄 Christmas', '🕌 Eid', '🎊 Housewarming',
+      '👨‍👩‍👧‍👦 School Trip', '👵👴 Medical', '👶 Diapers', '🍼 Baby Food', 'All'
+    ],
+    Other: [
+      '🛠️ Miscellaneous', '💵 Charity', '🌱 Donations', '🎟️ Tickets', '🐕 Pet Care',
+      '🐈 Pet Food', '🐾 Vet Visit', '🧼 Cleaning Supplies', '🧹 Household Items', '🔧 Tools',
+      '🪴 Plants', '🌿 Gardening', '🎁 Random Gifts', '📮 Courier', '📦 Packaging',
+      '🔑 Keys/Locks', '🚪 Home Decor', '🖼️ Paintings', '🕯️ Candles', '💡 Light Bulbs',
+      '💇 Haircut', '💅 Salon', '🚬 Smoking', '🍺 Alcohol', '🎰 Lottery',
+      '📱 Repair', '👕 Laundry', '🧺 Dry Cleaning', '🚲 Bike Service', '🚗 Car Service',
+      '🏠 Housekeeping', '🌸 Florist', '🎨 Interior Decor', 'All'
+    ]
+  }; // [file:1]
+
+  // =========================
+  // STATE
+  // =========================
+  let data = loadData('fin_spendly') || [];
+  let showLimit = 6;
+  let showAll = false;
   let charts = {};
 
-  // ========================================
-  // RENDER CALENDAR
-  // ========================================
-  function renderCalendar() {
-    try {
-      const grid = $('#calendarGrid');
-      if (!grid) return;
-      
-      grid.innerHTML = '';
-      
-      const year = current.getFullYear();
-      const month = current.getMonth();
-      const today = new Date().toISOString().split('T')[0];
-      
-      // Update month label
-      const calMonth = $('#calMonth');
-      if (calMonth) {
-        calMonth.textContent = current.toLocaleString('en-US', { 
-          month: 'long', 
-          year: 'numeric' 
-        });
-      }
-      
-      const firstDay = new Date(year, month, 1).getDay();
-      const daysInMonth = new Date(year, month + 1, 0).getDate();
-      
-      // Blank cells
-      for (let i = 0; i < firstDay; i++) {
-        const blank = document.createElement('div');
-        blank.className = 'day blank';
-        grid.appendChild(blank);
-      }
-      
-      // Actual days
-      for (let i = 1; i <= daysInMonth; i++) {
-        const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
-        const entry = data.find(d => d.date === dateStr);
-        
-        const dayEl = document.createElement('div');
-        dayEl.className = 'day';
-        
-        if (entry) {
-          dayEl.classList.add('has-entry');
-        }
-        
-        if (dateStr === today) {
-          dayEl.classList.add('today');
-        }
-        
-        dayEl.innerHTML = `
-          <div class="date-num">${i}</div>
-          ${entry ? `<div class="date-amount">${fmt(entry.amount)}</div>` : ''}
-        `;
-        
-        dayEl.onclick = () => openEntryModal(dateStr, entry);
-        grid.appendChild(dayEl);
-      }
-      
-      updateSummary();
-      updateCharts();
-    } catch (e) {
-      console.error('Render calendar error:', e);
-    }
+  const expenseCategory = $('#expenseCategory');
+  const expenseSub = $('#expenseSub');
+
+  if (expenseCategory) {
+    expenseCategory.innerHTML = Object.keys(categoryMap)
+      .map((c) => `<option value="${c}">${c}</option>`)
+      .join('');
   }
 
-  // ========================================
-  // UPDATE SUMMARY STATISTICS
-  // ========================================
-  function updateSummary() {
+  function populateSubcategories() {
+    if (!expenseCategory || !expenseSub) return;
+    const cat = expenseCategory.value;
+    expenseSub.innerHTML = categoryMap[cat]
+      .map((s) => `<option value="${s}">${s}</option>`)
+      .join('');
+  }
+
+  if (expenseCategory) {
+    expenseCategory.addEventListener('change', populateSubcategories);
+    populateSubcategories();
+  }
+
+  const today = new Date().toISOString().split('T')[0];
+  const incomeDateEl = $('#incomeDate');
+  const expenseDateEl = $('#expenseDate');
+  if (incomeDateEl) incomeDateEl.value = today;
+  if (expenseDateEl) expenseDateEl.value = today;
+
+  // =========================
+  // POCKETCAL SYNC
+  // =========================
+  function syncIncomeToPocketCal(entry) {
     try {
-      const currentMonthStr = `${current.getFullYear()}-${String(current.getMonth() + 1).padStart(2, '0')}`;
-      
-      // All-time total
-      const allTotal = data.reduce((sum, d) => sum + Number(d.amount || 0), 0);
-      const pcAll = $('#pcAll');
-      if (pcAll) pcAll.textContent = fmt(allTotal);
-      
-      // This month
-      const monthEntries = data.filter(d => d.date && d.date.startsWith(currentMonthStr));
-      const monthTotal = monthEntries.reduce((sum, d) => sum + Number(d.amount || 0), 0);
-      const pcMonth = $('#pcMonth');
-      if (pcMonth) pcMonth.textContent = fmt(monthTotal);
-      
-      // Highest day & Average
-      if (monthEntries.length > 0) {
-        const maxAmount = Math.max(...monthEntries.map(e => Number(e.amount || 0)));
-        const pcHigh = $('#pcHigh');
-        if (pcHigh) pcHigh.textContent = fmt(maxAmount);
-        
-        const avgAmount = monthTotal / monthEntries.length;
-        const pcAvg = $('#pcAvg');
-        if (pcAvg) pcAvg.textContent = fmt(avgAmount);
-      } else {
-        const pcHigh = $('#pcHigh');
-        const pcAvg = $('#pcAvg');
-        if (pcHigh) pcHigh.textContent = '₹0';
-        if (pcAvg) pcAvg.textContent = '₹0';
-      }
-      
-      // Days tracked
-      const daysTracked = $('#daysTracked');
-      const totalDays = $('#totalDays');
-      if (daysTracked) daysTracked.textContent = data.length;
-      if (totalDays) totalDays.textContent = data.length;
-      
-      // This week
-      const today = new Date();
-      const weekStart = new Date(today);
-      weekStart.setDate(today.getDate() - today.getDay());
-      const weekStartStr = weekStart.toISOString().split('T')[0];
-      
-      const weekTotal = data
-        .filter(d => d.date >= weekStartStr)
-        .reduce((sum, d) => sum + Number(d.amount || 0), 0);
-      const weekTotalEl = $('#weekTotal');
-      if (weekTotalEl) weekTotalEl.textContent = fmt(weekTotal);
-      
-      // Best month
-      const monthlyTotals = {};
-      data.forEach(d => {
-        if (d.date) {
-          const monthKey = d.date.substring(0, 7);
-          monthlyTotals[monthKey] = (monthlyTotals[monthKey] || 0) + Number(d.amount || 0);
-        }
+      if (entry.type !== 'income') return;
+      if (entry.category !== '💵 Pocket Money') return;
+
+      let pcData = loadData('fin_pocketcal') || [];
+      pcData = pcData.filter((d) => d.date !== entry.date);
+
+      pcData.push({
+        id: entry.id.toString(),
+        date: entry.date,
+        amount: Number(entry.amount),
+        category: '💵 Pocket Money',
+        notes: entry.notes || '',
+        source: 'spendly'
       });
-      
-      const bestMonthAmount = Math.max(...Object.values(monthlyTotals), 0);
-      const bestMonth = $('#bestMonth');
-      if (bestMonth) bestMonth.textContent = fmt(bestMonthAmount);
-      
-      // Footer stats
-      const footerEntries = $('#footerEntries');
-      if (footerEntries) footerEntries.textContent = data.length;
+
+      saveData('fin_pocketcal', pcData);
     } catch (e) {
-      console.error('Update summary error:', e);
+      console.error('Sync income to PocketCal error:', e);
     }
   }
 
-  // ========================================
-  // UPDATE ALL CHARTS
-  // ========================================
-  function updateCharts() {
+  function deletePocketCalForSpendly(dateStr) {
     try {
-      updateDailyChart();
-      updateCategoryChart();
-      updateWeeklyChart();
-      updateTrendChart();
+      let pcData = loadData('fin_pocketcal') || [];
+      const beforeLen = pcData.length;
+      pcData = pcData.filter((d) => !(d.date === dateStr && d.source === 'spendly'));
+      if (pcData.length !== beforeLen) saveData('fin_pocketcal', pcData);
     } catch (e) {
-      console.error('Update charts error:', e);
+      console.error('Delete PocketCal sync entry error:', e);
     }
   }
 
-  // ========================================
-  // DAILY CHART (CURRENT MONTH)
-  // ========================================
-  function updateDailyChart() {
+  // =========================
+  // TOTALS
+  // =========================
+  function calcTotals() {
     try {
-      const canvas = $('#pcChart');
-      if (!canvas) return;
-      
-      if (charts.daily) charts.daily.destroy();
-      
-      const year = current.getFullYear();
-      const month = current.getMonth();
-      const daysInMonth = new Date(year, month + 1, 0).getDate();
-      
-      const labels = [];
-      const values = [];
-      
-      for (let i = 1; i <= daysInMonth; i++) {
-        const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
-        const entry = data.find(d => d.date === dateStr);
-        labels.push(i);
-        values.push(entry ? Number(entry.amount) : 0);
-      }
-      
-      charts.daily = new Chart(canvas, {
-        type: 'bar',
-        data: {
-          labels: labels,
-          datasets: [{
-            label: 'Daily Amount',
-            data: values,
-            backgroundColor: 'rgba(16, 185, 129, 0.6)',
-            borderColor: '#10b981',
-            borderWidth: 1,
-            borderRadius: 6
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: true,
-          plugins: {
-            legend: { display: false },
-            tooltip: {
-              callbacks: {
-                label: (context) => '₹' + context.parsed.y.toFixed(2)
-              }
-            }
-          },
-          scales: {
-            y: {
-              beginAtZero: true,
-              ticks: {
-                callback: value => '₹' + value,
-                color: 'var(--text-secondary)'
-              },
-              grid: { color: 'var(--glass-border)' }
-            },
-            x: {
-              ticks: { color: 'var(--text-secondary)' },
-              grid: { color: 'var(--glass-border)' }
-            }
+      const totalIncome = data
+        .filter((d) => d.type === 'income')
+        .reduce((s, d) => s + Number(d.amount || 0), 0);
+      const totalExpense = data
+        .filter((d) => d.type === 'expense')
+        .reduce((s, d) => s + Number(d.amount || 0), 0);
+      const balance = totalIncome - totalExpense;
+
+      const currentMonth = today.slice(0, 7);
+      const monthIncome = data
+        .filter((d) => d.type === 'income' && d.date && d.date.startsWith(currentMonth))
+        .reduce((s, d) => s + Number(d.amount || 0), 0);
+
+      const incomeEl = $('#totalIncome');
+      const expenseEl = $('#totalExpense');
+      const balanceEl = $('#balance');
+      const monthIncomeEl = $('#monthIncome');
+
+      if (incomeEl) incomeEl.textContent = fmt(totalIncome);
+      if (expenseEl) expenseEl.textContent = fmt(totalExpense);
+      if (balanceEl) balanceEl.textContent = fmt(balance);
+      if (monthIncomeEl) monthIncomeEl.textContent = fmt(monthIncome);
+
+      const footerTransactions = $('#footerTransactions');
+      if (footerTransactions) footerTransactions.textContent = data.length;
+
+      return { totalIncome, totalExpense, balance };
+    } catch (e) {
+      console.error('Calculate totals error:', e);
+      return { totalIncome: 0, totalExpense: 0, balance: 0 };
+    }
+  }
+
+  // =========================
+  // LIST
+  // =========================
+  function renderList(filter = '') {
+    try {
+      const list = $('#listSpend');
+      const emptyState = $('#emptyState');
+      if (!list) return;
+
+      list.innerHTML = '';
+
+      const q = filter.toLowerCase();
+      const filterDateEl = $('#filterDate');
+      const selDate = filterDateEl ? filterDateEl.value : '';
+
+      let items = data
+        .slice()
+        .reverse()
+        .filter((it) => {
+          let match = true;
+          if (q) {
+            match =
+              (it.notes || '').toLowerCase().includes(q) ||
+              (it.category || '').toLowerCase().includes(q) ||
+              (it.sub || '').toLowerCase().includes(q);
           }
-        }
+          if (selDate) match = match && it.date === selDate;
+          return match;
+        });
+
+      if (!showAll) items = items.slice(0, showLimit);
+
+      if (items.length === 0) {
+        if (emptyState) emptyState.style.display = 'block';
+        return;
+      }
+      if (emptyState) emptyState.style.display = 'none';
+
+      items.forEach((it, idx) => {
+        const li = document.createElement('li');
+        li.className = 'list-item';
+        li.onclick = () => openEditModal(it.id);
+        li.style.animationDelay = `${idx * 0.05}s`;
+
+        const displayCategory =
+          it.type === 'income' ? it.category : `${it.category} - ${it.sub}`;
+
+        li.innerHTML = `
+          <div class="item-left">
+            <span class="item-type type-${it.type}">${it.type}</span>
+            <div class="item-main">${displayCategory}</div>
+            <div class="item-meta">📅 ${it.date} ${it.notes ? `• ${it.notes}` : ''}</div>
+          </div>
+          <div class="item-amount amount-${it.type}">
+            ${it.type === 'income' ? '+' : '-'}${fmt(it.amount)}
+          </div>
+        `;
+        list.appendChild(li);
       });
     } catch (e) {
-      console.error('Daily chart error:', e);
+      console.error('Render list error:', e);
     }
   }
 
-  // ========================================
-  // CATEGORY DISTRIBUTION CHART
-  // ========================================
-  function updateCategoryChart() {
+  // =========================
+  // CHARTS
+  // =========================
+  function renderCharts() {
     try {
-      const canvas = $('#categoryChart');
-      if (!canvas) return;
-      
-      if (charts.category) charts.category.destroy();
-      
-      const categoryData = {};
-      data.forEach(d => {
-        const cat = d.category || '🎯 Other';
-        categoryData[cat] = (categoryData[cat] || 0) + Number(d.amount || 0);
-      });
-      
-      const labels = Object.keys(categoryData);
-      const values = Object.values(categoryData);
-      
-      if (labels.length === 0) return;
-      
-      charts.category = new Chart(canvas, {
-        type: 'doughnut',
-        data: {
-          labels: labels,
-          datasets: [{
-            data: values,
-            backgroundColor: [
-              '#10b981', '#3b82f6', '#f59e0b', '#ef4444',
-              '#8b5cf6', '#ec4899', '#06b6d4', '#f97316'
-            ],
-            borderWidth: 2,
-            borderColor: 'var(--bg)'
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: true,
-          plugins: {
-            legend: {
-              position: 'bottom',
-              labels: {
-                color: 'var(--text)',
-                font: { size: 11 }
+      const totals = calcTotals();
+
+      Object.values(charts).forEach((c) => c && c.destroy && c.destroy());
+      charts = {};
+
+      const incomeExpenseCanvas = $('#incomeExpenseChart');
+      if (incomeExpenseCanvas && window.Chart) {
+        charts.incomeExpense = new Chart(incomeExpenseCanvas, {
+          type: 'doughnut',
+          data: {
+            labels: ['Income', 'Expense'],
+            datasets: [
+              {
+                data: [totals.totalIncome, totals.totalExpense],
+                backgroundColor: ['#10b981', '#ef4444'],
+                borderWidth: 2,
+                borderColor: 'var(--bg)'
               }
-            },
-            tooltip: {
-              callbacks: {
-                label: (context) => {
-                  const label = context.label || '';
-                  const value = '₹' + context.parsed.toFixed(2);
-                  return label + ': ' + value;
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+              legend: {
+                position: 'bottom',
+                labels: {
+                  color: 'var(--text)',
+                  font: { size: 12 }
                 }
               }
             }
           }
-        }
-      });
-    } catch (e) {
-      console.error('Category chart error:', e);
-    }
-  }
-
-  // ========================================
-  // WEEKLY COMPARISON CHART
-  // ========================================
-  function updateWeeklyChart() {
-    try {
-      const canvas = $('#weeklyChart');
-      if (!canvas) return;
-      
-      if (charts.weekly) charts.weekly.destroy();
-      
-      const weeks = [];
-      const weekTotals = [];
-      
-      for (let i = 3; i >= 0; i--) {
-        const weekEnd = new Date();
-        weekEnd.setDate(weekEnd.getDate() - (i * 7));
-        const weekStart = new Date(weekEnd);
-        weekStart.setDate(weekEnd.getDate() - 6);
-        
-        const weekLabel = `Week ${4 - i}`;
-        const weekStartStr = weekStart.toISOString().split('T')[0];
-        const weekEndStr = weekEnd.toISOString().split('T')[0];
-        
-        const weekTotal = data
-          .filter(d => d.date >= weekStartStr && d.date <= weekEndStr)
-          .reduce((sum, d) => sum + Number(d.amount || 0), 0);
-        
-        weeks.push(weekLabel);
-        weekTotals.push(weekTotal);
+        });
       }
-      
-      charts.weekly = new Chart(canvas, {
-        type: 'bar',
-        data: {
-          labels: weeks,
-          datasets: [{
-            label: 'Weekly Total',
-            data: weekTotals,
-            backgroundColor: '#3b82f6',
-            borderRadius: 8,
-            borderWidth: 0
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: true,
-          plugins: {
-            legend: { display: false },
-            tooltip: {
-              callbacks: {
-                label: (context) => '₹' + context.parsed.y.toFixed(2)
+
+      const categoryCanvas = $('#categoryChart');
+      if (categoryCanvas && window.Chart) {
+        const categoryData = {};
+        data
+          .filter((d) => d.type === 'expense')
+          .forEach((d) => {
+            categoryData[d.category] = (categoryData[d.category] || 0) + Number(d.amount);
+          });
+
+        const sortedCategories = Object.entries(categoryData)
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, 8);
+
+        charts.category = new Chart(categoryCanvas, {
+          type: 'pie',
+          data: {
+            labels: sortedCategories.map((c) => c[0]),
+            datasets: [
+              {
+                data: sortedCategories.map((c) => c[1]),
+                backgroundColor: [
+                  '#10b981', '#3b82f6', '#f59e0b', '#ef4444',
+                  '#8b5cf6', '#ec4899', '#14b8a6', '#f97316'
+                ],
+                borderWidth: 2,
+                borderColor: 'var(--bg)'
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+              legend: {
+                position: 'bottom',
+                labels: {
+                  color: 'var(--text)',
+                  font: { size: 11 }
+                }
               }
             }
-          },
-          scales: {
-            y: {
-              beginAtZero: true,
-              ticks: {
-                callback: value => '₹' + value,
-                color: 'var(--text-secondary)'
-              },
-              grid: { color: 'var(--glass-border)' }
-            },
-            x: {
-              ticks: { color: 'var(--text-secondary)' },
-              grid: { color: 'var(--glass-border)' }
-            }
           }
-        }
-      });
-    } catch (e) {
-      console.error('Weekly chart error:', e);
-    }
-  }
-
-  // ========================================
-  // 6-MONTH TREND CHART
-  // ========================================
-  function updateTrendChart() {
-    try {
-      const canvas = $('#trendChart');
-      if (!canvas) return;
-      
-      if (charts.trend) charts.trend.destroy();
-      
-      const months = [];
-      const monthTotals = [];
-      
-      for (let i = 5; i >= 0; i--) {
-        const d = new Date();
-        d.setMonth(d.getMonth() - i);
-        const monthStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
-        const monthLabel = d.toLocaleString('en-US', { month: 'short', year: '2-digit' });
-        
-        const monthTotal = data
-          .filter(entry => entry.date && entry.date.startsWith(monthStr))
-          .reduce((sum, entry) => sum + Number(entry.amount || 0), 0);
-        
-        months.push(monthLabel);
-        monthTotals.push(monthTotal);
+        });
       }
-      
-      charts.trend = new Chart(canvas, {
-        type: 'line',
-        data: {
-          labels: months,
-          datasets: [{
-            label: 'Monthly Trend',
-            data: monthTotals,
-            borderColor: '#f59e0b',
-            backgroundColor: 'rgba(245, 158, 11, 0.1)',
-            borderWidth: 3,
-            fill: true,
-            tension: 0.4,
-            pointRadius: 5,
-            pointBackgroundColor: '#f59e0b',
-            pointHoverRadius: 7
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: true,
-          plugins: {
-            legend: { display: false },
-            tooltip: {
-              callbacks: {
-                label: (context) => '₹' + context.parsed.y.toFixed(2)
+
+      const trendCanvas = $('#trendChart');
+      if (trendCanvas && window.Chart) {
+        const monthlyData = {};
+        data.forEach((d) => {
+          const month = d.date.slice(0, 7);
+          if (!monthlyData[month]) monthlyData[month] = { income: 0, expense: 0 };
+          monthlyData[month][d.type] += Number(d.amount);
+        });
+
+        const sortedMonths = Object.keys(monthlyData).sort().slice(-6);
+
+        charts.trend = new Chart(trendCanvas, {
+          type: 'line',
+          data: {
+            labels: sortedMonths,
+            datasets: [
+              {
+                label: 'Income',
+                data: sortedMonths.map((m) => monthlyData[m].income),
+                borderColor: '#10b981',
+                backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                tension: 0.4,
+                fill: true
+              },
+              {
+                label: 'Expense',
+                data: sortedMonths.map((m) => monthlyData[m].expense),
+                borderColor: '#ef4444',
+                backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                tension: 0.4,
+                fill: true
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+              legend: {
+                position: 'top',
+                labels: {
+                  color: 'var(--text)',
+                  font: { size: 12 }
+                }
+              }
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                ticks: { color: 'var(--text-secondary)' },
+                grid: { color: 'var(--glass-border)' }
+              },
+              x: {
+                ticks: { color: 'var(--text-secondary)' },
+                grid: { color: 'var(--glass-border)' }
               }
             }
-          },
-          scales: {
-            y: {
-              beginAtZero: true,
-              ticks: {
-                callback: value => '₹' + value,
-                color: 'var(--text-secondary)'
-              },
-              grid: { color: 'var(--glass-border)' }
-            },
-            x: {
-              ticks: { color: 'var(--text-secondary)' },
-              grid: { color: 'var(--glass-border)' }
-            }
           }
-        }
+        });
+      }
+    } catch (e) {
+      console.error('Render charts error:', e);
+    }
+  }
+
+  // =========================
+  // SWITCH TYPE
+  // =========================
+  window.switchType = function (type) {
+    try {
+      $$('.type-btn').forEach((btn) => {
+        btn.classList.toggle('active', btn.dataset.type === type);
+      });
+      $$('.transaction-form').forEach((form) => {
+        form.classList.toggle('active', form.id === `${type}Form`);
       });
     } catch (e) {
-      console.error('Trend chart error:', e);
-    }
-  }
-
-  // ========================================
-  // OPEN ENTRY MODAL
-  // ========================================
-  function openEntryModal(dateStr, entry) {
-    try {
-      selectedDate = dateStr;
-      
-      $('#pcDate').value = dateStr;
-      $('#pcAmount').value = entry ? entry.amount : '';
-      $('#pcCategory').value = entry ? (entry.category || '💵 Pocket Money') : '💵 Pocket Money';
-      $('#pcNotes').value = entry ? (entry.notes || '') : '';
-      
-      const deleteBtn = $('#pcDelete');
-      if (deleteBtn) {
-        deleteBtn.style.display = entry ? 'block' : 'none';
-      }
-      
-      const modalTitle = $('#modalTitle');
-      if (modalTitle) {
-        modalTitle.textContent = entry ? 'Edit Entry' : 'Add Entry';
-      }
-      
-      openModal('#entryModal');
-    } catch (e) {
-      console.error('Open entry modal error:', e);
-    }
-  }
-
-  // ========================================
-  // CLOSE ENTRY MODAL
-  // ========================================
-  window.closeEntryModal = function() {
-    try {
-      closeModal('#entryModal');
-      selectedDate = null;
-    } catch (e) {
-      console.error('Close entry modal error:', e);
+      console.error('Switch type error:', e);
     }
   };
 
-  // ========================================
-  // QUICK ADD TODAY
-  // ========================================
-  window.quickAddToday = function() {
-    try {
-      const today = new Date().toISOString().split('T')[0];
-      const entry = data.find(d => d.date === today);
-      openEntryModal(today, entry);
-    } catch (e) {
-      console.error('Quick add today error:', e);
-    }
-  };
-
-  // ========================================
-  // FORM SUBMISSION
-  // ========================================
-  const pcForm = $('#pcForm');
-  if (pcForm) {
-    pcForm.addEventListener('submit', (e) => {
+  // =========================
+  // ADD FORMS
+  // =========================
+  const incomeForm = $('#incomeForm');
+  if (incomeForm) {
+    incomeForm.addEventListener('submit', (e) => {
       e.preventDefault();
-      
       try {
-        const date = $('#pcDate').value;
-        const amount = Number($('#pcAmount').value);
-        const category = $('#pcCategory').value;
-        const notes = $('#pcNotes').value;
-        
-        if (!date || !amount) {
-          showSnackbar('Please fill required fields', 'error');
-          return;
-        }
-        
-        // Remove existing entry for this date
-        data = data.filter(d => d.date !== date);
-        
-        // Add new entry
-        const newEntry = {
-          id: Date.now().toString(),
-          date: date,
-          amount: amount,
-          category: category,
-          notes: notes,
-          source: 'pocketcal'
+        const entry = {
+          id: Date.now(),
+          type: 'income',
+          date: $('#incomeDate').value,
+          amount: $('#incomeAmount').value,
+          category: $('#incomeCategory').value,
+          sub: '',
+          notes: $('#incomeNotes').value
         };
-        data.push(newEntry);
-        
-        saveData('fin_pocketcal', data);
+        data.push(entry);
+        saveData('fin_spendly', data);
+        syncIncomeToPocketCal(entry);
 
-        // OPTIONAL: if you want PocketCal → Spendly sync,
-        // you can also update fin_spendly here in future.
-        
-        renderCalendar();
-        closeEntryModal();
-        showSnackbar('Entry saved! 💾');
-      } catch (e) {
-        console.error('Form submission error:', e);
-        showSnackbar('Failed to save entry', 'error');
+        incomeForm.reset();
+        if (incomeDateEl) incomeDateEl.value = today;
+
+        calcTotals();
+        renderList();
+        renderCharts();
+        showSnackbar('Income added successfully! 💰');
+      } catch (e2) {
+        console.error('Add income error:', e2);
+        showSnackbar('Failed to add income', 'error');
       }
     });
   }
 
-  // ========================================
-  // DELETE ENTRY
-  // ========================================
-  window.deleteEntry = function() {
-    if (!selectedDate) return;
-    if (!confirm('Delete this entry? This cannot be undone.')) return;
-    
+  const expenseForm = $('#expenseForm');
+  if (expenseForm) {
+    expenseForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      try {
+        const entry = {
+          id: Date.now(),
+          type: 'expense',
+          date: $('#expenseDate').value,
+          amount: $('#expenseAmount').value,
+          category: $('#expenseCategory').value,
+          sub: $('#expenseSub').value,
+          notes: $('#expenseNotes').value
+        };
+        data.push(entry);
+        saveData('fin_spendly', data);
+
+        expenseForm.reset();
+        if (expenseDateEl) expenseDateEl.value = today;
+        populateSubcategories();
+
+        calcTotals();
+        renderList();
+        renderCharts();
+        showSnackbar('Expense added successfully! 💸');
+      } catch (e2) {
+        console.error('Add expense error:', e2);
+        showSnackbar('Failed to add expense', 'error');
+      }
+    });
+  }
+
+  // =========================
+  // QUICK ADD EXPENSE
+  // =========================
+  window.quickAddExpense = function () {
     try {
-      data = data.filter(d => d.date !== selectedDate);
-      saveData('fin_pocketcal', data);
-      renderCalendar();
-      closeEntryModal();
-      showSnackbar('Entry deleted! 🗑️');
+      switchType('expense');
+      const expenseAmountEl = $('#expenseAmount');
+      if (expenseAmountEl) expenseAmountEl.focus();
+      const expenseFormEl = $('#expenseForm');
+      if (expenseFormEl) {
+        window.scrollTo({
+          top: expenseFormEl.offsetTop - 100,
+          behavior: 'smooth'
+        });
+      }
     } catch (e) {
-      console.error('Delete entry error:', e);
+      console.error('Quick add error:', e);
+    }
+  };
+
+  // =========================
+  // EDIT / DELETE
+  // =========================
+  function openEditModal(id) {
+    try {
+      const item = data.find((d) => d.id === id);
+      if (!item) return;
+
+      $('#editId').value = id;
+      $('#editType').value = item.type;
+      $('#editDate').value = item.date;
+      $('#editAmount').value = item.amount;
+      $('#editCategory').value = item.category;
+      $('#editSub').value = item.sub || '';
+      $('#editNotes').value = item.notes || '';
+
+      openModal('#editModal');
+    } catch (e) {
+      console.error('Open edit modal error:', e);
+    }
+  }
+
+  const editForm = $('#editForm');
+  if (editForm) {
+    editForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      try {
+        const id = Number($('#editId').value);
+        const idx = data.findIndex((d) => d.id === id);
+        if (idx !== -1) {
+          const oldEntry = { ...data[idx] };
+
+          data[idx].date = $('#editDate').value;
+          data[idx].amount = $('#editAmount').value;
+          data[idx].category = $('#editCategory').value;
+          data[idx].sub = $('#editSub').value;
+          data[idx].notes = $('#editNotes').value;
+
+          saveData('fin_spendly', data);
+
+          if (oldEntry.type === 'income') {
+            deletePocketCalForSpendly(oldEntry.date);
+            syncIncomeToPocketCal(data[idx]);
+          }
+
+          calcTotals();
+          renderList();
+          renderCharts();
+          closeModal('#editModal');
+          showSnackbar('Transaction updated! ✅');
+        }
+      } catch (e2) {
+        console.error('Edit transaction error:', e2);
+        showSnackbar('Failed to update', 'error');
+      }
+    });
+  }
+
+  window.deleteTransaction = function () {
+    if (!confirm('Delete this transaction? This cannot be undone.')) return;
+    try {
+      const id = Number($('#editId').value);
+      const tx = data.find((d) => d.id === id);
+      data = data.filter((d) => d.id !== id);
+      saveData('fin_spendly', data);
+
+      if (tx && tx.type === 'income' && tx.category === '💵 Pocket Money') {
+        deletePocketCalForSpendly(tx.date);
+      }
+
+      calcTotals();
+      renderList();
+      renderCharts();
+      closeModal('#editModal');
+      showSnackbar('Transaction deleted! 🗑️');
+    } catch (e) {
+      console.error('Delete transaction error:', e);
       showSnackbar('Failed to delete', 'error');
     }
   };
 
-  const pcDelete = $('#pcDelete');
-  if (pcDelete) {
-    pcDelete.addEventListener('click', deleteEntry);
-  }
+  // =========================
+  // TOGGLE SHOW ALL
+  // =========================
+  window.toggleShowAll = function () {
+    try {
+      showAll = !showAll;
+      const toggleText = $('#toggleText');
+      if (toggleText) toggleText.textContent = showAll ? 'Show Less' : 'Show All';
+      const searchInput = $('#searchInput');
+      renderList(searchInput ? searchInput.value : '');
+    } catch (e) {
+      console.error('Toggle show all error:', e);
+    }
+  };
 
-  // ========================================
-  // NAVIGATION BUTTONS
-  // ========================================
-  const prevMonth = $('#prevMonth');
-  if (prevMonth) {
-    prevMonth.addEventListener('click', () => {
-      current.setMonth(current.getMonth() - 1);
-      renderCalendar();
+  // =========================
+  // PDF MODAL
+  // =========================
+  window.openPDFModal = function () {
+    try {
+      openModal('#pdfModal');
+      const pdfStartDate = $('#pdfStartDate');
+      const pdfEndDate = $('#pdfEndDate');
+      if (pdfStartDate && !pdfStartDate.value) pdfStartDate.value = today;
+      if (pdfEndDate && !pdfEndDate.value) pdfEndDate.value = today;
+
+      const radios = document.querySelectorAll('input[name="pdfRange"]');
+      radios.forEach((r) =>
+        r.addEventListener('change', function () {
+          const customRange = $('#customDateRange');
+          if (customRange) {
+            customRange.style.display = this.value === 'custom' ? 'block' : 'none';
+          }
+        })
+      );
+    } catch (e) {
+      console.error('Open PDF modal error:', e);
+    }
+  };
+
+  // =========================
+  // PDF HELPERS
+  // =========================
+  function fmtNum(num) {
+    return Number(num).toLocaleString('en-IN', {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
     });
   }
 
-  const nextMonth = $('#nextMonth');
-  if (nextMonth) {
-    nextMonth.addEventListener('click', () => {
-      current.setMonth(current.getMonth() + 1);
-      renderCalendar();
-    });
+  function formatDate(dateStr) {
+    const d = new Date(dateStr);
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
   }
 
-  // ========================================
-  // DATE SEARCH/JUMP
-  // ========================================
-  const pcSearch = $('#pcSearch');
-  if (pcSearch) {
-    pcSearch.addEventListener('change', (e) => {
-      const dateStr = e.target.value;
-      if (!dateStr) return;
-      
-      try {
-        const selected = new Date(dateStr);
-        current = new Date(selected.getFullYear(), selected.getMonth(), 1);
-        renderCalendar();
-        
-        const entry = data.find(d => d.date === dateStr);
-        openEntryModal(dateStr, entry);
-      } catch (e) {
-        console.error('Date search error:', e);
+  function formatMonthYear(monthStr) {
+    const [year, month] = monthStr.split('-');
+    const months = ['January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December'];
+    return `${months[parseInt(month, 10) - 1]} ${year}`;
+  }
+
+  function formatDateTime(date) {
+    const d = new Date(date);
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const h = String(d.getHours()).padStart(2, '0');
+    const m = String(d.getMinutes()).padStart(2, '0');
+    return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()} • ${h}:${m}`;
+  }
+
+// =========================
+// ULTRA CLEAN PROFESSIONAL PDF EXPORT
+// =========================
+window.generatePDF = function () {
+  try {
+    if (!window.jspdf || !window.jspdf.jsPDF) {
+      showSnackbar('jsPDF not loaded', 'error');
+      return;
+    }
+
+    const jsPDF = window.jspdf.jsPDF;
+    const doc = new jsPDF('p', 'mm', 'a4');
+
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
+
+    const selectedRangeEl = document.querySelector('input[name="pdfRange"]:checked');
+    const selectedRange = selectedRangeEl ? selectedRangeEl.value : 'today';
+
+    let filteredData = [];
+    let rangeText = '';
+    const now = new Date();
+
+    // ===== RANGE FILTER =====
+    if (selectedRange === 'today') {
+      filteredData = data.filter(d => d.date === today);
+      rangeText = `Today • ${formatDate(today)}`;
+    } else if (selectedRange === 'week') {
+      const w = new Date();
+      w.setDate(now.getDate() - 7);
+      const ws = w.toISOString().split('T')[0];
+      filteredData = data.filter(d => d.date >= ws && d.date <= today);
+      rangeText = `Last 7 Days • ${formatDate(ws)} → ${formatDate(today)}`;
+    } else if (selectedRange === 'month') {
+      const m = today.slice(0, 7);
+      filteredData = data.filter(d => d.date.startsWith(m));
+      rangeText = `Month • ${formatMonthYear(m)}`;
+    } else if (selectedRange === 'year') {
+      const y = today.slice(0, 4);
+      filteredData = data.filter(d => d.date.startsWith(y));
+      rangeText = `Year • ${y}`;
+    } else {
+      const s = $('#pdfStartDate').value;
+      const e = $('#pdfEndDate').value;
+      filteredData = data.filter(d => d.date >= s && d.date <= e);
+      rangeText = `Custom • ${formatDate(s)} → ${formatDate(e)}`;
+    }
+
+    if (filteredData.length === 0) {
+      showSnackbar('No transactions', 'error');
+      return;
+    }
+
+    const income = filteredData
+      .filter(d => d.type === 'income')
+      .reduce((s, d) => s + Number(d.amount), 0);
+
+    const expense = filteredData
+      .filter(d => d.type === 'expense')
+      .reduce((s, d) => s + Number(d.amount), 0);
+
+    const balance = income - expense;
+
+    let y = 0;
+
+    // =========================
+    // HEADER BAR
+    // =========================
+    doc.setFillColor(22, 163, 74);
+    doc.rect(0, 0, pageWidth, 28, 'F');
+
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(18);
+    doc.setTextColor(255, 255, 255);
+    doc.text('SPENDLY FINANCIAL REPORT', pageWidth / 2, 14, { align: 'center' });
+
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+    doc.text('Income & Expense Statement', pageWidth / 2, 21, { align: 'center' });
+
+    y = 34;
+
+    // =========================
+    // PERIOD BOX
+    // =========================
+    doc.setDrawColor(200);
+    doc.roundedRect(12, y, pageWidth - 24, 18, 3, 3);
+
+    doc.setFontSize(9);
+    doc.setTextColor(40);
+    doc.text(rangeText, 16, y + 7);
+    doc.text(`Generated: ${formatDateTime(now)}`, 16, y + 13);
+
+    doc.text(`Transactions: ${filteredData.length}`, pageWidth - 16, y + 7, { align: 'right' });
+
+    y += 26;
+
+    // =========================
+    // SUMMARY CARDS
+    // =========================
+    const cardW = (pageWidth - 32) / 3;
+
+    function drawCard(x, title, value, color) {
+      doc.setDrawColor(220);
+      doc.roundedRect(x, y, cardW, 20, 3, 3);
+
+      doc.setFontSize(9);
+      doc.setTextColor(90);
+      doc.text(title, x + 4, y + 7);
+
+      doc.setFontSize(13);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(...color);
+      doc.text(`₹ ${fmtNum(value)}`, x + 4, y + 15);
+    }
+
+    drawCard(12, 'Income', income, [22, 163, 74]);
+    drawCard(16 + cardW, 'Expense', expense, [220, 38, 38]);
+    drawCard(20 + cardW * 2, balance >= 0 ? 'Savings' : 'Loss', Math.abs(balance), balance >= 0 ? [37, 99, 235] : [220, 38, 38]);
+
+    y += 30;
+
+    // =========================
+    // TRANSACTION TABLE
+    // =========================
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(12);
+    doc.setTextColor(30);
+    doc.text('Transactions', 12, y);
+
+    y += 4;
+
+    const rows = filteredData.slice().reverse().map(d => {
+      const cat = d.type === 'income'
+        ? d.category
+        : `${d.category} - ${d.sub}`;
+
+      return [
+        formatDate(d.date),
+        d.type.toUpperCase(),
+        cat,
+        `₹ ${fmtNum(d.amount)}`
+      ];
+    });
+
+    doc.autoTable({
+      startY: y,
+      head: [['Date', 'Type', 'Category', 'Amount']],
+      body: rows,
+      theme: 'grid',
+
+      headStyles: {
+        fillColor: [22, 163, 74],
+        textColor: 255,
+        fontStyle: 'bold',
+        halign: 'center'
+      },
+
+      bodyStyles: {
+        fontSize: 9,
+        textColor: 40
+      },
+
+      alternateRowStyles: {
+        fillColor: [245, 247, 250]
+      },
+
+      columnStyles: {
+        0: { cellWidth: 28, halign: 'center' },
+        1: { cellWidth: 24, halign: 'center' },
+        2: { cellWidth: 78 },
+        3: { cellWidth: 32, halign: 'right', fontStyle: 'bold' }
+      },
+
+      didParseCell: function (cell) {
+        if (cell.section === 'body' && cell.column.index === 1) {
+          if (cell.cell.raw === 'INCOME') {
+            cell.cell.styles.textColor = [22, 163, 74];
+          } else {
+            cell.cell.styles.textColor = [220, 38, 38];
+          }
+        }
+      },
+
+      didDrawPage: function () {
+        const pageNum = doc.internal.getCurrentPageInfo().pageNumber;
+        doc.setFontSize(8);
+        doc.setTextColor(150);
+        doc.text(`Page ${pageNum}`, pageWidth / 2, pageHeight - 6, { align: 'center' });
       }
     });
-  }
 
-  // ========================================
-  // ADD TODAY BUTTON
-  // ========================================
-  const btnAddToday = $('#btnAddToday');
-  if (btnAddToday) {
-    btnAddToday.addEventListener('click', quickAddToday);
-  }
+    // =========================
+    // TOTAL ROW
+    // =========================
+    const finalY = doc.lastAutoTable.finalY + 4;
 
-  // ========================================
-  // EXPORT FUNCTIONS
-  // ========================================
-  window.exportData = function() {
+    doc.setDrawColor(180);
+    doc.line(12, finalY, pageWidth - 12, finalY);
+
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(10);
+    doc.text('TOTAL EXPENSE', pageWidth - 60, finalY + 6);
+
+    doc.setTextColor(220, 38, 38);
+    doc.text(`₹ ${fmtNum(expense)}`, pageWidth - 12, finalY + 6, { align: 'right' });
+
+    // =========================
+    // CATEGORY INSIGHTS
+    // =========================
+    let iy = finalY + 16;
+
+    const catTotals = {};
+    filteredData
+      .filter(d => d.type === 'expense')
+      .forEach(d => {
+        catTotals[d.category] = (catTotals[d.category] || 0) + Number(d.amount);
+      });
+
+    const top = Object.entries(catTotals)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 5);
+
+    if (top.length > 0) {
+      doc.setFontSize(11);
+      doc.setTextColor(37, 99, 235);
+      doc.text('Top Expense Categories', 12, iy);
+
+      const body = top.map(([c, a]) => [
+        c,
+        `₹ ${fmtNum(a)}`,
+        expense > 0 ? ((a / expense) * 100).toFixed(1) + '%' : '0%'
+      ]);
+
+      doc.autoTable({
+        startY: iy + 3,
+        head: [['Category', 'Amount', '%']],
+        body,
+        theme: 'grid',
+        headStyles: { fillColor: [37, 99, 235], textColor: 255 },
+        columnStyles: {
+          1: { halign: 'right' },
+          2: { halign: 'center' }
+        }
+      });
+    }
+
+    // =========================
+    // SAVE
+    // =========================
+    const stamp = `${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}`;
+    doc.save(`Spendly_Report_${stamp}.pdf`);
+
+    closeModal('#pdfModal');
+    showSnackbar('PDF generated ✔', 'success');
+
+  } catch (e) {
+    console.error(e);
+    showSnackbar('PDF failed: ' + e.message, 'error');
+  }
+};
+
+  // =========================
+  // CSV / JSON
+  // =========================
+  window.exportToCSV = function () {
     try {
       if (data.length === 0) {
         showSnackbar('No data to export', 'error');
         return;
       }
-      const headers = ['date', 'amount', 'category', 'notes'];
-      const today = new Date().toISOString().split('T')[0];
-      exportCSV(data, `pocketcal-data-${today}.csv`, headers);
+      const headers = ['type', 'date', 'amount', 'category', 'sub', 'notes'];
+      exportCSV(data, `spendly-transactions-${today}.csv`, headers);
     } catch (e) {
       console.error('Export CSV error:', e);
       showSnackbar('Failed to export', 'error');
     }
   };
 
-  window.exportJSON = function() {
-    try {
-      if (data.length === 0) {
-        showSnackbar('No data to export', 'error');
-        return;
-      }
-      const today = new Date().toISOString().split('T')[0];
-      exportJSON(data, `pocketcal-data-${today}.json`);
-    } catch (e) {
-      console.error('Export JSON error:', e);
-      showSnackbar('Failed to export', 'error');
-    }
-  };
-
-  window.importJSON = function() {
+  window.importFromJSON = function () {
     try {
       importJSON((imported) => {
         if (Array.isArray(imported)) {
           data = [...data, ...imported];
-          saveData('fin_pocketcal', data);
-          renderCalendar();
+          saveData('fin_spendly', data);
+          calcTotals();
+          renderList();
+          renderCharts();
         } else {
           showSnackbar('Invalid data format', 'error');
         }
@@ -676,396 +1026,18 @@ startClock('#timeNow');
     }
   };
 
-  // ========================================
-  // PDF MODAL FUNCTIONS
-  // ========================================
-  window.openPDFModal = function() {
-    try {
-      if (data.length === 0) {
-        showSnackbar('No data to export', 'error');
-        return;
-      }
-      openModal('#pdfModal');
-      hideDateRangeForm();
-    } catch (e) {
-      console.error('Open PDF modal error:', e);
-    }
-  };
-
-  window.closePDFModal = function() {
-    try {
-      closeModal('#pdfModal');
-      hideDateRangeForm();
-    } catch (e) {
-      console.error('Close PDF modal error:', e);
-    }
-  };
-
-  window.showDateRangeForm = function() {
-    const form = $('#dateRangeForm');
-    if (form) {
-      form.style.display = 'block';
-      
-      const today = new Date();
-      const lastMonth = new Date();
-      lastMonth.setMonth(today.getMonth() - 1);
-      
-      $('#pdfToDate').value = today.toISOString().split('T')[0];
-      $('#pdfFromDate').value = lastMonth.toISOString().split('T')[0];
-    }
-  };
-
-  window.hideDateRangeForm = function() {
-    const form = $('#dateRangeForm');
-    if (form) form.style.display = 'none';
-  };
-
-  // ========================================
-  // PDF EXPORT FUNCTION (period presets)
-  // ========================================
-  window.exportPDF = function(period) {
-    try {
-      if (typeof window.jspdf === 'undefined') {
-        showSnackbar('PDF library not loaded. Please refresh.', 'error');
-        return;
-      }
-
-      const { jsPDF } = window.jspdf;
-      
-      let filteredData = [];
-      let periodLabel = '';
-      const now = new Date();
-      
-      switch(period) {
-        case 'today': {
-          const today = now.toISOString().split('T')[0];
-          filteredData = data.filter(d => d.date === today);
-          periodLabel = 'Today';
-          break;
-        }
-        case 'week': {
-          const weekStart = new Date(now);
-          weekStart.setDate(now.getDate() - now.getDay());
-          const weekStartStr = weekStart.toISOString().split('T')[0];
-          filteredData = data.filter(d => d.date >= weekStartStr);
-          periodLabel = 'This Week';
-          break;
-        }
-        case 'month': {
-          const monthStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
-          filteredData = data.filter(d => d.date && d.date.startsWith(monthStr));
-          periodLabel = now.toLocaleString('en-US', { month: 'long', year: 'numeric' });
-          break;
-        }
-        case 'year': {
-          const yearStr = now.getFullYear().toString();
-          filteredData = data.filter(d => d.date && d.date.startsWith(yearStr));
-          periodLabel = yearStr;
-          break;
-        }
-        case 'all': {
-          filteredData = [...data];
-          periodLabel = 'All Time';
-          break;
-        }
-        default: {
-          filteredData = [...data];
-          periodLabel = 'All Time';
-        }
-      }
-      
-      if (filteredData.length === 0) {
-        showSnackbar(`No entries found for ${periodLabel}`, 'error');
-        return;
-      }
-      
-      filteredData.sort((a, b) => new Date(b.date) - new Date(a.date));
-      
-      generatePDF(filteredData, periodLabel);
-      closePDFModal();
-      showSnackbar('PDF exported successfully! 📄', 'success');
-      
-    } catch (e) {
-      console.error('Export PDF error:', e);
-      showSnackbar('Failed to export PDF', 'error');
-    }
-  };
-
-  // ========================================
-  // PDF DATE RANGE EXPORT
-  // ========================================
-  window.exportPDFDateRange = function() {
-    try {
-      const fromDate = $('#pdfFromDate').value;
-      const toDate = $('#pdfToDate').value;
-      
-      if (!fromDate || !toDate) {
-        showSnackbar('Please select both dates', 'error');
-        return;
-      }
-      
-      if (fromDate > toDate) {
-        showSnackbar('From date must be before To date', 'error');
-        return;
-      }
-      
-      const filteredData = data.filter(d => d.date >= fromDate && d.date <= toDate);
-      
-      if (filteredData.length === 0) {
-        showSnackbar('No entries found in selected range', 'error');
-        return;
-      }
-      
-      filteredData.sort((a, b) => new Date(b.date) - new Date(a.date));
-      
-      const periodLabel = `${new Date(fromDate).toLocaleDateString('en-IN')} to ${new Date(toDate).toLocaleDateString('en-IN')}`;
-      
-      generatePDF(filteredData, periodLabel);
-      closePDFModal();
-      showSnackbar('PDF exported successfully! 📄', 'success');
-      
-    } catch (e) {
-      console.error('Export PDF date range error:', e);
-      showSnackbar('Failed to export PDF', 'error');
-    }
-  };
-
-  // ========================================
-  // GENERATE PDF FUNCTION
-  // ========================================
-  function generatePDF(entries, periodLabel) {
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
-    
-    const now = new Date();
-    const reportDate = now.toLocaleDateString('en-IN', { 
-      year: 'numeric', 
-      month: 'long', 
-      day: 'numeric' 
-    });
-    
-    const primaryColor = [16, 185, 129];
-    const secondaryColor = [59, 130, 246];
-    const accentColor = [245, 158, 11];
-    const textColor = [55, 65, 81];
-    
-    let yPos = 20;
-    
-    // HEADER GRADIENT BAR
-    doc.setFillColor(...primaryColor);
-    doc.rect(0, 0, 210, 40, 'F');
-    
-    doc.setFillColor(255, 255, 255);
-    doc.setGState(new doc.GState({ opacity: 0.1 }));
-    doc.circle(180, 10, 15, 'F');
-    doc.circle(200, 30, 20, 'F');
-    doc.setGState(new doc.GState({ opacity: 1 }));
-    
-    doc.setTextColor(255, 255, 255);
-    doc.setFontSize(26);
-    doc.setFont('helvetica', 'bold');
-    doc.text('💰 PocketCal Report', 15, 22);
-    
-    doc.setFontSize(12);
-    doc.setFont('helvetica', 'normal');
-    doc.text(`Period: ${periodLabel}`, 15, 30);
-    
-    doc.setFontSize(9);
-    doc.text(`Generated: ${reportDate}`, 15, 36);
-    
-    yPos = 50;
-    
-    // SUMMARY
-    doc.setTextColor(...textColor);
-    doc.setFontSize(18);
-    doc.setFont('helvetica', 'bold');
-    doc.text('📊 Summary Statistics', 15, yPos);
-    
-    yPos += 5;
-    
-    const total = entries.reduce((sum, e) => sum + Number(e.amount || 0), 0);
-    const highest = Math.max(...entries.map(e => Number(e.amount || 0)));
-    const average = total / entries.length;
-    const lowest = Math.min(...entries.map(e => Number(e.amount || 0)));
-    
-    doc.autoTable({
-      startY: yPos,
-      head: [['Metric', 'Value']],
-      body: [
-        ['Total Amount', `₹${total.toFixed(2)}`],
-        ['Number of Entries', entries.length.toString()],
-        ['Highest Amount', `₹${highest.toFixed(2)}`],
-        ['Lowest Amount', `₹${lowest.toFixed(2)}`],
-        ['Average per Entry', `₹${average.toFixed(2)}`]
-      ],
-      headStyles: {
-        fillColor: primaryColor,
-        fontSize: 11,
-        fontStyle: 'bold',
-        halign: 'left',
-        textColor: [255, 255, 255]
-      },
-      bodyStyles: {
-        fontSize: 10,
-        textColor: textColor
-      },
-      alternateRowStyles: {
-        fillColor: [249, 250, 251]
-      },
-      columnStyles: {
-        0: { fontStyle: 'bold', cellWidth: 90 },
-        1: { halign: 'right', cellWidth: 'auto', textColor: primaryColor, fontStyle: 'bold' }
-      },
-      margin: { left: 15, right: 15 },
-      theme: 'grid'
-    });
-    
-    yPos = doc.lastAutoTable.finalY + 12;
-    
-    // CATEGORY BREAKDOWN
-    const categoryTotals = {};
-    entries.forEach(e => {
-      const cat = e.category || '💵 Pocket Money';
-      categoryTotals[cat] = (categoryTotals[cat] || 0) + Number(e.amount || 0);
-    });
-    
-    if (Object.keys(categoryTotals).length > 0) {
-      if (yPos > 230) {
-        doc.addPage();
-        yPos = 20;
-      }
-      
-      doc.setFontSize(18);
-      doc.setFont('helvetica', 'bold');
-      doc.setTextColor(...textColor);
-      doc.text('🗂️ Category Breakdown', 15, yPos);
-      
-      yPos += 5;
-      
-      const categoryData = Object.entries(categoryTotals)
-        .sort((a, b) => b[1] - a[1])
-        .map(([category, amount]) => {
-          const percentage = ((amount / total) * 100).toFixed(1);
-          return [category, `₹${amount.toFixed(2)}`, `${percentage}%`];
-        });
-      
-      doc.autoTable({
-        startY: yPos,
-        head: [['Category', 'Amount', 'Percentage']],
-        body: categoryData,
-        headStyles: {
-          fillColor: secondaryColor,
-          fontSize: 11,
-          fontStyle: 'bold',
-          textColor: [255, 255, 255]
-        },
-        bodyStyles: {
-          fontSize: 10,
-          textColor: textColor
-        },
-        alternateRowStyles: {
-          fillColor: [249, 250, 251]
-        },
-        columnStyles: {
-          0: { cellWidth: 75 },
-          1: { halign: 'right', cellWidth: 55, textColor: secondaryColor, fontStyle: 'bold' },
-          2: { halign: 'right', cellWidth: 'auto' }
-        },
-        margin: { left: 15, right: 15 },
-        theme: 'grid'
-      });
-      
-      yPos = doc.lastAutoTable.finalY + 12;
-    }
-    
-    // TRANSACTION DETAILS
-    if (yPos > 230) {
-      doc.addPage();
-      yPos = 20;
-    }
-    
-    doc.setFontSize(18);
-    doc.setFont('helvetica', 'bold');
-    doc.setTextColor(...textColor);
-    doc.text('📅 Transaction Details', 15, yPos);
-    
-    yPos += 5;
-    
-    const transactionData = entries.map(e => {
-      const formattedDate = new Date(e.date).toLocaleDateString('en-IN', {
-        day: '2-digit',
-        month: 'short',
-        year: 'numeric'
-      });
-      return [
-        formattedDate,
-        e.category || '💵 Pocket Money',
-        `₹${Number(e.amount).toFixed(2)}`,
-        e.notes ? e.notes.substring(0, 35) + (e.notes.length > 35 ? '...' : '') : '-'
-      ];
-    });
-    
-    doc.autoTable({
-      startY: yPos,
-      head: [['Date', 'Category', 'Amount', 'Notes']],
-      body: transactionData,
-      headStyles: {
-        fillColor: accentColor,
-        fontSize: 10,
-        fontStyle: 'bold',
-        textColor: [255, 255, 255]
-      },
-      bodyStyles: {
-        fontSize: 9,
-        textColor: textColor
-      },
-      alternateRowStyles: {
-        fillColor: [249, 250, 251]
-      },
-      columnStyles: {
-        0: { cellWidth: 32 },
-        1: { cellWidth: 45 },
-        2: { halign: 'right', cellWidth: 30, textColor: accentColor, fontStyle: 'bold' },
-        3: { cellWidth: 'auto' }
-      },
-      margin: { left: 15, right: 15 },
-      theme: 'grid'
-    });
-    
-    // FOOTER ON ALL PAGES
-    const pageCount = doc.internal.getNumberOfPages();
-    
-    for (let i = 1; i <= pageCount; i++) {
-      doc.setPage(i);
-      
-      doc.setFillColor(...primaryColor);
-      doc.rect(0, 282, 210, 15, 'F');
-      
-      doc.setFontSize(9);
-      doc.setTextColor(255, 255, 255);
-      doc.setFont('helvetica', 'normal');
-      doc.text('MoneyFlow PocketCal - Pocket Money Tracker', 15, 289);
-      doc.text(`Page ${i} of ${pageCount}`, 195, 289, { align: 'right' });
-      
-      doc.setFontSize(8);
-      doc.text('Developed by Imad Khan (@imxd12) | imadak999@gmail.com', 105, 293, { align: 'center' });
-    }
-    
-    const fileName = `PocketCal_${periodLabel.replace(/\s+/g, '_')}_${now.toISOString().split('T')[0]}.pdf`;
-    doc.save(fileName);
-  }
-
-  // ========================================
-  // CLEAR ALL DATA
-  // ========================================
-  window.clearAllData = function() {
-    if (!confirm('⚠️ This will delete ALL entries! Are you sure?')) return;
+  // =========================
+  // CLEAR ALL
+  // =========================
+  window.clearAllData = function () {
+    if (!confirm('⚠️ This will delete ALL transactions! Are you sure?')) return;
     if (!confirm('This action cannot be undone. Continue?')) return;
-    
     try {
       data = [];
-      saveData('fin_pocketcal', data);
-      renderCalendar();
+      saveData('fin_spendly', data);
+      calcTotals();
+      renderList();
+      renderCharts();
       showSnackbar('All data cleared! 🗑️');
     } catch (e) {
       console.error('Clear all data error:', e);
@@ -1073,13 +1045,43 @@ startClock('#timeNow');
     }
   };
 
-  // ========================================
-  // INITIALIZATION
-  // ========================================
+  // =========================
+  // SEARCH & DATE FILTER
+  // =========================
+  function debounce(fn, delay) {
+    let t;
+    return (...args) => {
+      clearTimeout(t);
+      t = setTimeout(() => fn(...args), delay);
+    };
+  }
+
+  const searchInput = $('#searchInput');
+  if (searchInput) {
+    searchInput.addEventListener(
+      'input',
+      debounce((e) => {
+        renderList(e.target.value);
+      }, 300)
+    );
+  }
+
+  const filterDate = $('#filterDate');
+  if (filterDate) {
+    filterDate.addEventListener('change', () => {
+      renderList(searchInput ? searchInput.value : '');
+    });
+  }
+
+  // =========================
+  // INIT
+  // =========================
   function init() {
     try {
-      renderCalendar();
-      console.log('✅ PocketCal initialized successfully');
+      calcTotals();
+      renderList();
+      setTimeout(renderCharts, 100);
+      console.log('✅ Spendly initialized with clean PDF export');
     } catch (e) {
       console.error('Initialization error:', e);
     }
@@ -1091,11 +1093,9 @@ startClock('#timeNow');
     init();
   }
 
-  // Re-render charts on theme change
   document.addEventListener('click', (e) => {
     if (e.target.closest('.theme-toggle')) {
-      setTimeout(() => updateCharts(), 100);
+      setTimeout(renderCharts, 100);
     }
   });
-
 })();

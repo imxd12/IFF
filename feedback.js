@@ -1,566 +1,346 @@
 /* ========================================
-   FEEDBACK PAGE JAVASCRIPT
+   MONEYFLOW FEEDBACK SYSTEM — PRO v2
+   Complete Feedback Engine
 ======================================== */
 
-// Initialize on page load
-document.addEventListener('DOMContentLoaded', function() {
-  initializeFeedback();
-  initializeStarRating();
-  initializeCharacterCounter();
-  loadUserName();
-  updateTime();
-  setInterval(updateTime, 1000);
+document.addEventListener("DOMContentLoaded", () => {
+  initFeedbackSystem();
 });
 
 /* ========================================
-   INITIALIZE FEEDBACK SYSTEM
+   INIT
 ======================================== */
-function initializeFeedback() {
-  const feedbackForm = document.getElementById('feedbackForm');
-  
-  if (feedbackForm) {
-    feedbackForm.addEventListener('submit', handleFeedbackSubmit);
-  }
-  
-  // Add input animations
-  const inputs = document.querySelectorAll('.form-input');
-  inputs.forEach(input => {
-    input.addEventListener('focus', function() {
-      this.parentElement.classList.add('focused');
+function initFeedbackSystem() {
+  initStarRating();
+  initCharacterCounter();
+  initMoodSelector();
+  initBugSelector();
+  initFormSubmit();
+  loadUserName();
+  loadDraft();
+  renderFeedbackHistory();
+  setDeviceInfo();
+  updateTime();
+  setInterval(updateTime, 1000);
+}
+
+/* ========================================
+   DEVICE INFO
+======================================== */
+function setDeviceInfo() {
+  const deviceInfo = document.getElementById("deviceInfo");
+  if (!deviceInfo) return;
+
+  deviceInfo.value =
+    navigator.userAgent +
+    " | " +
+    screen.width +
+    "x" +
+    screen.height +
+    " | " +
+    navigator.platform;
+}
+
+/* ========================================
+   STAR RATING
+======================================== */
+function initStarRating() {
+  const stars = document.querySelectorAll(".star");
+  const ratingValue = document.getElementById("ratingValue");
+  const ratingText = document.getElementById("ratingText");
+
+  let selected = 0;
+
+  const labels = ["Poor", "Fair", "Good", "Very Good", "Excellent"];
+
+  stars.forEach((star, i) => {
+    star.addEventListener("mouseenter", () => highlight(i + 1));
+    star.addEventListener("click", () => {
+      selected = i + 1;
+      ratingValue.value = selected;
+      highlight(selected);
+      updateText(selected);
     });
-    
-    input.addEventListener('blur', function() {
-      this.parentElement.classList.remove('focused');
+  });
+
+  document.getElementById("starRating").addEventListener("mouseleave", () => {
+    highlight(selected);
+    if (selected === 0) ratingText.textContent = "No rating selected";
+  });
+
+  function highlight(r) {
+    stars.forEach((s, i) => {
+      s.classList.toggle("active", i < r);
+    });
+  }
+
+  function updateText(r) {
+    ratingText.textContent = `${r}/5 - ${labels[r - 1]}`;
+  }
+}
+
+/* ========================================
+   MOOD SELECTOR
+======================================== */
+function initMoodSelector() {
+  const moods = document.querySelectorAll(".mood-select span");
+  const moodValue = document.getElementById("moodValue");
+
+  moods.forEach(el => {
+    el.addEventListener("click", () => {
+      moods.forEach(m => m.classList.remove("active"));
+      el.classList.add("active");
+      moodValue.value = el.dataset.mood;
     });
   });
 }
 
 /* ========================================
-   STAR RATING SYSTEM
+   BUG TYPE SELECTOR
 ======================================== */
-function initializeStarRating() {
-  const stars = document.querySelectorAll('.star');
-  const ratingValue = document.getElementById('ratingValue');
-  const ratingText = document.getElementById('ratingText');
-  
-  let selectedRating = 0;
-  
-  const ratingLabels = {
-    1: 'Poor',
-    2: 'Fair',
-    3: 'Good',
-    4: 'Very Good',
-    5: 'Excellent'
-  };
-  
-  stars.forEach(star => {
-    // Hover effect
-    star.addEventListener('mouseenter', function() {
-      const rating = parseInt(this.getAttribute('data-rating'));
-      highlightStars(rating);
-      updateRatingText(rating);
-    });
-    
-    // Click to select
-    star.addEventListener('click', function() {
-      selectedRating = parseInt(this.getAttribute('data-rating'));
-      ratingValue.value = selectedRating;
-      selectStars(selectedRating);
-      updateRatingText(selectedRating);
-      
-      // Add animation
-      this.style.animation = 'none';
-      setTimeout(() => {
-        this.style.animation = 'starPop 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
-      }, 10);
+function initBugSelector() {
+  const type = document.getElementById("feedbackType");
+  const bugFields = document.querySelectorAll(".bug-only");
+
+  if (!type) return;
+
+  type.addEventListener("change", () => {
+    bugFields.forEach(el => {
+      el.style.display = type.value === "Bug Report" ? "block" : "none";
     });
   });
-  
-  // Reset on mouse leave
-  const starRating = document.getElementById('starRating');
-  starRating.addEventListener('mouseleave', function() {
-    if (selectedRating > 0) {
-      highlightStars(selectedRating);
-      updateRatingText(selectedRating);
-    } else {
-      resetStars();
-      ratingText.textContent = 'No rating selected';
-    }
-  });
-  
-  function highlightStars(rating) {
-    stars.forEach((star, index) => {
-      if (index < rating) {
-        star.classList.add('hover');
-      } else {
-        star.classList.remove('hover');
-      }
-    });
-  }
-  
-  function selectStars(rating) {
-    stars.forEach((star, index) => {
-      if (index < rating) {
-        star.classList.add('active');
-      } else {
-        star.classList.remove('active');
-      }
-    });
-  }
-  
-  function resetStars() {
-    stars.forEach(star => {
-      star.classList.remove('hover');
-      if (selectedRating === 0) {
-        star.classList.remove('active');
-      }
-    });
-  }
-  
-  function updateRatingText(rating) {
-    ratingText.textContent = `${rating} star${rating > 1 ? 's' : ''} - ${ratingLabels[rating]}`;
-    ratingText.style.color = rating >= 4 ? 'var(--accent)' : rating >= 3 ? '#f59e0b' : '#ef4444';
-  }
 }
 
 /* ========================================
    CHARACTER COUNTER
 ======================================== */
-function initializeCharacterCounter() {
-  const feedbackMessage = document.getElementById('feedbackMessage');
-  const charCount = document.getElementById('charCount');
-  const maxLength = 1000;
-  
-  if (feedbackMessage && charCount) {
-    feedbackMessage.setAttribute('maxlength', maxLength);
-    
-    feedbackMessage.addEventListener('input', function() {
-      const currentLength = this.value.length;
-      charCount.textContent = currentLength;
-      
-      // Color coding
-      if (currentLength > maxLength * 0.9) {
-        charCount.style.color = '#ef4444';
-      } else if (currentLength > maxLength * 0.7) {
-        charCount.style.color = '#f59e0b';
-      } else {
-        charCount.style.color = 'var(--text-secondary)';
-      }
-    });
-  }
-}
+function initCharacterCounter() {
+  const msg = document.getElementById("feedbackMessage");
+  const count = document.getElementById("charCount");
 
-/* ========================================
-   LOAD USER NAME
-======================================== */
-function loadUserName() {
-  const userName = localStorage.getItem('userName');
-  const userNameInput = document.getElementById('userName');
-  
-  if (userName && userNameInput) {
-    userNameInput.value = userName;
-  }
-}
+  if (!msg) return;
 
-/* ========================================
-   HANDLE FEEDBACK SUBMISSION
-======================================== */
-function handleFeedbackSubmit(e) {
-  e.preventDefault();
-  
-  // Get form values
-  const feedbackType = document.getElementById('feedbackType').value;
-  const userName = document.getElementById('userName').value;
-  const userEmail = document.getElementById('userEmail').value;
-  const ratingValue = document.getElementById('ratingValue').value;
-  const feedbackMessage = document.getElementById('feedbackMessage').value;
-  
-  // Validate rating
-  if (!ratingValue || ratingValue === '0') {
-    showToast('Please select a rating', 'error');
-    document.getElementById('starRating').scrollIntoView({ behavior: 'smooth', block: 'center' });
-    return;
-  }
-  
-  // Validate message
-  if (feedbackMessage.trim().length < 10) {
-    showToast('Please provide more details (at least 10 characters)', 'error');
-    document.getElementById('feedbackMessage').focus();
-    return;
-  }
-  
-  // Create WhatsApp message
-  const whatsappMessage = createWhatsAppMessage({
-    type: feedbackType,
-    name: userName,
-    email: userEmail,
-    rating: ratingValue,
-    message: feedbackMessage
+  msg.maxLength = 1000;
+
+  msg.addEventListener("input", () => {
+    count.textContent = msg.value.length;
   });
-  
-  // Show success message and open WhatsApp
-  showSuccessMessage(whatsappMessage);
 }
 
 /* ========================================
-   CREATE WHATSAPP MESSAGE
+   FORM SUBMIT
 ======================================== */
-function createWhatsAppMessage(data) {
-  const stars = '⭐'.repeat(parseInt(data.rating));
-  const ratingText = ['Poor', 'Fair', 'Good', 'Very Good', 'Excellent'][parseInt(data.rating) - 1];
-  
-  let message = `*MoneyFlow Feedback* 📱\n\n`;
-  message += `*Type:* ${data.type}\n`;
-  message += `*Name:* ${data.name}\n`;
-  
-  if (data.email) {
-    message += `*Email:* ${data.email}\n`;
-  }
-  
-  message += `*Rating:* ${stars} (${data.rating}/5 - ${ratingText})\n\n`;
-  message += `*Message:*\n${data.message}\n\n`;
-  message += `---\n`;
-  message += `Sent from MoneyFlow App\n`;
-  message += `Date: ${new Date().toLocaleString('en-IN', { 
-    timeZone: 'Asia/Kolkata',
-    dateStyle: 'medium',
-    timeStyle: 'short'
-  })}`;
-  
-  return message;
+function initFormSubmit() {
+  const form = document.getElementById("feedbackForm");
+  if (!form) return;
+
+  form.addEventListener("submit", e => {
+    e.preventDefault();
+    if (!validateForm()) return;
+
+    const data = collectFormData();
+    saveFeedbackHistory(data);
+    clearDraft();
+
+    const message = buildWhatsAppMessage(data);
+    showSuccess(message);
+
+    trackEvent("submit", data);
+  });
 }
 
 /* ========================================
-   SHOW SUCCESS MESSAGE
+   COLLECT DATA
 ======================================== */
-function showSuccessMessage(whatsappMessage) {
-  const feedbackForm = document.querySelector('.feedback-form-container');
-  const successMessage = document.getElementById('successMessage');
-  const sendWhatsAppBtn = document.getElementById('sendWhatsAppBtn');
-  
-  // Hide form, show success message
-  feedbackForm.querySelector('form').style.display = 'none';
-  successMessage.style.display = 'block';
-  
-  // Animate success message
-  successMessage.style.animation = 'fadeInUp165 0.6s cubic-bezier(0.19, 1, 0.22, 1)';
-  
-  // Add WhatsApp click handler
-  sendWhatsAppBtn.onclick = function() {
-    sendToWhatsApp(whatsappMessage);
+function collectFormData() {
+  return {
+    type: getVal("feedbackType"),
+    name: getVal("userName"),
+    email: getVal("userEmail"),
+    rating: getVal("ratingValue"),
+    message: getVal("feedbackMessage"),
+    mood: getVal("moodValue"),
+    bugPage: getVal("bugPage"),
+    device: getVal("deviceInfo"),
+    version: getVal("appVersion"),
+    contact: document.getElementById("contactPermission")?.checked || false,
+    time: new Date().toISOString()
   };
-  
-  // Auto-scroll to success message
-  setTimeout(() => {
-    successMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  }, 100);
-  
-  // Show toast
-  showToast('Feedback prepared successfully!', 'success');
+}
+
+function getVal(id) {
+  return document.getElementById(id)?.value || "";
 }
 
 /* ========================================
-   SEND TO WHATSAPP
+   VALIDATION
 ======================================== */
-function sendToWhatsApp(message) {
-  const phoneNumber = '918097814934'; // Your WhatsApp number with country code
-  const encodedMessage = encodeURIComponent(message);
-  
-  // Create WhatsApp URL
-  const whatsappURL = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
-  
-  // Open WhatsApp
-  window.open(whatsappURL, '_blank');
-  
-  // Show confirmation toast
-  showToast('Opening WhatsApp...', 'info');
-  
-  // Reset form after a delay
-  setTimeout(() => {
-    resetFeedbackForm();
-  }, 3000);
-}
-
-/* ========================================
-   RESET FEEDBACK FORM
-======================================== */
-function resetFeedbackForm() {
-  const feedbackForm = document.getElementById('feedbackForm');
-  const successMessage = document.getElementById('successMessage');
-  const feedbackFormContainer = document.querySelector('.feedback-form-container');
-  
-  // Hide success message
-  successMessage.style.display = 'none';
-  
-  // Show and reset form
-  feedbackForm.style.display = 'block';
-  feedbackForm.reset();
-  
-  // Reset star rating
-  const stars = document.querySelectorAll('.star');
-  stars.forEach(star => star.classList.remove('active', 'hover'));
-  
-  document.getElementById('ratingValue').value = '0';
-  document.getElementById('ratingText').textContent = 'No rating selected';
-  document.getElementById('ratingText').style.color = 'var(--text-secondary)';
-  
-  // Reset character counter
-  document.getElementById('charCount').textContent = '0';
-  document.getElementById('charCount').style.color = 'var(--text-secondary)';
-  
-  // Scroll to top of form
-  feedbackFormContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
-}
-
-/* ========================================
-   TOAST NOTIFICATION SYSTEM
-======================================== */
-function showToast(message, type = 'info') {
-  // Remove existing toast
-  const existingToast = document.querySelector('.toast-notification');
-  if (existingToast) {
-    existingToast.remove();
-  }
-  
-  // Create toast element
-  const toast = document.createElement('div');
-  toast.className = `toast-notification toast-${type}`;
-  
-  // Set icon based on type
-  const icons = {
-    success: '✅',
-    error: '❌',
-    info: 'ℹ️',
-    warning: '⚠️'
-  };
-  
-  toast.innerHTML = `
-    <span class="toast-icon">${icons[type] || icons.info}</span>
-    <span class="toast-message">${message}</span>
-  `;
-  
-  // Add to body
-  document.body.appendChild(toast);
-  
-  // Trigger animation
-  setTimeout(() => {
-    toast.classList.add('show');
-  }, 10);
-  
-  // Auto-remove after 3 seconds
-  setTimeout(() => {
-    toast.classList.remove('show');
-    setTimeout(() => {
-      toast.remove();
-    }, 300);
-  }, 3000);
-}
-
-/* ========================================
-   UPDATE TIME DISPLAY
-======================================== */
-function updateTime() {
-  const timeDisplay = document.getElementById('timeNow');
-  if (!timeDisplay) return;
-  
-  const now = new Date();
-  const options = {
-    timeZone: 'Asia/Kolkata',
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: true
-  };
-  
-  const timeString = now.toLocaleString('en-IN', options);
-  const dateOptions = {
-    timeZone: 'Asia/Kolkata',
-    weekday: 'short',
-    day: 'numeric',
-    month: 'short'
-  };
-  const dateString = now.toLocaleString('en-IN', dateOptions);
-  
-  timeDisplay.innerHTML = `
-    <div style="font-size: 0.9em; opacity: 0.8;">${dateString}</div>
-    <div style="font-weight: 700;">${timeString}</div>
-  `;
-}
-
-/* ========================================
-   FORM FIELD VALIDATION HELPERS
-======================================== */
-function validateEmail(email) {
-  const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return re.test(email);
-}
-
 function validateForm() {
-  const userName = document.getElementById('userName').value.trim();
-  const feedbackType = document.getElementById('feedbackType').value;
-  const ratingValue = document.getElementById('ratingValue').value;
-  const feedbackMessage = document.getElementById('feedbackMessage').value.trim();
-  const userEmail = document.getElementById('userEmail').value.trim();
-  
-  if (!userName) {
-    showToast('Please enter your name', 'error');
-    return false;
-  }
-  
-  if (!feedbackType) {
-    showToast('Please select a feedback type', 'error');
-    return false;
-  }
-  
-  if (!ratingValue || ratingValue === '0') {
-    showToast('Please select a rating', 'error');
-    return false;
-  }
-  
-  if (feedbackMessage.length < 10) {
-    showToast('Message must be at least 10 characters', 'error');
-    return false;
-  }
-  
-  if (userEmail && !validateEmail(userEmail)) {
-    showToast('Please enter a valid email address', 'error');
-    return false;
-  }
-  
+  if (!getVal("userName")) return toast("Enter name", "error");
+  if (!getVal("feedbackType")) return toast("Select type", "error");
+  if (!getVal("ratingValue") || getVal("ratingValue") === "0")
+    return toast("Select rating", "error");
+  if (getVal("feedbackMessage").length < 10)
+    return toast("Message too short", "error");
+
+  const email = getVal("userEmail");
+  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
+    return toast("Invalid email", "error");
+
   return true;
 }
 
 /* ========================================
-   KEYBOARD SHORTCUTS
+   WHATSAPP MESSAGE
 ======================================== */
-document.addEventListener('keydown', function(e) {
-  // Ctrl/Cmd + Enter to submit form
-  if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
-    const feedbackForm = document.getElementById('feedbackForm');
-    if (feedbackForm && document.activeElement.tagName === 'TEXTAREA') {
-      feedbackForm.dispatchEvent(new Event('submit'));
-    }
-  }
-  
-  // Escape to clear form
-  if (e.key === 'Escape') {
-    const feedbackForm = document.getElementById('feedbackForm');
-    if (feedbackForm && confirm('Clear all fields?')) {
-      resetFeedbackForm();
-    }
-  }
-});
+function buildWhatsAppMessage(d) {
+  let msg = `*MoneyFlow Feedback* 📱\n\n`;
+
+  msg += `*Type:* ${d.type}\n`;
+  msg += `*Name:* ${d.name}\n`;
+
+  if (d.email) msg += `*Email:* ${d.email}\n`;
+  if (d.mood) msg += `*Mood:* ${d.mood}\n`;
+
+  msg += `*Rating:* ${"⭐".repeat(d.rating)} (${d.rating}/5)\n`;
+
+  if (d.bugPage) msg += `*Page:* ${d.bugPage}\n`;
+
+  msg += `\n*Message:*\n${d.message}\n\n`;
+
+  msg += `---\n`;
+  msg += `Device: ${d.device}\n`;
+  msg += `App: ${d.version}\n`;
+  msg += `Contact OK: ${d.contact ? "Yes" : "No"}\n`;
+  msg += `Time: ${new Date(d.time).toLocaleString("en-IN")}`;
+
+  return msg;
+}
 
 /* ========================================
-   AUTO-SAVE DRAFT (OPTIONAL)
+   SUCCESS + WHATSAPP
 ======================================== */
-let autoSaveTimeout;
+function showSuccess(message) {
+  const form = document.getElementById("feedbackForm");
+  const box = document.getElementById("successMessage");
+  const btn = document.getElementById("sendWhatsAppBtn");
 
-function enableAutoSave() {
-  const inputs = ['feedbackType', 'userName', 'userEmail', 'feedbackMessage'];
-  
-  inputs.forEach(id => {
-    const element = document.getElementById(id);
-    if (element) {
-      element.addEventListener('input', function() {
-        clearTimeout(autoSaveTimeout);
-        autoSaveTimeout = setTimeout(() => {
-          saveDraft();
-        }, 1000);
-      });
-    }
-  });
-  
-  // Load draft on page load
-  loadDraft();
+  form.style.display = "none";
+  box.style.display = "block";
+
+  btn.onclick = () => openWhatsApp(message);
+
+  toast("Feedback ready", "success");
 }
 
-function saveDraft() {
-  const draft = {
-    type: document.getElementById('feedbackType').value,
-    name: document.getElementById('userName').value,
-    email: document.getElementById('userEmail').value,
-    message: document.getElementById('feedbackMessage').value,
-    rating: document.getElementById('ratingValue').value,
-    timestamp: Date.now()
-  };
-  
-  localStorage.setItem('feedbackDraft', JSON.stringify(draft));
+function openWhatsApp(msg) {
+  const phone = "918097814934";
+  const url = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
+  window.open(url, "_blank");
 }
 
-function loadDraft() {
-  const draftJSON = localStorage.getItem('feedbackDraft');
-  if (!draftJSON) return;
-  
-  const draft = JSON.parse(draftJSON);
-  
-  // Check if draft is less than 24 hours old
-  const hoursSinceDraft = (Date.now() - draft.timestamp) / (1000 * 60 * 60);
-  if (hoursSinceDraft > 24) {
-    localStorage.removeItem('feedbackDraft');
+/* ========================================
+   FEEDBACK HISTORY
+======================================== */
+function saveFeedbackHistory(data) {
+  const list = JSON.parse(localStorage.getItem("feedbackHistory") || "[]");
+  list.unshift(data);
+  localStorage.setItem("feedbackHistory", JSON.stringify(list.slice(0, 20)));
+}
+
+function renderFeedbackHistory() {
+  const container = document.getElementById("feedbackList");
+  if (!container) return;
+
+  const list = JSON.parse(localStorage.getItem("feedbackHistory") || "[]");
+
+  if (list.length === 0) {
+    container.innerHTML = "<p>No previous feedback</p>";
     return;
   }
-  
-  // Restore draft values
-  if (draft.type) document.getElementById('feedbackType').value = draft.type;
-  if (draft.name) document.getElementById('userName').value = draft.name;
-  if (draft.email) document.getElementById('userEmail').value = draft.email;
-  if (draft.message) {
-    document.getElementById('feedbackMessage').value = draft.message;
-    document.getElementById('charCount').textContent = draft.message.length;
-  }
-  if (draft.rating && draft.rating !== '0') {
-    document.getElementById('ratingValue').value = draft.rating;
-    const stars = document.querySelectorAll('.star');
-    stars.forEach((star, index) => {
-      if (index < parseInt(draft.rating)) {
-        star.classList.add('active');
-      }
-    });
-  }
-  
-  showToast('Draft restored', 'info');
+
+  container.innerHTML = list
+    .map(
+      f => `
+    <div class="feedback-card">
+      <div class="fb-top">
+        <span>${f.type}</span>
+        <span>${"⭐".repeat(f.rating)}</span>
+      </div>
+      <div class="fb-msg">${f.message}</div>
+      <div class="fb-date">${new Date(f.time).toLocaleDateString()}</div>
+    </div>
+  `
+    )
+    .join("");
+}
+
+/* ========================================
+   DRAFT SAVE
+======================================== */
+function loadDraft() {
+  const d = JSON.parse(localStorage.getItem("feedbackDraft") || "null");
+  if (!d) return;
+
+  Object.keys(d).forEach(k => {
+    if (document.getElementById(k)) {
+      document.getElementById(k).value = d[k];
+    }
+  });
+
+  toast("Draft restored", "info");
 }
 
 function clearDraft() {
-  localStorage.removeItem('feedbackDraft');
-}
-
-// Enable auto-save feature
-enableAutoSave();
-
-/* ========================================
-   ANALYTICS (OPTIONAL)
-======================================== */
-function trackFeedbackEvent(action, data) {
-  // Add your analytics tracking here
-  console.log('Feedback Event:', action, data);
-  
-  // Example: Google Analytics
-  // if (typeof gtag !== 'undefined') {
-  //   gtag('event', action, {
-  //     event_category: 'Feedback',
-  //     event_label: data.type,
-  //     value: data.rating
-  //   });
-  // }
+  localStorage.removeItem("feedbackDraft");
 }
 
 /* ========================================
-   UTILITY FUNCTIONS
+   TOAST
 ======================================== */
-function sanitizeInput(input) {
-  const temp = document.createElement('div');
-  temp.textContent = input;
-  return temp.innerHTML;
+function toast(msg, type = "info") {
+  const t = document.createElement("div");
+  t.className = `toast toast-${type}`;
+  t.textContent = msg;
+  document.body.appendChild(t);
+
+  setTimeout(() => t.classList.add("show"), 10);
+  setTimeout(() => t.remove(), 3000);
+
+  return false;
 }
 
-function formatDateTime(date) {
-  return date.toLocaleString('en-IN', {
-    timeZone: 'Asia/Kolkata',
-    dateStyle: 'medium',
-    timeStyle: 'short'
-  });
+/* ========================================
+   TIME
+======================================== */
+function updateTime() {
+  const el = document.getElementById("timeNow");
+  if (!el) return;
+
+  const now = new Date();
+
+  el.innerHTML = `
+    <div>${now.toLocaleDateString("en-IN", { weekday:"short", day:"numeric", month:"short"})}</div>
+    <div style="font-weight:700">
+      ${now.toLocaleTimeString("en-IN",{hour:"2-digit",minute:"2-digit"})}
+    </div>
+  `;
 }
 
-// Log initialization
-console.log('Feedback system initialized successfully! ✅');
+/* ========================================
+   ANALYTICS
+======================================== */
+function trackEvent(action, data) {
+  console.log("Feedback:", action, data);
+}
+
+/* ========================================
+   UTIL
+======================================== */
+function loadUserName() {
+  const n = localStorage.getItem("userName");
+  if (n && document.getElementById("userName"))
+    document.getElementById("userName").value = n;
+}
+
+console.log("MoneyFlow Feedback PRO loaded ✅");

@@ -24,6 +24,19 @@ document.getElementById('currentYear').textContent = new Date().getFullYear();
   };
   let importFileData = null;
 
+  // ========================================
+  // NEW ANALYTICS STATE (ADDED)
+  // ========================================
+  let financeStats = {
+    todayExpense: 0,
+    monthlyExpense: 0,
+    monthlyIncome: 0,
+    totalIncome: 0,
+    totalExpense: 0,
+    totalBalance: 0,
+    spendingRatio: 0
+  };
+
   // DOM helper functions (safe fallbacks)
   function $(selector) {
     return document.querySelector(selector);
@@ -66,14 +79,12 @@ document.getElementById('currentYear').textContent = new Date().getFullYear();
   // Safe snackbar (fallback to alert)
   function showSnackbar(message, type = 'info') {
     try {
-      // Try global snackbar first
       if (typeof window.showSnackbar === 'function') {
         window.showSnackbar(message, type);
         return;
       }
     } catch (e) {}
     
-    // Fallback to alert
     alert(message);
   }
 
@@ -84,7 +95,6 @@ document.getElementById('currentYear').textContent = new Date().getFullYear();
     const hour = new Date().getHours();
     let greeting;
     
-    // Dynamic casual greeting for every hour (0-23)
     const greetings = [
       `Late night 🌙, ${username}❤️`, `Midnight vibes 🌌, ${username}💜`, `Past midnight 🌃, ${username}💙`,
       `Early dawn 🌆, ${username}🧡`, `Pre-sunrise 🌄, ${username}💚`, `Early morning' 🌅, ${username}💛`,
@@ -119,63 +129,120 @@ document.getElementById('currentYear').textContent = new Date().getFullYear();
   }
 
   // ========================================
+  // CALCULATE ADVANCED FINANCE STATS (NEW)
+  // ========================================
+  function calculateFinanceStats() {
+
+    const spendly = dashboardData.spendly;
+
+    const today = new Date().toISOString().split('T')[0];
+    const currentMonth = new Date().toISOString().slice(0,7);
+
+    financeStats.todayExpense = spendly
+      .filter(t => t.date === today && t.type === 'expense')
+      .reduce((sum,t)=> sum + Number(t.amount || 0),0);
+
+    financeStats.monthlyExpense = spendly
+      .filter(t => t.date && t.date.startsWith(currentMonth) && t.type === 'expense')
+      .reduce((sum,t)=> sum + Number(t.amount || 0),0);
+
+    financeStats.monthlyIncome = spendly
+      .filter(t => t.date && t.date.startsWith(currentMonth) && t.type === 'income')
+      .reduce((sum,t)=> sum + Number(t.amount || 0),0);
+
+    financeStats.totalIncome = spendly
+      .filter(t => t.type === 'income')
+      .reduce((sum,t)=> sum + Number(t.amount || 0),0);
+
+    financeStats.totalExpense = spendly
+      .filter(t => t.type === 'expense')
+      .reduce((sum,t)=> sum + Number(t.amount || 0),0);
+
+    financeStats.totalBalance =
+      financeStats.totalIncome - financeStats.totalExpense;
+
+    if(financeStats.monthlyIncome > 0){
+      financeStats.spendingRatio =
+        Math.round((financeStats.monthlyExpense / financeStats.monthlyIncome) * 100);
+    } else {
+      financeStats.spendingRatio = 0;
+    }
+  }
+
+  // ========================================
+  // SMART INSIGHT ENGINE (NEW)
+  // ========================================
+  function generateSmartInsight() {
+
+    const insightEl = $('#financeInsightMsg');
+    if(!insightEl) return;
+
+    const percent = financeStats.spendingRatio;
+
+    let message = '';
+
+    if(percent >= 90){
+      message = `⚠️ You spent ${percent}% of your income this month. High spending detected.`;
+    }
+    else if(percent >= 70){
+      message = `💡 You used ${percent}% of your income. Consider saving more.`;
+    }
+    else if(percent >= 50){
+      message = `👍 Balanced spending (${percent}%). Good financial control.`;
+    }
+    else if(percent >= 30){
+      message = `💎 Great! Only ${percent}% of income spent. Savings looking strong.`;
+    }
+    else{
+      message = `🚀 Excellent discipline! Spending only ${percent}% of income.`;
+    }
+
+    insightEl.textContent = message;
+  }
+
+  // ========================================
   // UPDATE DASHBOARD SUMMARY
   // ========================================
   function updateDashboard() {
+
     loadDashboardData();
-    
-    const spendly = dashboardData.spendly;
-    const nexus = dashboardData.nexus;
+
+    calculateFinanceStats();
+
     const pocket = dashboardData.pocketcal;
-    
-    // Get current date and month
-    const today = new Date().toISOString().split('T')[0];
-    const currentMonth = new Date().toISOString().slice(0, 7);
-    
-    // Calculate Today's Expense (Spendly)
-    const todayExpense = spendly
-      .filter(t => t.date === today && t.type === 'expense')
-      .reduce((sum, t) => sum + Number(t.amount || 0), 0);
-    
-    // Calculate This Month Pocket Money
+    const currentMonth = new Date().toISOString().slice(0,7);
+
     const monthPocket = pocket
       .filter(p => p.date && p.date.startsWith(currentMonth))
-      .reduce((sum, p) => sum + Number(p.amount || 0), 0);
-    
-    // Calculate All-Time Balance
-    const totalIncome = spendly
-      .filter(t => t.type === 'income')
-      .reduce((sum, t) => sum + Number(t.amount || 0), 0);
-    
-    const totalExpense = spendly
-      .filter(t => t.type === 'expense')
-      .reduce((sum, t) => sum + Number(t.amount || 0), 0);
-    
-    const balance = totalIncome - totalExpense;
-    
-    // Update UI elements with smooth animation
-    updateValueWithAnimation('#todayExpense', todayExpense);
+      .reduce((sum,p)=> sum + Number(p.amount || 0),0);
+
+    updateValueWithAnimation('#todayExpense', financeStats.todayExpense);
+
+    updateValueWithAnimation('#monthExpense', financeStats.monthlyExpense);
+
     updateValueWithAnimation('#monthPocket', monthPocket);
-    updateValueWithAnimation('#totalBalance', balance);
+
+    updateValueWithAnimation('#totalBalance', financeStats.totalBalance);
+
+    generateSmartInsight();
   }
 
   // ========================================
   // ANIMATE VALUE UPDATES
   // ========================================
-  function updateValueWithAnimation(selector, value) {
+  function updateValueWithAnimation(selector,value){
+
     const element = $(selector);
-    if (!element) return;
-    
-    // Add flash animation class
+    if(!element) return;
+
     element.style.animation = 'flash 0.5s ease';
-    
-    // Update value
+
     element.textContent = fmt(value);
-    
-    // Remove animation class after animation completes
-    setTimeout(() => {
-      element.style.animation = '';
-    }, 500);
+
+    setTimeout(()=>{
+      element.style.animation='';
+    },500);
+
   }
 
   // ========================================

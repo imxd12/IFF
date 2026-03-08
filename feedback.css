@@ -1096,3 +1096,275 @@ select.form-input option {
     display: none !important;
   }
 }
+
+/* ========================================
+   NEW FEATURES — MATCHING THEME
+======================================== */
+
+/* ========================================
+   MOOD SELECTOR
+======================================== */
+.mood-select {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  padding: 10px 0;
+}
+
+.mood-select span {
+  font-size: 28px;
+  cursor: pointer;
+  transition: all 0.35s cubic-bezier(0.175,0.885,0.32,1.275);
+  filter: grayscale(0.4);
+  opacity: 0.7;
+  transform: translateZ(0);
+}
+
+.mood-select span:hover {
+  transform: scale(1.3) translateY(-3px);
+  filter: grayscale(0);
+  opacity: 1;
+}
+
+.mood-select span.active {
+  transform: scale(1.35) translateY(-4px);
+  filter: grayscale(0);
+  opacity: 1;
+  text-shadow: 0 6px 18px rgba(0,0,0,0.25);
+}
+
+/* ========================================
+   BUG FIELD SMOOTH SHOW
+======================================== */
+.bug-only {
+  animation: fadeInUp165 0.4s ease;
+}
+
+/* ========================================
+   FILE INPUT (SCREENSHOT)
+======================================== */
+input[type="file"].form-input {
+  padding: 10px;
+  cursor: pointer;
+}
+
+input[type="file"].form-input::-webkit-file-upload-button {
+  background: var(--accent);
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-weight: 600;
+  transition: all .3s ease;
+}
+
+input[type="file"].form-input::-webkit-file-upload-button:hover {
+  background: #059669;
+}
+
+/* ========================================
+   CONTACT SWITCH
+======================================== */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+}
+
+.switch input {
+  display: none;
+}
+
+.slider {
+  position: absolute;
+  inset: 0;
+  background: var(--glass);
+  border: 2px solid var(--glass-border);
+  border-radius: 50px;
+  transition: .35s;
+}
+
+.slider::before {
+  content: "";
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  left: 2px;
+  top: 2px;
+  border-radius: 50%;
+  background: var(--accent);
+  transition: .35s cubic-bezier(.34,1.56,.64,1);
+}
+
+.switch input:checked + .slider {
+  border-color: var(--accent);
+  background: rgba(16,185,129,0.15);
+}
+
+.switch input:checked + .slider::before {
+  transform: translateX(20px);
+}
+
+.switch-label {
+  margin-left: 10px;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+/* ========================================
+   FEEDBACK STATS
+======================================== */
+.feedback-stats {
+  display: flex;
+  justify-content: center;
+  gap: 18px;
+  margin-bottom: 25px;
+  flex-wrap: wrap;
+}
+
+.feedback-stats div {
+  background: var(--glass);
+  border: 2px solid var(--glass-border);
+  padding: 10px 16px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 13px;
+  transition: all .35s ease;
+}
+
+.feedback-stats div:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent);
+  box-shadow: 0 6px 18px rgba(16,185,129,.15);
+}
+
+/* ========================================
+   FAQ BOX
+======================================== */
+.faq-box {
+  background: var(--glass);
+  border: 2px solid var(--glass-border);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  margin-bottom: 25px;
+}
+
+.faq-box h3 {
+  margin-bottom: 10px;
+  font-size: 18px;
+  color: var(--text);
+}
+
+.faq-box details {
+  border-top: 1px solid var(--glass-border);
+  padding: 10px 0;
+}
+
+.faq-box summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.faq-box p {
+  margin-top: 6px;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+/* ========================================
+   FEEDBACK HISTORY
+======================================== */
+.feedback-history {
+  margin-top: 40px;
+}
+
+.feedback-history h3 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.feedback-card {
+  background: var(--glass);
+  border: 2px solid var(--glass-border);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  margin-bottom: 12px;
+  transition: .35s;
+}
+
+.feedback-card:hover {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+}
+
+.fb-top {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.fb-msg {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+}
+
+.fb-date {
+  font-size: 11px;
+  opacity: .7;
+}
+
+/* ========================================
+   SOCIAL CONNECT
+======================================== */
+.feedback-social {
+  text-align: center;
+  margin-top: 40px;
+}
+
+.feedback-social p {
+  margin-bottom: 10px;
+}
+
+.social-icons {
+  display: flex;
+  justify-content: center;
+  gap: 18px;
+}
+
+.social-icons a {
+  text-decoration: none;
+  font-weight: 600;
+  color: var(--accent);
+  transition: .3s;
+}
+
+.social-icons a:hover {
+  transform: translateY(-2px);
+  text-shadow: 0 6px 16px rgba(16,185,129,.3);
+}
+
+/* ========================================
+   RATE APP BLOCK
+======================================== */
+.rate-app {
+  margin-top: 20px;
+  padding: 18px;
+  border: 2px dashed var(--glass-border);
+  border-radius: var(--radius);
+  background: rgba(16,185,129,.05);
+}
+
+.rate-app h4 {
+  margin-bottom: 6px;
+}
+
+.rate-app p {
+  font-size: 13px;
+  margin-bottom: 10px;
+}

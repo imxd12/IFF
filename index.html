@@ -23,14 +23,16 @@
   
 <!-- Splash Screen -->
 <div class="splash-screen" id="splashScreen">
+  <div class="splash-glass"></div>
+
   <div class="splash-container">
-    <!-- Animated Background -->
+    <!-- Animated Background Bubbles -->
     <div class="splash-bg-circles">
       <div class="circle circle-1"></div>
       <div class="circle circle-2"></div>
       <div class="circle circle-3"></div>
     </div>
-    
+
     <!-- Logo Container -->
     <div class="splash-logo-wrapper">
       <svg class="splash-logo" width="120" height="120" viewBox="0 0 120 120">
@@ -47,53 +49,63 @@
             </feMerge>
           </filter>
         </defs>
-        
+
         <!-- Outer rotating ring -->
-        <circle cx="60" cy="60" r="54" fill="none" stroke="url(#logoGrad)" stroke-width="2" opacity="0.3">
+        <circle cx="60" cy="60" r="54" fill="none"
+                stroke="url(#logoGrad)" stroke-width="2" opacity="0.28">
           <animateTransform
             attributeName="transform"
             attributeType="XML"
             type="rotate"
             from="0 60 60"
             to="360 60 60"
-            dur="3s"
+            dur="4s"
             repeatCount="indefinite"/>
         </circle>
-        
-        <!-- Main circle with animation -->
-        <circle cx="60" cy="60" r="50" fill="none" stroke="url(#logoGrad)" stroke-width="4" filter="url(#glow)">
-          <animate attributeName="stroke-dasharray" from="0 314" to="314 0" dur="2s" repeatCount="indefinite"/>
+
+        <!-- Main circle with soft dash animation -->
+        <circle cx="60" cy="60" r="50" fill="none"
+                stroke="url(#logoGrad)" stroke-width="4" filter="url(#glow)"
+                stroke-linecap="round" stroke-dasharray="240 120">
+          <animate attributeName="stroke-dashoffset"
+                   from="0" to="360"
+                   dur="3s"
+                   repeatCount="indefinite"/>
         </circle>
-        
+
         <!-- Inner glow circle -->
-        <circle cx="60" cy="60" r="46" fill="none" stroke="url(#logoGrad)" stroke-width="1" opacity="0.5">
-          <animate attributeName="r" values="46;48;46" dur="2s" repeatCount="indefinite"/>
-          <animate attributeName="opacity" values="0.5;0.8;0.5" dur="2s" repeatCount="indefinite"/>
+        <circle cx="60" cy="60" r="46" fill="none"
+                stroke="url(#logoGrad)" stroke-width="1" opacity="0.5">
+          <animate attributeName="r" values="46;48;46" dur="2.2s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" values="0.5;0.9;0.5" dur="2.2s" repeatCount="indefinite"/>
         </circle>
-        
+
         <!-- Rupee symbol -->
-        <text x="60" y="75" font-family="Inter" font-size="36" font-weight="800" fill="url(#logoGrad)" text-anchor="middle" filter="url(#glow)">₹</text>
+        <text x="60" y="75" font-family="Inter, system-ui" font-size="36"
+              font-weight="800" fill="url(#logoGrad)" text-anchor="middle"
+              filter="url(#glow)">₹</text>
       </svg>
-     
+
       <!-- Pulse rings around logo -->
       <div class="pulse-ring pulse-ring-1"></div>
       <div class="pulse-ring pulse-ring-2"></div>
       <div class="pulse-ring pulse-ring-3"></div>
     </div>
-    
+
     <!-- Brand Text -->
     <h2 class="splash-text">
-      <span class="text-word text-word-1">Money</span><span class="text-word text-word-2">Flow</span>
+      <span class="text-word text-word-1">Money</span>
+      <span class="text-word text-word-2">Flow</span>
     </h2>
-    
+
     <!-- Tagline -->
     <p class="splash-tagline">Track. Analyze. Grow.</p>
-    
+
     <!-- Loading Bar -->
     <div class="loading-bar-container">
       <div class="loading-bar"></div>
     </div>
-    
+
     <!-- Loading Text -->
     <p class="loading-text">
       <span class="loading-dots">Loading</span>
@@ -151,26 +163,56 @@
      </div>
   </div>
 
-  <!-- Summary Cards -->
-  <div class="widget-grid">
-     <div class="card scroll-fade-in" style="animation-delay: 0.1s">
-       <div class="summary-icon">💰</div>
-       <div class="summary-label">Today's Expense</div>
-       <div class="summary-value" id="todayExpense">₹0</div>
-     </div>
-     
-     <div class="card scroll-fade-in" style="animation-delay: 0.2s">
-       <div class="summary-icon">📅</div>
-       <div class="summary-label">This Month Pocket</div>
-       <div class="summary-value" id="monthPocket">₹0</div>
-     </div>
-     
-     <div class="card scroll-fade-in" style="animation-delay: 0.4s">
-       <div class="summary-icon">💎</div>
-       <div class="summary-label">All-Time Balance</div>
-       <div class="summary-value" id="totalBalance">₹0</div>
-     </div>
+<!-- Summary Cards -->
+<div class="widget-grid">
+
+  <!-- Today's Expense -->
+  <div class="card scroll-fade-in" style="animation-delay: 0.1s">
+    <div class="summary-icon">💰</div>
+    <div class="summary-label">Today's Expense</div>
+    <div class="summary-value" id="todayExpense">₹0</div>
   </div>
+
+  <!-- All-Time Balance -->
+  <div class="card scroll-fade-in" style="animation-delay: 0.4s">
+    <div class="summary-icon">💎</div>
+    <div class="summary-label">All-Time Balance</div>
+    <div class="summary-value" id="totalBalance">₹0</div>
+  </div>
+
+  <!-- Monthly Expense -->
+  <div class="card scroll-fade-in" style="animation-delay: 0.2s">
+    <div class="summary-icon">📊</div>
+    <div class="summary-label">Monthly Expense</div>
+    <div class="summary-value" id="monthExpense">₹0</div>
+  </div>
+
+  <!-- This Month Pocket -->
+  <div class="card scroll-fade-in" style="animation-delay: 0.3s">
+    <div class="summary-icon">📅</div>
+    <div class="summary-label">This Month Pocket</div>
+    <div class="summary-value" id="monthPocket">₹0</div>
+  </div>
+
+</div>
+
+
+<!-- Smart Financial Insight -->
+<div class="finance-insight scroll-fade-in" style="animation-delay:0.5s">
+
+  <div class="insight-card">
+    <div class="insight-icon">🧠</div>
+
+    <div class="insight-content">
+      <h4>Smart Insight</h4>
+      <p id="financeInsightMsg">
+        Analyzing your spending...
+      </p>
+    </div>
+
+  </div>
+
+</div>
 
   <!-- Data Management Section -->
   <section class="data-management-section scroll-blur">
@@ -271,7 +313,7 @@
 <div class="modal" id="importModal">
   <div class="modal-content">
      <div class="modal-header">
-       <h2 class="modal-title">📥 Import Data</h2>
+       <h2 class="modal-title">Import Data</h2>
        <button class="modal-close" onclick="closeModal('#importModal')">&times;</button>
      </div>
      <div class="import-section">

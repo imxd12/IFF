@@ -143,257 +143,193 @@ body {
   transform: scale(1) rotateX(0);
 }
 
-/* Add this to enable smooth native scrolling of the whole page */
-html {
-  scroll-behavior: smooth;
+/* =====================================================
+   GLOBAL SETTINGS
+===================================================== */
+
+html{
+  scroll-behavior:smooth;
 }
 
-/* ========================================
-   HEADER — LIQUID GLASS PRO V2
-   Ultra Smooth | Fully Responsive | 60FPS
-======================================== */
 
-.header {
+/* =====================================================
+   HEADER STRUCTURE
+===================================================== */
+
+.header{
   --h: clamp(56px, 7.5vh, 72px);
 
-  position: sticky;
-  top: 0;
-  z-index: 1000;
+  position:sticky;
+  top:0;
+  z-index:1000;
 
-  height: var(--h);
-  padding-inline: clamp(10px, 3vw, 26px);
+  height:var(--header-height);
+  width:100%;
 
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  align-items: center;
-  gap: clamp(8px, 2vw, 18px);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
 
-  background: rgba(255,255,255,0.65);
-  backdrop-filter: blur(18px) saturate(160%);
-  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  padding:0 clamp(18px,4vw,40px);
 
-  border-bottom: 1px solid var(--glass-border);
+  background:var(--glass);
+  backdrop-filter:blur(16px) saturate(160%);
+  -webkit-backdrop-filter:blur(16px) saturate(160%);
+
+  border-bottom:1px solid var(--glass-border);
 
   box-shadow:
-    0 6px 20px rgba(0,0,0,0.12),
-    inset 0 1px 0 rgba(255,255,255,0.35);
+  0 6px 18px rgba(0,0,0,0.12),
+  inset 0 1px 0 rgba(255,255,255,0.4);
 
-  transform: translateZ(0);
-  will-change: transform, box-shadow;
   transition:
-    transform 0.35s cubic-bezier(.34,1.56,.64,1),
-    box-shadow 0.35s ease,
-    background 0.35s ease;
-
-  animation: headerEnter 0.7s cubic-bezier(.34,1.56,.64,1);
+  transform .35s ease,
+  background .35s ease,
+  box-shadow .35s ease;
 }
 
-/* gradient flow on scroll */
-.header::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    var(--accent-light),
-    transparent
-  );
-  opacity: 0;
-  animation: flow 8s linear infinite;
-  transition: opacity .4s ease;
-  pointer-events: none;
-}
 
-.header.scrolled::before {
-  opacity: .25;
-}
+/* HEADER HOVER */
 
-.header:hover {
-  transform: translateY(-2px);
+.header:hover{
+
   box-shadow:
-    0 10px 30px rgba(0,0,0,0.18),
-    0 0 18px var(--accent-light);
+  0 10px 28px rgba(0,0,0,0.18),
+  0 0 18px var(--accent-light);
+
 }
 
-@keyframes headerEnter {
-  from { transform: translateY(-120%); opacity:0; }
-  to   { transform: translateY(0); opacity:1; }
-}
 
-@keyframes flow {
-  from { background-position:-200% 0; }
-  to   { background-position:200% 0; }
-}
+/* =====================================================
+   HEADER LAYOUT
+===================================================== */
 
-/* ========================================
-   SECTIONS
-======================================== */
+.header-left,
+.header-center,
+.header-right{
 
-.header-left {
   display:flex;
   align-items:center;
-  gap: clamp(8px,2vw,14px);
-  min-width:0;
+  gap:18px;
 }
 
-.header-center {
-  display:flex;
+/* left */
+.header-left{
+  flex:1;
+}
+
+/* center */
+.header-center{
+
+  flex:1;
   justify-content:center;
-  align-items:center;
-  min-width:0;
+
 }
 
-.header-right {
-  display:flex;
-  align-items:center;
+/* right */
+
+.header-right{
+
+  flex:1;
   justify-content:flex-end;
-  gap: clamp(8px,2vw,16px);
-  min-width:0;
+
 }
 
-/* ========================================
-   BRAND
-======================================== */
 
-.brand {
+/* =====================================================
+   BRAND
+===================================================== */
+
+.brand{
+
   display:flex;
   align-items:center;
-  gap: clamp(6px,1.6vw,10px);
-  min-width:0;
+  gap:10px;
 }
 
-.brand-logo {
-  width: clamp(32px,6vw,44px);
-  height: clamp(32px,6vw,44px);
-  flex-shrink:0;
+.brand-logo{
 
-  filter: drop-shadow(0 4px 12px var(--accent-light));
-  animation: float 4s ease-in-out infinite;
+  width:40px;
+  height:40px;
 
-  transition: transform .4s cubic-bezier(.34,1.56,.64,1),
-              filter .4s ease;
+  object-fit:contain;
+
+  transition:transform .4s ease;
 }
 
-.brand-logo:hover {
-  transform: scale(1.15);
-  filter: drop-shadow(0 10px 22px var(--accent));
+.brand-logo:hover{
+
+  transform:scale(1.15) rotate(6deg);
+
 }
 
-@keyframes float {
-  50% { transform: translateY(-5px); }
-}
 
-.brand-name {
-  font-size: clamp(16px,3.6vw,24px);
+.brand-name{
+
+  font-size:20px;
   font-weight:800;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
 
-  background: var(--gradient-primary);
-  background-size:200% 200%;
+  letter-spacing:.5px;
+
+  background:linear-gradient(
+  90deg,
+  #10b981,
+  #22c55e,
+  #10b981
+  );
+
+  background-size:200%;
   -webkit-background-clip:text;
   -webkit-text-fill-color:transparent;
 
-  animation: gradientFlow 6s ease infinite;
-
-  transition: transform .35s cubic-bezier(.34,1.56,.64,1);
+  animation:brandGradient 6s linear infinite;
 }
 
-.brand-name:hover {
-  transform: scale(1.05);
+@keyframes brandGradient{
+
+  0%{background-position:0%}
+  100%{background-position:200%}
+
 }
 
-/* ========================================
-   TIME — ALWAYS VISIBLE
-======================================== */
 
-.time-display {
-  font-size: clamp(10px,2.8vw,14px);
-  padding: clamp(5px,1.2vw,9px) clamp(10px,2.5vw,16px);
+/* =====================================================
+   TIME DISPLAY
+===================================================== */
 
-  border-radius: 999px;
+.time-display{
+
+  font-size:13px;
+  font-weight:600;
+
+  padding:6px 14px;
+
+  border-radius:40px;
+
+  background:rgba(255,255,255,0.4);
+
   border:1px solid var(--glass-border);
 
-  background: rgba(255,255,255,0.35);
-  backdrop-filter: blur(8px);
+  backdrop-filter:blur(6px);
 
-  white-space:nowrap;
-  flex-shrink:0;
-
-  transition: transform .35s cubic-bezier(.34,1.56,.64,1),
-              box-shadow .35s ease,
-              border-color .35s ease;
-}
-
-.time-display:hover {
-  transform: translateY(-2px) scale(1.05);
-  border-color: var(--accent);
-  box-shadow: 0 0 14px var(--accent-light);
-}
-
-/* ========================================
-   RESPONSIVE — MOBILE OPTIMIZED
-======================================== */
-
-/* large phones 6.5–7 inch */
-@media (max-width: 480px) {
-
-  .header {
-    grid-template-columns: auto auto;
-    grid-template-rows: auto auto;
-    height:auto;
-    padding-block: 8px;
-  }
-
-  .header-left {
-    grid-column:1;
-    grid-row:1;
-  }
-
-  .header-right {
-    grid-column:2;
-    grid-row:1;
-  }
-
-  .header-center {
-    grid-column:1 / span 2;
-    grid-row:2;
-    justify-content:center;
-  }
-
-  .time-display {
-    order:2;
-  }
+  transition:var(--transition-smooth);
 
 }
 
-/* very small phones */
-@media (max-width:360px) {
-  .brand-name {
-    display:none;
-  }
+.time-display:hover{
+
+  transform:translateY(-2px) scale(1.05);
+
+  border-color:var(--accent);
+
+  box-shadow:0 0 12px var(--accent-light);
+
 }
 
-/* ========================================
-   DARK MODE
-======================================== */
 
-[data-theme="dark"] .header {
-  background: rgba(10,14,25,0.7);
-  border-bottom:1px solid rgba(255,255,255,0.08);
-}
-
-[data-theme="dark"] .time-display {
-  background: rgba(30,40,70,0.5);
-  border-color: rgba(255,255,255,0.12);
-}
-
-/* ============================================
-   LIQUID GLASS THEME TOGGLE — PRO EDITION
-   Ultra Smooth • Responsive • Morphing • Glow
-============================================ */
+/* =====================================================
+   THEME TOGGLE
+===================================================== */
 
 .theme-toggle {
   --toggle-w: clamp(60px, 9vw, 74px);
@@ -641,6 +577,16 @@ html {
   outline-offset: 3px;
 }
 
+
+/* DARK MODE POSITION */
+
+[data-theme="dark"] .theme-toggle-slider{
+
+  transform:translateX(26px);
+
+}
+
+
 /* ========================================
    PROFILE BUTTON - Rotating Border
 ======================================== */
@@ -694,6 +640,7 @@ html {
 .profile-btn:hover img {
   transform: scale(1.1);
 }
+
 
 /* ========================================
    BACK BUTTON - SMOOTH RIPPLE
@@ -799,104 +746,77 @@ html {
   transform: scale(1.08) translateZ(0);
 }
 
-/* ========================================
-   RESPONSIVE & REDUCED MOTION
-======================================== */
-@media (max-width: 480px) {
-  .header {
-    padding: 0 clamp(12px, 3vw, 16px);
-  }
-  .header-left,
-  .header-center,
-  .header-right {
-    gap: clamp(8px, 2vw, 12px);
-  }
-  .brand-logo {
-    width: clamp(32px, 6vw, 40px);
-    height: clamp(32px, 6vw, 40px);
-  }
-  .brand-name {
-    font-size: clamp(16px, 3.5vw, 22px);
-  }
-  .time-display {
-    font-size: clamp(10px, 1.8vw, 13px);
-    padding: clamp(6px, 1.2vw, 9px) clamp(12px, 2.5vw, 16px);
-  }
-  .theme-toggle {
-    width: clamp(50px, 9vw, 60px);
-    height: clamp(26px, 5vw, 32px);
-  }
-  .back-btn {
-    width: clamp(36px, 7vw, 44px);
-    height: clamp(36px, 7vw, 44px);
-  }
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+@media(max-width:768px){
+
+.header{
+
+padding:0 16px;
+height:64px;
+
 }
 
-@media (orientation: landscape) and (max-height: 600px) {
-  .header {
-    height: clamp(50px, 8vh, 60px);
-  }
+.brand-name{
+
+font-size:18px;
+
 }
 
-@media (hover: none) and (pointer: coarse) {
-  .back-btn {
-    min-width: 44px;
-    min-height: 44px;
-  }
-  .back-btn:active {
-    transform: scale(0.92) translateZ(0);
-  }
+.time-display{
+
+display:none;
+
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .header,
-  .brand-logo,
-  .brand-name,
-  .time-display,
-  .theme-toggle,
-  .theme-toggle-slider,
-  .profile-btn,
-  .back-btn {
-    animation: none !important;
-  }
-
-  .header {
-    animation: headerSlideDownSimple 0.25s ease !important;
-  }
-
-  @keyframes headerSlideDownSimple {
-    from { opacity: 0; }
-    to   { opacity: 1; }
-  }
 }
 
-@media (prefers-contrast: high) {
-  .back-btn,
-  .profile-btn {
-    border-width: 3px;
-  }
+@media(max-width:420px){
+
+.brand-name{
+
+display:none;
+
 }
 
-/* ========================================
+.header-left{
+
+gap:10px;
+
+}
+
+}
+
+
+/* =====================================================
    CONTAINER
-======================================== */
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: var(--container-padding);
-  padding-bottom: calc(var(--navbar-height) + var(--container-padding) + 10px);
-  animation: containerFadeIn 1s ease;
+===================================================== */
+
+.container{
+
+max-width:1200px;
+margin:auto;
+
+padding:30px;
+
+animation:containerFade .8s ease;
+
 }
 
-@keyframes containerFadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(25px) scale(0.98);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
+@keyframes containerFade{
+
+from{
+opacity:0;
+transform:translateY(20px);
+}
+
+to{
+opacity:1;
+transform:translateY(0);
+}
+
 }
 
 /* ========================================

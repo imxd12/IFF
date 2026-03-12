@@ -140,155 +140,591 @@
   }
 }
 
-/* ========================================
-   QUICK START BOX
-======================================== */
+/* =====================================================
+   QUICK START GUIDE — MONEYFLOW PRO UI
+===================================================== */
+
 .quick-start-box {
-  background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(59, 130, 246, 0.1) 100%);
-  padding: clamp(25px, 4vw, 35px);
-  border-radius: var(--radius-lg);
-  border: 3px solid var(--accent);
-  margin-bottom: clamp(35px, 5vw, 50px);
+
   position: relative;
+
+  padding: clamp(26px,4vw,38px);
+
+  border-radius: 18px;
+
+  background:
+  linear-gradient(180deg,
+  rgba(255,255,255,0.85),
+  rgba(255,255,255,0.65));
+
+  backdrop-filter: blur(12px);
+
+  border: 1px solid rgba(255,255,255,0.45);
+
+  margin-bottom: clamp(35px,5vw,55px);
+
   overflow: hidden;
-  animation: quickStartSlideIn 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.5s backwards;
-  box-shadow: 0 15px 50px rgba(16, 185, 129, 0.2);
-  transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  transform: translateZ(0);
+
+  box-shadow:
+  0 10px 35px rgba(0,0,0,0.12),
+  0 0 60px rgba(16,185,129,0.08);
+
+  transition: all .45s cubic-bezier(.34,1.56,.64,1);
+
 }
 
-@keyframes quickStartSlideIn {
-  from {
-    opacity: 0;
-    filter: blur(20px);
-    transform: scale(0.9) translateZ(0);
-  }
-  to {
-    opacity: 1;
-    filter: blur(0);
-    transform: scale(1) translateZ(0);
-  }
-}
+
+/* subtle glow border */
 
 .quick-start-box::before {
-  content: '';
+
+  content:"";
+
+  position:absolute;
+
+  inset:0;
+
+  border-radius:inherit;
+
+  padding:1px;
+
+  background:linear-gradient(
+  120deg,
+  rgba(16,185,129,0.6),
+  rgba(59,130,246,0.4),
+  rgba(16,185,129,0.6)
+  );
+
+  -webkit-mask:
+  linear-gradient(#fff 0 0) content-box,
+  linear-gradient(#fff 0 0);
+
+  -webkit-mask-composite: xor;
+
+  pointer-events:none;
+
+}
+
+
+/* hover lift */
+
+.quick-start-box:hover{
+
+  transform: translateY(-8px) scale(1.01);
+
+  box-shadow:
+  0 20px 60px rgba(0,0,0,0.18),
+  0 0 80px rgba(16,185,129,0.15);
+
+}
+
+
+/* =====================================================
+   ROCKET ICON
+===================================================== */
+
+.quick-start-icon{
+
+  position:absolute;
+
+  right:25px;
+
+  top:25px;
+
+  font-size: clamp(42px,6vw,58px);
+
+  opacity:.18;
+
+  animation:rocketFloat 4s ease-in-out infinite;
+
+}
+
+@keyframes rocketFloat{
+
+0%,100%{
+transform:translateY(0) rotate(-10deg);
+}
+
+50%{
+transform:translateY(-16px) rotate(-4deg);
+}
+
+}
+
+
+/* =====================================================
+   TITLE
+===================================================== */
+
+.quick-start-box h3{
+
+font-size: clamp(22px,4vw,28px);
+
+font-weight:800;
+
+margin-bottom:12px;
+
+color:#10b981;
+
+letter-spacing:.4px;
+
+}
+
+
+/* description */
+
+.quick-start-box p{
+
+font-size: clamp(14px,2.4vw,16px);
+
+color:#475569;
+
+margin-bottom:22px;
+
+line-height:1.7;
+
+max-width:520px;
+
+}
+
+
+/* =====================================================
+   STEP LIST
+===================================================== */
+
+.quick-start-list{
+
+list-style:none;
+
+margin:0;
+
+padding:0;
+
+display:flex;
+
+flex-direction:column;
+
+gap:18px;
+
+position:relative;
+
+}
+
+
+/* vertical guide line */
+
+.quick-start-list::before{
+
+content:"";
+
+position:absolute;
+
+left:19px;
+
+top:0;
+
+bottom:0;
+
+width:2px;
+
+background:linear-gradient(
+180deg,
+rgba(16,185,129,0.4),
+rgba(59,130,246,0.25)
+);
+
+}
+
+
+/* =====================================================
+   LIST ITEMS
+===================================================== */
+
+.quick-start-list li{
+
+position:relative;
+
+padding-left:56px;
+
+font-size:15px;
+
+line-height:1.7;
+
+color:#334155;
+
+font-weight:500;
+
+transition:all .35s ease;
+
+}
+
+
+/* =========================================
+   NUMBER CIRCLE — PREMIUM STEP INDICATOR
+========================================= */
+
+.quick-start-list li::before{
+
+  content: counter(step);
+  counter-increment: step;
+
   position: absolute;
-  top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(135deg, var(--accent) 0%, transparent 50%);
-  opacity: 0.05;
-  pointer-events: none;
-}
+  top: 2px;
 
-.quick-start-box:hover {
-  transform: translateY(-6px) scale(1.01) translateZ(0);
-  box-shadow: 
-    0 25px 70px rgba(16, 185, 129, 0.3),
-    0 0 80px rgba(16, 185, 129, 0.15);
-}
+  width: 40px;
+  height: 40px;
 
-.quick-start-icon {
-  position: absolute;
-  right: 25px;
-  top: 25px;
-  font-size: clamp(40px, 6vw, 56px);
-  opacity: 0.15;
-  animation: rocketFloat 4s ease-in-out infinite;
-}
-
-@keyframes rocketFloat {
-  0%, 100% {
-    transform: translateY(0) rotate(-15deg);
-  }
-  50% {
-    transform: translateY(-20px) rotate(-10deg);
-  }
-}
-
-.quick-start-box h3 {
-  font-size: clamp(20px, 4vw, 26px);
-  font-weight: 800;
-  color: var(--accent);
-  margin-bottom: 15px;
-  position: relative;
-  z-index: 1;
-}
-
-.quick-start-box > p {
-  font-size: clamp(14px, 2.5vw, 16px);
-  color: var(--text);
-  margin-bottom: 20px;
-  line-height: 1.7;
-  position: relative;
-  z-index: 1;
-}
-
-.quick-start-list {
-  list-style: none;
-  counter-reset: quick-counter;
-  padding: 0;
-  margin: 0;
-  position: relative;
-  z-index: 1;
-}
-
-.quick-start-list li {
-  counter-increment: quick-counter;
-  position: relative;
-  padding-left: clamp(45px, 7vw, 60px);
-  margin-bottom: clamp(16px, 3vw, 20px);
-  font-size: clamp(14px, 2.5vw, 16px);
-  line-height: 1.7;
-  color: var(--text);
-  animation: quickItemSlide 0.6s cubic-bezier(0.19, 1, 0.22, 1) backwards;
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-@keyframes quickItemSlide {
-  from {
-    opacity: 0;
-    transform: translateX(-20px) translateZ(0);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0) translateZ(0);
-  }
-}
-
-.quick-start-list li:nth-child(1) { animation-delay: 0.1s; }
-.quick-start-list li:nth-child(2) { animation-delay: 0.2s; }
-.quick-start-list li:nth-child(3) { animation-delay: 0.3s; }
-.quick-start-list li:nth-child(4) { animation-delay: 0.4s; }
-.quick-start-list li:nth-child(5) { animation-delay: 0.5s; }
-
-.quick-start-list li::before {
-  content: counter(quick-counter);
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: clamp(32px, 5vw, 40px);
-  height: clamp(32px, 5vw, 40px);
-  background: var(--accent);
-  color: white;
   border-radius: 50%;
+
   display: flex;
   align-items: center;
   justify-content: center;
+
   font-weight: 800;
-  font-size: clamp(16px, 3vw, 18px);
-  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  font-size: 16px;
+  color: #ffffff;
+
+  /* premium gradient */
+  background: linear-gradient(
+    135deg,
+    #10b981 0%,
+    #22c55e 40%,
+    #3b82f6 100%
+  );
+
+  /* glass highlight */
+  box-shadow:
+    0 6px 18px rgba(16,185,129,0.45),
+    inset 0 2px 4px rgba(255,255,255,0.35),
+    inset 0 -2px 4px rgba(0,0,0,0.2);
+
+  border: 1px solid rgba(255,255,255,0.4);
+
+  backdrop-filter: blur(4px);
+
+  transition:
+    transform .4s cubic-bezier(.34,1.56,.64,1),
+    box-shadow .35s ease,
+    background .35s ease;
+
+  transform: translateZ(0);
+
 }
 
-.quick-start-list li:hover {
-  transform: translateX(8px) translateZ(0);
+
+/* =========================================
+   HOVER EFFECT
+========================================= */
+
+.quick-start-list li:hover::before{
+
+  transform: scale(1.18) rotate(10deg);
+
+  background: linear-gradient(
+    135deg,
+    #10b981,
+    #3b82f6
+  );
+
+  box-shadow:
+    0 8px 24px rgba(16,185,129,0.6),
+    0 0 18px rgba(59,130,246,0.35),
+    inset 0 2px 4px rgba(255,255,255,0.4);
+
 }
 
-.quick-start-list li:hover::before {
-  transform: scale(1.2) rotate(15deg);
-  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.6);
+
+/* =========================================
+   ACTIVE CLICK EFFECT
+========================================= */
+
+.quick-start-list li:active::before{
+
+  transform: scale(0.92);
+
+  box-shadow:
+    0 4px 12px rgba(16,185,129,0.5),
+    inset 0 2px 4px rgba(0,0,0,0.3);
+
+}
+
+
+/* =========================================
+   DARK MODE SUPPORT
+========================================= */
+
+[data-theme="dark"] .quick-start-list li::before{
+
+  background: linear-gradient(
+    135deg,
+    #059669,
+    #2563eb
+  );
+
+  box-shadow:
+    0 6px 20px rgba(59, 246, 143, 0.4),
+    inset 0 2px 3px rgba(255,255,255,0.25),
+    inset 0 -2px 4px rgba(0,0,0,0.4);
+
+  border: 1px solid rgba(255,255,255,0.15);
+
+}
+
+
+/* hover interaction */
+
+.quick-start-list li:hover{
+
+transform:translateX(8px);
+
+color:#0f172a;
+
+}
+
+.quick-start-list li:hover::before{
+
+transform:scale(1.15) rotate(8deg);
+
+box-shadow:
+0 8px 24px rgba(16,185,129,0.5);
+
+}
+
+
+/* =====================================================
+   COUNTER RESET
+===================================================== */
+
+.quick-start-list{
+
+counter-reset:step;
+
+}
+
+
+/* =====================================================
+   RESPONSIVE DESIGN — QUICK START GUIDE
+===================================================== */
+
+/* Tablets & Small Laptops */
+@media (max-width: 900px){
+
+.quick-start-box{
+padding: clamp(22px,4vw,30px);
+}
+
+.quick-start-icon{
+font-size: clamp(36px,6vw,48px);
+right:20px;
+top:20px;
+opacity:0.12;
+}
+
+.quick-start-box h3{
+font-size: clamp(20px,3vw,24px);
+}
+
+.quick-start-box p{
+font-size: clamp(14px,2.4vw,15px);
+}
+
+.quick-start-list li{
+padding-left:52px;
+font-size:14.5px;
+}
+
+.quick-start-list li::before{
+width:36px;
+height:36px;
+font-size:15px;
+}
+
+}
+
+
+/* Phones */
+@media (max-width: 600px){
+
+.quick-start-box{
+padding:22px;
+border-radius:16px;
+}
+
+.quick-start-icon{
+font-size:40px;
+right:16px;
+top:16px;
+opacity:0.1;
+}
+
+.quick-start-box h3{
+font-size:20px;
+}
+
+.quick-start-box p{
+font-size:14px;
+line-height:1.6;
+}
+
+.quick-start-list{
+gap:16px;
+}
+
+.quick-start-list li{
+padding-left:48px;
+font-size:14px;
+}
+
+.quick-start-list li::before{
+width:34px;
+height:34px;
+font-size:14px;
+}
+
+}
+
+
+/* Small Phones (iPhone SE etc.) */
+@media (max-width: 420px){
+
+.quick-start-box{
+padding:20px;
+}
+
+.quick-start-icon{
+display:none;
+}
+
+.quick-start-box h3{
+font-size:18px;
+}
+
+.quick-start-box p{
+font-size:13.5px;
+}
+
+.quick-start-list li{
+padding-left:44px;
+font-size:13.5px;
+}
+
+.quick-start-list li::before{
+width:32px;
+height:32px;
+font-size:13px;
+}
+
+}
+
+
+/* Very Small Phones */
+@media (max-width: 340px){
+
+.quick-start-box{
+padding:18px;
+}
+
+.quick-start-box h3{
+font-size:17px;
+}
+
+.quick-start-box p{
+font-size:13px;
+}
+
+.quick-start-list li{
+padding-left:42px;
+font-size:13px;
+}
+
+.quick-start-list li::before{
+width:30px;
+height:30px;
+font-size:12px;
+}
+
+}
+
+
+/* Landscape Phones */
+@media (orientation: landscape) and (max-height: 500px){
+
+.quick-start-box{
+padding:18px 22px;
+}
+
+.quick-start-icon{
+display:none;
+}
+
+.quick-start-list{
+gap:14px;
+}
+
+}
+
+
+/* Large Desktop Enhancement */
+@media (min-width:1200px){
+
+.quick-start-box{
+padding:40px;
+}
+
+.quick-start-box h3{
+font-size:28px;
+}
+
+.quick-start-box p{
+font-size:16px;
+max-width:600px;
+}
+
+.quick-start-list li{
+font-size:16px;
+padding-left:60px;
+}
+
+.quick-start-list li::before{
+width:42px;
+height:42px;
+font-size:17px;
+}
+
+}
+
+
+/* =====================================================
+   DARK MODE
+===================================================== */
+
+[data-theme="dark"] .quick-start-box{
+
+background:
+linear-gradient(
+180deg,
+rgba(30,41,59,0.9),
+rgba(30,41,59,0.7)
+);
+
+border:1px solid rgba(255,255,255,0.08);
+
+box-shadow:
+0 15px 45px rgba(0,0,0,0.5);
+
+}
+
+[data-theme="dark"] .quick-start-box p{
+
+color:#cbd5f5;
+
+}
+
+[data-theme="dark"] .quick-start-list li{
+
+color:#e2e8f0;
+
 }
 
 /* ========================================

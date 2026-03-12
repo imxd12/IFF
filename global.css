@@ -746,49 +746,83 @@ html{
   transform: scale(1.08) translateZ(0);
 }
 
-/* =====================================================
-   RESPONSIVE
-===================================================== */
-
-@media(max-width:768px){
-
-.header{
-
-padding:0 16px;
-height:64px;
-
+/* ========================================
+   RESPONSIVE & REDUCED MOTION
+======================================== */
+@media (max-width: 480px) {
+  .header {
+    padding: 0 clamp(12px, 3vw, 16px);
+  }
+  .header-left,
+  .header-center,
+  .header-right {
+    gap: clamp(8px, 2vw, 12px);
+  }
+  .brand-logo {
+    width: clamp(32px, 6vw, 40px);
+    height: clamp(32px, 6vw, 40px);
+  }
+  .brand-name {
+    font-size: clamp(16px, 3.5vw, 22px);
+  }
+  .time-display {
+    font-size: clamp(10px, 1.8vw, 13px);
+    padding: clamp(6px, 1.2vw, 9px) clamp(12px, 2.5vw, 16px);
+  }
+  .theme-toggle {
+    width: clamp(50px, 9vw, 60px);
+    height: clamp(26px, 5vw, 32px);
+  }
+  .back-btn {
+    width: clamp(36px, 7vw, 44px);
+    height: clamp(36px, 7vw, 44px);
+  }
 }
 
-.brand-name{
-
-font-size:18px;
-
+@media (orientation: landscape) and (max-height: 600px) {
+  .header {
+    height: clamp(50px, 8vh, 60px);
+  }
 }
 
-.time-display{
-
-display:none;
-
+@media (hover: none) and (pointer: coarse) {
+  .back-btn {
+    min-width: 44px;
+    min-height: 44px;
+  }
+  .back-btn:active {
+    transform: scale(0.92) translateZ(0);
+  }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .header,
+  .brand-logo,
+  .brand-name,
+  .time-display,
+  .theme-toggle,
+  .theme-toggle-slider,
+  .profile-btn,
+  .back-btn {
+    animation: none !important;
+  }
+
+  .header {
+    animation: headerSlideDownSimple 0.25s ease !important;
+  }
+
+  @keyframes headerSlideDownSimple {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
 }
 
-@media(max-width:420px){
-
-.brand-name{
-
-display:none;
-
+@media (prefers-contrast: high) {
+  .back-btn,
+  .profile-btn {
+    border-width: 3px;
+  }
 }
-
-.header-left{
-
-gap:10px;
-
-}
-
-}
-
 
 /* =====================================================
    CONTAINER

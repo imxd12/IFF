@@ -394,23 +394,26 @@
   position: relative;
   padding: clamp(14px, 3.2vw, 22px);
   border-radius: var(--radius-lg, var(--radius));
-  border: 1px solid var(--glass-border);
 
-  background:
-    radial-gradient(circle at 0 0, rgba(148, 163, 184, 0.18), transparent 60%),
-    radial-gradient(circle at 100% 100%, rgba(37, 99, 235, 0.16), transparent 60%),
-    var(--bg);
+  /* 🔥 FIXED DARK BACKGROUND */
+  background: rgba(15, 23, 42, 0.85); /* deep slate dark */
+  
+  /* Better border visibility */
+  border: 1px solid rgba(255, 255, 255, 0.08);
 
-  backdrop-filter: blur(14px) saturate(145%);
-  -webkit-backdrop-filter: blur(14px) saturate(145%);
-  box-shadow: 0 22px 45px rgba(15, 23, 42, 0.5);
+  /* Cleaner glass effect */
+  backdrop-filter: blur(10px) saturate(120%);
+  -webkit-backdrop-filter: blur(10px) saturate(120%);
+
+  /* Stronger shadow for depth */
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.6);
 
   transition:
     transform 220ms var(--transition-smooth),
     box-shadow 220ms var(--transition-smooth),
     border-color 180ms ease,
-    background 220ms ease,
-    opacity 180ms ease;
+    background 220ms ease;
+
   animation: chartScaleIn 0.5s cubic-bezier(0.16, 1, 0.3, 1);
   overflow: hidden;
 }
@@ -464,13 +467,15 @@
 .chart-title {
   font-size: clamp(14px, 2.4vw, 16px);
   font-weight: 700;
-  color: var(--text);
+
+  /* 🔥 brighter text */
+  color: rgba(255, 255, 255, 0.92);
+
   margin-bottom: clamp(10px, 2vw, 14px);
   padding-bottom: 8px;
-  border-bottom: 1px solid var(--glass-border);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+
+  /* better separator */
+  border-bottom: 1px solid rgba(255,255,255,0.08);
 }
 
 /* Optional subtle accent line under title */
@@ -489,6 +494,9 @@ canvas {
   max-width: 100%;
   height: auto !important;
   display: block;
+
+  /* 🔥 improves clarity */
+  filter: brightness(1.1) contrast(1.1);
 }
 
 /* Ensure charts keep good aspect on small screens */
@@ -1282,7 +1290,7 @@ canvas {
 ======================================== */
 .fab {
   position: fixed;
-  bottom: clamp(70px, 6vh, 32px);
+  bottom: clamp(90px, 6vh, 32px);
   right: clamp(18px, 4vw, 30px);
   width: clamp(54px, 10vw, 60px);
   height: clamp(54px, 10vw, 60px);
@@ -1938,3 +1946,139 @@ canvas {
   background: var(--accent);
   color: #ffffff;
 }
+
+/* ===============================
+BANK PASSBOOK SUCCESS MODAL
+=============================== */
+
+.passbook-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.45);
+  backdrop-filter:blur(6px);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:9999;
+  animation:fadeIn .35s ease;
+}
+
+.passbook-modal{
+  width:720px;
+  max-width:95%;
+  background:#ffffff;
+  border-radius:14px;
+  overflow:hidden;
+  box-shadow:0 25px 60px rgba(0,0,0,.25);
+  animation:scaleUp .35s ease;
+  font-family:'Segoe UI',sans-serif;
+}
+
+/* Header */
+
+.passbook-header{
+  background:linear-gradient(135deg,#16a34a,#15803d);
+  padding:16px 20px;
+  color:white;
+}
+
+.passbook-header h2{
+  margin:0;
+  font-size:18px;
+  letter-spacing:.5px;
+}
+
+.passbook-header small{
+  opacity:.9;
+  font-size:12px;
+}
+
+/* Dashboard */
+
+.passbook-dashboard{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+  padding:18px 20px;
+}
+
+.passbook-card{
+  background:#f7fafc;
+  border-radius:8px;
+  padding:12px;
+  border:1px solid #e5e7eb;
+}
+
+.passbook-card span{
+  display:block;
+  font-size:12px;
+  color:#6b7280;
+}
+
+.passbook-card strong{
+  font-size:16px;
+}
+
+/* Ledger */
+
+.passbook-ledger{
+  font-family:"Courier New",monospace;
+  font-size:13px;
+  padding:10px 20px;
+}
+
+.passbook-ledger-header,
+.passbook-row{
+  display:grid;
+  grid-template-columns:100px 100px 1fr 120px;
+  padding:6px 0;
+}
+
+.passbook-ledger-header{
+  font-weight:bold;
+  border-bottom:2px solid #e5e7eb;
+}
+
+.passbook-row{
+  border-bottom:1px dashed #e5e7eb;
+}
+
+.passbook-row span:last-child{
+  text-align:right;
+}
+
+/* Footer */
+
+.passbook-footer{
+  padding:14px 20px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  background:#f9fafb;
+  border-top:1px solid #e5e7eb;
+}
+
+.passbook-footer button{
+  background:#16a34a;
+  color:white;
+  border:none;
+  padding:10px 16px;
+  border-radius:6px;
+  cursor:pointer;
+  font-weight:600;
+}
+
+.passbook-footer button:hover{
+  background:#15803d;
+}
+
+@keyframes fadeIn{
+  from{opacity:0}
+  to{opacity:1}
+}
+
+@keyframes scaleUp{
+  from{transform:scale(.9);opacity:0}
+  to{transform:scale(1);opacity:1}
+}
+

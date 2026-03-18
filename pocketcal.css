@@ -990,7 +990,7 @@
 ======================================== */
 .fab {
   position: fixed;
-  bottom: clamp(70px, 6vh, 32px);
+  bottom: clamp(90px, 6vh, 32px);
   right: clamp(18px, 4vw, 30px);
   width: clamp(54px, 10vw, 60px);
   height: clamp(54px, 10vw, 60px);
@@ -2019,3 +2019,15 @@
   }
 }
 
+.chart-card {
+  background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(12px);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+  transition: 0.3s ease;
+}
+
+.chart-card:hover {
+  transform: translateY(-5px) scale(1.02);
+}

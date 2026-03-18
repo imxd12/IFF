@@ -911,7 +911,7 @@ body {
     .cert-list li {
       animation: revealScroll165 linear;
       animation-timeline: view();
-      animation-range: entry 0% cover 35%;
+      animation-range: entry 0% cover 30%;
       will-change: transform, opacity;
     }
 

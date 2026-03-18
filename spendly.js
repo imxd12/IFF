@@ -43,107 +43,118 @@ startClock('#timeNow');
   // =========================
   // CATEGORY CONFIGURATION (same as original)
   // =========================
-  const categoryMap = {
-    Food: [
-      '🍳 Breakfast', '🥪 Lunch', '🍝 Dinner', '🍿 Snacks', '☕ Beverages',
-      '🍰 Desserts', '🛒 Groceries', '🥤 Drinks', '🍔 Fast Food', '🥗 Healthy Meals',
-      '🍕 Pizza', '🍜 Noodles', '🍛 Curry', '🥙 Street Food', '🍦 Ice Cream',
-      '🧃 Juice', '🥛 Dairy Products', '🍞 Bakery', '🥩 Meat', '🐟 Seafood',
-      '🍲 Home Cooked', '🍜 Chinese', '🍱 Japanese', '🌮 Mexican', '🍝 Italian',
-      '🥘 South Indian', '🥘 North Indian', '🍲 Biryani', '🥘 Dal', '🍗 Chicken',
-      '🥚 Eggs', '🍎 Fruits', '🥬 Vegetables', 'All'
-    ],
-    Travel: [
-      '🚌 Bus', '🚗 Taxi', '🚖 Local Transport', '✈️ Flights', '🚆 Train',
-      '⛴️ Ferry', '🛣️ Fuel', '🚲 Bicycle', '🏍️ Bike', '🛺 Rickshaw',
-      '🚇 Metro', '🚕 Ola/Uber', '🛵 Scooter Rental', '🚠 Cable Car', '🚁 Helicopter',
-      '🚢 Ship', '🚗 Car Rental', '🅿️ Parking', '🛤️ Road Tax', '🎫 Travel Pass',
-      '🛫 International', '🛬 Domestic', '🚗 Self Drive', '🚙 Road Trip', '🏖️ Vacation',
-      '🏔️ Adventure', '🏰 Pilgrimage', '🎡 Sightseeing', '🗺️ Local Tour', '🚤 Cruise',
-      '🛤️ Toll Plaza', '🛒 Travel Insurance', '📱 Roaming Pack', 'All'
-    ],
-    Rent: [
-      '🏠 House Rent', '📱 Mobile Recharge', '💡 Utilities', '🌐 Internet', '🏢 Workspace',
-      '🛋️ Furniture Rent', '🏨 Hotel', '🏡 PG/Hostel', '🚗 Vehicle Rent', '📺 TV Cable',
-      '💧 Water Bill', '⚡ Electricity Bill', '🔥 Gas Bill', '🧹 Maintenance', '🏘️ Society Fee',
-      '🔒 Security Deposit', '🛠️ Repair Charges', '🧰 Equipment Rental', '📦 Storage Rent', '🏪 Shop Rent',
-      '🏠 Apartment', '🏘️ Villa', '🏢 Office Space', '🏪 Commercial', '🛥️ Boat Rent',
-      '🎪 Event Space', '📚 Study Room', '💼 Meeting Room', '🏋️ Gym Locker', '🎸 Music Room',
-      '🖥️ Server Hosting', '☁️ Cloud Hosting', '📡 Satellite', 'All'
-    ],
-    Shopping: [
-      '👕 Clothes', '👗 Fashion', '🛍️ Online', '📺 Electronics', '🎁 Gifts',
-      '🖊️ Stationary', '👟 Shoes', '💄 Cosmetics', '👔 Formal Wear', '👖 Casual Wear',
-      '🧥 Winter Wear', '🩳 Summer Wear', '👜 Bags', '⌚ Watches', '💍 Jewelry',
-      '🕶️ Accessories', '🧴 Skincare', '💅 Makeup', '🧢 Headwear', '🧦 Innerwear',
-      '👓 Eyewear', '💰 Wallet', '🧳 Luggage', '🎒 Backpack', '👒 Hats',
-      '🧳 Travel Gear', '🏃 Sports Wear', '🏋️ Fitness Gear', '🎮 Gaming', '📱 Mobile',
-      '💻 Laptop', '📷 Camera', '🎧 Audio Gear', 'All'
-    ],
-    Bills: [
-      '🛜 Airtel Recharge Own', '💡 Electricity', '🌊 Water', '🌐 WiFi', '📞 Phone',
-      '📺 OTT', '🧾 Insurance', '🎫 Railway Pass', '📦 Subscriptions', '💳 Credit Card',
-      '📱 Postpaid', '🔥 Gas Cylinder', '📡 DTH', '☁️ Cloud Storage', '🎵 Music App',
-      '🎬 Netflix/Prime', '🎮 Gaming Pass', '📰 News Subscription', '💻 Software License',
-      '🏋️ Gym Membership', '🚗 Car Insurance', '🏠 Home Insurance', '👨‍⚕️ Health Insurance',
-      '👨‍💼 Life Insurance', '🏦 Loan EMI', '💳 Credit EMI', '📚 Education Loan',
-      '🏠 Mortgage', '💰 SIP Auto Debit', '🪙 Crypto Auto Buy', '📈 Stock SIP',
-      '🏦 Bank Charges', '💳 ATM Charges', '📱 App Charges', 'All'
-    ],
-    Health: [
-      '💊 Medicines', '🩺 Doctor', '🏋️ Gym', '🦷 Dental', '💆 Spa',
-      '🧘 Yoga', '🏥 Hospital', '🔬 Lab Tests', '👓 Eye Care', '🩹 First Aid',
-      '💉 Vaccination', '🧠 Mental Health', '🧘‍♂️ Meditation', '🤰 Maternity', '👶 Baby Care',
-      '🦴 Physiotherapy', '💪 Fitness', '🏃 Sports', '🧴 Health Supplements', '🩺 Health Checkup',
-      '🥗 Nutritionist', '💊 Pharmacy', '🩺 Specialist', '🩺 Cardiologist', '🧠 Neurologist',
-      '👂 ENT', '🦷 Orthodontist', '🏥 Emergency', '🩹 Bandages', '🥛 Protein',
-      '💊 Vitamins', '🩺 Annual Checkup', '🏃 Marathon Fee', '🏋️ Personal Trainer', 'All'
-    ],
-    Entertainment: [
-      '🎬 Movies', '🎮 Games', '🎵 Music', '📚 Books', '🎤 Shows',
-      '🎲 Board Games', '🎯 Hobbies', '🎪 Events', '🎭 Theatre', '🎨 Art Supplies',
-      '🎸 Musical Instruments', '🎧 Headphones', '🎮 Gaming Console', '🎱 Pool/Snooker', '🎳 Bowling',
-      '🎢 Amusement Park', '🎡 Fun Activities', '🎰 Casino', '🎪 Circus', '📖 Magazines',
-      '🎤 Live Concert', '🎪 Comedy Show', '🎨 Painting Class', '📚 Book Fair', '🎮 Esports',
-      '🎵 Music Festival', '🎬 Premiere', '🎭 Drama', '🎪 Magic Show', '🎲 Puzzle',
-      '🎯 Archery', '🎸 Guitar Lessons', '🎨 Art Exhibition', 'All'
-    ],
-    Education: [
-      '📚 Tuition', '📝 Exams', '💻 Online Course', '📖 Books', '🖋️ Stationary',
-      '🎓 Certifications', '📄 Print Out', '🏫 School Fees', '🎒 School Supplies', '📓 Notebooks',
-      '✏️ Pens/Pencils', '📐 Geometry Box', '🖨️ Printing', '📱 Learning Apps', '👨‍🏫 Coaching',
-      '🧑‍💻 Workshops', '📜 Study Material', '🗂️ Reference Books', '🎓 Exam Fees', '📚 Library Fees',
-      '🎓 College Fees', '📚 Textbooks', '💻 Laptop for Study', '📱 Tablet', '🎒 School Bag',
-      '🖥️ Software Courses', '🎓 Degree Fees', '🏆 Competition Fees', '📚 Language Course',
-      '💻 Coding Bootcamp', '🎓 Seminar', '📚 Ebooks', '🧑‍🏫 Private Tutor', 'All'
-    ],
-    Savings: [
-      '🏦 Bank Deposit', '📈 Investments', '💎 Assets', '🪙 Crypto', '💰 Cash Savings',
-      '📊 Stocks', '💹 Mutual Funds', '🏅 Gold', '🏠 Property', '📉 Bonds',
-      '💵 Fixed Deposit', '💳 SIP', '🏦 Recurring Deposit', '💼 PPF', '🔐 NSC',
-      '🪙 NFT', '🌾 Commodities', '💱 Forex', '🏛️ Real Estate', '💎 Precious Metals',
-      '💰 Emergency Fund', '👨‍💼 Retirement Fund', '👶 Child Education', '🏠 Home Downpayment',
-      '💳 Credit Card Points', '🎁 Gift Cards', '🏦 Fixed Maturity Plan', '💼 EPF',
-      '💰 Sovereign Gold Bonds', '📈 Index Funds', '🏦 Senior Citizen FD', 'All'
-    ],
-    Family: [
-      '👨‍👩‍👧 Kids', '🎂 Celebrations', '🎁 Gifts', '👵👴 Elder Care', '👶 Baby Products',
-      '🎉 Birthday Party', '💒 Wedding', '🎊 Anniversary', '🎈 Festivals', '🍰 Cake',
-      '💐 Flowers', '🎀 Decorations', '👗 Family Clothing', '🧸 Toys', '📸 Photography',
-      '🍽️ Family Dinner', '🏖️ Family Trip', '🎓 Education Support', '💊 Medical Care', '🏡 Home Improvement',
-      '👨‍👩‍👧‍👦 Family Outing', '🎁 Diwali Gifts', '🎄 Christmas', '🕌 Eid', '🎊 Housewarming',
-      '👨‍👩‍👧‍👦 School Trip', '👵👴 Medical', '👶 Diapers', '🍼 Baby Food', 'All'
-    ],
-    Other: [
-      '🛠️ Miscellaneous', '💵 Charity', '🌱 Donations', '🎟️ Tickets', '🐕 Pet Care',
-      '🐈 Pet Food', '🐾 Vet Visit', '🧼 Cleaning Supplies', '🧹 Household Items', '🔧 Tools',
-      '🪴 Plants', '🌿 Gardening', '🎁 Random Gifts', '📮 Courier', '📦 Packaging',
-      '🔑 Keys/Locks', '🚪 Home Decor', '🖼️ Paintings', '🕯️ Candles', '💡 Light Bulbs',
-      '💇 Haircut', '💅 Salon', '🚬 Smoking', '🍺 Alcohol', '🎰 Lottery',
-      '📱 Repair', '👕 Laundry', '🧺 Dry Cleaning', '🚲 Bike Service', '🚗 Car Service',
-      '🏠 Housekeeping', '🌸 Florist', '🎨 Interior Decor', 'All'
-    ]
-  }; // [file:1]
+const categoryMap = {
+  Travel: [
+    '🛺 Rickshaw', '🚍 BEST Bus', '🚌 Luxury Bus', '🚗 Taxi', '🚖 Local Transport', '🚇 Metro',
+    '🚆 Train', '🚕 Ola/Uber', '🛵 Bike Petrol', '⛽ Fuel',
+    '🅿️ Parking', '🛤️ Toll', '🎫 Monthly Pass',
+    '🚶 Walking', '🚲 Bicycle',
+    '🏫 College Travel', '💼 Office Travel',
+    '🏖️ Trip', '🏠 Native Travel', 'All'
+  ],
+
+  Food: [
+    '🍳 Breakfast', '🥪 Lunch', '🍛 Dinner',
+    '🍿 Snacks', '☕ Tea/Chai', '🥤 Cold Drinks', '🥤 Juice',
+    '🍲 Home Food', '🍔 Outside Food', '🥙 Street Food',
+    '🛒 Groceries', '🥬 Vegetables', '🍎 Fruits',
+    '🥛 Milk', '🍞 Bread', '🥚 Eggs',
+    '🍗 Chicken', '🍛 Biryani', '🍕 Pizza',
+    '🥘 Tiffin', '🍱 Mess Food', 'All'
+  ],
+
+  Rent: [
+    '🏠 House Rent', '🏡 PG/Hostel', '🏢 Room Rent',
+    '💡 Electricity Bill', '💧 Water Bill', '🔥 Gas Cylinder',
+    '🌐 Internet/WiFi', '📱 Mobile Recharge',
+    '🏘️ Society Maintenance',
+    '🛠️ Repairs', '🧹 Cleaning',
+    '📺 Cable/DTH', 'All'
+  ],
+
+  Shopping: [
+    '👕 Clothes', '👟 Shoes', '🧢 Daily Wear','🧼 Soap', '🪥 Toothpaste', '🧻 Tissue',
+    '🧴 Shampoo', '🪒 Razor',
+    '🎒 College Items', '🖊️ Stationary',
+    '📱 Mobile', '🔌 Accessories', '💻 Laptop',
+    '🛍️ Online Shopping', '🏪 Local Market',
+    '🧴 Personal Care', '💄 Cosmetics',
+    '🪑 Home Items', 'All'
+  ],
+
+  Bills: [
+    '📱 Mobile Recharge', '🚆 Railway Pass',
+    '💡 Electricity',
+    '📶 Data Pack', '💻 Software',
+    '🏦 Bank Charges', '💳 Late Fees',
+    '🌊 Water', '🌐 WiFi',
+    '📺 OTT', '🎬 Netflix/Prime',
+    '💳 Credit Card Bill', '🏦 Loan EMI',
+    '🏋️ Gym Membership',
+    '🧾 Insurance', 'All'
+  ],
+
+  Health: [
+    '💊 Medicines', '🧴 Skin Care',
+    '🩺 Doctor Visit','🧠 Mental Therapy', '🧂 ORS',
+    '💉 Injection', '🩺 Checkup',
+    '🏥 Hospital', '🦷 Dental',
+    '🧘 Yoga', '🏋️ Gym',
+    '🧪 Tests', '💊 Pharmacy',
+    '🩹 First Aid', 'All'
+  ],
+
+  Entertainment: [
+    '🎬 Movies', '🎮 Games', '🎵 Music',
+    '🎥 YouTube Premium',
+    '🎮 Mobile Games', '🎧 Spotify',
+    '📚 Comics',
+    '🍿 Outing', '🎡 Fun Activities',
+    '🎂 Party', '📺 TV Shows',
+    '📱 Mobile Apps', '🎧 Subscriptions',
+    'All'
+  ],
+
+  Education: [
+    '📚 Books', '🖊️ Stationary',
+    '🧾 Xerox', '🖨️ Printouts', '📓 Notes',
+    '🏫 College Fees', '📝 Exam Fees',
+    '💻 Online Course', '📱 Learning Apps',
+    '🧑‍🏫 Coaching Classes',
+    '📘 Guides', '📗 Reference Books',
+    '🧮 Calculator', '📏 Scale',
+    '📐 Drawing Items', '🧑‍💻 Coding Course',
+    '📊 Project Work', '📂 Files',
+    '🖊️ Extra Pens', '🎓 Seminar Fees',
+    'All'
+  ],
+
+  Savings: [
+    '🏦 Bank Saving', '💰 Cash Saving',
+    '📈 Mutual Funds', '📊 Stocks',
+    '💳 SIP', '🏅 Gold',
+    '💼 PF', '🏠 Future Saving',
+    '🚨 Emergency Fund', 'All'
+  ],
+
+  Family: [
+    '🍛 Family Food', '🎁 Gifts',
+    '🎉 Festivals', '🕌 Eid', '🪔 Diwali',
+    '🎂 Birthday', '👶 Kids',
+    '👵 Medical Care',
+    '🏠 Home Needs', 'All'
+  ],
+
+  Other: [
+    '💇 Haircut', '💅 Salon',
+    '🧼 Cleaning Items', '🧹 House Items',
+    '📦 Courier', '📱 Repair',
+    '🚗 Vehicle Service', '🏍️ Bike Service',
+    '💵 Charity', '🎟️ Tickets',
+    '🚬 Smoking', '🍺 Alcohol',
+    'All'
+  ]
+};
 
   // =========================
   // STATE
@@ -728,9 +739,6 @@ startClock('#timeNow');
     return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()} • ${h}:${m}`;
   }
 
-// =========================
-// ULTRA CLEAN PROFESSIONAL PDF EXPORT
-// =========================
 window.generatePDF = function () {
   try {
     if (!window.jspdf || !window.jspdf.jsPDF) {
@@ -738,251 +746,259 @@ window.generatePDF = function () {
       return;
     }
 
-    const jsPDF = window.jspdf.jsPDF;
+    const { jsPDF } = window.jspdf;
     const doc = new jsPDF('p', 'mm', 'a4');
 
     const pageWidth = doc.internal.pageSize.getWidth();
     const pageHeight = doc.internal.pageSize.getHeight();
 
+    const now = new Date();
+    let y = 20;
+
+    // =========================
+    // 🌿 BACKGROUND WATER EFFECT
+    // =========================
+    doc.setFillColor(240, 253, 244); // very light green
+    doc.rect(0, 0, pageWidth, pageHeight, 'F');
+
+    // =========================
+    // 💧 HEADER (GRADIENT STYLE)
+    // =========================
+    doc.setFillColor(16, 185, 129); // emerald
+    doc.roundedRect(10, 10, pageWidth - 20, 18, 4, 4, 'F');
+
+    doc.setTextColor(255, 255, 255);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(16);
+    doc.text('POCKET MONEY BANK', pageWidth / 2, 18, { align: 'center' });
+
+    doc.setFontSize(9);
+    doc.text('Savings Account Passbook Statement', pageWidth / 2, 23, { align: 'center' });
+
+    y = 35;
+
+    // =========================
+    // 🌿 ACCOUNT GLASS CARD
+    // =========================
+    doc.setFillColor(255, 255, 255);
+    doc.setDrawColor(16, 185, 129);
+    doc.setLineWidth(0.5);
+    doc.roundedRect(12, y, pageWidth - 24, 24, 3, 3, 'FD');
+
+    doc.setTextColor(0);
+    doc.setFontSize(9);
+
+// Get username from localStorage
+let username = localStorage.getItem('fin_userName') || 'User';
+
+// Optional: Capitalize nicely
+username = username.replace(/\b\w/g, c => c.toUpperCase());
+
+// Label
+doc.setFont('helvetica', 'normal');
+doc.text('Account Holder:', 14, y + 7);
+
+// Value (dynamic 🔥)
+doc.setFont('helvetica', 'bold');
+doc.text(username, 50, y + 7);
+
+    doc.setFont('helvetica', 'normal');
+    doc.text('Account No:', 120, y + 7);
+    doc.text('532377734', 160, y + 7);
+
+    doc.text('Branch:', 14, y + 14);
+    doc.text('Mumbai Branch', 50, y + 14);
+
+    doc.text('IFSC:', 120, y + 14);
+    doc.text('IMXD00000012', 160, y + 14);
+
+    doc.text('Generated:', 14, y + 21);
+    doc.text(now.toLocaleString('en-IN'), 50, y + 21);
+
+    y += 32;
+
+    // =========================
+    // FILTER DATA (same)
+    // =========================
     const selectedRangeEl = document.querySelector('input[name="pdfRange"]:checked');
     const selectedRange = selectedRangeEl ? selectedRangeEl.value : 'today';
 
     let filteredData = [];
     let rangeText = '';
-    const now = new Date();
+    const todayDate = today;
 
-    // ===== RANGE FILTER =====
     if (selectedRange === 'today') {
-      filteredData = data.filter(d => d.date === today);
-      rangeText = `Today • ${formatDate(today)}`;
+      filteredData = data.filter(d => d.date === todayDate);
+      rangeText = `Today`;
     } else if (selectedRange === 'week') {
       const w = new Date();
       w.setDate(now.getDate() - 7);
       const ws = w.toISOString().split('T')[0];
-      filteredData = data.filter(d => d.date >= ws && d.date <= today);
-      rangeText = `Last 7 Days • ${formatDate(ws)} → ${formatDate(today)}`;
+      filteredData = data.filter(d => d.date >= ws && d.date <= todayDate);
+      rangeText = `Last 7 Days`;
     } else if (selectedRange === 'month') {
-      const m = today.slice(0, 7);
+      const m = todayDate.slice(0, 7);
       filteredData = data.filter(d => d.date.startsWith(m));
-      rangeText = `Month • ${formatMonthYear(m)}`;
-    } else if (selectedRange === 'year') {
-      const y = today.slice(0, 4);
-      filteredData = data.filter(d => d.date.startsWith(y));
-      rangeText = `Year • ${y}`;
+      rangeText = `Month`;
     } else {
-      const s = $('#pdfStartDate').value;
-      const e = $('#pdfEndDate').value;
-      filteredData = data.filter(d => d.date >= s && d.date <= e);
-      rangeText = `Custom • ${formatDate(s)} → ${formatDate(e)}`;
+      filteredData = data;
+      rangeText = `All Records`;
     }
 
-    if (filteredData.length === 0) {
+    if (!filteredData.length) {
       showSnackbar('No transactions', 'error');
       return;
     }
 
-    const income = filteredData
-      .filter(d => d.type === 'income')
-      .reduce((s, d) => s + Number(d.amount), 0);
-
-    const expense = filteredData
-      .filter(d => d.type === 'expense')
-      .reduce((s, d) => s + Number(d.amount), 0);
-
-    const balance = income - expense;
-
-    let y = 0;
-
     // =========================
-    // HEADER BAR
+    // PASSBOOK ROWS
     // =========================
-    doc.setFillColor(22, 163, 74);
-    doc.rect(0, 0, pageWidth, 28, 'F');
+    let balance = 0;
 
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(18);
-    doc.setTextColor(255, 255, 255);
-    doc.text('SPENDLY FINANCIAL REPORT', pageWidth / 2, 14, { align: 'center' });
+    const rows = filteredData.map(d => {
+      const amt = Number(d.amount);
 
-    doc.setFontSize(10);
-    doc.setFont('helvetica', 'normal');
-    doc.text('Income & Expense Statement', pageWidth / 2, 21, { align: 'center' });
+      let debit = '';
+      let credit = '';
 
-    y = 34;
-
-    // =========================
-    // PERIOD BOX
-    // =========================
-    doc.setDrawColor(200);
-    doc.roundedRect(12, y, pageWidth - 24, 18, 3, 3);
-
-    doc.setFontSize(9);
-    doc.setTextColor(40);
-    doc.text(rangeText, 16, y + 7);
-    doc.text(`Generated: ${formatDateTime(now)}`, 16, y + 13);
-
-    doc.text(`Transactions: ${filteredData.length}`, pageWidth - 16, y + 7, { align: 'right' });
-
-    y += 26;
-
-    // =========================
-    // SUMMARY CARDS
-    // =========================
-    const cardW = (pageWidth - 32) / 3;
-
-    function drawCard(x, title, value, color) {
-      doc.setDrawColor(220);
-      doc.roundedRect(x, y, cardW, 20, 3, 3);
-
-      doc.setFontSize(9);
-      doc.setTextColor(90);
-      doc.text(title, x + 4, y + 7);
-
-      doc.setFontSize(13);
-      doc.setFont('helvetica', 'bold');
-      doc.setTextColor(...color);
-      doc.text(`₹ ${fmtNum(value)}`, x + 4, y + 15);
-    }
-
-    drawCard(12, 'Income', income, [22, 163, 74]);
-    drawCard(16 + cardW, 'Expense', expense, [220, 38, 38]);
-    drawCard(20 + cardW * 2, balance >= 0 ? 'Savings' : 'Loss', Math.abs(balance), balance >= 0 ? [37, 99, 235] : [220, 38, 38]);
-
-    y += 30;
-
-    // =========================
-    // TRANSACTION TABLE
-    // =========================
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(12);
-    doc.setTextColor(30);
-    doc.text('Transactions', 12, y);
-
-    y += 4;
-
-    const rows = filteredData.slice().reverse().map(d => {
-      const cat = d.type === 'income'
-        ? d.category
-        : `${d.category} - ${d.sub}`;
+      if (d.type === 'expense') {
+        debit = amt.toFixed(2);
+        balance -= amt;
+      } else {
+        credit = amt.toFixed(2);
+        balance += amt;
+      }
 
       return [
         formatDate(d.date),
-        d.type.toUpperCase(),
-        cat,
-        `₹ ${fmtNum(d.amount)}`
+        (d.category || 'Pocket Money') + (d.sub ? ' - ' + d.sub : ''),
+        debit ? `₹ ${debit}` : '-',
+        credit ? `₹ ${credit}` : '-',
+        `₹ ${balance.toFixed(2)}`
       ];
     });
 
+    // =========================
+    // 🌿 SECTION TITLE
+    // =========================
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(11);
+    doc.setTextColor(16, 185, 129);
+    doc.text(`Statement: ${rangeText}`, 12, y);
+
+    y += 4;
+
+    // =========================
+    // 💧 TABLE (PREMIUM STYLE)
+    // =========================
     doc.autoTable({
       startY: y,
-      head: [['Date', 'Type', 'Category', 'Amount']],
+      head: [['Date', 'Particulars', 'Debit (₹)', 'Credit (₹)', 'Balance (₹)']],
       body: rows,
+
       theme: 'grid',
 
+      styles: {
+        fontSize: 8.5,
+        cellPadding: 2.5,
+        overflow: 'linebreak',
+        valign: 'middle'
+      },
+
       headStyles: {
-        fillColor: [22, 163, 74],
-        textColor: 255,
+        fillColor: [16, 185, 129],
+        textColor: [255, 255, 255],
         fontStyle: 'bold',
         halign: 'center'
       },
 
-      bodyStyles: {
-        fontSize: 9,
-        textColor: 40
+      columnStyles: {
+        0: { cellWidth: 28 },
+        1: { cellWidth: 'auto' },
+        2: { halign: 'right', cellWidth: 28 },
+        3: { halign: 'right', cellWidth: 28 },
+        4: { halign: 'right', cellWidth: 32 }
       },
 
       alternateRowStyles: {
-        fillColor: [245, 247, 250]
+        fillColor: [236, 253, 245] // light mint rows
       },
 
-      columnStyles: {
-        0: { cellWidth: 28, halign: 'center' },
-        1: { cellWidth: 24, halign: 'center' },
-        2: { cellWidth: 78 },
-        3: { cellWidth: 32, halign: 'right', fontStyle: 'bold' }
-      },
-
-      didParseCell: function (cell) {
-        if (cell.section === 'body' && cell.column.index === 1) {
-          if (cell.cell.raw === 'INCOME') {
-            cell.cell.styles.textColor = [22, 163, 74];
-          } else {
-            cell.cell.styles.textColor = [220, 38, 38];
-          }
+      didParseCell: function (data) {
+        if (data.section === 'body' && data.column.index === 2) {
+          data.cell.styles.textColor = [220, 38, 38];
+        }
+        if (data.section === 'body' && data.column.index === 3) {
+          data.cell.styles.textColor = [22, 163, 74];
         }
       },
 
       didDrawPage: function () {
-        const pageNum = doc.internal.getCurrentPageInfo().pageNumber;
         doc.setFontSize(8);
-        doc.setTextColor(150);
-        doc.text(`Page ${pageNum}`, pageWidth / 2, pageHeight - 6, { align: 'center' });
+        doc.setTextColor(120);
+
+        doc.text(
+          'This is a system-generated passbook statement.',
+          pageWidth / 2,
+          pageHeight - 10,
+          { align: 'center' }
+        );
+
+        doc.text(
+          `Page ${doc.internal.getCurrentPageInfo().pageNumber}`,
+          pageWidth - 12,
+          pageHeight - 10,
+          { align: 'right' }
+        );
       }
     });
 
     // =========================
-    // TOTAL ROW
+    // 🌿 SUMMARY GLASS BOX
     // =========================
-    const finalY = doc.lastAutoTable.finalY + 4;
+    let finalY = doc.lastAutoTable.finalY + 8;
 
-    doc.setDrawColor(180);
-    doc.line(12, finalY, pageWidth - 12, finalY);
+    let totalCredit = filteredData
+      .filter(d => d.type === 'income')
+      .reduce((s, d) => s + Number(d.amount), 0);
 
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(10);
-    doc.text('TOTAL EXPENSE', pageWidth - 60, finalY + 6);
-
-    doc.setTextColor(220, 38, 38);
-    doc.text(`₹ ${fmtNum(expense)}`, pageWidth - 12, finalY + 6, { align: 'right' });
-
-    // =========================
-    // CATEGORY INSIGHTS
-    // =========================
-    let iy = finalY + 16;
-
-    const catTotals = {};
-    filteredData
+    let totalDebit = filteredData
       .filter(d => d.type === 'expense')
-      .forEach(d => {
-        catTotals[d.category] = (catTotals[d.category] || 0) + Number(d.amount);
-      });
+      .reduce((s, d) => s + Number(d.amount), 0);
 
-    const top = Object.entries(catTotals)
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, 5);
+    doc.setFillColor(220, 252, 231);
+    doc.roundedRect(12, finalY, pageWidth - 24, 20, 3, 3, 'F');
 
-    if (top.length > 0) {
-      doc.setFontSize(11);
-      doc.setTextColor(37, 99, 235);
-      doc.text('Top Expense Categories', 12, iy);
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(0);
 
-      const body = top.map(([c, a]) => [
-        c,
-        `₹ ${fmtNum(a)}`,
-        expense > 0 ? ((a / expense) * 100).toFixed(1) + '%' : '0%'
-      ]);
+    doc.text(`Total Credit: ₹ ${fmtNum(totalCredit)}`, 16, finalY + 8);
+    doc.text(`Total Debit: ₹ ${fmtNum(totalDebit)}`, 16, finalY + 15);
 
-      doc.autoTable({
-        startY: iy + 3,
-        head: [['Category', 'Amount', '%']],
-        body,
-        theme: 'grid',
-        headStyles: { fillColor: [37, 99, 235], textColor: 255 },
-        columnStyles: {
-          1: { halign: 'right' },
-          2: { halign: 'center' }
-        }
-      });
-    }
+// Label
+doc.setTextColor(100);
+doc.setFont('helvetica', 'normal');
+doc.text('Closing Balance:', pageWidth - 70, finalY + 11);
+
+// Amount (highlighted)
+doc.setTextColor(16, 185, 129);
+doc.setFont('helvetica', 'bold');
+doc.text(
+  `₹ ${fmtNum(totalCredit - totalDebit)}`,
+  pageWidth - 14,
+  finalY + 11,
+  { align: 'right' }
+);
 
     // =========================
     // SAVE
     // =========================
-    const stamp = `${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}`;
-    doc.save(`Spendly_Report_${stamp}.pdf`);
+    const stamp = now.toISOString().split('T')[0];
+    doc.save(`Passbook_${stamp}.pdf`);
 
     closeModal('#pdfModal');
-    showSnackbar('PDF generated ✔', 'success');
+    showSnackbar('Passbook PDF Ready ✔', 'success');
 
   } catch (e) {
     console.error(e);
@@ -1099,3 +1115,4 @@ window.generatePDF = function () {
     }
   });
 })();
+

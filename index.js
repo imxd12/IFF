@@ -621,9 +621,9 @@ function speakAssistantGreeting() {
 
   // 🧠 Jarvis-style message (multi-language mix)
   const message = `
-    Assalamualaikum ${userName}. 
+    Assalamualaikum ${userName}.. 
     ${timeGreeting}. 
-    Welcome back to MoneyFlow.
+    Welcome back . to MoneyFlow.
     ${extra}
   `;
 

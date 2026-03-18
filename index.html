@@ -251,43 +251,76 @@
   </div>
 </section>
 
-  <!-- User Settings Section -->
-  <section class="user-settings-section scroll-blur">
-     <h3 class="section-title">⚙️ User Settings</h3>
-     
-     <div class="settings-grid">
-       <!-- Set Name Card -->
-       <div class="settings-card">
-         <div class="settings-icon">👤</div>
-         <h4 class="settings-title">Personalize Your Experience</h4>
-         <p class="settings-description">Set your name to see personalized greetings throughout the app.</p>
-         <button class="btn btn-secondary btn-block" onclick="openModal('#nameModal')">
-           <span>✏️ Set Your Name</span>
-         </button>
-       </div>
-       
-       <!-- Developer Profile Card -->
-       <div class="settings-card">
-         <div class="settings-icon">💻</div>
-         <h4 class="settings-title">Meet the Developer</h4>
-         <p class="settings-description">Learn more about the creator of MoneyFlow and get in touch.</p>
-         <button class="btn btn-secondary btn-block" onclick="window.location.href='profile.html'">
-           <span>👋 Hi, Here!!</span>
-         </button>
-       </div>
+<!-- User Settings Section -->
+<section class="user-settings-section scroll-blur">
+  <h3 class="section-title">⚙️ User Settings</h3>
+  
+  <div class="settings-grid">
 
-       <!-- Feedback Card -->
-       <div class="settings-card">
-         <div class="settings-icon">💬</div>
-         <h4 class="settings-title">Share Your Feedback</h4>
-         <p class="settings-description">Help us improve! Share your reviews, suggestions, or report issues.</p>
-         <button class="btn btn-secondary btn-block" onclick="window.location.href='feedback.html'">
-           <span>📝 Give Feedback</span>
-         </button>
-       </div>
-     </div>
-  </section>
+    <!-- Set Name Card -->
+    <div class="settings-card">
+      <div class="settings-icon">👤</div>
+      <h4 class="settings-title">Personalize Your Experience</h4>
+      <p class="settings-description">
+        Set your name to see personalized greetings throughout the app.
+      </p>
+      <button class="btn btn-secondary btn-block" onclick="openModal('#nameModal')">
+        ✏️ Set Your Name
+      </button>
+    </div>
+    
+    <!-- Developer Profile Card -->
+    <div class="settings-card">
+      <div class="settings-icon">💻</div>
+      <h4 class="settings-title">Meet the Developer</h4>
+      <p class="settings-description">
+        Learn more about the creator of MoneyFlow and get in touch.
+      </p>
+      <button class="btn btn-secondary btn-block" onclick="window.location.href='profile.html'">
+        👋 Hi, Here!!
+      </button>
+    </div>
+
+    <!-- Feedback Card -->
+    <div class="settings-card">
+      <div class="settings-icon">💬</div>
+      <h4 class="settings-title">Share Your Feedback</h4>
+      <p class="settings-description">
+        Help us improve! Share your reviews, suggestions, or report issues.
+      </p>
+      <button class="btn btn-secondary btn-block" onclick="window.location.href='feedback.html'">
+        📝 Give Feedback
+      </button>
+    </div>
+
+    <!-- ✅ NEW: Voice Greeting Card -->
+    <div class="settings-card">
+      <div class="settings-icon">🎙️</div>
+      <h4 class="settings-title">Voice Greeting</h4>
+      <p class="settings-description">
+        Enable AI voice greeting when you open the app.
+      </p>
+
+      <!-- Toggle -->
+      <label class="toggle-switch">
+        <input type="checkbox" id="voiceToggle" checked>
+        <span class="slider"></span>
+      </label>
+
+      <div class="voice-select">
+  <label class="voice-label">Choose Voice</label>
+  
+  <select id="voiceSelect" class="voice-dropdown">
+    <option value="male1">Male - Deep</option>
+    <option value="male2">Male - Smooth</option>
+    <option value="female1">Female - Soft</option>
+    <option value="female2">Female - Cute</option>
+  </select>
 </div>
+    </div>
+
+  </div>
+</section>
 
 <!-- Set Name Modal -->
 <div class="modal" id="nameModal">
@@ -388,6 +421,15 @@
      <span>PocketCal</span>
    </a>
 </nav>
+
+<!-- Floating Music Button -->
+<div class="music-fab" id="musicFab">
+  <button class="music-btn" id="musicToggle">
+    <span id="musicIcon">▶</span>
+  </button>
+</div>
+
+<audio id="musicPlayer"></audio>
 
 <script src="global.js"></script>
 <script src="index.js"></script>

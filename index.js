@@ -531,3 +531,227 @@ document.getElementById('currentYear').textContent = new Date().getFullYear();
   }
 
 })();
+
+
+// ===============================
+// FLOATING MUSIC PLAYER (SHUFFLE)
+// ===============================
+
+const musicBtn = document.getElementById("musicToggle");
+const musicIcon = document.getElementById("musicIcon");
+const player = document.getElementById("musicPlayer");
+
+// 🎵 Add your songs here (IMPORTANT)
+const playlist = [
+  "music/judas-ladygaga.mp3"
+];
+
+let isPlaying = false;
+
+// Get random song
+function playRandomSong() {
+  const randomIndex = Math.floor(Math.random() * playlist.length);
+  player.src = playlist[randomIndex];
+  player.play();
+}
+
+// Toggle play/pause
+musicBtn.addEventListener("click", () => {
+  if (!isPlaying) {
+    playRandomSong();
+    musicIcon.innerHTML = "⏸"; // pause icon
+    musicBtn.classList.add("playing");
+    isPlaying = true;
+  } else {
+    player.pause();
+    musicIcon.innerHTML = "▶"; // play icon
+    musicBtn.classList.remove("playing");
+    isPlaying = false;
+  }
+});
+
+// Auto play next random song when current ends
+player.addEventListener("ended", () => {
+  playRandomSong();
+});
+
+
+// ===============================
+// AI ASSISTANT VOICE (JARVIS STYLE)
+// ===============================
+
+function speakAssistantGreeting() {
+  // 🔒 Toggle check
+  if (localStorage.getItem("voiceGreeting") === "off") return;
+
+  const userName = localStorage.getItem("fin_userName") || "User";
+
+  const now = new Date();
+  const hour = now.getHours();
+  const day = now.getDay();
+
+  let timeGreeting = "";
+  let moodLine = "";
+  
+  // 🕒 Smart time greeting (English only)
+  if (hour >= 5 && hour < 8) {
+    timeGreeting = "Early morning";
+  } 
+  else if (hour >= 8 && hour < 12) {
+    timeGreeting = "Good morning";
+  } 
+  else if (hour >= 12 && hour < 15) {
+    timeGreeting = "Good afternoon";
+  } 
+  else if (hour >= 15 && hour < 18) {
+    timeGreeting = "Early evening";
+  } 
+  else if (hour >= 18 && hour < 21) {
+    timeGreeting = "Good evening";
+  } 
+  else {
+    timeGreeting = "Good night";
+  }
+
+  // 📅 Friday special
+  let extra = "";
+  if (day === 5) {
+    extra = " Jumma Mubarak!";
+  }
+
+  // 🧠 Jarvis-style message (multi-language mix)
+  const message = `
+    Assalamualaikum ${userName}. 
+    ${timeGreeting}. 
+    Welcome back to MoneyFlow.
+    ${extra}
+  `;
+
+  const speech = new SpeechSynthesisUtterance(message);
+
+  // 🎛️ Voice tuning (Jarvis feel)
+  speech.lang = "en-IN";
+  speech.rate = 0.9;
+  speech.pitch = 0.95;
+  speech.volume = 1;
+
+  // 🌙 Night softer voice
+  if (hour >= 21 || hour < 6) {
+    speech.rate = 0.85;
+    speech.volume = 0.85;
+  }
+
+  // 🎙️ Load voices properly
+  const setVoiceAndSpeak = () => {
+    const voices = speechSynthesis.getVoices();
+    applyVoiceStyle(speech, voices);
+
+    // Prefer natural voices
+    const preferredVoice =
+      voices.find(v => v.name.toLowerCase().includes("female")) ||
+      voices.find(v => v.lang.includes("en-IN")) ||
+      voices.find(v => v.lang.includes("en-US")) ||
+      voices[0];
+
+    if (preferredVoice) speech.voice = preferredVoice;
+
+    speechSynthesis.cancel();
+    speechSynthesis.speak(speech);
+  };
+
+  if (speechSynthesis.getVoices().length === 0) {
+    speechSynthesis.onvoiceschanged = setVoiceAndSpeak;
+  } else {
+    setVoiceAndSpeak();
+  }
+}
+
+
+// ===============================
+// AUTO TRIGGER ON APP OPEN
+// ===============================
+
+window.addEventListener("load", () => {
+
+  if (sessionStorage.getItem("greeted")) return;
+
+  const start = () => {
+    speakAssistantGreeting();
+    sessionStorage.setItem("greeted", "true");
+  };
+
+  // Smooth delay (premium feel)
+  setTimeout(start, 1400);
+
+  // Fallback for mobile autoplay block
+  document.addEventListener("click", start, { once: true });
+
+});
+
+
+// ===============================
+// VOICE TOGGLE (SETTINGS)
+// ===============================
+
+const toggle = document.getElementById("voiceToggle");
+
+if (toggle) {
+  toggle.checked = localStorage.getItem("voiceGreeting") !== "off";
+
+  toggle.addEventListener("change", () => {
+    localStorage.setItem("voiceGreeting", toggle.checked ? "on" : "off");
+  });
+}
+
+// ===============================
+// VOICE SELECTION SYSTEM
+// ===============================
+
+const voiceSelect = document.getElementById("voiceSelect");
+
+// Load saved voice
+if (voiceSelect) {
+  voiceSelect.value = localStorage.getItem("assistantVoice") || "female1";
+
+  voiceSelect.addEventListener("change", () => {
+    localStorage.setItem("assistantVoice", voiceSelect.value);
+  });
+}
+
+
+// 🎙️ APPLY VOICE STYLE
+function applyVoiceStyle(speech, voices) {
+  const selected = localStorage.getItem("assistantVoice") || "female1";
+
+  let chosenVoice = voices[0];
+
+  if (selected === "male1") {
+    // Deep male
+    chosenVoice = voices.find(v => v.name.toLowerCase().includes("male")) || voices[0];
+    speech.pitch = 0.7;
+    speech.rate = 0.9;
+  }
+
+  else if (selected === "male2") {
+    // Smooth male
+    chosenVoice = voices.find(v => v.lang.includes("en-US")) || voices[0];
+    speech.pitch = 0.85;
+    speech.rate = 0.95;
+  }
+
+  else if (selected === "female1") {
+    // Soft female
+    chosenVoice = voices.find(v => v.name.toLowerCase().includes("female")) || voices[0];
+    speech.pitch = 1.1;
+    speech.rate = 0.95;
+  }
+
+  else if (selected === "female2") {
+    // Cute female
+    chosenVoice = voices.find(v => v.lang.includes("en-IN")) || voices[0];
+    speech.pitch = 1.25;
+    speech.rate = 1;
+  }
+
+  if (chosenVoice) speech.voice = chosenVoice;
+}

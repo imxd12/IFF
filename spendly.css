@@ -130,232 +130,233 @@
 }
 
 /* ========================================
-   SUMMARY CARDS - ENHANCED
+   SUMMARY GRID
 ======================================== */
 .summary-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
-  gap: clamp(12px, 2.3vw, 18px);
-  margin: clamp(18px, 4vw, 26px) 0;
-  align-items: stretch;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: clamp(12px, 2vw, 18px);
+  margin: clamp(16px, 4vw, 28px) 0;
 }
 
-/* Base card (glassmorphism + smooth hover) */
+/* ========================================
+   CARD BASE (SMART GLASS)
+======================================== */
 .summary-card {
   position: relative;
-  overflow: hidden;
   display: flex;
   align-items: center;
-  gap: clamp(12px, 2vw, 16px);
+  gap: clamp(10px, 2vw, 16px);
   padding: clamp(14px, 3vw, 20px);
+  overflow: hidden;
 
   border-radius: var(--radius);
   border: 1px solid var(--glass-border);
-  background: radial-gradient(circle at top left,
-              rgba(255, 255, 255, 0.18),
-              rgba(15, 23, 42, 0.35));
-  backdrop-filter: blur(14px) saturate(140%);
-  -webkit-backdrop-filter: blur(14px) saturate(140%);
 
-  box-shadow: 0 20px 35px rgba(15, 23, 42, 0.35);
+  background: var(--card-bg);
+  backdrop-filter: blur(16px) saturate(150%);
+  -webkit-backdrop-filter: blur(16px) saturate(150%);
+
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+
   transition:
-    transform 260ms var(--transition-smooth),
-    box-shadow 260ms var(--transition-smooth),
-    border-color 220ms ease,
-    background 260ms ease;
-  animation: fadeInUp 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+    transform 0.35s var(--transition-smooth),
+    box-shadow 0.35s var(--transition-smooth),
+    border 0.3s ease,
+    background 0.4s ease;
+
+  animation: fadeUp 0.6s var(--transition-smooth);
 }
 
-/* Top light sweep */
+/* Glow sweep */
 .summary-card::before {
-  content: '';
+  content: "";
   position: absolute;
-  inset: -40%;
-  background: radial-gradient(circle at 0 0,
-              rgba(255, 255, 255, 0.28),
-              transparent 60%);
+  inset: -50%;
+  background: radial-gradient(circle, rgba(255,255,255,0.25), transparent 60%);
   opacity: 0;
-  transform: translate3d(-25%, -25%, 0) rotate(0.001deg);
-  transition:
-    opacity 0.45s ease,
-    transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: 0.6s;
 }
 
-/* Accent border glow */
+/* Border glow */
 .summary-card::after {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
   border-radius: inherit;
   border: 1px solid transparent;
-  background: linear-gradient(135deg,
-              rgba(148, 163, 184, 0.4),
-              rgba(15, 23, 42, 0.2)) border-box;
-  mix-blend-mode: screen;
+  background: linear-gradient(135deg, rgba(255,255,255,0.4), transparent) border-box;
   opacity: 0;
-  transition: opacity 0.4s ease;
-  pointer-events: none;
+  transition: 0.4s;
 }
 
-/* Hover interactions */
+/* Hover */
 .summary-card:hover {
-  transform: translateY(-6px) scale(1.02);
-  box-shadow: 0 26px 50px rgba(15, 23, 42, 0.55);
+  transform: translateY(-8px) scale(1.03);
+  box-shadow: 0 25px 60px rgba(0,0,0,0.25);
 }
 
 .summary-card:hover::before {
   opacity: 1;
-  transform: translate3d(10%, 10%, 0) rotate(0.001deg);
 }
 
 .summary-card:hover::after {
   opacity: 1;
 }
 
-/* Icon (subtle float, reduced motion-friendly) */
+/* ========================================
+   ICON
+======================================== */
 .summary-icon {
-  font-size: clamp(28px, 6vw, 34px);
+  font-size: clamp(26px, 5vw, 34px);
   flex-shrink: 0;
-  filter: drop-shadow(0 6px 12px rgba(15, 23, 42, 0.6));
-  animation: iconFloat 3s ease-in-out infinite;
+  animation: floatIcon 3s ease-in-out infinite;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .summary-card,
-  .summary-card::before,
-  .summary-card::after {
-    transition: none;
-    animation: none;
-  }
-  .summary-icon {
-    animation: none;
-  }
-}
-
-/* Floating icon animation */
-@keyframes iconFloat {
-  0%, 100% {
-    transform: translateY(0) translateZ(0);
-  }
-  50% {
-    transform: translateY(-6px) translateZ(0);
-  }
-}
-
+/* ========================================
+   TEXT FIX (IMPORTANT FOR LIGHT MODE)
+======================================== */
 .summary-info {
   flex: 1;
   min-width: 0;
 }
 
 .summary-label {
-  font-size: clamp(11px, 1.7vw, 12px);
+  font-size: clamp(11px, 1.6vw, 12px);
   color: var(--text-secondary);
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.05em;
   margin-bottom: 4px;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow: hidden;
 }
 
 .summary-value {
-  font-size: clamp(20px, 4.2vw, 26px);
+  font-size: clamp(20px, 4vw, 26px);
   font-weight: 800;
   color: var(--text);
   line-height: 1.1;
-  letter-spacing: 0.02em;
-  animation: valueIn 0.45s ease-out;
+
+  /* Smooth counter animation feel */
+  animation: popIn 0.5s ease;
 }
 
-/* Value entrance animation */
-@keyframes valueIn {
-  from {
-    opacity: 0;
-    transform: translateY(8px) scale(0.98);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
+/* ========================================
+   COLOR CARDS (THEME SAFE)
+======================================== */
 
-/* Per-card accent theming */
+/* Income */
 .income-card {
-  border-color: rgba(34, 197, 94, 0.85);
-  box-shadow: 0 18px 35px rgba(22, 163, 74, 0.35);
-  background:
-    radial-gradient(circle at 0 0, rgba(34, 197, 94, 0.16), transparent 55%),
-    radial-gradient(circle at 100% 100%, rgba(16, 185, 129, 0.12), transparent 55%),
-    rgba(15, 23, 42, 0.72);
+  border-color: rgba(34, 197, 94, 0.6);
 }
-
 .income-card .summary-value {
   color: #22c55e;
 }
 
-/* Expense card */
+/* Expense */
 .expense-card {
-  border-color: rgba(248, 113, 113, 0.9);
-  box-shadow: 0 18px 35px rgba(239, 68, 68, 0.3);
-  background:
-    radial-gradient(circle at 0 0, rgba(248, 113, 113, 0.16), transparent 55%),
-    radial-gradient(circle at 100% 100%, rgba(248, 113, 113, 0.12), transparent 55%),
-    rgba(15, 23, 42, 0.72);
+  border-color: rgba(239, 68, 68, 0.6);
 }
-
 .expense-card .summary-value {
-  color: #f97373;
+  color: #ef4444;
 }
 
-/* Balance card */
+/* Balance */
 .balance-card {
-  border-color: rgba(59, 130, 246, 0.9);
-  box-shadow: 0 18px 35px rgba(59, 130, 246, 0.3);
-  background:
-    radial-gradient(circle at 0 0, rgba(59, 130, 246, 0.16), transparent 55%),
-    radial-gradient(circle at 100% 100%, rgba(37, 99, 235, 0.12), transparent 55%),
-    rgba(15, 23, 42, 0.72);
+  border-color: rgba(59, 130, 246, 0.6);
 }
-
 .balance-card .summary-value {
-  color: #60a5fa;
+  color: #3b82f6;
 }
 
-/* This Month Income card */
+/* Monthly */
 .month-income-card {
-  border-color: rgba(250, 204, 21, 0.9);
-  box-shadow: 0 18px 35px rgba(250, 204, 21, 0.32);
-  background:
-    radial-gradient(circle at 0 0, rgba(250, 204, 21, 0.18), transparent 55%),
-    radial-gradient(circle at 100% 100%, rgba(234, 179, 8, 0.12), transparent 55%),
-    rgba(15, 23, 42, 0.72);
+  border-color: rgba(234, 179, 8, 0.6);
 }
-
 .month-income-card .summary-value {
-  color: #facc15;
+  color: #eab308;
 }
 
-/* Small screen tweaks */
+/* ========================================
+   ANIMATIONS
+======================================== */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes floatIcon {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+@keyframes popIn {
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* ========================================
+   RESPONSIVE IMPROVEMENTS
+======================================== */
+
+/* Mobile */
 @media (max-width: 480px) {
+  .summary-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
   .summary-card {
-    padding: 12px 14px;
+    padding: 12px;
     gap: 10px;
   }
 
   .summary-icon {
-    font-size: 26px;
+    font-size: 24px;
   }
 
   .summary-value {
-    font-size: 19px;
+    font-size: 18px;
   }
 }
 
-/* Slightly tighter layout on huge screens */
-@media (min-width: 1280px) {
+/* Tablet */
+@media (max-width: 768px) {
   .summary-grid {
-    gap: 18px;
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Large screens */
+@media (min-width: 1200px) {
+  .summary-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* Ultra-wide */
+@media (min-width: 1600px) {
+  .summary-grid {
+    max-width: 1400px;
+    margin: auto;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
   }
 }
 
@@ -396,7 +397,7 @@
   border-radius: var(--radius-lg, var(--radius));
 
   /* 🔥 FIXED DARK BACKGROUND */
-  background: rgba(15, 23, 42, 0.85); /* deep slate dark */
+  background: rgba(255, 255, 255, 0.099); /* deep slate dark */
   
   /* Better border visibility */
   border: 1px solid rgba(255, 255, 255, 0.08);

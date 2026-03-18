@@ -830,230 +830,184 @@ startClock('#timeNow');
     }
   };
 
-  // ========================================
-  // GENERATE PDF FUNCTION
-  // ========================================
-  function generatePDF(entries, periodLabel) {
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
-    
-    const now = new Date();
-    const reportDate = now.toLocaleDateString('en-IN', { 
-      year: 'numeric', 
-      month: 'long', 
-      day: 'numeric' 
-    });
-    
-    const primaryColor = [16, 185, 129];
-    const secondaryColor = [59, 130, 246];
-    const accentColor = [245, 158, 11];
-    const textColor = [55, 65, 81];
-    
-    let yPos = 20;
-    
-    // HEADER GRADIENT BAR
-    doc.setFillColor(...primaryColor);
-    doc.rect(0, 0, 210, 40, 'F');
-    
-    doc.setFillColor(255, 255, 255);
-    doc.setGState(new doc.GState({ opacity: 0.1 }));
-    doc.circle(180, 10, 15, 'F');
-    doc.circle(200, 30, 20, 'F');
-    doc.setGState(new doc.GState({ opacity: 1 }));
-    
-    doc.setTextColor(255, 255, 255);
-    doc.setFontSize(26);
-    doc.setFont('helvetica', 'bold');
-    doc.text('💰 PocketCal Report', 15, 22);
-    
-    doc.setFontSize(12);
-    doc.setFont('helvetica', 'normal');
-    doc.text(`Period: ${periodLabel}`, 15, 30);
-    
-    doc.setFontSize(9);
-    doc.text(`Generated: ${reportDate}`, 15, 36);
-    
-    yPos = 50;
-    
-    // SUMMARY
-    doc.setTextColor(...textColor);
-    doc.setFontSize(18);
-    doc.setFont('helvetica', 'bold');
-    doc.text('📊 Summary Statistics', 15, yPos);
-    
-    yPos += 5;
-    
-    const total = entries.reduce((sum, e) => sum + Number(e.amount || 0), 0);
-    const highest = Math.max(...entries.map(e => Number(e.amount || 0)));
-    const average = total / entries.length;
-    const lowest = Math.min(...entries.map(e => Number(e.amount || 0)));
-    
-    doc.autoTable({
-      startY: yPos,
-      head: [['Metric', 'Value']],
-      body: [
-        ['Total Amount', `₹${total.toFixed(2)}`],
-        ['Number of Entries', entries.length.toString()],
-        ['Highest Amount', `₹${highest.toFixed(2)}`],
-        ['Lowest Amount', `₹${lowest.toFixed(2)}`],
-        ['Average per Entry', `₹${average.toFixed(2)}`]
-      ],
-      headStyles: {
-        fillColor: primaryColor,
-        fontSize: 11,
-        fontStyle: 'bold',
-        halign: 'left',
-        textColor: [255, 255, 255]
-      },
-      bodyStyles: {
-        fontSize: 10,
-        textColor: textColor
-      },
-      alternateRowStyles: {
-        fillColor: [249, 250, 251]
-      },
-      columnStyles: {
-        0: { fontStyle: 'bold', cellWidth: 90 },
-        1: { halign: 'right', cellWidth: 'auto', textColor: primaryColor, fontStyle: 'bold' }
-      },
-      margin: { left: 15, right: 15 },
-      theme: 'grid'
-    });
-    
-    yPos = doc.lastAutoTable.finalY + 12;
-    
-    // CATEGORY BREAKDOWN
-    const categoryTotals = {};
-    entries.forEach(e => {
-      const cat = e.category || '💵 Pocket Money';
-      categoryTotals[cat] = (categoryTotals[cat] || 0) + Number(e.amount || 0);
-    });
-    
-    if (Object.keys(categoryTotals).length > 0) {
-      if (yPos > 230) {
-        doc.addPage();
-        yPos = 20;
-      }
-      
-      doc.setFontSize(18);
-      doc.setFont('helvetica', 'bold');
-      doc.setTextColor(...textColor);
-      doc.text('🗂️ Category Breakdown', 15, yPos);
-      
-      yPos += 5;
-      
-      const categoryData = Object.entries(categoryTotals)
-        .sort((a, b) => b[1] - a[1])
-        .map(([category, amount]) => {
-          const percentage = ((amount / total) * 100).toFixed(1);
-          return [category, `₹${amount.toFixed(2)}`, `${percentage}%`];
-        });
-      
-      doc.autoTable({
-        startY: yPos,
-        head: [['Category', 'Amount', 'Percentage']],
-        body: categoryData,
-        headStyles: {
-          fillColor: secondaryColor,
-          fontSize: 11,
-          fontStyle: 'bold',
-          textColor: [255, 255, 255]
-        },
-        bodyStyles: {
-          fontSize: 10,
-          textColor: textColor
-        },
-        alternateRowStyles: {
-          fillColor: [249, 250, 251]
-        },
-        columnStyles: {
-          0: { cellWidth: 75 },
-          1: { halign: 'right', cellWidth: 55, textColor: secondaryColor, fontStyle: 'bold' },
-          2: { halign: 'right', cellWidth: 'auto' }
-        },
-        margin: { left: 15, right: 15 },
-        theme: 'grid'
-      });
-      
-      yPos = doc.lastAutoTable.finalY + 12;
+function generatePDF(entries, periodLabel) {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+
+  const now = new Date();
+  const reportDate = now.toLocaleDateString('en-IN');
+
+  let yPos = 20;
+
+  // =========================
+  // BANK HEADER
+  // =========================
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(18);
+  doc.text('POCKETCAL BANK', 105, yPos, { align: 'center' });
+
+  yPos += 8;
+
+  doc.setFontSize(10);
+  doc.setFont('helvetica', 'normal');
+  doc.text('Digital Savings Account Statement', 105, yPos, { align: 'center' });
+
+  yPos += 10;
+
+  // Divider line
+  doc.line(15, yPos, 195, yPos);
+
+  yPos += 8;
+
+  // =========================
+  // ACCOUNT DETAILS
+  // =========================
+  doc.setFontSize(10);
+
+// Get username
+let username = localStorage.getItem('fin_userName') || 'User';
+
+// Optional: clean formatting
+username = username.replace(/\b\w/g, c => c.toUpperCase());
+
+// Use in text
+doc.text(`Account Holder : ${username}`, 15, yPos);
+  doc.text(`Account No : 532377734`, 130, yPos);
+
+  yPos += 6;
+
+  doc.text(`Branch : Mumbai`, 15, yPos);
+  doc.text(`IFSC : IMXD00000012`, 130, yPos);
+
+  yPos += 6;
+
+  doc.text(`Statement Period : ${periodLabel}`, 15, yPos);
+  doc.text(`Generated On : ${reportDate}`, 130, yPos);
+
+  yPos += 8;
+
+  doc.line(15, yPos, 195, yPos);
+
+  yPos += 6;
+
+  // =========================
+  // CALCULATIONS
+  // =========================
+  let balance = 0;
+
+  const tableData = entries.map(e => {
+    const amount = Number(e.amount || 0);
+
+    let credit = '';
+    let debit = '';
+
+    if (amount >= 0) {
+      credit = amount.toFixed(2);
+      balance += amount;
+    } else {
+      debit = Math.abs(amount).toFixed(2);
+      balance -= Math.abs(amount);
     }
-    
-    // TRANSACTION DETAILS
-    if (yPos > 230) {
-      doc.addPage();
-      yPos = 20;
-    }
-    
-    doc.setFontSize(18);
-    doc.setFont('helvetica', 'bold');
-    doc.setTextColor(...textColor);
-    doc.text('📅 Transaction Details', 15, yPos);
-    
-    yPos += 5;
-    
-    const transactionData = entries.map(e => {
-      const formattedDate = new Date(e.date).toLocaleDateString('en-IN', {
-        day: '2-digit',
-        month: 'short',
-        year: 'numeric'
-      });
-      return [
-        formattedDate,
-        e.category || '💵 Pocket Money',
-        `₹${Number(e.amount).toFixed(2)}`,
-        e.notes ? e.notes.substring(0, 35) + (e.notes.length > 35 ? '...' : '') : '-'
-      ];
-    });
-    
-    doc.autoTable({
-      startY: yPos,
-      head: [['Date', 'Category', 'Amount', 'Notes']],
-      body: transactionData,
-      headStyles: {
-        fillColor: accentColor,
-        fontSize: 10,
-        fontStyle: 'bold',
-        textColor: [255, 255, 255]
-      },
-      bodyStyles: {
-        fontSize: 9,
-        textColor: textColor
-      },
-      alternateRowStyles: {
-        fillColor: [249, 250, 251]
-      },
-      columnStyles: {
-        0: { cellWidth: 32 },
-        1: { cellWidth: 45 },
-        2: { halign: 'right', cellWidth: 30, textColor: accentColor, fontStyle: 'bold' },
-        3: { cellWidth: 'auto' }
-      },
-      margin: { left: 15, right: 15 },
-      theme: 'grid'
-    });
-    
-    // FOOTER ON ALL PAGES
-    const pageCount = doc.internal.getNumberOfPages();
-    
-    for (let i = 1; i <= pageCount; i++) {
-      doc.setPage(i);
-      
-      doc.setFillColor(...primaryColor);
-      doc.rect(0, 282, 210, 15, 'F');
-      
-      doc.setFontSize(9);
-      doc.setTextColor(255, 255, 255);
-      doc.setFont('helvetica', 'normal');
-      doc.text('MoneyFlow PocketCal - Pocket Money Tracker', 15, 289);
-      doc.text(`Page ${i} of ${pageCount}`, 195, 289, { align: 'right' });
-      
-      doc.setFontSize(8);
-      doc.text('Developed by Imad Khan (@imxd12) | imadak999@gmail.com', 105, 293, { align: 'center' });
-    }
-    
-    const fileName = `PocketCal_${periodLabel.replace(/\s+/g, '_')}_${now.toISOString().split('T')[0]}.pdf`;
-    doc.save(fileName);
+
+    return [
+      new Date(e.date).toLocaleDateString('en-IN'),
+      e.category || '-',
+      debit ? `₹${debit}` : '-',
+      credit ? `₹${credit}` : '-',
+      `₹${balance.toFixed(2)}`
+    ];
+  });
+
+  // =========================
+  // TRANSACTION TABLE
+  // =========================
+  doc.autoTable({
+    startY: yPos,
+    head: [['Date', 'Description', 'Debit (₹)', 'Credit (₹)', 'Balance (₹)']],
+    body: tableData,
+    styles: {
+      fontSize: 9,
+      cellPadding: 3,
+    },
+    headStyles: {
+      fillColor: [220, 220, 220],
+      textColor: [0, 0, 0],
+      fontStyle: 'bold'
+    },
+    columnStyles: {
+      2: { halign: 'right' },
+      3: { halign: 'right' },
+      4: { halign: 'right' }
+    },
+    margin: { left: 15, right: 15 },
+    theme: 'grid'
+  });
+
+  yPos = doc.lastAutoTable.finalY + 10;
+
+  // =========================
+  // SUMMARY (BANK STYLE)
+  // =========================
+  const totalCredit = entries
+    .filter(e => Number(e.amount) > 0)
+    .reduce((sum, e) => sum + Number(e.amount), 0);
+
+  const totalDebit = entries
+    .filter(e => Number(e.amount) < 0)
+    .reduce((sum, e) => sum + Math.abs(Number(e.amount)), 0);
+
+  doc.setFontSize(11);
+  doc.setFont('helvetica', 'bold');
+
+  doc.text(`Total Credit : ₹${totalCredit.toFixed(2)}`, 15, yPos);
+  doc.text(`Total Debit : ₹${totalDebit.toFixed(2)}`, 110, yPos);
+
+  yPos += 6;
+
+  doc.text(`Closing Balance : ₹${balance.toFixed(2)}`, 15, yPos);
+
+  yPos += 15;
+
+  // =========================
+  // SIGNATURE AREA
+  // =========================
+  doc.line(140, yPos, 195, yPos);
+  doc.setFontSize(9);
+  doc.text('Authorized Signature', 140, yPos + 5);
+
+  // =========================
+  // FOOTER (ALL PAGES)
+  // =========================
+  const pageCount = doc.internal.getNumberOfPages();
+
+  for (let i = 1; i <= pageCount; i++) {
+    doc.setPage(i);
+
+    doc.setFontSize(8);
+    doc.setTextColor(100);
+
+    doc.text(
+      'This is a system-generated statement. No signature required.',
+      105,
+      285,
+      { align: 'center' }
+    );
+
+    doc.text(`Page ${i} of ${pageCount}`, 195, 290, { align: 'right' });
+
+    doc.text(
+      'PocketCal Bank | Customer Care: support@pocketcal.com',
+      15,
+      290
+    );
   }
+
+  // =========================
+  // SAVE FILE
+  // =========================
+  const fileName = `Passbook_${now.toISOString().split('T')[0]}.pdf`;
+  doc.save(fileName);
+}
 
   // ========================================
   // CLEAR ALL DATA

@@ -1,27 +1,30 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>MoneyFlow - Privacy Policy</title>
-    
+
     <link rel="stylesheet" href="global.css">
-    
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-      tailwind.config = { darkMode: ['class', '[data-theme="dark"]'] }
+        tailwind.config = { darkMode: ['class', '[data-theme="dark"]'] }
     </script>
 </head>
+
 <body>
 
     <svg style="visibility: hidden; position: absolute;" width="0" height="0">
-      <defs>
-          <filter id="gooey-filter">
-              <feGaussianBlur in="SourceGraphic" stdDeviation="20" result="blur" />
-              <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 30 -10" result="goo" />
-              <feBlend in="SourceGraphic" in2="goo" />
-          </filter>
-      </defs>
+        <defs>
+            <filter id="gooey-filter">
+                <feGaussianBlur in="SourceGraphic" stdDeviation="20" result="blur" />
+                <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 30 -10"
+                    result="goo" />
+                <feBlend in="SourceGraphic" in2="goo" />
+            </filter>
+        </defs>
     </svg>
 
     <div class="liquid-bg-container">
@@ -31,9 +34,14 @@
 
     <header class="global-header glass-panel">
         <div class="brand flex items-center gap-3">
-            <a href="profile.html" class="glass-button w-10 h-10 rounded-full flex items-center justify-center hover:-translate-x-1">
+            <a href="javascript:history.back()"
+                class="glass-button w-10 h-10 rounded-full flex items-center justify-center hover:-translate-x-1">
                 <i data-lucide="arrow-left" class="w-5 h-5"></i>
             </a>
+            <div class="brand-logo-wave hidden sm:block">
+                <div class="wave wave1"></div>
+                <div class="wave wave2"></div>
+            </div>
             <span class="brand-text">Privacy Policy</span>
         </div>
         <div class="header-controls">
@@ -43,7 +51,7 @@
     </header>
 
     <main class="main-content flex flex-col items-center">
-        
+
         <div class="glass-panel w-full max-w-4xl p-8 md:p-12 mt-4 ag-card-reveal" data-speed="0.1">
             <div class="text-center mb-12 border-b border-glass-border pb-8">
                 <h1 class="text-4xl font-extrabold mb-4 text-gradient">Data Liquidization & Privacy</h1>
@@ -52,28 +60,71 @@
 
             <div class="prose prose-emerald prose-invert mx-auto max-w-2xl text-muted space-y-8">
                 <div>
-                    <h2 class="text-2xl font-bold text-main mb-4">1. Information We Collect</h2>
-                    <p class="leading-relaxed">MoneyFlow is a Progressive Web App (PWA). All your financial data, including income, expenses, and calendar entries, are stored strictly via LocalStorage on your device. We do not transmit your "Spendly" or "PocketCal" ledgers to any remote cloud servers. Because your device acts as the absolute database, data remains securely sandboxed within your browser's local state.</p>
+                    <h2 class="text-2xl font-bold text-main mb-4">1. Data Storage & Local Sandboxing</h2>
+                    <p class="leading-relaxed">MoneyFlow operates exclusively as a sandboxed Progressive Web Application
+                        (PWA) operating on a <strong>"Local-First"</strong> principle. This means absolutely zero
+                        transactional data, ledgers, or historical profiles are ever transmitted, synchronized, or
+                        stored on external cloud servers, databases, or remote endpoints.</p>
+                    <ul class="list-disc pl-5 mt-3 text-sm space-y-2">
+                        <li>All financial records are encrypted and retained entirely within your device's native
+                            browser <code>localStorage</code> API.</li>
+                        <li>You maintain absolute sovereignty and physical ownership over your data footprints.</li>
+                    </ul>
                 </div>
 
                 <div>
-                    <h2 class="text-2xl font-bold text-main mb-4">2. Antigravity Analytics</h2>
-                    <p class="leading-relaxed">Any computations for Smart Insights, data visualization tools, and boxplots are executed on the client-side browser logic using JavaScript. Your data flows fluidly but remains localized.</p>
+                    <h2 class="text-2xl font-bold text-main mb-4">2. Application Telemetry & Analytics</h2>
+                    <p class="leading-relaxed">MoneyFlow does NOT embed overarching tracking pixels, user behavior
+                        metrics, or third-party advertising monitors. The "Smart Insights" and numerical analytics
+                        generated on your dashboard are compiled deterministically on your local CPU via JavaScript math
+                        logic without invoking external analytics hubs.</p>
                 </div>
 
                 <div>
-                    <h2 class="text-2xl font-bold text-main mb-4">3. Local File Generation</h2>
-                    <p class="leading-relaxed">Our PDF Bank Passbook export features utilize 'jsPDF' to render the file dynamically in your browser. At no point is a file uploaded or passed through cloud services.</p>
+                    <h2 class="text-2xl font-bold text-main mb-4">3. External Libraries & CDNs</h2>
+                    <p class="leading-relaxed">In order to deliver a high-fidelity visual experience, MoneyFlow fetches
+                        open-source stylistic and structural assets from trusted Content Delivery Networks (CDNs):</p>
+                    <ul class="list-disc pl-5 mt-3 text-sm space-y-2">
+                        <li><strong>TailwindCSS:</strong> For responsive, inline stylistic computations.</li>
+                        <li><strong>Chart.js:</strong> For interpreting your local data points strictly inside the DOM
+                            canvas rendering pipeline.</li>
+                        <li><strong>GSAP & Lenis:</strong> Specifically allocated to handle the "Antigravity" scroll
+                            physics and fluid interface rendering matrices.</li>
+                        <li><strong>Lucide Icons & jsPDF:</strong> Essential for visual assets and local document
+                            compilation respectively.</li>
+                    </ul>
                 </div>
 
                 <div>
-                    <h2 class="text-2xl font-bold text-main mb-4">4. Clear Data Control</h2>
-                    <p class="leading-relaxed">You have full control to wipe your financial history via the Settings panel. Triggering the wipe command irrevocably deletes the data shards from your local cache.</p>
+                    <h2 class="text-2xl font-bold text-main mb-4">4. Device API Utilization Requirements</h2>
+                    <p class="leading-relaxed">With your explicit consent or activation toggles, MoneyFlow may request
+                        specific hardware-level APIs exposed via the browser:</p>
+                    <ul class="list-disc pl-5 mt-3 text-sm space-y-2">
+                        <li><strong>Haptic Feedback / <code>navigator.vibrate()</code>:</strong> utilized exclusively
+                            for tactile confirmation of button taps and user interactions when explicitly enabled in
+                            Settings.</li>
+                        <li><strong>Speech Synthesis:</strong> utilized to deliver auditory AI greetings and status
+                            reads entirely without leveraging external Text-To-Speech cloud APIs.</li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h2 class="text-2xl font-bold text-main mb-4">5. Complete Data Erasure, Portability & Control</h2>
+                    <p class="leading-relaxed">We implicitly strictly adhere to the fundamental principles of 'Right to
+                        Erasure' and 'Data Portability' without caveat:</p>
+                    <ul class="list-disc pl-5 mt-3 text-sm space-y-2">
+                        <li><strong>Nuclear Wipe:</strong> A hard-delete function available persistently in User
+                            Settings to irrevocably destroy all locally cached financial logs and preferences.</li>
+                        <li><strong>JSON Portability:</strong> Users may freely extract their overarching application
+                            state via standard <code>.json</code> exports to secure their data offline or gracefully
+                            merge across their personal devices.</li>
+                    </ul>
                 </div>
             </div>
-            
+
             <div class="mt-16 text-center">
-                <a href="profile.html" class="inline-flex items-center gap-2 glass-button px-8 py-3 rounded-xl font-bold text-emerald-500 hover:text-white transition">
+                <a href="settings.html"
+                    class="inline-flex items-center gap-2 glass-button px-8 py-3 rounded-xl font-bold text-emerald-500 hover:text-white transition">
                     <i data-lucide="check-circle" class="w-5 h-5"></i> I Understand
                 </a>
             </div>
@@ -89,4 +140,5 @@
 
     <script src="global.js"></script>
 </body>
+
 </html>

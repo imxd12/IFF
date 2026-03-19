@@ -1,27 +1,30 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>MoneyFlow - How to Use</title>
-    
+
     <link rel="stylesheet" href="global.css">
-    
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-      tailwind.config = { darkMode: ['class', '[data-theme="dark"]'] }
+        tailwind.config = { darkMode: ['class', '[data-theme="dark"]'] }
     </script>
 </head>
+
 <body>
 
     <svg style="visibility: hidden; position: absolute;" width="0" height="0">
-      <defs>
-          <filter id="gooey-filter">
-              <feGaussianBlur in="SourceGraphic" stdDeviation="20" result="blur" />
-              <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 30 -10" result="goo" />
-              <feBlend in="SourceGraphic" in2="goo" />
-          </filter>
-      </defs>
+        <defs>
+            <filter id="gooey-filter">
+                <feGaussianBlur in="SourceGraphic" stdDeviation="20" result="blur" />
+                <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 30 -10"
+                    result="goo" />
+                <feBlend in="SourceGraphic" in2="goo" />
+            </filter>
+        </defs>
     </svg>
 
     <div class="liquid-bg-container">
@@ -31,9 +34,14 @@
 
     <header class="global-header glass-panel">
         <div class="brand flex items-center gap-3">
-            <a href="index.html" class="glass-button w-10 h-10 rounded-full flex items-center justify-center hover:-translate-x-1">
+            <a href="javascript:history.back()"
+                class="glass-button w-10 h-10 rounded-full flex items-center justify-center hover:-translate-x-1">
                 <i data-lucide="arrow-left" class="w-5 h-5"></i>
             </a>
+            <div class="brand-logo-wave hidden sm:block">
+                <div class="wave wave1"></div>
+                <div class="wave wave2"></div>
+            </div>
             <span class="brand-text">How to Use</span>
         </div>
         <div class="header-controls">
@@ -43,68 +51,117 @@
     </header>
 
     <main class="main-content">
-        
+
         <section class="max-w-3xl mx-auto mb-16 text-center" data-speed="0.1">
             <h1 class="text-4xl md:text-5xl font-extrabold mb-4 text-gradient">Mastering MoneyFlow</h1>
             <p class="text-xl text-muted">A fluid guide to the Antigravity Financial Engine.</p>
         </section>
 
         <section class="max-w-3xl mx-auto space-y-6">
-            
+
             <div class="glass-panel p-6 ag-card-reveal" data-speed="0.15">
                 <h3 class="text-xl font-bold flex items-center gap-3 mb-4 text-emerald-500">
                     <i data-lucide="home"></i> 1. The Hub (Dashboard)
                 </h3>
-                <p class="text-muted leading-relaxed">
-                    The Hub is your liquid financial overview. It continuously calculates your spending velocity and provides Smart Insights. Watch out for AI voice greetings, and if you haven't already, install MoneyFlow as a PWA for a seamless full-screen experience!
-                </p>
+                <div class="text-muted leading-relaxed space-y-3">
+                    <p>The Hub is your central command center, providing a liquid financial overview in real-time. It
+                        continuously calculates your spending velocity and presents holistic analytics about your
+                        current monetary state.</p>
+                    <ul class="list-disc pl-6 space-y-2">
+                        <li><strong>Real-Time Cards:</strong> Instantly view Today's Expense, All-Time Balance, and
+                            customized monthly insights.</li>
+                        <li><strong>AI Smart Insights:</strong> Neural-styled guidance and suggestions based on your
+                            logging frequency.</li>
+                        <li><strong>Quick Access:</strong> Navigate to any core feature (Spendly, PocketCal, Feedback)
+                            with a single tap.</li>
+                        <li><strong>PWA Integration:</strong> Install MoneyFlow directly to your home screen via the
+                            prompt for a full-screen, native-app experience!</li>
+                    </ul>
+                </div>
             </div>
 
             <div class="glass-panel p-6 ag-card-reveal" data-speed="0.2">
                 <h3 class="text-xl font-bold flex items-center gap-3 mb-4 text-blue-500">
                     <i data-lucide="pie-chart"></i> 2. Spendly Analytics
                 </h3>
-                <p class="text-muted leading-relaxed">
-                    Log your daily income and expenses here. Use the toggle buttons to switch forms. Every entry updates the dynamic charts instantly. Need to present a report? Use the <strong>Export PDF</strong> button to generate a sleek Bank Passbook.
-                </p>
+                <div class="text-muted leading-relaxed space-y-3">
+                    <p>Spendly is your core ledger. Log every single daily transactional movement—whether it's an
+                        impromptu expense or an unexpected income.</p>
+                    <ul class="list-disc pl-6 space-y-2">
+                        <li><strong>Liquid Toggle:</strong> Seamlessly flip between Income and Expense logging using the
+                            centered liquid slider.</li>
+                        <li><strong>Categorizations:</strong> Assign universal tags (e.g., Food, Travel) for visual
+                            Chart.js mappings.</li>
+                        <li><strong>Dynamic Data Viz:</strong> Observe up to 4 real-time graphs recalculating instantly
+                            right as you log transactions.</li>
+                    </ul>
+                </div>
             </div>
 
             <div class="glass-panel p-6 ag-card-reveal" data-speed="0.25">
                 <h3 class="text-xl font-bold flex items-center gap-3 mb-4 text-amber-500">
                     <i data-lucide="calendar"></i> 3. PocketCal Engine
                 </h3>
-                <p class="text-muted leading-relaxed">
-                    PocketCal is a visualized day-grid for your Pocket Money tracking. 
-                    <br><br>
-                    <strong>Magic Sync:</strong> When you add an income labeled "💵 Pocket Money" in Spendly, it automatically populates the Calendar here, keeping your total balance unified across engines!
-                </p>
+                <div class="text-muted leading-relaxed space-y-3">
+                    <p>PocketCal translates arbitrary financial numbers into a chronological, scannable day-grid,
+                        originally designed for managing "Pocket Money" allowances but robust enough for anything.</p>
+                    <ul class="list-disc pl-6 space-y-2">
+                        <li><strong>Visual Day Grid:</strong> Instantly see which days you gained money (green rings) vs
+                            days you spent heavily.</li>
+                        <li><strong>Magic Syncing:</strong> When you add an income explicitly labeled <em>"💵 Pocket
+                                Money"</em> inside Spendly, it magically bridges over into your PocketCal balance.</li>
+                        <li><strong>Extreme Scaling:</strong> The UI is protected from layout-breakage, shrinking texts
+                            down intelligently to fit ANY device constraint globally.</li>
+                    </ul>
+                </div>
             </div>
 
             <div class="glass-panel p-6 ag-card-reveal" data-speed="0.3">
                 <h3 class="text-xl font-bold flex items-center gap-3 mb-4 text-indigo-500">
                     <i data-lucide="moon"></i> 4. The Inky Theme Switch
                 </h3>
-                <p class="text-muted leading-relaxed">
-                    Tap the Sun/Moon icon in the header to activate the Inky Transition Layer. This utilizes advanced ViewTransitions API with a clip-path circle expansion, swapping the entire UI between Ceramic White and Obsidian Black flawlessly.
-                </p>
+                <div class="text-muted leading-relaxed space-y-3">
+                    <p>Why stick to one reality? MoneyFlow boasts a pristine light aesthetic ("Ceramic White") and a
+                        highly optimized dark mode ("Obsidian Black").</p>
+                    <ul class="list-disc pl-6 space-y-2">
+                        <li><strong>Liquid Expansion:</strong> Tap the Sun/Moon icon in the overarching header to
+                            initiate an expanding clip-path sequence spanning the whole DOM.</li>
+                        <li><strong>Engine Support:</strong> Uses the cutting-edge ViewTransitions API natively baked
+                            into modern browser pipelines.</li>
+                    </ul>
+                </div>
             </div>
 
             <div class="glass-panel p-6 ag-card-reveal" data-speed="0.35">
                 <h3 class="text-xl font-bold flex items-center gap-3 mb-4 text-emerald-500">
                     <i data-lucide="file-down"></i> 5. Bank Passbook Exports
                 </h3>
-                <p class="text-muted leading-relaxed">
-                    Need official reports? In Spendly or PocketCal, use the <strong>Export PDF</strong> button to generate standardized Bank Passbooks. Choose from Month or All Time filters. The PDF retains professional Debit (Dr) / Credit (Cr) structures, dynamically calculated Running Balances, and pristine visual styling using purely client-side compilation.
-                </p>
+                <div class="text-muted leading-relaxed space-y-3">
+                    <p>Sometimes you need official records—for parents, audits, or personal archiving. MoneyFlow
+                        computes real-time PDFs in your browser locally.</p>
+                    <ul class="list-disc pl-6 space-y-2">
+                        <li><strong>Instant Compilation:</strong> Clicking "Export PDF" instantly stitches your
+                            transactions into a standard A4 format without relying on a remote cloud.</li>
+                        <li><strong>Dr/Cr Architecture:</strong> Automatically routes your flows into professional Debit
+                            and Credit structures alongside running balances.</li>
+                    </ul>
+                </div>
             </div>
 
             <div class="glass-panel p-6 ag-card-reveal" data-speed="0.4">
                 <h3 class="text-xl font-bold flex items-center gap-3 mb-4 text-purple-500">
                     <i data-lucide="sparkles"></i> 6. The Antigravity Ecosystem
                 </h3>
-                <p class="text-muted leading-relaxed">
-                    MoneyFlow utilizes a cutting-edge <strong>Antigravity Physics Engine</strong>. As you traverse the interface, observe how distinct cards and data elements float upward at unalike velocities. This GSAP ScrollTrigger-powered parallax, combined with Lenis smooth scrolling, builds a truly weightless user experience.
-                </p>
+                <div class="text-muted leading-relaxed space-y-3">
+                    <p>MoneyFlow is completely governed by a localized physics engine, marrying structural layouts with
+                        fluid motions.</p>
+                    <ul class="list-disc pl-6 space-y-2">
+                        <li><strong>Scroll Physics:</strong> As you traverse sections, distinct cards float at unalike
+                            speeds using GSAP ScrollTrigger computations.</li>
+                        <li><strong>Feedback Mechanisms:</strong> If enabled inside your Settings, the app physically
+                            taps your device's vibration motors upon major interactions.</li>
+                    </ul>
+                </div>
             </div>
 
         </section>
@@ -119,4 +176,5 @@
 
     <script src="global.js"></script>
 </body>
+
 </html>

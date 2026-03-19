@@ -1,1055 +1,433 @@
-/* =========================
-   POCKETCAL - COMPLETE LOGIC
-   Calendar Money Tracker with Advanced Analytics & PDF Export
-========================= */
-
-// Initialize global functions
-startClock('#timeNow');
+/* ========================================================================
+   MONEYFLOW - POCKETCAL.JS
+   Calendar Generation, Sync with `fin_pocketcal`, PDF Passbook Extractor
+======================================================================== */
 
 (function() {
-  'use strict';
+    'use strict';
 
-  // ========================================
-  // STATE MANAGEMENT
-  // ========================================
-  let data = loadData('fin_pocketcal') || [];
-  let current = new Date();
-  current.setDate(1); // first day of month
-  let selectedDate = null;
-  let charts = {};
+    let data = loadData('fin_pocketcal') || [];
+    let current = new Date();
+    current.setDate(1);
+    let selectedDate = null;
+    let charts = {};
 
-  // ========================================
-  // RENDER CALENDAR
-  // ========================================
-  function renderCalendar() {
-    try {
-      const grid = $('#calendarGrid');
-      if (!grid) return;
-      
-      grid.innerHTML = '';
-      
-      const year = current.getFullYear();
-      const month = current.getMonth();
-      const today = new Date().toISOString().split('T')[0];
-      
-      // Update month label
-      const calMonth = $('#calMonth');
-      if (calMonth) {
-        calMonth.textContent = current.toLocaleString('en-US', { 
-          month: 'long', 
-          year: 'numeric' 
-        });
-      }
-      
-      const firstDay = new Date(year, month, 1).getDay();
-      const daysInMonth = new Date(year, month + 1, 0).getDate();
-      
-      // Blank cells
-      for (let i = 0; i < firstDay; i++) {
-        const blank = document.createElement('div');
-        blank.className = 'day blank';
-        grid.appendChild(blank);
-      }
-      
-      // Actual days
-      for (let i = 1; i <= daysInMonth; i++) {
-        const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
-        const entry = data.find(d => d.date === dateStr);
+    // ----------------------------------------------------
+    // RENDER CALENDAR
+    // ----------------------------------------------------
+    function renderCalendar() {
+        const grid = document.getElementById('calendarGrid');
+        if (!grid) return;
+        grid.innerHTML = '';
         
-        const dayEl = document.createElement('div');
-        dayEl.className = 'day';
+        const year = current.getFullYear();
+        const month = current.getMonth();
+        const today = new Date().toISOString().split('T')[0];
         
-        if (entry) {
-          dayEl.classList.add('has-entry');
+        document.getElementById('calMonth').textContent = current.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+        
+        const firstDay = new Date(year, month, 1).getDay();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        
+        // Blank cells
+        for (let i = 0; i < firstDay; i++) {
+            const blank = document.createElement('div');
+            blank.className = 'day blank';
+            grid.appendChild(blank);
         }
         
-        if (dateStr === today) {
-          dayEl.classList.add('today');
+        // Actual days
+        for (let i = 1; i <= daysInMonth; i++) {
+            const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
+            const entry = data.find(d => d.date === dateStr);
+            
+            const dayEl = document.createElement('div');
+            dayEl.className = 'day';
+            if (entry) dayEl.classList.add('has-entry');
+            if (dateStr === today) dayEl.classList.add('today');
+            
+            dayEl.innerHTML = `
+                <div class="date-num">${i}</div>
+                ${entry ? `<div class="date-amount">${fmt(entry.amount)}</div>` : ''}
+            `;
+            
+            dayEl.onclick = () => openEntryModal(dateStr, entry);
+            grid.appendChild(dayEl);
         }
         
-        dayEl.innerHTML = `
-          <div class="date-num">${i}</div>
-          ${entry ? `<div class="date-amount">${fmt(entry.amount)}</div>` : ''}
-        `;
-        
-        dayEl.onclick = () => openEntryModal(dateStr, entry);
-        grid.appendChild(dayEl);
-      }
-      
-      updateSummary();
-      updateCharts();
-    } catch (e) {
-      console.error('Render calendar error:', e);
+        updateSummary();
+        renderCharts();
+        if(typeof populatePocketMonthFilter === 'function') populatePocketMonthFilter();
     }
-  }
 
-  // ========================================
-  // UPDATE SUMMARY STATISTICS
-  // ========================================
-  function updateSummary() {
-    try {
-      const currentMonthStr = `${current.getFullYear()}-${String(current.getMonth() + 1).padStart(2, '0')}`;
-      
-      // All-time total
-      const allTotal = data.reduce((sum, d) => sum + Number(d.amount || 0), 0);
-      const pcAll = $('#pcAll');
-      if (pcAll) pcAll.textContent = fmt(allTotal);
-      
-      // This month
-      const monthEntries = data.filter(d => d.date && d.date.startsWith(currentMonthStr));
-      const monthTotal = monthEntries.reduce((sum, d) => sum + Number(d.amount || 0), 0);
-      const pcMonth = $('#pcMonth');
-      if (pcMonth) pcMonth.textContent = fmt(monthTotal);
-      
-      // Highest day & Average
-      if (monthEntries.length > 0) {
-        const maxAmount = Math.max(...monthEntries.map(e => Number(e.amount || 0)));
-        const pcHigh = $('#pcHigh');
-        if (pcHigh) pcHigh.textContent = fmt(maxAmount);
+    // ----------------------------------------------------
+    // STATS SUMMARY
+    // ----------------------------------------------------
+    function updateSummary() {
+        const currentMonthStr = `${current.getFullYear()}-${String(current.getMonth() + 1).padStart(2, '0')}`;
         
-        const avgAmount = monthTotal / monthEntries.length;
-        const pcAvg = $('#pcAvg');
-        if (pcAvg) pcAvg.textContent = fmt(avgAmount);
-      } else {
-        const pcHigh = $('#pcHigh');
-        const pcAvg = $('#pcAvg');
-        if (pcHigh) pcHigh.textContent = '₹0';
-        if (pcAvg) pcAvg.textContent = '₹0';
-      }
-      
-      // Days tracked
-      const daysTracked = $('#daysTracked');
-      const totalDays = $('#totalDays');
-      if (daysTracked) daysTracked.textContent = data.length;
-      if (totalDays) totalDays.textContent = data.length;
-      
-      // This week
-      const today = new Date();
-      const weekStart = new Date(today);
-      weekStart.setDate(today.getDate() - today.getDay());
-      const weekStartStr = weekStart.toISOString().split('T')[0];
-      
-      const weekTotal = data
-        .filter(d => d.date >= weekStartStr)
-        .reduce((sum, d) => sum + Number(d.amount || 0), 0);
-      const weekTotalEl = $('#weekTotal');
-      if (weekTotalEl) weekTotalEl.textContent = fmt(weekTotal);
-      
-      // Best month
-      const monthlyTotals = {};
-      data.forEach(d => {
-        if (d.date) {
-          const monthKey = d.date.substring(0, 7);
-          monthlyTotals[monthKey] = (monthlyTotals[monthKey] || 0) + Number(d.amount || 0);
+        const allTotal = data.reduce((sum, d) => sum + Number(d.amount || 0), 0);
+        document.getElementById('pcAll').textContent = fmt(allTotal);
+        
+        const monthEntries = data.filter(d => d.date && d.date.startsWith(currentMonthStr));
+        const monthTotal = monthEntries.reduce((sum, d) => sum + Number(d.amount || 0), 0);
+        document.getElementById('pcMonth').textContent = fmt(monthTotal);
+        
+        if (monthEntries.length > 0) {
+            const max = Math.max(...monthEntries.map(e => Number(e.amount || 0)));
+            document.getElementById('pcHigh').textContent = fmt(max);
+            const avg = monthTotal / monthEntries.length;
+            document.getElementById('pcAvg').textContent = fmt(avg);
+        } else {
+            document.getElementById('pcHigh').textContent = '₹0';
+            document.getElementById('pcAvg').textContent = '₹0';
         }
-      });
-      
-      const bestMonthAmount = Math.max(...Object.values(monthlyTotals), 0);
-      const bestMonth = $('#bestMonth');
-      if (bestMonth) bestMonth.textContent = fmt(bestMonthAmount);
-      
-      // Footer stats
-      const footerEntries = $('#footerEntries');
-      if (footerEntries) footerEntries.textContent = data.length;
-    } catch (e) {
-      console.error('Update summary error:', e);
     }
-  }
 
-  // ========================================
-  // UPDATE ALL CHARTS
-  // ========================================
-  function updateCharts() {
-    try {
-      updateDailyChart();
-      updateCategoryChart();
-      updateWeeklyChart();
-      updateTrendChart();
-    } catch (e) {
-      console.error('Update charts error:', e);
-    }
-  }
+    // ----------------------------------------------------
+    // MODAL HANDLING
+    // ----------------------------------------------------
+    window.openTodayEntry = function() {
+        const tzoffset = (new Date()).getTimezoneOffset() * 60000;
+        const localISOTime = (new Date(Date.now() - tzoffset)).toISOString().split('T')[0];
+        window.openEntryModal(localISOTime);
+    };
 
-  // ========================================
-  // DAILY CHART (CURRENT MONTH)
-  // ========================================
-  function updateDailyChart() {
-    try {
-      const canvas = $('#pcChart');
-      if (!canvas) return;
-      
-      if (charts.daily) charts.daily.destroy();
-      
-      const year = current.getFullYear();
-      const month = current.getMonth();
-      const daysInMonth = new Date(year, month + 1, 0).getDate();
-      
-      const labels = [];
-      const values = [];
-      
-      for (let i = 1; i <= daysInMonth; i++) {
-        const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
-        const entry = data.find(d => d.date === dateStr);
-        labels.push(i);
-        values.push(entry ? Number(entry.amount) : 0);
-      }
-      
-      charts.daily = new Chart(canvas, {
-        type: 'bar',
-        data: {
-          labels: labels,
-          datasets: [{
-            label: 'Daily Amount',
-            data: values,
-            backgroundColor: 'rgba(16, 185, 129, 0.6)',
-            borderColor: '#10b981',
-            borderWidth: 1,
-            borderRadius: 6
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: true,
-          plugins: {
-            legend: { display: false },
-            tooltip: {
-              callbacks: {
-                label: (context) => '₹' + context.parsed.y.toFixed(2)
-              }
-            }
-          },
-          scales: {
-            y: {
-              beginAtZero: true,
-              ticks: {
-                callback: value => '₹' + value,
-                color: 'var(--text-secondary)'
-              },
-              grid: { color: 'var(--glass-border)' }
-            },
-            x: {
-              ticks: { color: 'var(--text-secondary)' },
-              grid: { color: 'var(--glass-border)' }
-            }
-          }
-        }
-      });
-    } catch (e) {
-      console.error('Daily chart error:', e);
-    }
-  }
-
-  // ========================================
-  // CATEGORY DISTRIBUTION CHART
-  // ========================================
-  function updateCategoryChart() {
-    try {
-      const canvas = $('#categoryChart');
-      if (!canvas) return;
-      
-      if (charts.category) charts.category.destroy();
-      
-      const categoryData = {};
-      data.forEach(d => {
-        const cat = d.category || '🎯 Other';
-        categoryData[cat] = (categoryData[cat] || 0) + Number(d.amount || 0);
-      });
-      
-      const labels = Object.keys(categoryData);
-      const values = Object.values(categoryData);
-      
-      if (labels.length === 0) return;
-      
-      charts.category = new Chart(canvas, {
-        type: 'doughnut',
-        data: {
-          labels: labels,
-          datasets: [{
-            data: values,
-            backgroundColor: [
-              '#10b981', '#3b82f6', '#f59e0b', '#ef4444',
-              '#8b5cf6', '#ec4899', '#06b6d4', '#f97316'
-            ],
-            borderWidth: 2,
-            borderColor: 'var(--bg)'
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: true,
-          plugins: {
-            legend: {
-              position: 'bottom',
-              labels: {
-                color: 'var(--text)',
-                font: { size: 11 }
-              }
-            },
-            tooltip: {
-              callbacks: {
-                label: (context) => {
-                  const label = context.label || '';
-                  const value = '₹' + context.parsed.toFixed(2);
-                  return label + ': ' + value;
-                }
-              }
-            }
-          }
-        }
-      });
-    } catch (e) {
-      console.error('Category chart error:', e);
-    }
-  }
-
-  // ========================================
-  // WEEKLY COMPARISON CHART
-  // ========================================
-  function updateWeeklyChart() {
-    try {
-      const canvas = $('#weeklyChart');
-      if (!canvas) return;
-      
-      if (charts.weekly) charts.weekly.destroy();
-      
-      const weeks = [];
-      const weekTotals = [];
-      
-      for (let i = 3; i >= 0; i--) {
-        const weekEnd = new Date();
-        weekEnd.setDate(weekEnd.getDate() - (i * 7));
-        const weekStart = new Date(weekEnd);
-        weekStart.setDate(weekEnd.getDate() - 6);
+    window.openEntryModal = function(dateStr, entry) {
+        selectedDate = dateStr;
+        document.getElementById('pcDate').value = dateStr;
+        document.getElementById('pcAmount').value = entry ? entry.amount : '';
+        document.getElementById('pcNotes').value = entry ? (entry.notes || '') : '';
         
-        const weekLabel = `Week ${4 - i}`;
-        const weekStartStr = weekStart.toISOString().split('T')[0];
-        const weekEndStr = weekEnd.toISOString().split('T')[0];
+        document.getElementById('pcDelete').style.display = entry ? 'block' : 'none';
+        document.getElementById('modalTitle').textContent = entry ? 'Edit Entry' : 'Add Entry';
         
-        const weekTotal = data
-          .filter(d => d.date >= weekStartStr && d.date <= weekEndStr)
-          .reduce((sum, d) => sum + Number(d.amount || 0), 0);
-        
-        weeks.push(weekLabel);
-        weekTotals.push(weekTotal);
-      }
-      
-      charts.weekly = new Chart(canvas, {
-        type: 'bar',
-        data: {
-          labels: weeks,
-          datasets: [{
-            label: 'Weekly Total',
-            data: weekTotals,
-            backgroundColor: '#3b82f6',
-            borderRadius: 8,
-            borderWidth: 0
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: true,
-          plugins: {
-            legend: { display: false },
-            tooltip: {
-              callbacks: {
-                label: (context) => '₹' + context.parsed.y.toFixed(2)
-              }
-            }
-          },
-          scales: {
-            y: {
-              beginAtZero: true,
-              ticks: {
-                callback: value => '₹' + value,
-                color: 'var(--text-secondary)'
-              },
-              grid: { color: 'var(--glass-border)' }
-            },
-            x: {
-              ticks: { color: 'var(--text-secondary)' },
-              grid: { color: 'var(--glass-border)' }
-            }
-          }
-        }
-      });
-    } catch (e) {
-      console.error('Weekly chart error:', e);
-    }
-  }
+        document.getElementById('entryModal').classList.add('active');
+    };
 
-  // ========================================
-  // 6-MONTH TREND CHART
-  // ========================================
-  function updateTrendChart() {
-    try {
-      const canvas = $('#trendChart');
-      if (!canvas) return;
-      
-      if (charts.trend) charts.trend.destroy();
-      
-      const months = [];
-      const monthTotals = [];
-      
-      for (let i = 5; i >= 0; i--) {
-        const d = new Date();
-        d.setMonth(d.getMonth() - i);
-        const monthStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
-        const monthLabel = d.toLocaleString('en-US', { month: 'short', year: '2-digit' });
-        
-        const monthTotal = data
-          .filter(entry => entry.date && entry.date.startsWith(monthStr))
-          .reduce((sum, entry) => sum + Number(entry.amount || 0), 0);
-        
-        months.push(monthLabel);
-        monthTotals.push(monthTotal);
-      }
-      
-      charts.trend = new Chart(canvas, {
-        type: 'line',
-        data: {
-          labels: months,
-          datasets: [{
-            label: 'Monthly Trend',
-            data: monthTotals,
-            borderColor: '#f59e0b',
-            backgroundColor: 'rgba(245, 158, 11, 0.1)',
-            borderWidth: 3,
-            fill: true,
-            tension: 0.4,
-            pointRadius: 5,
-            pointBackgroundColor: '#f59e0b',
-            pointHoverRadius: 7
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: true,
-          plugins: {
-            legend: { display: false },
-            tooltip: {
-              callbacks: {
-                label: (context) => '₹' + context.parsed.y.toFixed(2)
-              }
-            }
-          },
-          scales: {
-            y: {
-              beginAtZero: true,
-              ticks: {
-                callback: value => '₹' + value,
-                color: 'var(--text-secondary)'
-              },
-              grid: { color: 'var(--glass-border)' }
-            },
-            x: {
-              ticks: { color: 'var(--text-secondary)' },
-              grid: { color: 'var(--glass-border)' }
-            }
-          }
-        }
-      });
-    } catch (e) {
-      console.error('Trend chart error:', e);
-    }
-  }
+    window.closeEntryModal = function() {
+        document.getElementById('entryModal').classList.remove('active');
+        selectedDate = null;
+    };
 
-  // ========================================
-  // OPEN ENTRY MODAL
-  // ========================================
-  function openEntryModal(dateStr, entry) {
-    try {
-      selectedDate = dateStr;
-      
-      $('#pcDate').value = dateStr;
-      $('#pcAmount').value = entry ? entry.amount : '';
-      $('#pcCategory').value = entry ? (entry.category || '💵 Pocket Money') : '💵 Pocket Money';
-      $('#pcNotes').value = entry ? (entry.notes || '') : '';
-      
-      const deleteBtn = $('#pcDelete');
-      if (deleteBtn) {
-        deleteBtn.style.display = entry ? 'block' : 'none';
-      }
-      
-      const modalTitle = $('#modalTitle');
-      if (modalTitle) {
-        modalTitle.textContent = entry ? 'Edit Entry' : 'Add Entry';
-      }
-      
-      openModal('#entryModal');
-    } catch (e) {
-      console.error('Open entry modal error:', e);
-    }
-  }
-
-  // ========================================
-  // CLOSE ENTRY MODAL
-  // ========================================
-  window.closeEntryModal = function() {
-    try {
-      closeModal('#entryModal');
-      selectedDate = null;
-    } catch (e) {
-      console.error('Close entry modal error:', e);
-    }
-  };
-
-  // ========================================
-  // QUICK ADD TODAY
-  // ========================================
-  window.quickAddToday = function() {
-    try {
-      const today = new Date().toISOString().split('T')[0];
-      const entry = data.find(d => d.date === today);
-      openEntryModal(today, entry);
-    } catch (e) {
-      console.error('Quick add today error:', e);
-    }
-  };
-
-  // ========================================
-  // FORM SUBMISSION
-  // ========================================
-  const pcForm = $('#pcForm');
-  if (pcForm) {
-    pcForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      
-      try {
-        const date = $('#pcDate').value;
-        const amount = Number($('#pcAmount').value);
-        const category = $('#pcCategory').value;
-        const notes = $('#pcNotes').value;
+    // ----------------------------------------------------
+    // FORM SUBMISSION AND 2 WAY SYNC LOGIC
+    // ----------------------------------------------------
+    document.getElementById('pcForm').addEventListener('submit', (e) => {
+        e.preventDefault();
         
-        if (!date || !amount) {
-          showSnackbar('Please fill required fields', 'error');
-          return;
-        }
+        const date = document.getElementById('pcDate').value;
+        const amount = Number(document.getElementById('pcAmount').value);
+        const notes = document.getElementById('pcNotes').value;
+        const category = document.getElementById('pcCategory').value;
         
-        // Remove existing entry for this date
+        // Remove old from pocketcal
+        let existing = data.find(d => d.date === date);
         data = data.filter(d => d.date !== date);
         
-        // Add new entry
         const newEntry = {
-          id: Date.now().toString(),
-          date: date,
-          amount: amount,
-          category: category,
-          notes: notes,
-          source: 'pocketcal'
+            id: existing ? existing.id : Date.now().toString(),
+            date: date,
+            amount: amount,
+            category: category,
+            notes: notes,
+            source: 'pocketcal'
         };
         data.push(newEntry);
-        
         saveData('fin_pocketcal', data);
 
-        // OPTIONAL: if you want PocketCal → Spendly sync,
-        // you can also update fin_spendly here in future.
-        
+        // 2-WAY SYNC TO SPENDLY
+        syncPocketToSpendly(newEntry, existing);
+
         renderCalendar();
         closeEntryModal();
         showSnackbar('Entry saved! 💾');
-      } catch (e) {
-        console.error('Form submission error:', e);
-        showSnackbar('Failed to save entry', 'error');
-      }
     });
-  }
 
-  // ========================================
-  // DELETE ENTRY
-  // ========================================
-  window.deleteEntry = function() {
-    if (!selectedDate) return;
-    if (!confirm('Delete this entry? This cannot be undone.')) return;
-    
-    try {
-      data = data.filter(d => d.date !== selectedDate);
-      saveData('fin_pocketcal', data);
-      renderCalendar();
-      closeEntryModal();
-      showSnackbar('Entry deleted! 🗑️');
-    } catch (e) {
-      console.error('Delete entry error:', e);
-      showSnackbar('Failed to delete', 'error');
-    }
-  };
-
-  const pcDelete = $('#pcDelete');
-  if (pcDelete) {
-    pcDelete.addEventListener('click', deleteEntry);
-  }
-
-  // ========================================
-  // NAVIGATION BUTTONS
-  // ========================================
-  const prevMonth = $('#prevMonth');
-  if (prevMonth) {
-    prevMonth.addEventListener('click', () => {
-      current.setMonth(current.getMonth() - 1);
-      renderCalendar();
-    });
-  }
-
-  const nextMonth = $('#nextMonth');
-  if (nextMonth) {
-    nextMonth.addEventListener('click', () => {
-      current.setMonth(current.getMonth() + 1);
-      renderCalendar();
-    });
-  }
-
-  // ========================================
-  // DATE SEARCH/JUMP
-  // ========================================
-  const pcSearch = $('#pcSearch');
-  if (pcSearch) {
-    pcSearch.addEventListener('change', (e) => {
-      const dateStr = e.target.value;
-      if (!dateStr) return;
-      
-      try {
-        const selected = new Date(dateStr);
-        current = new Date(selected.getFullYear(), selected.getMonth(), 1);
-        renderCalendar();
+    document.getElementById('pcDelete').addEventListener('click', () => {
+        if(!confirm('Delete this entry?')) return;
+        const existing = data.find(d => d.date === selectedDate);
         
-        const entry = data.find(d => d.date === dateStr);
-        openEntryModal(dateStr, entry);
-      } catch (e) {
-        console.error('Date search error:', e);
-      }
+        data = data.filter(d => d.date !== selectedDate);
+        saveData('fin_pocketcal', data);
+
+        // SYNC DELETION TO SPENDLY
+        if(existing) {
+            deleteSpendlyForPocketCal(existing.id);
+        }
+
+        renderCalendar();
+        closeEntryModal();
+        showSnackbar('Entry deleted! 🗑️');
     });
-  }
 
-  // ========================================
-  // ADD TODAY BUTTON
-  // ========================================
-  const btnAddToday = $('#btnAddToday');
-  if (btnAddToday) {
-    btnAddToday.addEventListener('click', quickAddToday);
-  }
-
-  // ========================================
-  // EXPORT FUNCTIONS
-  // ========================================
-  window.exportData = function() {
-    try {
-      if (data.length === 0) {
-        showSnackbar('No data to export', 'error');
-        return;
-      }
-      const headers = ['date', 'amount', 'category', 'notes'];
-      const today = new Date().toISOString().split('T')[0];
-      exportCSV(data, `pocketcal-data-${today}.csv`, headers);
-    } catch (e) {
-      console.error('Export CSV error:', e);
-      showSnackbar('Failed to export', 'error');
-    }
-  };
-
-  window.exportJSON = function() {
-    try {
-      if (data.length === 0) {
-        showSnackbar('No data to export', 'error');
-        return;
-      }
-      const today = new Date().toISOString().split('T')[0];
-      exportJSON(data, `pocketcal-data-${today}.json`);
-    } catch (e) {
-      console.error('Export JSON error:', e);
-      showSnackbar('Failed to export', 'error');
-    }
-  };
-
-  window.importJSON = function() {
-    try {
-      importJSON((imported) => {
-        if (Array.isArray(imported)) {
-          data = [...data, ...imported];
-          saveData('fin_pocketcal', data);
-          renderCalendar();
-        } else {
-          showSnackbar('Invalid data format', 'error');
+    function syncPocketToSpendly(newEntry, oldEntry) {
+        let spendData = loadData('fin_spendly') || [];
+        
+        // Remove old entry if this was edited
+        if (oldEntry) {
+            spendData = spendData.filter(d => d.id.toString() !== oldEntry.id.toString());
         }
-      });
-    } catch (e) {
-      console.error('Import JSON error:', e);
-      showSnackbar('Failed to import', 'error');
+
+        // Add new income entry in Spendly
+        spendData.push({
+            id: Number(newEntry.id),
+            type: 'income',
+            date: newEntry.date,
+            amount: newEntry.amount,
+            category: newEntry.category,
+            sub: '',
+            notes: newEntry.notes || '(From PocketCal)'
+        });
+
+        saveData('fin_spendly', spendData);
     }
-  };
 
-  // ========================================
-  // PDF MODAL FUNCTIONS
-  // ========================================
-  window.openPDFModal = function() {
-    try {
-      if (data.length === 0) {
-        showSnackbar('No data to export', 'error');
-        return;
-      }
-      openModal('#pdfModal');
-      hideDateRangeForm();
-    } catch (e) {
-      console.error('Open PDF modal error:', e);
+    function deleteSpendlyForPocketCal(idstr) {
+        let spendData = loadData('fin_spendly') || [];
+        const beforeLen = spendData.length;
+        spendData = spendData.filter(d => d.id.toString() !== idstr);
+        if (spendData.length !== beforeLen) saveData('fin_spendly', spendData);
     }
-  };
 
-  window.closePDFModal = function() {
-    try {
-      closeModal('#pdfModal');
-      hideDateRangeForm();
-    } catch (e) {
-      console.error('Close PDF modal error:', e);
+    // ----------------------------------------------------
+    // CONTROLS
+    // ----------------------------------------------------
+    document.getElementById('prevMonth').addEventListener('click', () => {
+        current.setMonth(current.getMonth() - 1);
+        renderCalendar();
+    });
+
+    document.getElementById('nextMonth').addEventListener('click', () => {
+        current.setMonth(current.getMonth() + 1);
+        renderCalendar();
+    });
+
+    document.getElementById('pcMonthFilter')?.addEventListener('change', (e) => {
+        const val = e.target.value;
+        if (!val) return;
+        const [y, m] = val.split('-');
+        current = new Date(Number(y), Number(m) - 1, 1);
+        renderCalendar();
+    });
+
+    function populatePocketMonthFilter() {
+        const sel = document.getElementById('pcMonthFilter');
+        if(!sel) return;
+        const currentVal = sel.value;
+        const months = new Set();
+        data.forEach(d => months.add(d.date.slice(0, 7)));
+        const now = new Date();
+        months.add(`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`);
+        
+        let html = '<option value="">Jump to Month...</option>';
+        [...months].sort().reverse().forEach(m => {
+            html += `<option value="${m}">${m}</option>`;
+        });
+        sel.innerHTML = html;
+        if([...months].includes(currentVal)) sel.value = currentVal;
     }
-  };
 
-  window.showDateRangeForm = function() {
-    const form = $('#dateRangeForm');
-    if (form) {
-      form.style.display = 'block';
-      
-      const today = new Date();
-      const lastMonth = new Date();
-      lastMonth.setMonth(today.getMonth() - 1);
-      
-      $('#pdfToDate').value = today.toISOString().split('T')[0];
-      $('#pdfFromDate').value = lastMonth.toISOString().split('T')[0];
-    }
-  };
+    document.getElementById('btnAddToday').addEventListener('click', () => {
+        const todayStr = new Date().toISOString().split('T')[0];
+        const entry = data.find(d => d.date === todayStr);
+        openEntryModal(todayStr, entry);
+    });
 
-  window.hideDateRangeForm = function() {
-    const form = $('#dateRangeForm');
-    if (form) form.style.display = 'none';
-  };
+    // ----------------------------------------------------
+    // CHARTS
+    // ----------------------------------------------------
+    function renderCharts() {
+        if (!window.Chart) return;
+        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        const textColor = isDark ? '#f8fafc' : '#0f172a';
+        
+        Object.values(charts).forEach(c => c && c.destroy && c.destroy());
+        charts = {};
+        Chart.defaults.color = textColor;
+        Chart.defaults.font.family = "'Plus Jakarta Sans', sans-serif";
 
-  // ========================================
-  // PDF EXPORT FUNCTION (period presets)
-  // ========================================
-  window.exportPDF = function(period) {
-    try {
-      if (typeof window.jspdf === 'undefined') {
-        showSnackbar('PDF library not loaded. Please refresh.', 'error');
-        return;
-      }
+        const year = current.getFullYear();
+        const month = current.getMonth();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        const labels = [], values = [];
 
-      const { jsPDF } = window.jspdf;
-      
-      let filteredData = [];
-      let periodLabel = '';
-      const now = new Date();
-      
-      switch(period) {
-        case 'today': {
-          const today = now.toISOString().split('T')[0];
-          filteredData = data.filter(d => d.date === today);
-          periodLabel = 'Today';
-          break;
+        for (let i = 1; i <= daysInMonth; i++) {
+            const ds = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
+            const entry = data.find(d => d.date === ds);
+            labels.push(i);
+            values.push(entry ? Number(entry.amount) : 0);
         }
-        case 'week': {
-          const weekStart = new Date(now);
-          weekStart.setDate(now.getDate() - now.getDay());
-          const weekStartStr = weekStart.toISOString().split('T')[0];
-          filteredData = data.filter(d => d.date >= weekStartStr);
-          periodLabel = 'This Week';
-          break;
+
+        const ctx1 = document.getElementById('pcChart');
+        if (ctx1) {
+            charts.daily = new Chart(ctx1, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Daily Amount',
+                        data: values,
+                        backgroundColor: '#10b981',
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { display: false },
+                        x: { display: false }
+                    }
+                }
+            });
         }
-        case 'month': {
-          const monthStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
-          filteredData = data.filter(d => d.date && d.date.startsWith(monthStr));
-          periodLabel = now.toLocaleString('en-US', { month: 'long', year: 'numeric' });
-          break;
+
+        const ctxT = document.getElementById('trendChart');
+        if (ctxT) {
+            const months = [], monthTotals = [];
+            for (let i = 5; i >= 0; i--) {
+                const d = new Date();
+                d.setMonth(d.getMonth() - i);
+                const monthStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+                
+                const monthTotal = data.filter(entry => entry.date && entry.date.startsWith(monthStr))
+                    .reduce((sum, entry) => sum + Number(entry.amount || 0), 0);
+                
+                months.push(d.toLocaleString('en-US', { month: 'short' }));
+                monthTotals.push(monthTotal);
+            }
+
+            charts.trend = new Chart(ctxT, {
+                type: 'line',
+                data: {
+                    labels: months,
+                    datasets: [{
+                        label: 'Trend',
+                        data: monthTotals,
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { display: false },
+                        x: { display: true, grid: { display: false } }
+                    }
+                }
+            });
         }
-        case 'year': {
-          const yearStr = now.getFullYear().toString();
-          filteredData = data.filter(d => d.date && d.date.startsWith(yearStr));
-          periodLabel = yearStr;
-          break;
-        }
-        case 'all': {
-          filteredData = [...data];
-          periodLabel = 'All Time';
-          break;
-        }
-        default: {
-          filteredData = [...data];
-          periodLabel = 'All Time';
-        }
-      }
-      
-      if (filteredData.length === 0) {
-        showSnackbar(`No entries found for ${periodLabel}`, 'error');
-        return;
-      }
-      
-      filteredData.sort((a, b) => new Date(b.date) - new Date(a.date));
-      
-      generatePDF(filteredData, periodLabel);
-      closePDFModal();
-      showSnackbar('PDF exported successfully! 📄', 'success');
-      
-    } catch (e) {
-      console.error('Export PDF error:', e);
-      showSnackbar('Failed to export PDF', 'error');
-    }
-  };
-
-  // ========================================
-  // PDF DATE RANGE EXPORT
-  // ========================================
-  window.exportPDFDateRange = function() {
-    try {
-      const fromDate = $('#pdfFromDate').value;
-      const toDate = $('#pdfToDate').value;
-      
-      if (!fromDate || !toDate) {
-        showSnackbar('Please select both dates', 'error');
-        return;
-      }
-      
-      if (fromDate > toDate) {
-        showSnackbar('From date must be before To date', 'error');
-        return;
-      }
-      
-      const filteredData = data.filter(d => d.date >= fromDate && d.date <= toDate);
-      
-      if (filteredData.length === 0) {
-        showSnackbar('No entries found in selected range', 'error');
-        return;
-      }
-      
-      filteredData.sort((a, b) => new Date(b.date) - new Date(a.date));
-      
-      const periodLabel = `${new Date(fromDate).toLocaleDateString('en-IN')} to ${new Date(toDate).toLocaleDateString('en-IN')}`;
-      
-      generatePDF(filteredData, periodLabel);
-      closePDFModal();
-      showSnackbar('PDF exported successfully! 📄', 'success');
-      
-    } catch (e) {
-      console.error('Export PDF date range error:', e);
-      showSnackbar('Failed to export PDF', 'error');
-    }
-  };
-
-function generatePDF(entries, periodLabel) {
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF();
-
-  const now = new Date();
-  const reportDate = now.toLocaleDateString('en-IN');
-
-  let yPos = 20;
-
-  // =========================
-  // BANK HEADER
-  // =========================
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(18);
-  doc.text('POCKETCAL BANK', 105, yPos, { align: 'center' });
-
-  yPos += 8;
-
-  doc.setFontSize(10);
-  doc.setFont('helvetica', 'normal');
-  doc.text('Digital Savings Account Statement', 105, yPos, { align: 'center' });
-
-  yPos += 10;
-
-  // Divider line
-  doc.line(15, yPos, 195, yPos);
-
-  yPos += 8;
-
-  // =========================
-  // ACCOUNT DETAILS
-  // =========================
-  doc.setFontSize(10);
-
-// Get username
-let username = localStorage.getItem('fin_userName') || 'User';
-
-// Optional: clean formatting
-username = username.replace(/\b\w/g, c => c.toUpperCase());
-
-// Use in text
-doc.text(`Account Holder : ${username}`, 15, yPos);
-  doc.text(`Account No : 532377734`, 130, yPos);
-
-  yPos += 6;
-
-  doc.text(`Branch : Mumbai`, 15, yPos);
-  doc.text(`IFSC : IMXD00000012`, 130, yPos);
-
-  yPos += 6;
-
-  doc.text(`Statement Period : ${periodLabel}`, 15, yPos);
-  doc.text(`Generated On : ${reportDate}`, 130, yPos);
-
-  yPos += 8;
-
-  doc.line(15, yPos, 195, yPos);
-
-  yPos += 6;
-
-  // =========================
-  // CALCULATIONS
-  // =========================
-  let balance = 0;
-
-  const tableData = entries.map(e => {
-    const amount = Number(e.amount || 0);
-
-    let credit = '';
-    let debit = '';
-
-    if (amount >= 0) {
-      credit = amount.toFixed(2);
-      balance += amount;
-    } else {
-      debit = Math.abs(amount).toFixed(2);
-      balance -= Math.abs(amount);
     }
 
-    return [
-      new Date(e.date).toLocaleDateString('en-IN'),
-      e.category || '-',
-      debit ? `₹${debit}` : '-',
-      credit ? `₹${credit}` : '-',
-      `₹${balance.toFixed(2)}`
-    ];
-  });
-
-  // =========================
-  // TRANSACTION TABLE
-  // =========================
-  doc.autoTable({
-    startY: yPos,
-    head: [['Date', 'Description', 'Debit (₹)', 'Credit (₹)', 'Balance (₹)']],
-    body: tableData,
-    styles: {
-      fontSize: 9,
-      cellPadding: 3,
-    },
-    headStyles: {
-      fillColor: [220, 220, 220],
-      textColor: [0, 0, 0],
-      fontStyle: 'bold'
-    },
-    columnStyles: {
-      2: { halign: 'right' },
-      3: { halign: 'right' },
-      4: { halign: 'right' }
-    },
-    margin: { left: 15, right: 15 },
-    theme: 'grid'
-  });
-
-  yPos = doc.lastAutoTable.finalY + 10;
-
-  // =========================
-  // SUMMARY (BANK STYLE)
-  // =========================
-  const totalCredit = entries
-    .filter(e => Number(e.amount) > 0)
-    .reduce((sum, e) => sum + Number(e.amount), 0);
-
-  const totalDebit = entries
-    .filter(e => Number(e.amount) < 0)
-    .reduce((sum, e) => sum + Math.abs(Number(e.amount)), 0);
-
-  doc.setFontSize(11);
-  doc.setFont('helvetica', 'bold');
-
-  doc.text(`Total Credit : ₹${totalCredit.toFixed(2)}`, 15, yPos);
-  doc.text(`Total Debit : ₹${totalDebit.toFixed(2)}`, 110, yPos);
-
-  yPos += 6;
-
-  doc.text(`Closing Balance : ₹${balance.toFixed(2)}`, 15, yPos);
-
-  yPos += 15;
-
-  // =========================
-  // SIGNATURE AREA
-  // =========================
-  doc.line(140, yPos, 195, yPos);
-  doc.setFontSize(9);
-  doc.text('Authorized Signature', 140, yPos + 5);
-
-  // =========================
-  // FOOTER (ALL PAGES)
-  // =========================
-  const pageCount = doc.internal.getNumberOfPages();
-
-  for (let i = 1; i <= pageCount; i++) {
-    doc.setPage(i);
-
-    doc.setFontSize(8);
-    doc.setTextColor(100);
-
-    doc.text(
-      'This is a system-generated statement. No signature required.',
-      105,
-      285,
-      { align: 'center' }
-    );
-
-    doc.text(`Page ${i} of ${pageCount}`, 195, 290, { align: 'right' });
-
-    doc.text(
-      'PocketCal Bank | Customer Care: support@pocketcal.com',
-      15,
-      290
-    );
-  }
-
-  // =========================
-  // SAVE FILE
-  // =========================
-  const fileName = `Passbook_${now.toISOString().split('T')[0]}.pdf`;
-  doc.save(fileName);
-}
-
-  // ========================================
-  // CLEAR ALL DATA
-  // ========================================
-  window.clearAllData = function() {
-    if (!confirm('⚠️ This will delete ALL entries! Are you sure?')) return;
-    if (!confirm('This action cannot be undone. Continue?')) return;
+    // ----------------------------------------------------
+    // PDF MODAL EXPORT
+    // ----------------------------------------------------
+    window.openPDFModal = function() {
+        document.getElementById('pdfModal').classList.add('active');
+    };
     
-    try {
-      data = [];
-      saveData('fin_pocketcal', data);
-      renderCalendar();
-      showSnackbar('All data cleared! 🗑️');
-    } catch (e) {
-      console.error('Clear all data error:', e);
-      showSnackbar('Failed to clear data', 'error');
-    }
-  };
+    window.closeModal = function(id) {
+        document.querySelector(id).classList.remove('active');
+    };
 
-  // ========================================
-  // INITIALIZATION
-  // ========================================
-  function init() {
-    try {
-      renderCalendar();
-      console.log('✅ PocketCal initialized successfully');
-    } catch (e) {
-      console.error('Initialization error:', e);
-    }
-  }
+    window.exportPDF = function(period) {
+        if (!window.jspdf) { showSnackbar('PDF library not ready', 'error'); return; }
+        
+        let filteredData = [];
+        const now = new Date();
+        let periodLabel = '';
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
-    init();
-  }
+        if (period === 'month') {
+            const monthStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+            filteredData = data.filter(d => d.date.startsWith(monthStr));
+            periodLabel = now.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+        } else if (period === 'year') {
+            const yearStr = now.getFullYear().toString();
+            filteredData = data.filter(d => d.date.startsWith(yearStr));
+            periodLabel = yearStr;
+        } else {
+            filteredData = [...data];
+            periodLabel = 'All Time History';
+        }
 
-  // Re-render charts on theme change
-  document.addEventListener('click', (e) => {
-    if (e.target.closest('.theme-toggle')) {
-      setTimeout(() => updateCharts(), 100);
-    }
-  });
+        // Passbook Calculation
+        const sortedAsc = [...data].sort((a,b)=> new Date(a.date) - new Date(b.date));
+        let runningBal = 0;
+        const passbookData = sortedAsc.map(d => {
+            runningBal += Number(d.amount); // PocketCal only tracks Income
+            return {
+                date: d.date,
+                desc: d.category + (d.notes ? `\n${d.notes}` : ''),
+                dr: '-', // No expenses in PocketCal natively
+                cr: d.amount,
+                bal: runningBal
+            };
+        });
+
+        let exportRows = passbookData;
+        if(period === 'month') {
+            const monthStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+            exportRows = passbookData.filter(d => d.date.startsWith(monthStr));
+        } else if (period === 'year') {
+            const yearStr = now.getFullYear().toString();
+            exportRows = passbookData.filter(d => d.date.startsWith(yearStr));
+        }
+
+        if (exportRows.length === 0) {
+            showSnackbar('No data found for this period', 'warning');
+            return;
+        }
+
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF('p', 'pt', 'a4');
+        const pageWidth = doc.internal.pageSize.getWidth();
+        
+        doc.setFillColor(248, 250, 252);
+        doc.rect(0, 0, pageWidth, 5000, 'F');
+        doc.setFillColor(16, 185, 129);
+        doc.rect(0, 0, pageWidth, 120, 'F');
+
+        doc.setTextColor(255, 255, 255);
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(26);
+        doc.text("PocketCal Passbook", pageWidth / 2, 60, { align: "center" });
+        doc.setFontSize(14);
+        doc.text(`Period: ${periodLabel}`, pageWidth / 2, 85, { align: "center" });
+
+        const tableRows = exportRows.map(r => [
+            r.date, r.desc, r.dr, r.cr, r.bal.toFixed(2)
+        ]);
+
+        doc.autoTable({
+            startY: 140,
+            head: [['Date', 'Description', 'Debit (Dr)', 'Credit (Cr)', 'Balance (₹)']],
+            body: tableRows,
+            theme: 'striped',
+            headStyles: { fillColor: [16, 185, 129] },
+            styles: { font: 'helvetica', fontSize: 10 },
+            didParseCell: function(data) {
+                if (data.section === 'body') {
+                    if (data.column.index === 3 && data.cell.raw !== '-') data.cell.styles.textColor = [16, 185, 129];
+                    if (data.column.index === 4) data.cell.styles.fontStyle = 'bold';
+                }
+            }
+        });
+
+        doc.save(`PocketCal_${periodLabel.replace(' ','_')}.pdf`);
+        closeModal('#pdfModal');
+        showSnackbar('Calendar Report Downloaded! 🗓️');
+    };
+
+    // ----------------------------------------------------
+    // INIT
+    // ----------------------------------------------------
+    window.addEventListener('DOMContentLoaded', () => {
+        renderCalendar();
+        document.addEventListener('themeChanged', renderCharts);
+    });
 
 })();

@@ -76,6 +76,40 @@
         });
     }
 
+    // Haptic Power Toggle
+    const hapticToggle = document.getElementById('toggleHapticBtn');
+    if(hapticToggle) {
+        const updateHapticBtn = () => {
+            const val = localStorage.getItem('fin_haptic');
+            const isOn = (val === null || val === 'true');
+            hapticToggle.textContent = isOn ? 'Turn OFF' : 'Turn ON';
+            hapticToggle.className = isOn ? 
+                'px-6 py-2 rounded-xl text-sm font-bold bg-glass-bg border border-glass-border text-muted hover:text-white transition active:scale-95' :
+                'px-6 py-2 rounded-xl text-sm font-bold bg-emerald-500 text-white shadow-md active:scale-95 transition';
+        };
+        updateHapticBtn();
+        
+        hapticToggle.addEventListener('click', () => {
+            const val = localStorage.getItem('fin_haptic');
+            const isOn = (val === null || val === 'true');
+            localStorage.setItem('fin_haptic', isOn ? 'false' : 'true');
+            updateHapticBtn();
+            if(!isOn) window.showSnackbar('Haptic feedback enabled! 📳');
+            else window.showSnackbar('Haptic feedback disabled 🔇');
+        });
+    }
+
+    // Currency Formatter Select
+    const currencySelect = document.getElementById('currencySelect');
+    if(currencySelect) {
+        const savedCurr = localStorage.getItem('fin_currency') || '₹';
+        currencySelect.value = savedCurr;
+        currencySelect.addEventListener('change', (e) => {
+            localStorage.setItem('fin_currency', e.target.value);
+            window.showSnackbar(`Currency updated to ${e.target.value}`);
+        });
+    }
+
     // Personal Identity
     const nameInput = document.getElementById('usernameInput');
     if(nameInput) {

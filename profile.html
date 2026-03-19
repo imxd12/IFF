@@ -1,487 +1,410 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>Profile - MoneyFlow</title>
-  <link rel="stylesheet" href="global.css">
-  <link rel="stylesheet" href="index.css">
-  <link rel="stylesheet" href="profile.css">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-  
-  <!-- PWA Meta Tags -->
-  <meta name="theme-color" content="#10b981">
-  <link rel="apple-touch-icon" href="./icon-192.png">
-  <link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>MoneyFlow - Profile</title>
+
+    <link rel="stylesheet" href="global.css">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: ['class', '[data-theme="dark"]'] }
+    </script>
 </head>
+
 <body>
 
-  <!-- ========================================
-       HEADER - Navigation & Clock
-  ======================================== -->
-  <header class="header">
-    <div class="header-left">
-      <a href="index.html" class="back-btn" title="Back to Dashboard">
-        <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
-          <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
-        </svg>
-      </a>
-      
-<div class="header-title-group">
-  <h1 class="page-name">Profile</h1>
-  <p class="page-tagline">Imxdddddddddd</p>
-</div>
-    </div>
-    
-    <div class="header-right">
-      <div class="theme-toggle">
-        <div class="theme-toggle-slider">☀️</div>
-      </div>
-    </div>
-  </header>
+    <svg style="visibility: hidden; position: absolute;" width="0" height="0">
+        <defs>
+            <filter id="gooey-filter">
+                <feGaussianBlur in="SourceGraphic" stdDeviation="20" result="blur" />
+                <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 30 -10"
+                    result="goo" />
+                <feBlend in="SourceGraphic" in2="goo" />
+            </filter>
+        </defs>
+    </svg>
 
-  <!-- Main Container -->
-  <div class="container">
-    
-    <!-- Profile Details Section -->
-    <section class="profile-details-page">
-      <h2 class="page-title">👨‍💻 Professional Profile</h2>
-      
-      <!-- Profile Photo -->
-      <div class="profile-photo-large">
-        <img src="Imad.jpg" alt="Imad Khan" id="profileImageLarge">
-        <div class="photo-overlay">
-          <span class="verified-badge">✓</span>
-        </div>
-      </div>
-      
-      <!-- Header Info -->
-      <div class="profile-header-info">
-        <h3 class="profile-name">Imad Khan</h3>
-        <a href="https://www.instagram.com/_imxd12" target="_blank" rel="noopener noreferrer"><p class="profile-handle">@imxd12</p></a>
-        <p class="profile-title">Developer | MoneyFlow Creator</p>
-        
-        <!-- Location -->
-        <div class="profile-location" id="userLocation">
-          <svg width="16" height="16" fill="var(--accent)" viewBox="0 0 24 24">
-            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z"/>
-          </svg>
-          <span>Fetching location...</span>
-        </div>
-      </div>
-      
-      <!-- About Myself Section -->
-       <div class="profile-section">
-        <h4 class="section-heading">
-            <span class="section-icon">👨‍💻</span>
-            About Myself
-        </h4>
-        <div class="section-content">
-            <p class="profile-bio">
-                Hey there! I'm a passionate frontent developer and tech enthusiast who loves turning ideas into 
-      reality through code. As the creator of MoneyFlow, I believe in building tools that solve real 
-      problems—helping people take control of their finances with beautiful, intuitive interfaces. 
-      Currently pursuing Electrical & Computer Engineering while specializing in Automation & Robotics, 
-      I blend hardware knowledge with software expertise to create innovative solutions. When I'm not 
-      coding, you'll find me exploring new technologies, optimizing workflows, or working on the next 
-      big feature for MoneyFlow! 🚀
-    </p>
-  </div>
-</div>
-
-
-      <!-- Contact Information Section -->
-      <div class="profile-section">
-        <h4 class="section-heading">
-          <span class="section-icon">📧</span>
-          Contact Information
-        </h4>
-        <div class="section-content contact-grid">
-          <div class="contact-item">
-            <svg width="20" height="20" fill="var(--accent)" viewBox="0 0 24 24">
-              <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
-            </svg>
-            <div>
-              <strong>Email</strong>
-              <a href="mailto:imadak999@gmail.com">imadak999@gmail.com</a>
-            </div>
-          </div>
-          
-          <div class="contact-item">
-            <svg width="20" height="20" fill="var(--accent)" viewBox="0 0 24 24">
-              <path d="M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4a5.8 5.8 0 0 1-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8A5.8 5.8 0 0 1 7.8 2m-.2 2A3.6 3.6 0 0 0 4 7.6v8.8C4 18.39 5.61 20 7.6 20h8.8a3.6 3.6 0 0 0 3.6-3.6V7.6C20 5.61 18.39 4 16.4 4H7.6m9.65 1.5a1.25 1.25 0 0 1 1.25 1.25A1.25 1.25 0 0 1 17.25 8 1.25 1.25 0 0 1 16 6.75a1.25 1.25 0 0 1 1.25-1.25M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3z"/>
-            </svg>
-            <div>
-              <strong>Instagram</strong>
-              <a href="https://www.instagram.com/imxd12" target="_blank">@imxd12</a>
-            </div>
-          </div>
-          
-          <div class="contact-item">
-            <svg width="20" height="20" fill="var(--accent)" viewBox="0 0 24 24">
-              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-            </svg>
-            <div>
-              <strong>WhatsApp</strong>
-              <a href="https://wa.me/918097814934" target="_blank">Chat on WhatsApp</a>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Education Section -->
-      <div class="profile-section">
-        <h4 class="section-heading">
-          <span class="section-icon">🎓</span>
-          Education
-        </h4>
-        <div class="section-content">
-          <div class="edu-item">
-            <div class="edu-header">
-              <strong>B.E (Expected June 2028)</strong>
-              <a href="https://maps.app.goo.gl/xcGfMsNk44Qse9CLA" target="_blank" class="location-link" title="View on Google Maps">
-                <svg width="16" height="16" fill="#ef4444" viewBox="0 0 24 24">
-                  <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z"/>
-                </svg>
-              </a>
-            </div>
-            <p class="edu-course">Electrical & Computer Engineering</p>
-            <p class="edu-institution">Anjuman-I-Islam's Kalsekar Technical Campus, Panvel - Navi Mumbai</p>
-          </div>
-          
-          <div class="edu-item">
-            <div class="edu-header">
-              <strong>Diploma (June 2024)</strong>
-              <a href="https://maps.app.goo.gl/bUB4eSrFojxXSUjy9" target="_blank" class="location-link" title="View on Google Maps">
-                <svg width="16" height="16" fill="#ef4444" viewBox="0 0 24 24">
-                  <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z"/>
-                </svg>
-              </a>
-            </div>
-            <p class="edu-course">Automation & Robotics</p>
-            <p class="edu-institution">Anjuman-I-Islam's Abdul Razzaq Kalsekar Polytechnic,<br> Panvel - Navi Mumbai</p>
-          </div>
-          
-          <div class="edu-item">
-            <div class="edu-header">
-              <strong>S.S.C (March 2021)</strong>
-              <a href="https://maps.app.goo.gl/mbEHeidS6EWQ3zmr5" target="_blank" class="location-link" title="View on Google Maps">
-                <svg width="16" height="16" fill="#ef4444" viewBox="0 0 24 24">
-                  <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z"/>
-                </svg>
-              </a>
-            </div>
-            <p class="edu-institution">St. Francis Xavier's English Medium High School, Ajgoan</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Work Experience Section -->
-      <div class="profile-section">
-        <h4 class="section-heading">
-          <span class="section-icon">💼</span>
-          Work Experience
-        </h4>
-        <div class="section-content">
-          <div class="work-item">
-            <div class="work-header">
-              <strong>IRABOT TechEd LLP</strong>
-              <a href="https://maps.app.goo.gl/cVu78nW3DoMW48V88" target="_blank" class="location-link" title="View on Google Maps">
-                <svg width="16" height="16" fill="#ef4444" viewBox="0 0 24 24">
-                  <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z"/>
-                </svg>
-              </a>
-            </div>
-            <p class="work-period">June 2023 - July 2023</p>
-            <p class="work-description">Completed a six-week industrial internship in Automation and Robotics. Gained hands-on experience in industrial automation systems, robotics programming, and real-world applications of automation technology.</p>
-          </div>
-        </div>
-      </div>
-
-<!-- Professional Certifications Section -->
-<div class="profile-section">
-  <h4 class="section-heading">
-    <span class="section-icon">📜</span>
-    Professional Certifications
-  </h4>
-  <div class="section-content">
-    <p class="cert-period"><strong>Aug 2023 - May 2024</strong></p>
-    <ul class="cert-list">
-      
-      <li>
-        <span class="cert-icon">📄</span>
-        <strong>Research Publication:</strong> "Automated Attendance Marking System Using Raspberry Pi" 
-        published in International Journal of Research and Analytical Reviews (IJRAR)
-      </li>
-
-      <li>
-        <span class="cert-icon">🏆</span>
-        <strong>NEUROFEST 2024:</strong> Participation Certificate - State Level Project Competition 
-        (Anjuman-I-Islam Abdul Razzaq Kalsekar Polytechnic, Panvel)
-      </li>
-
-      <li>
-        <span class="cert-icon">🏆</span>
-        <strong>TECHNOVATION 2024:</strong> Participation Certificate - State Level Project Competition 
-        (Vivekanand Education Society's Polytechnic, Chembur)
-      </li>
-
-      <!-- NEW EV CERTIFICATE -->
-      <li>
-        <span class="cert-icon">⚡</span>
-        <strong>EV Maintenance Technician Training:</strong> Completed industry-certified training at Mahindra & Mahindra (Centum Foundation), gaining hands-on knowledge of electric vehicle systems, diagnostics, and safety (Sep 202 – Nov 2025)
-      </li>
-
-    </ul>
-  </div>
-</div>
-
-      <!-- Skills Section -->
-<div class="profile-section">
-  <h4 class="section-heading">
-    <span class="section-icon">💻</span>
-    Skills & Technologies
-  </h4>
-  <div class="section-content">
-    <div class="skills-grid">
-      <!-- Web Development -->
-      <div class="skill-category">
-        <h5 class="category-title">
-          <span class="category-icon">🌐</span>
-          Web Development
-        </h5>
-        <div class="skill-tags">
-          <span class="skill-tag skill-html">
-            <span class="tag-icon">📄</span>
-            HTML5
-          </span>
-          <span class="skill-tag skill-css">
-            <span class="tag-icon">🎨</span>
-            CSS3
-          </span>
-          <span class="skill-tag skill-js">
-            <span class="tag-icon">⚡</span>
-            JavaScript
-          </span>
-          <span class="skill-tag skill-responsive">
-            <span class="tag-icon">📱</span>
-            Responsive Design
-          </span>
-          <span class="skill-tag skill-pwa">
-            <span class="tag-icon">📲</span>
-            PWA
-          </span>
-        </div>
-      </div>
-
-      <!-- Programming Languages -->
-      <div class="skill-category">
-        <h5 class="category-title">
-          <span class="category-icon">👨‍💻</span>
-          Programming
-        </h5>
-        <div class="skill-tags">
-          <span class="skill-tag skill-python">
-            <span class="tag-icon">🐍</span>
-            Python
-          </span>
-          <span class="skill-tag skill-js">
-            <span class="tag-icon">📜</span>
-            JavaScript ES6+
-          </span>
-          <span class="skill-tag skill-c">
-            <span class="tag-icon">⚙️</span>
-            C/C++
-          </span>
-        </div>
-      </div>
-
-      <!-- Hardware & IoT -->
-      <div class="skill-category">
-        <h5 class="category-title">
-          <span class="category-icon">🔌</span>
-          Hardware & IoT
-        </h5>
-        <div class="skill-tags">
-          <span class="skill-tag skill-arduino">
-            <span class="tag-icon">🤖</span>
-            Arduino
-          </span>
-          <span class="skill-tag skill-raspberry">
-            <span class="tag-icon">🍓</span>
-            Raspberry Pi
-          </span>
-          <span class="skill-tag skill-iot">
-            <span class="tag-icon">📡</span>
-            IoT
-          </span>
-          <span class="skill-tag skill-sensors">
-            <span class="tag-icon">🔧</span>
-            Sensors & Actuators
-          </span>
-        </div>
-      </div>
-
-      <!-- Tools & Frameworks -->
-      <div class="skill-category">
-        <h5 class="category-title">
-          <span class="category-icon">🛠️</span>
-          Tools & Libraries
-        </h5>
-        <div class="skill-tags">
-          <span class="skill-tag skill-git">
-            <span class="tag-icon">🔀</span>
-            Git
-          </span>
-          <span class="skill-tag skill-chartjs">
-            <span class="tag-icon">📊</span>
-            Chart.js
-          </span>
-          <span class="skill-tag skill-api">
-            <span class="tag-icon">🔗</span>
-            REST API
-          </span>
-          <span class="skill-tag skill-json">
-            <span class="tag-icon">📦</span>
-            JSON
-          </span>
-        </div>
-      </div>
-
-      <!-- Design & UI/UX -->
-      <div class="skill-category">
-        <h5 class="category-title">
-          <span class="category-icon">🎨</span>
-          Design & UI/UX
-        </h5>
-        <div class="skill-tags">
-          <span class="skill-tag skill-figma">
-            <span class="tag-icon">🎯</span>
-            UI/UX Design
-          </span>
-          <span class="skill-tag skill-animation">
-            <span class="tag-icon">✨</span>
-            CSS Animations
-          </span>
-          <span class="skill-tag skill-mobile">
-            <span class="tag-icon">📱</span>
-            Mobile-First
-          </span>
-        </div>
-      </div>
-
-      <!-- Automation & Robotics -->
-      <div class="skill-category">
-        <h5 class="category-title">
-          <span class="category-icon">🤖</span>
-          Automation & Robotics
-        </h5>
-        <div class="skill-tags">
-          <span class="skill-tag skill-automation">
-            <span class="tag-icon">⚙️</span>
-            Automation
-          </span>
-          <span class="skill-tag skill-robotics">
-            <span class="tag-icon">🦾</span>
-            Robotics
-          </span>
-          <span class="skill-tag skill-embedded">
-            <span class="tag-icon">💾</span>
-            Embedded Systems
-          </span>
-        </div>
-      </div>
+    <div class="liquid-bg-container">
+        <div class="liquid-blob"></div>
+        <div class="liquid-blob"></div>
     </div>
 
-    <!-- Skill Level Indicator (Optional) -->
-    <div class="skill-levels">
-      <div class="level-item">
-        <span class="level-dot expert"></span>
-        <span class="level-label">Expert</span>
-      </div>
-      <div class="level-item">
-        <span class="level-dot intermediate"></span>
-        <span class="level-label">Intermediate</span>
-      </div>
-      <div class="level-item">
-        <span class="level-dot learning"></span>
-        <span class="level-label">Learning</span>
-      </div>
-    </div>
-  </div>
-</div>
-
-      <!-- Resume Section -->
-      <div class="profile-section">
-        <h4 class="section-heading">
-          <span class="section-icon">📄</span>
-          Resume
-        </h4>
-        <div class="section-content">
-          <a href="resume.pdf" target="_blank" class="btn btn-primary btn-resume">
-            <svg width="20" height="20" fill="white" viewBox="0 0 24 24">
-              <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
-            </svg>
-            View / Download Resume
-          </a>
+    <header class="global-header glass-panel">
+        <div class="brand flex items-center gap-3">
+            <a href="index.html"
+                class="glass-button w-10 h-10 rounded-full flex items-center justify-center hover:-translate-x-1">
+                <i data-lucide="arrow-left" class="w-5 h-5"></i>
+            </a>
+            <span class="brand-text">Profile</span>
         </div>
-      </div>
-
-      <!-- App Footer Note -->
-      <div class="profile-footer">
-        <div class="app-badge">
-          <svg width="24" height="24" viewBox="0 0 100 100">
-            <defs>
-              <linearGradient id="badgeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" style="stop-color:#10b981"/>
-                <stop offset="100%" style="stop-color:#3b82f6"/>
-              </linearGradient>
-            </defs>
-            <circle cx="50" cy="50" r="45" fill="url(#brandGrad)"/>
-            <text x="50" y="65" font-size="40" font-weight="800" fill="white" text-anchor="middle">₹</text>
-          </svg>
-          <div>
-            <strong>MoneyFlow 2026</strong>
-            <p>All-in-One Finance & Productivity Web App</p>
-          </div>
+        <div class="header-controls">
+            <button class="theme-toggle-btn glass-button" id="themeToggleBtn"><i data-lucide="sun"></i></button>
         </div>
-      </div>
+    </header>
 
-    </section>
-  </div>
+    <main class="main-content flex flex-col items-center">
 
-  <!-- Footer -->
-  <footer class="footer">
-    <div class="footer-content">
-      <div class="footer-section">
-        <h3>About MoneyFlow</h3>
-        <p>A comprehensive personal finance tracking application designed for complete money management.</p>
-      </div>
-      
-      <div class="footer-section">
-        <h3>Quick Links</h3>
-        <ul>
-          <li><a href="howtouse.html">How to Use</a></li>
-          <li><a href="profile.html">About Developer</a></li>
-          <li><a href="terms-conditions.html">Terms & Conditions</a></li>
-          <li><a href="privacy-policy.html">Privacy Policy</a></li>
-        </ul>
-      </div>
-      
-      <div class="footer-section">
-        <h3>Developer</h3>
-        <p><strong>Imad Khan</strong></p>
-        <a href="https://www.instagram.com/_imxd12" target="_blank" rel="noopener noreferrer"><p class="profile-handle">@imxd12</p></a>
-        <p><a href="mailto:imadak999@gmail.com">imadak999@gmail.com</a></p>
-      </div>
-    </div>
-    
-    <div class="footer-bottom">
-      <p>&copy; 2026 MoneyFlow by Imad Khan. All rights reserved.</p>
-    </div>
-  </footer>
+        <!-- Preamble / Hero -->
+        <div class="glass-panel w-full max-w-4xl p-8 mb-12 ag-card-reveal text-center relative overflow-hidden"
+            data-speed="0.1">
+            <div class="absolute top-0 right-0 w-64 h-64 bg-emerald-500/20 rounded-full blur-3xl -z-10"></div>
 
-  <script src="global.js"></script>
-  <script src="index.js"></script>
+            <div class="relative w-32 h-32 mx-auto mb-6">
+                <div class="absolute inset-0 bg-emerald-500 rounded-full animate-pulse blur-xl opacity-50"></div>
+                <img src="Imad.jpg" alt="Imad"
+                    class="relative w-full h-full object-cover rounded-full border-4 border-emerald-500 shadow-2xl"
+                    onerror="this.src='https://ui-avatars.com/api/?name=Imad&background=10b981&color=fff'">
+            </div>
+
+            <h1 class="text-4xl font-extrabold mb-2 text-gradient flex justify-center items-center gap-2">
+                Imad Khan <i data-lucide="badge-check" class="text-blue-500 w-8 h-8"></i>
+            </h1>
+            <a href="https://www.instagram.com/_imxd12" target="_blank"
+                class="text-emerald-500 font-bold hover:underline">@imxd12</a>
+            <p class="text-lg text-emerald-600 font-bold mb-4 mt-2">Developer | MoneyFlow Creator</p>
+
+            <div
+                class="flex justify-center items-center gap-2 text-muted mb-8 text-sm bg-glass-bg border border-glass-border px-4 py-2 rounded-full inline-flex">
+                <i data-lucide="map-pin" class="w-4 h-4 text-red-500"></i> Navi Mumbai, India
+            </div>
+
+            <p class="text-muted mb-8 max-w-2xl mx-auto leading-relaxed text-left">
+                Hey there! I'm a passionate frontend developer and tech enthusiast who loves turning ideas into reality
+                through code. As the creator of MoneyFlow, I believe in building tools that solve real problems—helping
+                people take control of their finances with beautiful, intuitive interfaces. Currently pursuing
+                Electrical & Computer Engineering while specializing in Automation & Robotics, I blend hardware
+                knowledge with software expertise to create innovative solutions. When I'm not coding, you'll find me
+                exploring new technologies, optimizing workflows, or working on the next big feature for MoneyFlow! 🚀
+            </p>
+
+            <div class="flex justify-center gap-4 flex-wrap">
+                <a href="mailto:imadak999@gmail.com"
+                    class="glass-button px-6 py-3 rounded-xl font-bold flex items-center gap-2">
+                    <i data-lucide="mail"></i> Email Me
+                </a>
+                <a href="https://wa.me/918097814934" target="_blank"
+                    class="px-6 py-3 rounded-xl font-bold flex items-center gap-2 bg-[#25D366] text-white shadow-lg active:scale-95 transition-transform hover:bg-[#1ebd5c]">
+                    <i data-lucide="message-circle"></i> WhatsApp
+                </a>
+                <a href="resume.pdf" target="_blank"
+                    class="glass-button px-6 py-3 rounded-xl font-bold flex items-center gap-2">
+                    <i data-lucide="file-text"></i> Resume
+                </a>
+            </div>
+        </div>
+
+        <!-- Grid Layout for Resume details -->
+        <div class="w-full max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-8 mb-20">
+
+            <!-- Education Section -->
+            <div class="profile-section glass-panel p-8 ag-card-reveal" data-speed="0.2">
+                <h4 class="section-heading text-2xl font-bold mb-6 flex items-center gap-3">
+                    <span class="section-icon text-emerald-500">🎓</span>
+                    Education
+                </h4>
+                <div class="section-content space-y-6">
+                    <div class="edu-item pl-4 border-l-2 border-emerald-500/30">
+                        <div class="edu-header flex justify-between items-center mb-1">
+                            <strong class="font-bold text-lg">B.E (Expected June 2028)</strong>
+                            <a href="https://maps.app.goo.gl/xcGfMsNk44Qse9CLA" target="_blank"
+                                class="location-link bg-glass-hover p-2 rounded-full hover:scale-110 transition-transform"
+                                title="View on Google Maps">
+                                <svg width="16" height="16" fill="#10b981" viewBox="0 0 24 24">
+                                    <path
+                                        d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z" />
+                                </svg>
+                            </a>
+                        </div>
+                        <p class="edu-course text-emerald-500 font-semibold mb-1">Electrical & Computer Engineering</p>
+                        <p class="edu-institution text-sm text-muted">Anjuman-I-Islam's Kalsekar Technical Campus,
+                            Panvel - Navi Mumbai</p>
+                    </div>
+
+                    <div class="edu-item pl-4 border-l-2 border-emerald-500/30">
+                        <div class="edu-header flex justify-between items-center mb-1">
+                            <strong class="font-bold text-lg">Diploma (June 2024)</strong>
+                            <a href="https://maps.app.goo.gl/bUB4eSrFojxXSUjy9" target="_blank"
+                                class="location-link bg-glass-hover p-2 rounded-full hover:scale-110 transition-transform"
+                                title="View on Google Maps">
+                                <svg width="16" height="16" fill="#10b981" viewBox="0 0 24 24">
+                                    <path
+                                        d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z" />
+                                </svg>
+                            </a>
+                        </div>
+                        <p class="edu-course text-emerald-500 font-semibold mb-1">Automation & Robotics</p>
+                        <p class="edu-institution text-sm text-muted">Anjuman-I-Islam's Abdul Razzaq Kalsekar
+                            Polytechnic,<br> Panvel - Navi Mumbai</p>
+                    </div>
+
+                    <div class="edu-item pl-4 border-l-2 border-emerald-500/30">
+                        <div class="edu-header flex justify-between items-center mb-1">
+                            <strong class="font-bold text-lg">S.S.C (March 2021)</strong>
+                            <a href="https://maps.app.goo.gl/mbEHeidS6EWQ3zmr5" target="_blank"
+                                class="location-link bg-glass-hover p-2 rounded-full hover:scale-110 transition-transform"
+                                title="View on Google Maps">
+                                <svg width="16" height="16" fill="#10b981" viewBox="0 0 24 24">
+                                    <path
+                                        d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z" />
+                                </svg>
+                            </a>
+                        </div>
+                        <p class="edu-institution text-sm text-muted">St. Francis Xavier's English Medium High School,
+                            Ajgoan</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Work Experience & Certs Column -->
+            <div class="space-y-8 flex flex-col">
+                <!-- Work Experience Section -->
+                <div class="profile-section glass-panel p-8 ag-card-reveal flex-1" data-speed="0.25">
+                    <h4 class="section-heading text-2xl font-bold mb-6 flex items-center gap-3">
+                        <span class="section-icon text-blue-500">💼</span>
+                        Work Experience
+                    </h4>
+                    <div class="section-content">
+                        <div class="work-item pl-4 border-l-2 border-blue-500/30">
+                            <div class="work-header flex justify-between items-center mb-1">
+                                <strong class="font-bold text-lg">IRABOT TechEd LLP</strong>
+                                <a href="https://maps.app.goo.gl/cVu78nW3DoMW48V88" target="_blank"
+                                    class="location-link bg-glass-hover p-2 rounded-full hover:scale-110 transition-transform"
+                                    title="View on Google Maps">
+                                    <svg width="16" height="16" fill="#3b82f6" viewBox="0 0 24 24">
+                                        <path
+                                            d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z" />
+                                    </svg>
+                                </a>
+                            </div>
+                            <p class="work-period text-xs font-bold text-blue-500 mb-2">June 2023 - July 2023</p>
+                            <p class="work-description text-sm text-muted">Completed a six-week industrial internship in
+                                Automation and Robotics. Gained hands-on experience in industrial automation systems,
+                                robotics programming, and real-world applications of automation technology.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Professional Certifications Section -->
+                <div class="profile-section glass-panel p-8 ag-card-reveal flex-1" data-speed="0.3">
+                    <h4 class="section-heading text-2xl font-bold mb-6 flex items-center gap-3">
+                        <span class="section-icon text-amber-500">📜</span>
+                        Professional Certifications
+                    </h4>
+                    <div class="section-content space-y-6 text-sm text-muted">
+                        <div class="cert-item pl-4 border-l-2 border-amber-500/30">
+                            <div class="cert-header mb-1">
+                                <strong class="font-bold text-lg text-foreground">📄 Research Publication</strong>
+                            </div>
+                            <p class="cert-description">"Automated Attendance Marking System Using Raspberry Pi"
+                                published in International Journal of Research and Analytical Reviews (IJRAR)</p>
+                        </div>
+                        <div class="cert-item pl-4 border-l-2 border-amber-500/30">
+                            <div class="cert-header mb-1">
+                                <strong class="font-bold text-lg text-foreground">🏆 NEUROFEST 2024</strong>
+                            </div>
+                            <p class="cert-description">Participation Certificate - State Level Project Competition
+                                (Anjuman-I-Islam Abdul Razzaq Kalsekar Polytechnic, Panvel)</p>
+                        </div>
+                        <div class="cert-item pl-4 border-l-2 border-amber-500/30">
+                            <div class="cert-header mb-1">
+                                <strong class="font-bold text-lg text-foreground">🏆 TECHNOVATION 2024</strong>
+                            </div>
+                            <p class="cert-description">Participation Certificate - State Level Project Competition
+                                (Vivekanand Education Society's Polytechnic, Chembur)</p>
+                        </div>
+                        <div class="cert-item pl-4 border-l-2 border-amber-500/30">
+                            <div class="cert-header mb-1">
+                                <strong class="font-bold text-lg text-foreground">⚡ EV Maintenance Technician
+                                    Training</strong>
+                            </div>
+                            <p class="cert-description">Completed industry-certified training at Mahindra & Mahindra
+                                (Centum Foundation), gaining hands-on knowledge of electric vehicle systems,
+                                diagnostics, and safety (Sep 2024 – Nov 2025)</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Skills Section -->
+            <div class="profile-section w-full mb-12 ag-card-reveal" data-speed="0.15" id="skillGridTrigger">
+                <h4 class="section-heading text-3xl font-bold mb-10 flex justify-center items-center gap-3 w-full text-center">
+                    <span class="section-icon text-purple-500">💻</span>
+                    Core Stack & Technologies
+                </h4>
+                <div class="section-content grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Web Development -->
+                    <div class="skill-category glass-panel p-6 rounded-2xl relative overflow-hidden group">
+                        <div class="absolute -right-6 -top-6 w-24 h-24 bg-purple-500/10 rounded-full blur-2xl group-hover:bg-purple-500/20 transition-colors"></div>
+                        <h5 class="category-title font-extrabold flex items-center gap-2 mb-6 text-lg border-b border-glass-border pb-3">
+                            <span class="category-icon text-purple-500 drop-shadow-[0_0_8px_rgba(168,85,247,0.5)]">🌐</span> Web Development
+                        </h5>
+                        <div class="grid grid-cols-3 gap-3 text-xs font-bold text-center">
+                            <div class="skill-box bg-glass-hover p-4 rounded-xl flex flex-col items-center gap-2 border border-glass-border/50 hover:border-emerald-500/50 transition-colors">
+                                <i data-lucide="layout-template" class="w-8 h-8 text-orange-500 skill-icon"></i>
+                                <span class="text-muted">HTML5</span>
+                            </div>
+                            <div class="skill-box bg-glass-hover p-4 rounded-xl flex flex-col items-center gap-2 border border-glass-border/50 hover:border-emerald-500/50 transition-colors">
+                                <i data-lucide="palette" class="w-8 h-8 text-blue-500 skill-icon"></i>
+                                <span class="text-muted">CSS3</span>
+                            </div>
+                            <div class="skill-box bg-glass-hover p-4 rounded-xl flex flex-col items-center gap-2 border border-glass-border/50 hover:border-emerald-500/50 transition-colors">
+                                <i data-lucide="file-code-2" class="w-8 h-8 text-yellow-400 skill-icon drop-shadow-[0_0_8px_rgba(250,204,21,0.5)]"></i>
+                                <span class="text-emerald-500">JS Engine</span>
+                            </div>
+                            <div class="skill-box bg-glass-hover p-4 rounded-xl flex flex-col items-center gap-2 border border-glass-border/50 hover:border-emerald-500/50 transition-colors col-span-3">
+                                <i data-lucide="smartphone" class="w-8 h-8 text-emerald-500 skill-icon"></i>
+                                <span class="text-emerald-500 font-extrabold tracking-widest">PWA INTERFACES</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Programming Languages -->
+                    <div class="skill-category glass-panel p-6 rounded-2xl relative overflow-hidden group">
+                        <div class="absolute -right-6 -top-6 w-24 h-24 bg-emerald-500/10 rounded-full blur-2xl group-hover:bg-emerald-500/20 transition-colors"></div>
+                        <h5 class="category-title font-extrabold flex items-center gap-2 mb-6 text-lg border-b border-glass-border pb-3">
+                            <span class="category-icon text-emerald-500 drop-shadow-[0_0_8px_rgba(16,185,129,0.5)]">👨‍💻</span> Programming
+                        </h5>
+                        <div class="grid grid-cols-3 gap-3 text-xs font-bold text-center">
+                            <div class="skill-box bg-glass-hover p-4 rounded-xl flex flex-col items-center gap-2 border border-glass-border/50 hover:border-emerald-500/50 transition-colors">
+                                <i data-lucide="terminal-square" class="w-8 h-8 text-blue-400 skill-icon"></i>
+                                <span class="text-muted">Python</span>
+                            </div>
+                            <div class="skill-box bg-glass-hover p-4 rounded-xl flex flex-col items-center gap-2 border border-glass-border/50 hover:border-emerald-500/50 transition-colors">
+                                <i data-lucide="code-2" class="w-8 h-8 text-emerald-500 skill-icon drop-shadow-[0_0_8px_rgba(16,185,129,0.5)]"></i>
+                                <span class="text-emerald-500">ES6+</span>
+                            </div>
+                            <div class="skill-box bg-glass-hover p-4 rounded-xl flex flex-col items-center gap-2 border border-glass-border/50 hover:border-emerald-500/50 transition-colors">
+                                <i data-lucide="cpu" class="w-8 h-8 text-muted skill-icon"></i>
+                                <span class="text-muted">C/C++</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Hardware & IoT -->
+                    <div class="skill-category glass-panel p-6 rounded-2xl relative overflow-hidden group">
+                        <div class="absolute -right-6 -top-6 w-24 h-24 bg-amber-500/10 rounded-full blur-2xl group-hover:bg-amber-500/20 transition-colors"></div>
+                        <h5 class="category-title font-extrabold flex items-center gap-2 mb-6 text-lg border-b border-glass-border pb-3">
+                            <span class="category-icon text-amber-500 drop-shadow-[0_0_8px_rgba(245,158,11,0.5)]">🔌</span> Hardware & IoT
+                        </h5>
+                        <div class="grid grid-cols-3 gap-3 text-xs font-bold text-center">
+                            <div class="skill-box bg-glass-hover p-4 rounded-xl flex flex-col items-center gap-2 border border-glass-border/50 hover:border-emerald-500/50 transition-colors">
+                                <i data-lucide="microchip" class="w-8 h-8 text-cyan-500 skill-icon"></i>
+                                <span class="text-muted">Arduino</span>
+                            </div>
+                            <div class="skill-box bg-glass-hover p-4 rounded-xl flex flex-col items-center gap-2 border border-glass-border/50 hover:border-emerald-500/50 transition-colors">
+                                <i data-lucide="hard-drive" class="w-8 h-8 text-red-500 skill-icon drop-shadow-[0_0_8px_rgba(239,68,68,0.5)]"></i>
+                                <span class="text-red-500">Raspberry Pi</span>
+                            </div>
+                            <div class="skill-box bg-glass-hover p-4 rounded-xl flex flex-col items-center gap-2 border border-glass-border/50 hover:border-emerald-500/50 transition-colors">
+                                <i data-lucide="wifi" class="w-8 h-8 text-amber-500 skill-icon"></i>
+                                <span class="text-muted">IoT</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tools & Frameworks -->
+                    <div class="skill-category glass-panel p-6 rounded-2xl relative overflow-hidden group">
+                        <div class="absolute -right-6 -top-6 w-24 h-24 bg-orange-500/10 rounded-full blur-2xl group-hover:bg-orange-500/20 transition-colors"></div>
+                        <h5 class="category-title font-extrabold flex items-center gap-2 mb-6 text-lg border-b border-glass-border pb-3">
+                            <span class="category-icon text-orange-500 drop-shadow-[0_0_8px_rgba(249,115,22,0.5)]">🛠️</span> Tools & Logic
+                        </h5>
+                        <div class="grid grid-cols-2 gap-3 text-xs font-bold text-center">
+                            <div class="skill-box bg-glass-hover p-4 rounded-xl flex flex-col items-center gap-2 border border-glass-border/50 hover:border-emerald-500/50 transition-colors">
+                                <i data-lucide="git-branch" class="w-8 h-8 text-orange-500 skill-icon drop-shadow-[0_0_8px_rgba(249,115,22,0.5)]"></i>
+                                <span class="text-orange-500">Git Versioning</span>
+                            </div>
+                            <div class="skill-box bg-glass-hover p-4 rounded-xl flex flex-col items-center gap-2 border border-glass-border/50 hover:border-emerald-500/50 transition-colors">
+                                <i data-lucide="pie-chart" class="w-8 h-8 text-emerald-500 skill-icon"></i>
+                                <span class="text-muted">Chart.js Nodes</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Robotics -->
+                    <div class="skill-category glass-panel p-6 rounded-2xl relative overflow-hidden group md:col-span-2 lg:col-span-2">
+                        <div class="absolute -right-6 -top-6 w-32 h-32 bg-blue-500/10 rounded-full blur-2xl group-hover:bg-blue-500/20 transition-colors"></div>
+                        <h5 class="category-title font-extrabold flex items-center gap-2 mb-6 text-lg border-b border-glass-border pb-3">
+                            <span class="category-icon text-blue-500 drop-shadow-[0_0_8px_rgba(59,130,246,0.5)]">🤖</span> Robotics Engineering
+                        </h5>
+                        <div class="grid grid-cols-3 gap-3 text-xs font-bold text-center">
+                            <div class="skill-box bg-glass-hover p-6 rounded-xl flex flex-col items-center justify-center gap-3 border border-glass-border/50 hover:border-emerald-500/50 transition-colors">
+                                <i data-lucide="settings" class="w-10 h-10 text-blue-500 skill-icon drop-shadow-[0_0_8px_rgba(59,130,246,0.5)]"></i>
+                                <span class="text-blue-500 font-extrabold tracking-wide uppercase">Automation Engines</span>
+                            </div>
+                            <div class="skill-box bg-glass-hover p-6 rounded-xl flex flex-col items-center justify-center gap-3 border border-glass-border/50 hover:border-emerald-500/50 transition-colors">
+                                <i data-lucide="bot" class="w-10 h-10 text-emerald-500 skill-icon drop-shadow-[0_0_8px_rgba(16,185,129,0.5)]"></i>
+                                <span class="text-emerald-500 font-extrabold tracking-wide uppercase">Robotic Kinematics</span>
+                            </div>
+                            <div class="skill-box bg-glass-hover p-6 rounded-xl flex flex-col items-center justify-center gap-3 border border-glass-border/50 hover:border-emerald-500/50 transition-colors">
+                                <i data-lucide="memory-stick" class="w-10 h-10 text-amber-500 skill-icon drop-shadow-[0_0_8px_rgba(245,158,11,0.5)]"></i>
+                                <span class="text-amber-500 font-extrabold tracking-wide uppercase">Embedded Systems</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <nav class="bottom-dock glass-dock">
+        <div class="dock-liquid-indicator"></div>
+        <a href="index.html" class="dock-item">
+            <i data-lucide="home"></i>
+            <span>Home</span>
+        </a>
+        <a href="spendly.html" class="dock-item">
+            <i data-lucide="pie-chart"></i>
+            <span>Spendly</span>
+        </a>
+        <a href="pocketcal.html" class="dock-item">
+            <i data-lucide="calendar"></i>
+            <span>Calendar</span>
+        </a>
+        <a href="settings.html" class="dock-item">
+            <i data-lucide="settings"></i>
+            <span>Settings</span>
+        </a>
+    </nav>
+
+    <!-- CDNs -->
+    <script src="https://unpkg.com/@studio-freight/lenis@1.0.39/dist/lenis.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script src="global.js"></script>
+
+    <script>
+        // Physics-driven Falling Skill Icons Geometry
+        document.addEventListener('DOMContentLoaded', () => {
+            gsap.registerPlugin(ScrollTrigger);
+            
+            // Loop through each box grid and apply heavy bounce staggered drop logic
+            const categoryBoxes = document.querySelectorAll('.skill-category');
+            categoryBoxes.forEach(category => {
+                const icons = category.querySelectorAll('.skill-icon');
+                gsap.from(icons, {
+                    scrollTrigger: {
+                        trigger: category,
+                        start: "top 80%",
+                        toggleActions: "play none none reverse"
+                    },
+                    y: -60,
+                    opacity: 0,
+                    scale: 0.5,
+                    duration: 0.8,
+                    stagger: 0.1,
+                    ease: "bounce.out"
+                });
+            });
+        });
+    </script>
 </body>
+
 </html>

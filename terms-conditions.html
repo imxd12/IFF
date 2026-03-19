@@ -1,27 +1,30 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>MoneyFlow - Terms & Conditions</title>
-    
+
     <link rel="stylesheet" href="global.css">
-    
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-      tailwind.config = { darkMode: ['class', '[data-theme="dark"]'] }
+        tailwind.config = { darkMode: ['class', '[data-theme="dark"]'] }
     </script>
 </head>
+
 <body>
 
     <svg style="visibility: hidden; position: absolute;" width="0" height="0">
-      <defs>
-          <filter id="gooey-filter">
-              <feGaussianBlur in="SourceGraphic" stdDeviation="20" result="blur" />
-              <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 30 -10" result="goo" />
-              <feBlend in="SourceGraphic" in2="goo" />
-          </filter>
-      </defs>
+        <defs>
+            <filter id="gooey-filter">
+                <feGaussianBlur in="SourceGraphic" stdDeviation="20" result="blur" />
+                <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 30 -10"
+                    result="goo" />
+                <feBlend in="SourceGraphic" in2="goo" />
+            </filter>
+        </defs>
     </svg>
 
     <div class="liquid-bg-container">
@@ -31,9 +34,14 @@
 
     <header class="global-header glass-panel">
         <div class="brand flex items-center gap-3">
-            <a href="profile.html" class="glass-button w-10 h-10 rounded-full flex items-center justify-center hover:-translate-x-1">
+            <a href="javascript:history.back()"
+                class="glass-button w-10 h-10 rounded-full flex items-center justify-center hover:-translate-x-1">
                 <i data-lucide="arrow-left" class="w-5 h-5"></i>
             </a>
+            <div class="brand-logo-wave hidden sm:block">
+                <div class="wave wave1"></div>
+                <div class="wave wave2"></div>
+            </div>
             <span class="brand-text">Terms & Conditions</span>
         </div>
         <div class="header-controls">
@@ -43,7 +51,7 @@
     </header>
 
     <main class="main-content flex flex-col items-center">
-        
+
         <div class="glass-panel w-full max-w-4xl p-8 md:p-12 mb-20 mt-4 ag-card-reveal" data-speed="0.1">
             <div class="text-center mb-12 border-b border-glass-border pb-8">
                 <h1 class="text-4xl font-extrabold mb-4 text-gradient">Terms of Service</h1>
@@ -52,23 +60,82 @@
 
             <div class="prose prose-emerald prose-invert mx-auto max-w-2xl text-muted space-y-8">
                 <div>
-                    <h2 class="text-2xl font-bold text-main mb-4">1. Acceptance of Terms</h2>
-                    <p class="leading-relaxed">By installing and utilizing MoneyFlow ("the App"), you agree to these Terms. Expect fluid animations, glassmorphism, and Antigravity parallax. By using the app, you commit to not suing us if the Liquid-Glass aesthetics are too beautiful to handle.</p>
+                    <h2 class="text-2xl font-bold text-main mb-4">1. Acceptance of the Antigravity Terms</h2>
+                    <p class="leading-relaxed">By installing, accessing, or actively utilizing MoneyFlow ("the
+                        Software"), you categorically and definitively accept these Terms of Service. If you strictly
+                        disagree with any segment contained within, your sole active remedy is to explicitly clear the
+                        application's site data from your browser configurations and formally cease utilization
+                        immediately.</p>
                 </div>
 
                 <div>
-                    <h2 class="text-2xl font-bold text-main mb-4">2. Application Warranty</h2>
-                    <p class="leading-relaxed">MoneyFlow is provided "as is". The core engine relies on the native capabilities of modern browsers (Lenis, Web Speech API, LocalStorage). We do not guarantee compatibility with obscure or ancient web engines.</p>
+                    <h2 class="text-2xl font-bold text-main mb-4">2. Software Purpose & Limited Authorized License</h2>
+                    <p class="leading-relaxed">MoneyFlow is provided primarily as a personal financial tracker and
+                        interactive lifestyle utility dashboard. We enthusiastically grant you a revocable,
+                        non-exclusive, non-transferable right to operate the PWA locally on your personal computing
+                        architectures and smartphone devices. The distinctive aesthetic signatures—including the
+                        Liquid-Glass dynamics, Inky Theme clip-transitions, and overarching Antigravity motion
+                        physics—are engineered and deployed exclusively for a seamless, immersive aesthetic experience.
+                    </p>
                 </div>
 
                 <div>
-                    <h2 class="text-2xl font-bold text-main mb-4">3. Data Responsibility</h2>
-                    <p class="leading-relaxed">Because your records are securely kept offline within PWA LocalStorage and are not externally backed up by a centralized server, clearing your browser application data or cache may erase your financial ledger. You are solely responsible for manually exporting your JSON backups via the Developer Settings page to prevent data loss.</p>
+                    <h2 class="text-2xl font-bold text-main mb-4">3. Universal User Obligations & Sovereign Data
+                        Preservation</h2>
+                    <p class="leading-relaxed">Because MoneyFlow structurally rejects the concept of centralized
+                        internet backend database dependencies by operating Local-First:</p>
+                    <ul class="list-disc pl-5 mt-3 text-sm space-y-2">
+                        <li><strong>You</strong> are strictly and unilaterally responsibly for proactively maintaining
+                            routine automated or manual backups via the internal <code>Export .json</code> core
+                            facility.</li>
+                        <li>Deliberately or accidentally clearing the host browser cache/storage or factory resetting
+                            your device hardware <strong>will categorically erase your financial ecosystem
+                                payload</strong> without the technical possibility of server-side data recovery.</li>
+                        <li>We explicitly assume absolute zero legal liability for local data degradation fragments,
+                            filesystem corruption, or unintentional record deletions spanning local operational
+                            contexts.</li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h2 class="text-2xl font-bold text-main mb-4">4. Absolute Disclaimer of Fiduciary & Financial Advice
+                    </h2>
+                    <p class="leading-relaxed">The internal analytics matrices, generalized "Smart Insights," data
+                        visualizations (Chart JS implementations), and categorical breakdowns dynamically generated
+                        inside the graphical application are algorithmic heuristic approximations. They strictly
+                        <strong>do not</strong> constitute verified accounting guidelines, certified tax parameters, or
+                        endorsed professional financial advice. Users are prohibited from utilizing MoneyFlow
+                        computations as the sole determinant factor for federal tax filings, IRS obligations, or
+                        authorized fiduciary audits without formally cross-referencing and validating against authentic
+                        institutional bank statements.
+                    </p>
+                </div>
+
+                <div>
+                    <h2 class="text-2xl font-bold text-main mb-4">5. Exclusive Intellectual Property Legalities</h2>
+                    <p class="leading-relaxed">All stylistic DOM implementations, specifically specialized CSS
+                        architectures (inclusive of Liquid Context Switching and underlying Gooey Filter SVG physics
+                        vectors), Javascript routing methodologies, and UI conceptual structures constitute the deeply
+                        defended intellectual property of Imad Khan (Creator & Developer). While you are inherently free
+                        to inspect the DOM via dev tools, unauthorized mass commercial redistribution, malicious
+                        scraping, or 1:1 conceptual cloning stands harshly discouraged.</p>
+                </div>
+
+                <div>
+                    <h2 class="text-2xl font-bold text-main mb-4">6. Blanket Limitation of Universal Liability</h2>
+                    <p class="leading-relaxed">In no physical or digital operational event shall the Creator, its
+                        associated affiliates, or corresponding rendering endpoints (CDNs distributing standard
+                        dependencies) be held explicitly or implicitly liable for any damages (including, without broad
+                        limitation, severe damages for loss of physiological time, local data logic, profound emotional
+                        distress stemming from observing bad expense habits visually represented, or lost tangible
+                        monetary assets) directly or proximately arising out of the active use, or paradoxically an
+                        inability to use, the Software ecosystem.</p>
                 </div>
             </div>
-            
+
             <div class="mt-16 text-center">
-                <a href="profile.html" class="inline-flex items-center gap-2 glass-button px-8 py-3 rounded-xl font-bold text-blue-500 hover:text-white transition">
+                <a href="settings.html"
+                    class="inline-flex items-center gap-2 glass-button px-8 py-3 rounded-xl font-bold text-blue-500 hover:text-white transition">
                     <i data-lucide="check-circle" class="w-5 h-5"></i> I Agree
                 </a>
             </div>
@@ -84,4 +151,5 @@
 
     <script src="global.js"></script>
 </body>
+
 </html>

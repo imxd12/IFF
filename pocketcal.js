@@ -73,15 +73,17 @@
         const monthTotal = monthEntries.reduce((sum, d) => sum + Number(d.amount || 0), 0);
         document.getElementById('pcMonth').textContent = fmt(monthTotal);
         
+        let avg = 0;
         if (monthEntries.length > 0) {
             const max = Math.max(...monthEntries.map(e => Number(e.amount || 0)));
             document.getElementById('pcHigh').textContent = fmt(max);
-            const avg = monthTotal / monthEntries.length;
+            avg = monthTotal / monthEntries.length;
             document.getElementById('pcAvg').textContent = fmt(avg);
         } else {
             document.getElementById('pcHigh').textContent = '₹0';
             document.getElementById('pcAvg').textContent = '₹0';
         }
+
     }
 
     // ----------------------------------------------------
@@ -317,6 +319,150 @@
                     scales: {
                         y: { display: false },
                         x: { display: true, grid: { display: false } }
+                    }
+                }
+            });
+        }
+
+        const ctxW = document.getElementById('weekdayChart');
+        if (ctxW) {
+            const weekdayTotals = [0,0,0,0,0,0,0]; // Sun..Sat
+            data.forEach(d => {
+                if(d.date && Number(d.amount) > 0) {
+                    let dateObj = new Date(d.date);
+                    weekdayTotals[dateObj.getDay()] += Number(d.amount);
+                }
+            });
+
+            charts.weekday = new Chart(ctxW, {
+                type: 'polarArea',
+                data: {
+                    labels: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+                    datasets: [{
+                        label: 'Weekday Amount',
+                        data: weekdayTotals,
+                        backgroundColor: [
+                            'rgba(239, 68, 68, 0.6)',
+                            'rgba(245, 158, 11, 0.6)',
+                            'rgba(16, 185, 129, 0.6)',
+                            'rgba(59, 130, 246, 0.6)',
+                            'rgba(139, 92, 246, 0.6)',
+                            'rgba(236, 72, 153, 0.6)',
+                            'rgba(99, 102, 241, 0.6)'
+                        ],
+                        borderWidth: 1,
+                        borderColor: isDark ? '#1e293b' : '#ffffff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        r: {
+                            ticks: { display: false },
+                            grid: { color: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)' }
+                        }
+                    }
+                }
+            });
+        }
+
+        const ctxC = document.getElementById('comparisonChart');
+        if (ctxC) {
+            const thisMonth = [], prevMonth = [];
+            const prevMonthDate = new Date(year, month - 1, 1);
+            const prevYear = prevMonthDate.getFullYear();
+            const prevM = prevMonthDate.getMonth();
+            const daysInPrevMonth = new Date(prevYear, prevM + 1, 0).getDate();
+            
+            const maxDays = Math.max(daysInMonth, daysInPrevMonth);
+            const compLabels = [];
+            
+            for (let i = 1; i <= maxDays; i++) {
+                compLabels.push(i);
+                
+                // Current Month
+                if (i <= daysInMonth) {
+                    const ds = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
+                    const entry = data.find(d => d.date === ds);
+                    thisMonth.push(entry ? Number(entry.amount) : 0);
+                } else {
+                    thisMonth.push(0);
+                }
+                
+                // Previous Month
+                if (i <= daysInPrevMonth) {
+                    const dsPrev = `${prevYear}-${String(prevM + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
+                    const entryPrev = data.find(d => d.date === dsPrev);
+                    prevMonth.push(entryPrev ? Number(entryPrev.amount) : 0);
+                } else {
+                    prevMonth.push(0);
+                }
+            }
+
+            charts.comp = new Chart(ctxC, {
+                type: 'bar',
+                data: {
+                    labels: compLabels,
+                    datasets: [
+                        {
+                            label: 'This Month',
+                            data: thisMonth,
+                            backgroundColor: '#10b981',
+                            borderRadius: 4
+                        },
+                        {
+                            label: 'Last Month',
+                            data: prevMonth,
+                            backgroundColor: isDark ? '#334155' : '#cbd5e1',
+                            borderRadius: 4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { display: true, labels: { color: textColor } } },
+                    scales: {
+                        y: { display: false },
+                        x: { display: true, grid: { display: false } }
+                    }
+                }
+            });
+        }
+
+        const ctxCum = document.getElementById('cumulativeChart');
+        if (ctxCum) {
+            const cumLabels = [], cumValues = [];
+            let runningTotal = 0;
+            
+            for (let i = 1; i <= daysInMonth; i++) {
+                cumLabels.push(i);
+                const ds = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
+                const entry = data.find(d => d.date === ds);
+                if (entry) runningTotal += Number(entry.amount);
+                cumValues.push(runningTotal);
+            }
+
+            charts.cumulative = new Chart(ctxCum, {
+                type: 'line',
+                data: {
+                    labels: cumLabels,
+                    datasets: [{
+                        label: 'Cumulative Savings',
+                        data: cumValues,
+                        borderColor: '#8b5cf6',
+                        backgroundColor: 'rgba(139, 92, 246, 0.2)',
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { display: false },
+                        x: { display: true, grid: { display: false }, ticks: { maxTicksLimit: 10 } }
                     }
                 }
             });

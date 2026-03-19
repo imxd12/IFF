@@ -1,446 +1,224 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="PocketCal - Visual calendar-based pocket money tracker with powerful analytics">
-  <meta name="author" content="Imad Khan (@imxd12)">
-  <meta name="theme-color" content="#10b981">
-  
-  <title>PocketCal - Calendar Money Tracker | MoneyFlow</title>
-  
-  <!-- Stylesheets -->
-  <link rel="stylesheet" href="global.css">
-  <link rel="stylesheet" href="pocketcal.css">
-  
-  <!-- Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-  
-  <!-- Chart.js for Analytics -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-  
-  <!-- jsPDF for PDF Export -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>MoneyFlow - PocketCal</title>
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="global.css">
+    <link rel="stylesheet" href="pocketcal.css">
+    
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: ['class', '[data-theme="dark"]']
+      }
+    </script>
 </head>
 <body>
 
-  <!-- ========================================
-       HEADER - Navigation & Clock
-  ======================================== -->
-  <header class="header">
-    <!-- Left: Back Button -->
-    <div class="header-left">
-      <a href="index.html" class="back-btn" title="Back to Dashboard">
-        <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
-          <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
-        </svg>
-      </a>
-      
-      <div class="header-title-group">
-        <h1 class="page-name">PocketCal</h1>
-        <p class="page-tagline">Track pocket money</p>
-      </div>
-    </div>
-    
-    <!-- Right: Theme Toggle -->
-    <div class="header-right">
-      <div class="theme-toggle">
-        <div class="theme-toggle-slider">☀️</div>
-      </div>
-    </div>
-  </header>
-
-  <!-- ========================================
-       MAIN CONTAINER
-  ======================================== -->
-  <div class="container">
-    
-    <!-- Summary Cards -->
-    <div class="summary-grid scroll-fade-in">
-      <div class="summary-card month-card">
-        <div class="summary-icon">📅</div>
-        <div class="summary-info">
-          <div class="summary-label">This Month</div>
-          <div class="summary-value" id="pcMonth">₹0</div>
-        </div>
-      </div>
-      
-      <div class="summary-card total-card">
-        <div class="summary-icon">💎</div>
-        <div class="summary-info">
-          <div class="summary-label">All-Time Total</div>
-          <div class="summary-value" id="pcAll">₹0</div>
-        </div>
-      </div>
-      
-      <div class="summary-card high-card">
-        <div class="summary-icon">🏆</div>
-        <div class="summary-info">
-          <div class="summary-label">Highest Day</div>
-          <div class="summary-value" id="pcHigh">₹0</div>
-        </div>
-      </div>
-      
-      <div class="summary-card avg-card">
-        <div class="summary-icon">📊</div>
-        <div class="summary-info">
-          <div class="summary-label">Average/Day</div>
-          <div class="summary-value" id="pcAvg">₹0</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ========================================
-         CALENDAR SECTION
-    ======================================== -->
-    <section class="calendar-section scroll-blur">
-      <!-- Calendar Header with Navigation -->
-      <div class="calendar-header">
-        <button class="btn-nav" id="prevMonth" title="Previous Month">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
-          </svg>
-        </button>
-        
-        <h2 class="month-label" id="calMonth">Loading...</h2>
-        
-        <button class="btn-nav" id="nextMonth" title="Next Month">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
-          </svg>
-        </button>
-      </div>
-
-      <!-- Weekday Headers -->
-      <div class="calendar-weekdays">
-        <div class="weekday">Sun</div>
-        <div class="weekday">Mon</div>
-        <div class="weekday">Tue</div>
-        <div class="weekday">Wed</div>
-        <div class="weekday">Thu</div>
-        <div class="weekday">Fri</div>
-        <div class="weekday">Sat</div>
-      </div>
-
-      <!-- Calendar Grid -->
-      <div class="calendar-grid" id="calendarGrid">
-        <!-- Days populated by JS -->
-      </div>
-
-      <!-- Quick Actions (Below Calendar) -->
-      <div class="calendar-actions">
-        <input type="date" class="form-input date-picker" id="pcSearch" placeholder="Jump to date" title="Jump to specific date">
-        <button class="btn btn-primary" id="btnAddToday">
-          <span>➕ Add Today</span>
-        </button>
-        <button class="btn btn-secondary" onclick="openPDFModal()">
-          <span>📄 Export PDF</span>
-        </button>
-        <button class="btn btn-secondary" onclick="exportData()">
-          <span>📊 Export CSV</span>
-        </button>
-        <button class="btn btn-secondary" onclick="exportJSON()">
-          <span>📤 Export JSON</span>
-        </button>
-        <button class="btn btn-secondary" onclick="importJSON()">
-          <span>📥 Import</span>
-        </button>
-      </div>
-    </section>
-
-    <!-- ========================================
-         ANALYTICS SECTION
-    ======================================== -->
-    <section class="analytics-section scroll-fade-in">
-      <h3 class="section-title">📈 Analytics & Insights</h3>
-      
-      <!-- Charts Grid -->
-      <div class="chart-grid">
-        <!-- Monthly Trend Chart -->
-        <div class="chart-card">
-          <h4 class="chart-title">Daily Money Received (This Month)</h4>
-          <canvas id="pcChart"></canvas>
-        </div>
-        
-        <!-- Category Distribution -->
-        <div class="chart-card">
-          <h4 class="chart-title">Category-wise Distribution</h4>
-          <canvas id="categoryChart"></canvas>
-        </div>
-        
-        <!-- Weekly Comparison -->
-        <div class="chart-card">
-          <h4 class="chart-title">Weekly Comparison</h4>
-          <canvas id="weeklyChart"></canvas>
-        </div>
-        
-        <!-- 6-Month Trend -->
-        <div class="chart-card">
-          <h4 class="chart-title">6-Month Trend</h4>
-          <canvas id="trendChart"></canvas>
-        </div>
-      </div>
-
-      <!-- Statistics Grid -->
-      <div class="stats-grid">
-        <div class="stat-card">
-          <div class="stat-icon">📆</div>
-          <div class="stat-label">Days Tracked</div>
-          <div class="stat-value" id="daysTracked">0</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon">🎯</div>
-          <div class="stat-label">This Week</div>
-          <div class="stat-value" id="weekTotal">₹0</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon">📈</div>
-          <div class="stat-label">Best Month</div>
-          <div class="stat-value" id="bestMonth">₹0</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon">💰</div>
-          <div class="stat-label">Total Entries</div>
-          <div class="stat-value" id="totalDays">0</div>
-        </div>
-      </div>
-    </section>
-
-  </div>
-
-  <!-- ========================================
-       ENTRY MODAL
-  ======================================== -->
-  <div class="modal" id="entryModal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2 class="modal-title" id="modalTitle">Add Entry</h2>
-        <button class="modal-close" onclick="closeEntryModal()">&times;</button>
-      </div>
-      <form id="pcForm">
-        <div class="form-group">
-          <label class="form-label">Date</label>
-          <input type="date" class="form-input" id="pcDate" required>
-        </div>
-        
-        <div class="form-group">
-          <label class="form-label">Amount Received (₹)</label>
-          <input type="number" class="form-input" id="pcAmount" placeholder="0.00" step="0.01" required>
-        </div>
-        
-        <div class="form-group">
-          <label class="form-label">Category</label>
-          <select class="form-select" id="pcCategory">
-            <option value="💵 Pocket Money">💵 Pocket Money</option>
-            <option value="🎁 Gift">🎁 Gift</option>
-            <option value="💰 Allowance">💰 Allowance</option>
-            <option value="🏆 Reward">🏆 Reward</option>
-            <option value="💼 Work">💼 Work</option>
-            <option value="🎓 Education">🎓 Education</option>
-            <option value="🎉 Festival">🎉 Festival</option>
-            <option value="🎯 Other">🎯 Other</option>
-          </select>
-        </div>
-        
-        <div class="form-group">
-          <label class="form-label">Notes (Optional)</label>
-          <textarea class="form-textarea" id="pcNotes" placeholder="Add any notes..."></textarea>
-        </div>
-        
-        <div class="modal-actions">
-          <button type="submit" class="btn btn-primary" id="pcSave">💾 Save Entry</button>
-          <button type="button" class="btn btn-danger" id="pcDelete" style="display: none;" onclick="deleteEntry()">🗑️ Delete</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <!-- ========================================
-       PDF EXPORT OPTIONS MODAL
-  ======================================== -->
-  <div class="modal" id="pdfModal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2 class="modal-title">Export PDF Report</h2>
-        <button class="modal-close" onclick="closePDFModal()">&times;</button>
-      </div>
-      
-      <div class="pdf-options">
-        <p class="modal-subtitle">Select the time period for your report:</p>
-        
-        <div class="pdf-option-grid">
-          <button class="pdf-option-btn" onclick="exportPDF('today')">
-            <div class="option-icon">📅</div>
-            <div class="option-label">Today</div>
-            <div class="option-desc">Current day report</div>
-          </button>
-          
-          <button class="pdf-option-btn" onclick="exportPDF('week')">
-            <div class="option-icon">📆</div>
-            <div class="option-label">This Week</div>
-            <div class="option-desc">Last 7 days</div>
-          </button>
-          
-          <button class="pdf-option-btn" onclick="exportPDF('month')">
-            <div class="option-icon">📊</div>
-            <div class="option-label">This Month</div>
-            <div class="option-desc">Current month</div>
-          </button>
-          
-          <button class="pdf-option-btn" onclick="exportPDF('year')">
-            <div class="option-icon">📈</div>
-            <div class="option-label">This Year</div>
-            <div class="option-desc">Current year</div>
-          </button>
-          
-          <button class="pdf-option-btn" onclick="exportPDF('all')">
-            <div class="option-icon">💎</div>
-            <div class="option-label">All Time</div>
-            <div class="option-desc">Complete history</div>
-          </button>
-          
-          <button class="pdf-option-btn" onclick="showDateRangeForm()">
-            <div class="option-icon">🗓️</div>
-            <div class="option-label">Date Range</div>
-            <div class="option-desc">Custom period</div>
-          </button>
-        </div>
-        
-        <!-- Date Range Form (Hidden by default) -->
-        <div class="date-range-form" id="dateRangeForm" style="display: none;">
-          <h3>Select Custom Date Range</h3>
-          <div class="form-row">
-            <div class="form-group">
-              <label class="form-label">From Date</label>
-              <input type="date" class="form-input" id="pdfFromDate" required>
-            </div>
-            <div class="form-group">
-              <label class="form-label">To Date</label>
-              <input type="date" class="form-input" id="pdfToDate" required>
-            </div>
-          </div>
-          <div class="form-actions">
-            <button class="btn btn-primary" onclick="exportPDFDateRange()">
-              <span>📄 Generate PDF</span>
-            </button>
-            <button class="btn btn-secondary" onclick="hideDateRangeForm()">
-              <span>Cancel</span>
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ========================================
-       FLOATING ACTION BUTTON (FAB)
-  ======================================== -->
-  <button class="fab" onclick="quickAddToday()" title="Quick Add Today">
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
-      <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+    <svg style="visibility: hidden; position: absolute;" width="0" height="0">
+      <defs>
+          <filter id="gooey-filter">
+              <feGaussianBlur in="SourceGraphic" stdDeviation="20" result="blur" />
+              <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 30 -10" result="goo" />
+              <feBlend in="SourceGraphic" in2="goo" />
+          </filter>
+      </defs>
     </svg>
-  </button>
 
-  <!-- ========================================
-       ENHANCED FOOTER
-  ======================================== -->
-  <footer class="footer">
-    <div class="footer-content">
-      <!-- About PocketCal -->
-      <div class="footer-section">
-        <h3>About PocketCal</h3>
-        <p>Visual calendar-based tracking for pocket money. See daily earnings at a glance with powerful analytics and beautiful charts.</p>
-        <div class="footer-stats">
-          <div class="stat-item">
-            <strong id="footerEntries">0</strong>
-            <span>Entries</span>
-          </div>
-          <div class="stat-item">
-            <strong id="footerCategories">8</strong>
-            <span>Categories</span>
-          </div>
-        </div>
-      </div>
-      
-      <!-- Features -->
-      <div class="footer-section">
-        <h3>Features</h3>
-        <ul>
-          <li>✅ Visual calendar interface</li>
-          <li>📊 4 advanced analytics charts</li>
-          <li>📅 Month/week/day tracking</li>
-          <li>🗂️ 8 spending categories</li>
-          <li>📈 6-month trend analysis</li>
-          <li>📥 CSV/JSON/PDF export</li>
-          <li>🌓 Dark mode support</li>
-          <li>💾 Auto-save to localStorage</li>
-        </ul>
-      </div>
-      
-      <!-- Quick Actions -->
-      <div class="footer-section">
-        <h3>Quick Actions</h3>
-        <div class="footer-actions">
-          <button class="btn btn-secondary btn-sm" onclick="quickAddToday()">➕ Quick Add</button>
-          <button class="btn btn-secondary btn-sm" onclick="openPDFModal()">📄 PDF</button>
-          <button class="btn btn-secondary btn-sm" onclick="exportData()">📊 CSV</button>
-          <button class="btn btn-secondary btn-sm" onclick="exportJSON()">📤 JSON</button>
-          <button class="btn btn-secondary btn-sm" onclick="clearAllData()">🗑️ Clear All</button>
-        </div>
-      </div>
-      
-      <!-- Navigation -->
-      <div class="footer-section">
-        <h3>Navigate</h3>
-        <ul>
-          <li><a href="index.html">🏠 Dashboard</a></li>
-          <li><a href="spendly.html">💰 Spendly</a></li>
-          <li><a href="nexus.html">💼 Nexus</a></li>
-          <li><a href="pocketcal.html">📅 PocketCal</a></li>
-        </ul>
-        
-        <div class="footer-social">
-          <h4>Developer</h4>
-          <p><strong>Imad Khan</strong></p>
-          <p class="footer-handle">
-            <a href="https://www.instagram.com/_imxd12" target="_blank" rel="noopener noreferrer">@imxd12</a>
-          </p>
-          <div class="social-links">
-            <a href="mailto:imadak999@gmail.com" title="Email">📧</a>
-            <a href="https://instagram.com/_imxd12" target="_blank" title="Instagram">📷</a>
-          </div>
-        </div>
-      </div>
+    <div class="liquid-bg-container">
+        <div class="liquid-blob"></div>
+        <div class="liquid-blob"></div>
     </div>
-    
-    <!-- Footer Bottom -->
-   <div class="footer-bottom">
-     <p>&copy; 2026 MoneyFlow by Imad Khan. All rights reserved.</p>
-   </div>
-  </footer>
 
-  <!-- Bottom Navigation -->
-  <nav class="bottom-nav" data-active="0">
-    <div class="nav-liquid"></div>
-    <a href="index.html" class="nav-item active" id="nav-home">
-      <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
-      <span>Home</span>
-    </a>
-    <a href="spendly.html" class="nav-item" id="nav-spend">
-      <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1.41 16.09V20h-2.67v-1.93c-1.71-.36-3.16-1.46-3.27-3.4h1.96c.1 1.05.82 1.87 2.65 1.87 1.96 0 2.4-.98 2.4-1.59 0-.83-.44-1.61-2.67-2.14-2.48-.6-4.18-1.62-4.18-3.67 0-1.72 1.39-2.84 3.11-3.21V4h2.67v1.95c1.86.45 2.79 1.86 2.85 3.39H14.3c-.05-1.11-.64-1.87-2.22-1.87-1.5 0-2.4.68-2.4 1.64 0 .84.65 1.39 2.67 1.91s4.18 1.39 4.18 3.91c-.01 1.83-1.38 2.83-3.12 3.16z"/></svg>
-      <span>Spendly</span>
-    </a>
-    <a href="pocketcal.html" class="nav-item" id="nav-pocket">
-      <svg viewBox="0 0 24 24"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zM9 14H7v-2h2v2zm4 0h-2v-2h2v2zm4 0h-2v-2h2v2zm-8 4H7v-2h2v2zm4 0h-2v-2h2v2zm4 0h-2v-2h2v2z"/></svg>
-      <span>PocketCal</span>
-    </a>
-  </nav>
-  
-  <!-- Scripts -->
-  <script src="global.js"></script>
-  <script src="pocketcal.js"></script>
+    <!-- Global Header -->
+    <header class="global-header glass-panel">
+        <div class="brand flex items-center gap-3">
+            <a href="index.html" class="glass-button w-10 h-10 rounded-full flex items-center justify-center hover:-translate-x-1">
+                <i data-lucide="arrow-left" class="w-5 h-5"></i>
+            </a>
+            <span class="brand-text">PocketCal</span>
+        </div>
+        <div class="header-controls">
+
+            <button class="theme-toggle-btn glass-button" id="themeToggleBtn">
+                <i data-lucide="sun"></i>
+            </button>
+        </div>
+    </header>
+
+    <main class="main-content">
+        
+        <!-- Top Stats Summary -->
+        <section class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8" data-speed="0.1">
+            <div class="glass-panel p-5">
+                <div class="text-sm font-semibold text-muted mb-1">Total Pocket</div>
+                <h2 class="text-2xl font-bold text-emerald-500" id="pcAll">₹0</h2>
+            </div>
+            <div class="glass-panel p-5">
+                <div class="text-sm font-semibold text-muted mb-1">This Month</div>
+                <h2 class="text-2xl font-bold text-blue-500" id="pcMonth">₹0</h2>
+            </div>
+            <div class="glass-panel p-5">
+                <div class="text-sm font-semibold text-muted mb-1">Best Day</div>
+                <h2 class="text-2xl font-bold text-amber-500" id="pcHigh">₹0</h2>
+            </div>
+            <div class="glass-panel p-5">
+                <div class="text-sm font-semibold text-muted mb-1">Average</div>
+                <h2 class="text-2xl font-bold text-indigo-500" id="pcAvg">₹0</h2>
+            </div>
+        </section>
+
+        <!-- Main Calendar Section -->
+        <section class="glass-panel p-6 md:p-8 mb-12 ag-card-reveal" data-speed="0.15">
+            <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+                <h2 class="text-3xl font-extrabold flex items-center gap-3">
+                    <button class="glass-button w-10 h-10 rounded-full flex items-center justify-center hover:-translate-x-1" id="prevMonth"><i data-lucide="chevron-left"></i></button>
+                    <span id="calMonth" class="min-w-[150px] text-center">January 2026</span>
+                    <button class="glass-button w-10 h-10 rounded-full flex items-center justify-center hover:translate-x-1" id="nextMonth"><i data-lucide="chevron-right"></i></button>
+                </h2>
+                
+                <div class="flex gap-3">
+                    <select id="pcMonthFilter" class="glass-input !w-auto text-sm"></select>
+                    <button class="glass-button px-4 py-2 rounded-xl font-bold text-sm bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500 hover:text-white" id="btnAddToday">
+                        + Today
+                    </button>
+                    <button class="glass-button px-4 py-2 rounded-xl font-bold text-sm" onclick="openPDFModal()">
+                        <i data-lucide="download"></i> PDF
+                    </button>
+                </div>
+            </div>
+
+            <div class="calendar-wrapper">
+                <div class="calendar-days font-bold text-muted text-center uppercase text-sm mb-4">
+                    <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
+                </div>
+                <div id="calendarGrid" class="calendar-grid">
+                    <!-- JS Injected -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Charts Section -->
+        <section class="mb-20">
+            <h3 class="text-2xl font-extrabold mb-8" data-speed="0.05">Visual Analytics</h3>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                
+                <div class="glass-panel p-6 ag-card-reveal" data-speed="0.2">
+                    <h4 class="text-md font-bold mb-4">Daily Deposits (Current Month)</h4>
+                    <div class="relative w-full h-64">
+                        <canvas id="pcChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="glass-panel p-6 ag-card-reveal" data-speed="0.25">
+                    <h4 class="text-md font-bold mb-4">6-Month Trend</h4>
+                    <div class="relative w-full h-64">
+                        <canvas id="trendChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+  <!-- Quick Add Shortcut -->
+  <div class="fixed bottom-24 right-6 flex flex-col gap-4 z-50">
+      <button onclick="openTodayEntry()" class="w-14 h-14 bg-blue-500 rounded-full flex items-center justify-center text-white shadow-[0_8px_30px_rgb(59,130,246,0.4)] hover:scale-110 transition-transform cursor-pointer" title="Quick Income">
+          <i data-lucide="plus" class="w-6 h-6"></i>
+      </button>
+  </div>
+
+  <!-- Bottom Dock -->
+    <nav class="bottom-dock glass-dock">
+        <div class="dock-liquid-indicator"></div>
+        <a href="index.html" class="dock-item">
+            <i data-lucide="home"></i>
+            <span>Home</span>
+        </a>
+        <a href="spendly.html" class="dock-item">
+            <i data-lucide="pie-chart"></i>
+            <span>Spendly</span>
+        </a>
+        <a href="pocketcal.html" class="dock-item active">
+            <i data-lucide="calendar"></i>
+            <span>Calendar</span>
+        </a>
+        <a href="profile.html" class="dock-item">
+            <i data-lucide="settings"></i>
+            <span>Settings</span>
+        </a>
+    </nav>
+
+    <!-- Entry Modal -->
+    <div class="modal-overlay" id="entryModal">
+        <div class="modal-content-glass max-w-sm w-full relative">
+            <button class="absolute top-4 right-4 text-muted hover:text-red-500" onclick="closeEntryModal()"><i data-lucide="x"></i></button>
+            <h2 class="text-xl font-bold mb-6" id="modalTitle">Add Entry</h2>
+            
+            <form id="pcForm">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-muted mb-1">Date</label>
+                        <input type="date" id="pcDate" class="glass-input bg-glass-bg border border-glass-border font-bold text-center" readonly>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-muted mb-1">Pocket Money Amount</label>
+                        <input type="number" id="pcAmount" class="glass-input font-extrabold text-2xl text-center text-emerald-500 placeholder-emerald-500/30" min="1" placeholder="₹0" required autofocus>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-muted mb-1">Source</label>
+                        <input type="text" id="pcCategory" class="glass-input" value="💵 Pocket Money" readonly>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-muted mb-1">Notes</label>
+                        <input type="text" id="pcNotes" class="glass-input" placeholder="Optional notes...">
+                    </div>
+                </div>
+                
+                <div class="flex justify-between items-center mt-8">
+                    <button type="button" id="pcDelete" class="text-red-500 font-bold hover:underline" style="display:none;">Delete</button>
+                    <button type="submit" class="px-8 py-3 bg-emerald-500 hover:bg-emerald-600 border border-emerald-400 text-white rounded-xl shadow-lg shadow-emerald-500/30font-bold transition-transform active:scale-95 ml-auto">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- PDF Modal -->
+    <div class="modal-overlay" id="pdfModal">
+        <div class="modal-content-glass max-w-sm w-full relative text-center">
+            <button class="absolute top-4 right-4 text-muted hover:text-red-500" onclick="closeModal('#pdfModal')"><i data-lucide="x"></i></button>
+            <h2 class="text-xl font-bold mb-6">Calendar PDF Report</h2>
+            <div class="flex flex-col gap-3">
+                <button class="glass-button p-4 rounded-xl font-bold text-emerald-500 text-left flex justify-between items-center" onclick="exportPDF('month')">
+                    Current Month
+                    <i data-lucide="file-down"></i>
+                </button>
+                <button class="glass-button p-4 rounded-xl font-bold text-emerald-500 text-left flex justify-between items-center" onclick="exportPDF('year')">
+                    This Year
+                    <i data-lucide="file-down"></i>
+                </button>
+                <button class="glass-button p-4 rounded-xl font-bold text-emerald-500 text-left flex justify-between items-center" onclick="exportPDF('all')">
+                    All Time History
+                    <i data-lucide="file-down"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="https://unpkg.com/@studio-freight/lenis@1.0.39/dist/lenis.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+
+    <script src="global.js"></script>
+    <script src="pocketcal.js"></script>
 </body>
 </html>

@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>MoneyFlow - Settings</title>
+
+    <link rel="stylesheet" href="global.css">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: ['class', '[data-theme="dark"]'] }
+    </script>
+</head>
+
+<body>
+
+    <svg style="visibility: hidden; position: absolute;" width="0" height="0">
+        <defs>
+            <filter id="gooey-filter">
+                <feGaussianBlur in="SourceGraphic" stdDeviation="20" result="blur" />
+                <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 30 -10"
+                    result="goo" />
+                <feBlend in="SourceGraphic" in2="goo" />
+            </filter>
+        </defs>
+    </svg>
+
+    <div class="liquid-bg-container">
+        <div class="liquid-blob"></div>
+        <div class="liquid-blob"></div>
+    </div>
+
+    <!-- Fixed Header -->
+    <header class="global-header glass-panel">
+        <div class="brand flex items-center gap-3">
+            <a href="javascript:history.back()"
+                class="glass-button w-10 h-10 rounded-full flex items-center justify-center hover:-translate-x-1">
+                <i data-lucide="arrow-left" class="w-5 h-5"></i>
+            </a>
+            <span class="brand-text">Settings</span>
+        </div>
+        <div class="header-controls">
+            <button class="theme-toggle-btn glass-button" id="themeToggleBtn"><i data-lucide="sun"></i></button>
+        </div>
+    </header>
+
+    <main class="main-content flex flex-col items-center">
+
+        <div class="w-full max-w-3xl space-y-8">
+
+            <h1 class="text-3xl font-extrabold mb-8 pl-4" data-speed="0.1">System Configuration</h1>
+
+            <!-- Engine Settings -->
+            <section class="glass-panel p-8 ag-card-reveal overflow-hidden relative" data-speed="0.15">
+                <div class="absolute -top-10 -right-10 w-32 h-32 bg-blue-500/10 rounded-full blur-2xl"></div>
+                <h2 class="text-xl font-bold mb-6 flex items-center gap-2"><i data-lucide="mic"
+                        class="text-blue-500"></i> AI Assistant Engine</h2>
+
+                <div class="space-y-6 relative z-10">
+                    <div
+                        class="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-glass-bg border border-glass-border p-4 rounded-xl gap-4">
+                        <div class="flex-1">
+                            <h3 class="font-bold text-lg">MoneyFlow Greeting Voice</h3>
+                            <p class="text-sm text-muted">Select high-quality synthesis voice.</p>
+                            <select id="voiceSelect" class="glass-input mt-3 font-semibold"></select>
+                        </div>
+                    </div>
+
+                    <div
+                        class="flex justify-between items-center bg-glass-bg border border-glass-border p-4 rounded-xl">
+                        <div>
+                            <h3 class="font-bold text-lg">Voice Greetings Power</h3>
+                            <p class="text-sm text-muted">Enable auto-speaking on Hub</p>
+                        </div>
+                        <button id="toggleVoiceBtn" class="px-6 py-2 rounded-xl text-sm font-bold transition"></button>
+                    </div>
+
+                    <div
+                        class="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-glass-bg border border-glass-border p-4 rounded-xl gap-4">
+                        <div class="flex-1">
+                            <h3 class="font-bold text-lg">Personal Identity</h3>
+                            <input type="text" id="usernameInput" class="glass-input mt-2" placeholder="Your name">
+                        </div>
+                        <button class="px-6 py-3 rounded-xl text-sm font-bold glass-button mt-auto"
+                            onclick="window.saveName()">Save</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Data Management -->
+            <section class="glass-panel p-8 ag-card-reveal" data-speed="0.2">
+                <h2 class="text-xl font-bold mb-6 flex items-center gap-2"><i data-lucide="database"
+                        class="text-purple-500"></i> Data Portability</h2>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                    <div class="bg-glass-bg border border-glass-border p-5 rounded-xl text-center">
+                        <i data-lucide="download-cloud" class="w-8 h-8 text-emerald-500 mx-auto mb-3"></i>
+                        <h3 class="font-bold mb-2">Export Data</h3>
+                        <p class="text-xs text-muted mb-4">Download a full JSON backup of Spendly & PocketCal ledgers.
+                        </p>
+                        <button onclick="window.exportDataJSON()"
+                            class="w-full glass-button py-2 rounded-lg font-bold text-emerald-500 hover:bg-emerald-500 hover:text-white transition">Export
+                            .json</button>
+                    </div>
+
+                    <div class="bg-glass-bg border border-glass-border p-5 rounded-xl text-center">
+                        <i data-lucide="upload-cloud" class="w-8 h-8 text-blue-500 mx-auto mb-3"></i>
+                        <h3 class="font-bold mb-2">Import Data</h3>
+                        <p class="text-xs text-muted mb-4">Upload a JSON backup to overwrite current financial ledgers.
+                        </p>
+                        <input type="file" id="importFile" accept=".json" class="hidden"
+                            onchange="window.importDataJSON(this)">
+                        <button onclick="document.getElementById('importFile').click()"
+                            class="w-full glass-button py-2 rounded-lg font-bold text-blue-500 hover:bg-blue-500 hover:text-white transition">Import
+                            .json</button>
+                    </div>
+                </div>
+
+                <div class="flex justify-between items-center bg-red-500/5 border border-red-500/20 p-4 rounded-xl">
+                    <div>
+                        <h3 class="font-bold text-lg text-red-500">Nuclear Wipe</h3>
+                        <p class="text-sm text-muted">Irrevocable data destruction.</p>
+                    </div>
+                    <button
+                        class="px-6 py-2 rounded-xl text-sm font-bold bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white border border-red-500/30 transition active:scale-95"
+                        onclick="window.wipeData()">Reset App</button>
+                </div>
+            </section>
+
+            <!-- Support & Legal -->
+            <section class="glass-panel p-8 ag-card-reveal" data-speed="0.25">
+                <h2 class="text-xl font-bold mb-6 flex items-center gap-2"><i data-lucide="book-open" class="text-amber-500"></i> Support & Legal</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <a href="howtouse.html" class="bg-glass-bg border border-glass-border p-4 rounded-xl flex items-center justify-between hover:bg-glass-hover transition cursor-pointer">
+                        <div class="flex items-center gap-3">
+                            <i data-lucide="help-circle" class="text-purple-500"></i>
+                            <span class="font-bold">How to Use</span>
+                        </div>
+                        <i data-lucide="chevron-right" class="text-muted"></i>
+                    </a>
+                    <a href="feedback.html" class="bg-glass-bg border border-glass-border p-4 rounded-xl flex items-center justify-between hover:bg-glass-hover transition cursor-pointer">
+                        <div class="flex items-center gap-3">
+                            <i data-lucide="message-square" class="text-blue-500"></i>
+                            <span class="font-bold">Give Feedback</span>
+                        </div>
+                        <i data-lucide="chevron-right" class="text-muted"></i>
+                    </a>
+                    <a href="privacy-policy.html" class="bg-glass-bg border border-glass-border p-4 rounded-xl flex items-center justify-between hover:bg-glass-hover transition cursor-pointer">
+                        <div class="flex items-center gap-3">
+                            <i data-lucide="shield" class="text-emerald-500"></i>
+                            <span class="font-bold">Privacy Policy</span>
+                        </div>
+                        <i data-lucide="chevron-right" class="text-muted"></i>
+                    </a>
+                    <a href="terms-conditions.html" class="bg-glass-bg border border-glass-border p-4 rounded-xl flex items-center justify-between hover:bg-glass-hover transition cursor-pointer">
+                        <div class="flex items-center gap-3">
+                            <i data-lucide="file-text" class="text-amber-500"></i>
+                            <span class="font-bold">Terms & Conditions</span>
+                        </div>
+                        <i data-lucide="chevron-right" class="text-muted"></i>
+                    </a>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- CDNs -->
+    <script src="https://unpkg.com/@studio-freight/lenis@1.0.39/dist/lenis.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script src="global.js"></script>
+    <script src="settings.js"></script>
+</body>
+
+</html>

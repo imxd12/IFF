@@ -1,345 +1,265 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>Feedback - MoneyFlow</title>
-
-  <link rel="stylesheet" href="global.css">
-  <link rel="stylesheet" href="index.css">
-  <link rel="stylesheet" href="feedback.css">
-
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-
-  <meta name="theme-color" content="#10b981">
-  <link rel="apple-touch-icon" href="./icon-192.png">
-  <link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>MoneyFlow - Feedback</title>
+    
+    <link rel="stylesheet" href="global.css">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = { darkMode: ['class', '[data-theme="dark"]'] }
+    </script>
+    <style>
+        .feedback-section { margin-top: 40px; }
+        .success-message { text-align: center; padding: 40px; background: rgba(16, 185, 129, 0.1); border-radius: 16px; border: 1px solid rgba(16, 185, 129, 0.3); }
+        .rating-container { display: flex; gap: 8px; align-items: center; }
+        .star { font-size: 2rem; color: #cbd5e1; cursor: pointer; transition: 0.2s; }
+        .star.selected { color: #f59e0b; }
+        .mood-select { display: flex; gap: 16px; font-size: 2.5rem; justify-content: space-around; cursor: pointer; }
+        .mood-select span { transition: transform 0.2s; }
+        .mood-select span:hover { transform: scale(1.2); }
+        .mood-select span.selected { transform: scale(1.3); filter: drop-shadow(0 0 10px rgba(var(--accent-primary-rgb), 0.5)); }
+        .switch { position: relative; display: inline-block; width: 50px; height: 28px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: #10b981; }
+        input:checked + .slider:before { transform: translateX(22px); }
+        .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 16px; }
+        .info-card { background: var(--glass-bg); border: 1px solid var(--glass-border); padding: 16px; border-radius: 12px; }
+    </style>
 </head>
-
 <body>
 
-<!-- =========================================
-   HEADER
-========================================= -->
-<header class="header">
-  <div class="header-left">
-    <svg class="brand-logo" viewBox="0 0 100 100">
+    <svg style="visibility: hidden; position: absolute;" width="0" height="0">
       <defs>
-        <linearGradient id="brandGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" style="stop-color:#10b981"/>
-          <stop offset="100%" style="stop-color:#3b82f6"/>
-        </linearGradient>
+          <filter id="gooey-filter">
+              <feGaussianBlur in="SourceGraphic" stdDeviation="20" result="blur" />
+              <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 30 -10" result="goo" />
+              <feBlend in="SourceGraphic" in2="goo" />
+          </filter>
       </defs>
-      <circle cx="50" cy="50" r="45" fill="url(#brandGrad)"/>
-      <text x="50" y="65" font-size="40" font-weight="800" fill="white" text-anchor="middle">₹</text>
     </svg>
-    <h1 class="brand-name">MoneyFlow</h1>
-  </div>
 
-  <div class="header-right">
-    <div class="theme-toggle">
-      <div class="theme-toggle-slider">☀️</div>
-    </div>
-    <div class="profile-btn" onclick="window.location.href='index.html'">
-      <img src="Imad.jpg" alt="Profile">
-    </div>
-  </div>
-</header>
-
-<!-- =========================================
-   MAIN CONTAINER
-========================================= -->
-<div class="container">
-
-<section class="feedback-section">
-
-<!-- Header -->
-<div class="feedback-header">
-  <div class="feedback-icon">💬</div>
-  <h2 class="page-title">We Value Your Feedback</h2>
-  <p class="page-subtitle">
-    Help us improve MoneyFlow by sharing your thoughts, suggestions, or reporting issues.
-  </p>
-</div>
-
-<!-- Feedback Stats -->
-<div class="feedback-stats">
-  <div>⭐ 4.8 Avg Rating</div>
-  <div>💬 120+ Feedback</div>
-  <div>🚀 30 Updates</div>
-</div>
-
-<!-- FAQ -->
-<div class="faq-box">
-  <h3>Common Questions</h3>
-  <details>
-    <summary>My data disappeared</summary>
-    <p>Check if browser storage was cleared or incognito mode used.</p>
-  </details>
-  <details>
-    <summary>App not saving entries</summary>
-    <p>Ensure browser storage permission is enabled.</p>
-  </details>
-</div>
-
-<!-- =========================================
-   FORM
-========================================= -->
-<div class="feedback-form-container">
-
-<form id="feedbackForm" class="feedback-form">
-
-<!-- Hidden Device Info -->
-<input type="hidden" id="deviceInfo">
-<input type="hidden" id="appVersion" value="1.0.0">
-
-<!-- Type -->
-<div class="form-group">
-  <label class="form-label">
-    <span class="label-icon">📋</span>
-    Feedback Type
-  </label>
-  <select id="feedbackType" class="form-input" required>
-    <option value="">Select feedback type</option>
-    <option value="Review">⭐ Review / Appreciation</option>
-    <option value="Suggestion">💡 Suggestion / Feature Request</option>
-    <option value="Bug Report">🐛 Bug Report / Issue</option>
-    <option value="Complaint">⚠️ Complaint</option>
-    <option value="Other">📝 Other</option>
-  </select>
-</div>
-
-<!-- Bug Location -->
-<div class="form-group bug-only" style="display:none;">
-  <label class="form-label">Where did the issue occur?</label>
-  <select class="form-input" id="bugPage">
-    <option>Home</option>
-    <option>Spendly</option>
-    <option>Nexus</option>
-    <option>PocketCal</option>
-    <option>Feedback</option>
-  </select>
-</div>
-
-<!-- Name -->
-<div class="form-group">
-  <label class="form-label">
-    <span class="label-icon">👤</span>
-    Your Name
-  </label>
-  <input type="text" id="userName" class="form-input" placeholder="Enter your name" required>
-</div>
-
-<!-- Email -->
-<div class="form-group">
-  <label class="form-label">
-    <span class="label-icon">📧</span>
-    Email Address <span class="optional-text">(Optional)</span>
-  </label>
-  <input type="email" id="userEmail" class="form-input" placeholder="your.email@example.com">
-</div>
-
-<!-- Mood -->
-<div class="form-group">
-  <label class="form-label">Overall Feeling</label>
-  <div class="mood-select">
-    <span data-mood="😡">😡</span>
-    <span data-mood="😕">😕</span>
-    <span data-mood="😐">😐</span>
-    <span data-mood="🙂">🙂</span>
-    <span data-mood="😍">😍</span>
-  </div>
-  <input type="hidden" id="moodValue">
-</div>
-
-<!-- Rating -->
-<div class="form-group">
-  <label class="form-label">
-    <span class="label-icon">⭐</span>
-    Rate Your Experience
-  </label>
-  <div class="rating-container">
-    <div class="star-rating" id="starRating">
-      <span class="star" data-rating="1">★</span>
-      <span class="star" data-rating="2">★</span>
-      <span class="star" data-rating="3">★</span>
-      <span class="star" data-rating="4">★</span>
-      <span class="star" data-rating="5">★</span>
-    </div>
-    <span class="rating-text" id="ratingText">No rating selected</span>
-  </div>
-  <input type="hidden" id="ratingValue" value="0">
-</div>
-
-<!-- Message -->
-<div class="form-group">
-  <label class="form-label">
-    <span class="label-icon">💭</span>
-    Your Message
-  </label>
-  <textarea id="feedbackMessage" class="form-textarea"
-    placeholder="Share your thoughts, suggestions, or describe the issue in detail..."
-    rows="6" required></textarea>
-  <div class="character-count">
-    <span id="charCount">0</span> / 1000 characters
-  </div>
-</div>
-
-<!-- Screenshot -->
-<div class="form-group">
-  <label class="form-label">
-    <span class="label-icon">📎</span>
-    Attach Screenshot (Optional)
-  </label>
-  <input type="file" id="feedbackFile" class="form-input" accept="image/*">
-</div>
-
-<!-- Contact Permission -->
-<div class="form-group">
-  <label class="switch">
-    <input type="checkbox" id="contactPermission">
-    <span class="slider"></span>
-  </label>
-  <span class="switch-label">
-    Allow us to contact you regarding this feedback
-  </span>
-</div>
-
-<!-- Actions -->
-<div class="form-actions">
-  <button type="submit" class="btn btn-primary btn-submit">
-    <span class="btn-icon">📤</span>
-    <span>Send Feedback via WhatsApp</span>
-  </button>
-  <button type="button" class="btn btn-secondary" onclick="window.location.href='index.html'">
-    Cancel
-  </button>
-</div>
-
-</form>
-
-<!-- =========================================
-   SUCCESS
-========================================= -->
-<div class="success-message" id="successMessage" style="display:none;">
-  <div class="success-icon">✅</div>
-  <h3>Thank You!</h3>
-  <p>Your feedback has been prepared. Click below to send via WhatsApp.</p>
-
-  <button class="btn btn-primary" id="sendWhatsAppBtn">
-    📱 Open WhatsApp
-  </button>
-
-  <div class="rate-app">
-    <h4>Enjoying MoneyFlow?</h4>
-    <p>Consider rating the app ⭐</p>
-    <button class="btn btn-secondary">Rate App</button>
-  </div>
-</div>
-
-</div>
-
-<!-- Feedback History -->
-<div class="feedback-history">
-  <h3>Your Previous Feedback</h3>
-  <div id="feedbackList"></div>
-</div>
-
-<!-- Social -->
-<div class="feedback-social">
-  <p>Connect with us</p>
-  <div class="social-icons">
-    <a href="https://instagram.com/imxd12" target="_blank">Instagram</a>
-    <a href="mailto:imadak999@gmail.com">Email</a>
-  </div>
-</div>
-
-<!-- Why Feedback -->
-<div class="info-section">
-  <h3 class="info-title">
-    <span class="info-icon">💡</span>
-    Why Your Feedback Matters
-  </h3>
-
-  <div class="info-grid">
-    <div class="info-card">
-      <div class="info-card-icon">🚀</div>
-      <h4>Improve Features</h4>
-      <p>Your suggestions help us build better features.</p>
+    <div class="liquid-bg-container">
+        <div class="liquid-blob"></div>
+        <div class="liquid-blob"></div>
     </div>
 
-    <div class="info-card">
-      <div class="info-card-icon">🐛</div>
-      <h4>Fix Bugs Faster</h4>
-      <p>Bug reports help identify issues quickly.</p>
-    </div>
+    <header class="global-header glass-panel">
+        <div class="brand flex items-center gap-3">
+            <a href="javascript:history.back()" class="glass-button w-10 h-10 rounded-full flex items-center justify-center hover:-translate-x-1">
+                <i data-lucide="arrow-left" class="w-5 h-5"></i>
+            </a>
+            <span class="brand-text">Feedback</span>
+        </div>
+        <div class="header-controls">
+            <button class="theme-toggle-btn glass-button" id="themeToggleBtn"><i data-lucide="sun"></i></button>
+        </div>
+    </header>
 
-    <div class="info-card">
-      <div class="info-card-icon">❤️</div>
-      <h4>Show Appreciation</h4>
-      <p>Positive reviews motivate improvements.</p>
-    </div>
-  </div>
-</div>
+    <main class="main-content flex flex-col items-center">
+        <!-- =========================================
+           MAIN CONTAINER
+        ========================================= -->
+        <div class="w-full max-w-3xl space-y-8 glass-panel p-8">
 
-</section>
-</div>
+        <section class="feedback-section">
 
-<!-- =========================================
-   FOOTER
-========================================= -->
-<footer class="footer">
-  <div class="footer-content">
+        <!-- Header -->
+        <div class="text-center mb-8">
+          <div class="text-4xl mb-2">💬</div>
+          <h2 class="text-3xl font-extrabold text-gradient">We Value Your Feedback</h2>
+          <p class="text-muted mt-2">
+            Help us improve MoneyFlow by sharing your thoughts, suggestions, or reporting issues.
+          </p>
+        </div>
 
-    <div class="footer-section">
-      <h3>About MoneyFlow</h3>
-      <p>A comprehensive personal finance tracking application designed for complete money management.</p>
-    </div>
+        <!-- Feedback Stats -->
+        <div class="flex justify-center flex-wrap gap-4 font-bold text-sm mb-8 bg-glass-bg border border-glass-border p-4 rounded-xl">
+          <div class="text-amber-500">⭐ 4.8 Avg Rating</div>
+          <div class="text-blue-500">💬 120+ Feedback</div>
+          <div class="text-purple-500">🚀 30 Updates</div>
+        </div>
 
-    <div class="footer-section">
-      <h3>Quick Links</h3>
-      <ul>
-        <li><a href="howtouse.html">How to Use</a></li>
-        <li><a href="profile.html">About Developer</a></li>
-        <li><a href="terms-conditions.html">Terms & Conditions</a></li>
-        <li><a href="privacy-policy.html">Privacy Policy</a></li>
-      </ul>
-    </div>
+        <!-- FAQ -->
+        <div class="mb-8 border border-glass-border p-5 rounded-xl bg-glass-bg">
+          <h3 class="font-bold mb-4 flex items-center gap-2"><i data-lucide="info" class="w-5 h-5 text-emerald-500"></i> Common Questions</h3>
+          <details class="mb-2 cursor-pointer outline-none">
+            <summary class="font-bold text-emerald-600 outline-none">My data disappeared</summary>
+            <p class="text-sm text-muted mt-2 pl-4">Check if browser storage was cleared or incognito mode used. Data is stored purely offline in LocalStorage.</p>
+          </details>
+          <details class="cursor-pointer outline-none">
+            <summary class="font-bold text-emerald-600 outline-none">App not saving entries</summary>
+            <p class="text-sm text-muted mt-2 pl-4">Ensure browser storage permission is enabled.</p>
+          </details>
+        </div>
 
-    <div class="footer-section">
-      <h3>Developer</h3>
-      <p><strong>Imad Khan</strong></p>
-      <a href="https://www.instagram.com/_imxd12" target="_blank">@imxd12</a>
-      <p><a href="mailto:imadak999@gmail.com">imadak999@gmail.com</a></p>
-    </div>
+        <!-- =========================================
+           FORM
+        ========================================= -->
+        <div class="feedback-form-container" id="formContainer">
 
-  </div>
+        <form id="feedbackForm" class="space-y-6">
 
-  <div class="footer-bottom">
-    <p>&copy; 2025 MoneyFlow by Imad Khan. All rights reserved.</p>
-  </div>
-</footer>
+        <!-- Hidden Device Info -->
+        <input type="hidden" id="deviceInfo">
+        <input type="hidden" id="appVersion" value="2.0.0">
 
-<!-- Bottom Navigation -->
-<nav class="bottom-nav" data-active="0">
-   <div class="nav-liquid"></div>
-   <a href="index.html" class="nav-item active" id="nav-home">
-     <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
-     <span>Home</span>
-   </a>
-   <a href="spendly.html" class="nav-item" id="nav-spend">
-     <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1.41 16.09V20h-2.67v-1.93c-1.71-.36-3.16-1.46-3.27-3.4h1.96c.1 1.05.82 1.87 2.65 1.87 1.96 0 2.4-.98 2.4-1.59 0-.83-.44-1.61-2.67-2.14-2.48-.6-4.18-1.62-4.18-3.67 0-1.72 1.39-2.84 3.11-3.21V4h2.67v1.95c1.86.45 2.79 1.86 2.85 3.39H14.3c-.05-1.11-.64-1.87-2.22-1.87-1.5 0-2.4.68-2.4 1.64 0 .84.65 1.39 2.67 1.91s4.18 1.39 4.18 3.91c-.01 1.83-1.38 2.83-3.12 3.16z"/></svg>
-     <span>Spendly</span>
-   </a>
-   <a href="pocketcal.html" class="nav-item" id="nav-pocket">
-     <svg viewBox="0 0 24 24"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zM9 14H7v-2h2v2zm4 0h-2v-2h2v2zm4 0h-2v-2h2v2zm-8 4H7v-2h2v2zm4 0h-2v-2h2v2zm4 0h-2v-2h2v2z"/></svg>
-     <span>PocketCal</span>
-   </a>
-</nav>
+        <!-- Type -->
+        <div>
+          <label class="block font-bold mb-2">
+            📋 Feedback Type
+          </label>
+          <select id="feedbackType" class="glass-input font-bold" required>
+            <option value="">Select feedback type</option>
+            <option value="Review">⭐ Review / Appreciation</option>
+            <option value="Suggestion">💡 Suggestion / Feature Request</option>
+            <option value="Bug Report">🐛 Bug Report / Issue</option>
+            <option value="Complaint">⚠️ Complaint</option>
+            <option value="Other">📝 Other</option>
+          </select>
+        </div>
 
+        <!-- Bug Location -->
+        <div id="bugGroup" style="display:none;">
+          <label class="block font-bold mb-2">Where did the issue occur?</label>
+          <select class="glass-input font-bold" id="bugPage">
+            <option>Home</option>
+            <option>Spendly</option>
+            <option>PocketCal</option>
+            <option>Settings</option>
+            <option>Profile</option>
+          </select>
+        </div>
 
-<script src="global.js"></script>
-<script src="feedback.js"></script>
+        <!-- Name -->
+        <div>
+          <label class="block font-bold mb-2">👤 Your Name</label>
+          <input type="text" id="userName" class="glass-input" placeholder="Enter your name" required>
+        </div>
 
+        <!-- Email -->
+        <div>
+          <label class="block font-bold mb-2">📧 Email Address <span class="text-muted text-xs">(Optional)</span></label>
+          <input type="email" id="userEmail" class="glass-input" placeholder="your.email@example.com">
+        </div>
+
+        <!-- Mood -->
+        <div>
+          <label class="block font-bold mb-2">Overall Feeling</label>
+          <div class="mood-select" id="moodSelector">
+            <span data-mood="😡">😡</span>
+            <span data-mood="😕">😕</span>
+            <span data-mood="😐">😐</span>
+            <span data-mood="🙂">🙂</span>
+            <span data-mood="😍">😍</span>
+          </div>
+          <input type="hidden" id="moodValue">
+        </div>
+
+        <!-- Rating -->
+        <div>
+          <label class="block font-bold mb-2">⭐ Rate Your Experience</label>
+          <div class="rating-container mb-2">
+            <div class="star-rating" id="starRating">
+              <span class="star" data-rating="1">★</span>
+              <span class="star" data-rating="2">★</span>
+              <span class="star" data-rating="3">★</span>
+              <span class="star" data-rating="4">★</span>
+              <span class="star" data-rating="5">★</span>
+            </div>
+            <span class="text-sm font-bold text-emerald-500 ml-4" id="ratingText">0/5</span>
+          </div>
+          <input type="hidden" id="ratingValue" value="0">
+        </div>
+
+        <!-- Message -->
+        <div>
+          <label class="block font-bold mb-2">💭 Your Message</label>
+          <textarea id="feedbackMessage" class="glass-input h-32 resize-none"
+            placeholder="Share your thoughts, suggestions, or describe the issue in detail..."
+            required maxlength="1000"></textarea>
+          <div class="text-xs text-muted mt-2 text-right">
+            <span id="charCount">0</span> / 1000 characters
+          </div>
+        </div>
+
+        <!-- Contact Permission -->
+        <div class="flex items-center gap-4">
+          <label class="switch">
+            <input type="checkbox" id="contactPermission">
+            <span class="slider"></span>
+          </label>
+          <span class="font-bold text-sm">
+            Allow us to contact you
+          </span>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex gap-4 pt-4">
+          <button type="submit" class="flex-1 glass-button font-bold flex items-center justify-center gap-2 bg-[#25D366]/20 text-emerald-600 hover:bg-[#25D366] hover:text-white border-emerald-500/50">
+            <i data-lucide="send"></i> Send Feedback via WhatsApp
+          </button>
+        </div>
+
+        </form>
+        </div>
+
+        <!-- =========================================
+           SUCCESS
+        ========================================= -->
+        <div class="success-message" id="successMessage" style="display:none;">
+          <div class="text-5xl mb-4">✅</div>
+          <h3 class="text-2xl font-bold mb-2">Thank You!</h3>
+          <p class="mb-6">Your feedback has been prepared. Click below to send via WhatsApp.</p>
+
+          <button class="glass-button bg-blue-500 hover:bg-blue-600 text-white font-bold px-8 py-3 rounded-xl shadow-lg border-0 mb-8" id="sendWhatsAppBtn">
+            📱 Open WhatsApp Now
+          </button>
+        </div>
+
+        <!-- Why Feedback -->
+        <div class="mt-12">
+          <h3 class="font-bold text-xl flex items-center gap-2 mb-4">
+            <i data-lucide="lightbulb" class="text-amber-500"></i> Why Your Feedback Matters
+          </h3>
+
+          <div class="info-grid">
+            <div class="info-card">
+              <div class="text-2xl mb-2">🚀</div>
+              <h4 class="font-bold">Improve Features</h4>
+              <p class="text-xs text-muted mt-1">Your suggestions help us build better features.</p>
+            </div>
+
+            <div class="info-card">
+              <div class="text-2xl mb-2">🐛</div>
+              <h4 class="font-bold">Fix Bugs Faster</h4>
+              <p class="text-xs text-muted mt-1">Bug reports help identify issues quickly.</p>
+            </div>
+
+            <div class="info-card">
+              <div class="text-2xl mb-2">❤️</div>
+              <h4 class="font-bold">Appreciation</h4>
+              <p class="text-xs text-muted mt-1">Positive reviews motivate improvements.</p>
+            </div>
+          </div>
+        </div>
+
+        </section>
+        </div>
+
+    </main>
+
+    <!-- CDNs -->
+    <script src="https://unpkg.com/@studio-freight/lenis@1.0.39/dist/lenis.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script src="global.js"></script>
+    <script src="feedback.js"></script>
 </body>
 </html>

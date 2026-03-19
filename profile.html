@@ -34,10 +34,14 @@
 
     <header class="global-header glass-panel">
         <div class="brand flex items-center gap-3">
-            <a href="index.html"
+            <a href="javascript:history.back()"
                 class="glass-button w-10 h-10 rounded-full flex items-center justify-center hover:-translate-x-1">
                 <i data-lucide="arrow-left" class="w-5 h-5"></i>
             </a>
+            <div class="brand-logo-wave hidden sm:block">
+                <div class="wave wave1"></div>
+                <div class="wave wave2"></div>
+            </div>
             <span class="brand-text">Profile</span>
         </div>
         <div class="header-controls">
@@ -161,7 +165,7 @@
             <!-- Work Experience & Certs Column -->
             <div class="space-y-8 flex flex-col">
                 <!-- Work Experience Section -->
-                <div class="profile-section glass-panel p-8 ag-card-reveal flex-1" data-speed="0.25">
+                <div class="profile-section glass-panel p-8 ag-card-reveal h-fit" data-speed="0.25">
                     <h4 class="section-heading text-2xl font-bold mb-6 flex items-center gap-3">
                         <span class="section-icon text-blue-500">💼</span>
                         Work Experience
@@ -188,7 +192,7 @@
                 </div>
 
                 <!-- Professional Certifications Section -->
-                <div class="profile-section glass-panel p-8 ag-card-reveal flex-1" data-speed="0.3">
+                <div class="profile-section glass-panel p-8 ag-card-reveal h-fit" data-speed="0.3">
                     <h4 class="section-heading text-2xl font-bold mb-6 flex items-center gap-3">
                         <span class="section-icon text-amber-500">📜</span>
                         Professional Certifications
@@ -222,7 +226,7 @@
                             </div>
                             <p class="cert-description">Completed industry-certified training at Mahindra & Mahindra
                                 (Centum Foundation), gaining hands-on knowledge of electric vehicle systems,
-                                diagnostics, and safety (Sep 2024 – Nov 2025)</p>
+                                diagnostics, and safety (Sep 202 – Nov 2025)</p>
                         </div>
                     </div>
                 </div>
@@ -230,31 +234,42 @@
 
             <!-- Skills Section -->
             <div class="profile-section w-full mb-12 ag-card-reveal" data-speed="0.15" id="skillGridTrigger">
-                <h4 class="section-heading text-3xl font-bold mb-10 flex justify-center items-center gap-3 w-full text-center">
+                <h4
+                    class="section-heading text-3xl font-bold mb-10 flex justify-center items-center gap-3 w-full text-center">
                     <span class="section-icon text-purple-500">💻</span>
                     Core Stack & Technologies
                 </h4>
                 <div class="section-content grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     <!-- Web Development -->
                     <div class="skill-category glass-panel p-6 rounded-2xl relative overflow-hidden group">
-                        <div class="absolute -right-6 -top-6 w-24 h-24 bg-purple-500/10 rounded-full blur-2xl group-hover:bg-purple-500/20 transition-colors"></div>
-                        <h5 class="category-title font-extrabold flex items-center gap-2 mb-6 text-lg border-b border-glass-border pb-3">
-                            <span class="category-icon text-purple-500 drop-shadow-[0_0_8px_rgba(168,85,247,0.5)]">🌐</span> Web Development
+                        <div
+                            class="absolute -right-6 -top-6 w-24 h-24 bg-purple-500/10 rounded-full blur-2xl group-hover:bg-purple-500/20 transition-colors">
+                        </div>
+                        <h5
+                            class="category-title font-extrabold flex items-center gap-2 mb-6 text-lg border-b border-glass-border pb-3">
+                            <span
+                                class="category-icon text-purple-500 drop-shadow-[0_0_8px_rgba(168,85,247,0.5)]">🌐</span>
+                            Web Development
                         </h5>
                         <div class="grid grid-cols-3 gap-3 text-xs font-bold text-center">
-                            <div class="skill-box bg-glass-hover p-4 rounded-xl flex flex-col items-center gap-2 border border-glass-border/50 hover:border-emerald-500/50 transition-colors">
+                            <div
+                                class="skill-box bg-glass-hover p-4 rounded-xl flex flex-col items-center gap-2 border border-glass-border/50 hover:border-emerald-500/50 transition-colors">
                                 <i data-lucide="layout-template" class="w-8 h-8 text-orange-500 skill-icon"></i>
                                 <span class="text-muted">HTML5</span>
                             </div>
-                            <div class="skill-box bg-glass-hover p-4 rounded-xl flex flex-col items-center gap-2 border border-glass-border/50 hover:border-emerald-500/50 transition-colors">
+                            <div
+                                class="skill-box bg-glass-hover p-4 rounded-xl flex flex-col items-center gap-2 border border-glass-border/50 hover:border-emerald-500/50 transition-colors">
                                 <i data-lucide="palette" class="w-8 h-8 text-blue-500 skill-icon"></i>
                                 <span class="text-muted">CSS3</span>
                             </div>
-                            <div class="skill-box bg-glass-hover p-4 rounded-xl flex flex-col items-center gap-2 border border-glass-border/50 hover:border-emerald-500/50 transition-colors">
-                                <i data-lucide="file-code-2" class="w-8 h-8 text-yellow-400 skill-icon drop-shadow-[0_0_8px_rgba(250,204,21,0.5)]"></i>
+                            <div
+                                class="skill-box bg-glass-hover p-4 rounded-xl flex flex-col items-center gap-2 border border-glass-border/50 hover:border-emerald-500/50 transition-colors">
+                                <i data-lucide="file-code-2"
+                                    class="w-8 h-8 text-yellow-400 skill-icon drop-shadow-[0_0_8px_rgba(250,204,21,0.5)]"></i>
                                 <span class="text-emerald-500">JS Engine</span>
                             </div>
-                            <div class="skill-box bg-glass-hover p-4 rounded-xl flex flex-col items-center gap-2 border border-glass-border/50 hover:border-emerald-500/50 transition-colors col-span-3">
+                            <div
+                                class="skill-box bg-glass-hover p-4 rounded-xl flex flex-col items-center gap-2 border border-glass-border/50 hover:border-emerald-500/50 transition-colors col-span-3">
                                 <i data-lucide="smartphone" class="w-8 h-8 text-emerald-500 skill-icon"></i>
                                 <span class="text-emerald-500 font-extrabold tracking-widest">PWA INTERFACES</span>
                             </div>
@@ -263,20 +278,29 @@
 
                     <!-- Programming Languages -->
                     <div class="skill-category glass-panel p-6 rounded-2xl relative overflow-hidden group">
-                        <div class="absolute -right-6 -top-6 w-24 h-24 bg-emerald-500/10 rounded-full blur-2xl group-hover:bg-emerald-500/20 transition-colors"></div>
-                        <h5 class="category-title font-extrabold flex items-center gap-2 mb-6 text-lg border-b border-glass-border pb-3">
-                            <span class="category-icon text-emerald-500 drop-shadow-[0_0_8px_rgba(16,185,129,0.5)]">👨‍💻</span> Programming
+                        <div
+                            class="absolute -right-6 -top-6 w-24 h-24 bg-emerald-500/10 rounded-full blur-2xl group-hover:bg-emerald-500/20 transition-colors">
+                        </div>
+                        <h5
+                            class="category-title font-extrabold flex items-center gap-2 mb-6 text-lg border-b border-glass-border pb-3">
+                            <span
+                                class="category-icon text-emerald-500 drop-shadow-[0_0_8px_rgba(16,185,129,0.5)]">👨‍💻</span>
+                            Programming
                         </h5>
                         <div class="grid grid-cols-3 gap-3 text-xs font-bold text-center">
-                            <div class="skill-box bg-glass-hover p-4 rounded-xl flex flex-col items-center gap-2 border border-glass-border/50 hover:border-emerald-500/50 transition-colors">
+                            <div
+                                class="skill-box bg-glass-hover p-4 rounded-xl flex flex-col items-center gap-2 border border-glass-border/50 hover:border-emerald-500/50 transition-colors">
                                 <i data-lucide="terminal-square" class="w-8 h-8 text-blue-400 skill-icon"></i>
                                 <span class="text-muted">Python</span>
                             </div>
-                            <div class="skill-box bg-glass-hover p-4 rounded-xl flex flex-col items-center gap-2 border border-glass-border/50 hover:border-emerald-500/50 transition-colors">
-                                <i data-lucide="code-2" class="w-8 h-8 text-emerald-500 skill-icon drop-shadow-[0_0_8px_rgba(16,185,129,0.5)]"></i>
+                            <div
+                                class="skill-box bg-glass-hover p-4 rounded-xl flex flex-col items-center gap-2 border border-glass-border/50 hover:border-emerald-500/50 transition-colors">
+                                <i data-lucide="code-2"
+                                    class="w-8 h-8 text-emerald-500 skill-icon drop-shadow-[0_0_8px_rgba(16,185,129,0.5)]"></i>
                                 <span class="text-emerald-500">ES6+</span>
                             </div>
-                            <div class="skill-box bg-glass-hover p-4 rounded-xl flex flex-col items-center gap-2 border border-glass-border/50 hover:border-emerald-500/50 transition-colors">
+                            <div
+                                class="skill-box bg-glass-hover p-4 rounded-xl flex flex-col items-center gap-2 border border-glass-border/50 hover:border-emerald-500/50 transition-colors">
                                 <i data-lucide="cpu" class="w-8 h-8 text-muted skill-icon"></i>
                                 <span class="text-muted">C/C++</span>
                             </div>
@@ -285,20 +309,29 @@
 
                     <!-- Hardware & IoT -->
                     <div class="skill-category glass-panel p-6 rounded-2xl relative overflow-hidden group">
-                        <div class="absolute -right-6 -top-6 w-24 h-24 bg-amber-500/10 rounded-full blur-2xl group-hover:bg-amber-500/20 transition-colors"></div>
-                        <h5 class="category-title font-extrabold flex items-center gap-2 mb-6 text-lg border-b border-glass-border pb-3">
-                            <span class="category-icon text-amber-500 drop-shadow-[0_0_8px_rgba(245,158,11,0.5)]">🔌</span> Hardware & IoT
+                        <div
+                            class="absolute -right-6 -top-6 w-24 h-24 bg-amber-500/10 rounded-full blur-2xl group-hover:bg-amber-500/20 transition-colors">
+                        </div>
+                        <h5
+                            class="category-title font-extrabold flex items-center gap-2 mb-6 text-lg border-b border-glass-border pb-3">
+                            <span
+                                class="category-icon text-amber-500 drop-shadow-[0_0_8px_rgba(245,158,11,0.5)]">🔌</span>
+                            Hardware & IoT
                         </h5>
                         <div class="grid grid-cols-3 gap-3 text-xs font-bold text-center">
-                            <div class="skill-box bg-glass-hover p-4 rounded-xl flex flex-col items-center gap-2 border border-glass-border/50 hover:border-emerald-500/50 transition-colors">
+                            <div
+                                class="skill-box bg-glass-hover p-4 rounded-xl flex flex-col items-center gap-2 border border-glass-border/50 hover:border-emerald-500/50 transition-colors">
                                 <i data-lucide="microchip" class="w-8 h-8 text-cyan-500 skill-icon"></i>
                                 <span class="text-muted">Arduino</span>
                             </div>
-                            <div class="skill-box bg-glass-hover p-4 rounded-xl flex flex-col items-center gap-2 border border-glass-border/50 hover:border-emerald-500/50 transition-colors">
-                                <i data-lucide="hard-drive" class="w-8 h-8 text-red-500 skill-icon drop-shadow-[0_0_8px_rgba(239,68,68,0.5)]"></i>
+                            <div
+                                class="skill-box bg-glass-hover p-4 rounded-xl flex flex-col items-center gap-2 border border-glass-border/50 hover:border-emerald-500/50 transition-colors">
+                                <i data-lucide="hard-drive"
+                                    class="w-8 h-8 text-red-500 skill-icon drop-shadow-[0_0_8px_rgba(239,68,68,0.5)]"></i>
                                 <span class="text-red-500">Raspberry Pi</span>
                             </div>
-                            <div class="skill-box bg-glass-hover p-4 rounded-xl flex flex-col items-center gap-2 border border-glass-border/50 hover:border-emerald-500/50 transition-colors">
+                            <div
+                                class="skill-box bg-glass-hover p-4 rounded-xl flex flex-col items-center gap-2 border border-glass-border/50 hover:border-emerald-500/50 transition-colors">
                                 <i data-lucide="wifi" class="w-8 h-8 text-amber-500 skill-icon"></i>
                                 <span class="text-muted">IoT</span>
                             </div>
@@ -307,16 +340,24 @@
 
                     <!-- Tools & Frameworks -->
                     <div class="skill-category glass-panel p-6 rounded-2xl relative overflow-hidden group">
-                        <div class="absolute -right-6 -top-6 w-24 h-24 bg-orange-500/10 rounded-full blur-2xl group-hover:bg-orange-500/20 transition-colors"></div>
-                        <h5 class="category-title font-extrabold flex items-center gap-2 mb-6 text-lg border-b border-glass-border pb-3">
-                            <span class="category-icon text-orange-500 drop-shadow-[0_0_8px_rgba(249,115,22,0.5)]">🛠️</span> Tools & Logic
+                        <div
+                            class="absolute -right-6 -top-6 w-24 h-24 bg-orange-500/10 rounded-full blur-2xl group-hover:bg-orange-500/20 transition-colors">
+                        </div>
+                        <h5
+                            class="category-title font-extrabold flex items-center gap-2 mb-6 text-lg border-b border-glass-border pb-3">
+                            <span
+                                class="category-icon text-orange-500 drop-shadow-[0_0_8px_rgba(249,115,22,0.5)]">🛠️</span>
+                            Tools & Logic
                         </h5>
                         <div class="grid grid-cols-2 gap-3 text-xs font-bold text-center">
-                            <div class="skill-box bg-glass-hover p-4 rounded-xl flex flex-col items-center gap-2 border border-glass-border/50 hover:border-emerald-500/50 transition-colors">
-                                <i data-lucide="git-branch" class="w-8 h-8 text-orange-500 skill-icon drop-shadow-[0_0_8px_rgba(249,115,22,0.5)]"></i>
+                            <div
+                                class="skill-box bg-glass-hover p-4 rounded-xl flex flex-col items-center gap-2 border border-glass-border/50 hover:border-emerald-500/50 transition-colors">
+                                <i data-lucide="git-branch"
+                                    class="w-8 h-8 text-orange-500 skill-icon drop-shadow-[0_0_8px_rgba(249,115,22,0.5)]"></i>
                                 <span class="text-orange-500">Git Versioning</span>
                             </div>
-                            <div class="skill-box bg-glass-hover p-4 rounded-xl flex flex-col items-center gap-2 border border-glass-border/50 hover:border-emerald-500/50 transition-colors">
+                            <div
+                                class="skill-box bg-glass-hover p-4 rounded-xl flex flex-col items-center gap-2 border border-glass-border/50 hover:border-emerald-500/50 transition-colors">
                                 <i data-lucide="pie-chart" class="w-8 h-8 text-emerald-500 skill-icon"></i>
                                 <span class="text-muted">Chart.js Nodes</span>
                             </div>
@@ -324,23 +365,38 @@
                     </div>
 
                     <!-- Robotics -->
-                    <div class="skill-category glass-panel p-6 rounded-2xl relative overflow-hidden group md:col-span-2 lg:col-span-2">
-                        <div class="absolute -right-6 -top-6 w-32 h-32 bg-blue-500/10 rounded-full blur-2xl group-hover:bg-blue-500/20 transition-colors"></div>
-                        <h5 class="category-title font-extrabold flex items-center gap-2 mb-6 text-lg border-b border-glass-border pb-3">
-                            <span class="category-icon text-blue-500 drop-shadow-[0_0_8px_rgba(59,130,246,0.5)]">🤖</span> Robotics Engineering
+                    <div
+                        class="skill-category glass-panel p-6 rounded-2xl relative overflow-hidden group md:col-span-2 lg:col-span-2">
+                        <div
+                            class="absolute -right-6 -top-6 w-32 h-32 bg-blue-500/10 rounded-full blur-2xl group-hover:bg-blue-500/20 transition-colors">
+                        </div>
+                        <h5
+                            class="category-title font-extrabold flex items-center gap-2 mb-6 text-lg border-b border-glass-border pb-3">
+                            <span
+                                class="category-icon text-blue-500 drop-shadow-[0_0_8px_rgba(59,130,246,0.5)]">🤖</span>
+                            Robotics Engineering
                         </h5>
                         <div class="grid grid-cols-3 gap-3 text-xs font-bold text-center">
-                            <div class="skill-box bg-glass-hover p-6 rounded-xl flex flex-col items-center justify-center gap-3 border border-glass-border/50 hover:border-emerald-500/50 transition-colors">
-                                <i data-lucide="settings" class="w-10 h-10 text-blue-500 skill-icon drop-shadow-[0_0_8px_rgba(59,130,246,0.5)]"></i>
-                                <span class="text-blue-500 font-extrabold tracking-wide uppercase">Automation Engines</span>
+                            <div
+                                class="skill-box bg-glass-hover p-6 rounded-xl flex flex-col items-center justify-center gap-3 border border-glass-border/50 hover:border-emerald-500/50 transition-colors">
+                                <i data-lucide="settings"
+                                    class="w-10 h-10 text-blue-500 skill-icon drop-shadow-[0_0_8px_rgba(59,130,246,0.5)]"></i>
+                                <span class="text-blue-500 font-extrabold tracking-wide uppercase">Automation
+                                    Engines</span>
                             </div>
-                            <div class="skill-box bg-glass-hover p-6 rounded-xl flex flex-col items-center justify-center gap-3 border border-glass-border/50 hover:border-emerald-500/50 transition-colors">
-                                <i data-lucide="bot" class="w-10 h-10 text-emerald-500 skill-icon drop-shadow-[0_0_8px_rgba(16,185,129,0.5)]"></i>
-                                <span class="text-emerald-500 font-extrabold tracking-wide uppercase">Robotic Kinematics</span>
+                            <div
+                                class="skill-box bg-glass-hover p-6 rounded-xl flex flex-col items-center justify-center gap-3 border border-glass-border/50 hover:border-emerald-500/50 transition-colors">
+                                <i data-lucide="bot"
+                                    class="w-10 h-10 text-emerald-500 skill-icon drop-shadow-[0_0_8px_rgba(16,185,129,0.5)]"></i>
+                                <span class="text-emerald-500 font-extrabold tracking-wide uppercase">Robotic
+                                    Kinematics</span>
                             </div>
-                            <div class="skill-box bg-glass-hover p-6 rounded-xl flex flex-col items-center justify-center gap-3 border border-glass-border/50 hover:border-emerald-500/50 transition-colors">
-                                <i data-lucide="memory-stick" class="w-10 h-10 text-amber-500 skill-icon drop-shadow-[0_0_8px_rgba(245,158,11,0.5)]"></i>
-                                <span class="text-amber-500 font-extrabold tracking-wide uppercase">Embedded Systems</span>
+                            <div
+                                class="skill-box bg-glass-hover p-6 rounded-xl flex flex-col items-center justify-center gap-3 border border-glass-border/50 hover:border-emerald-500/50 transition-colors">
+                                <i data-lucide="memory-stick"
+                                    class="w-10 h-10 text-amber-500 skill-icon drop-shadow-[0_0_8px_rgba(245,158,11,0.5)]"></i>
+                                <span class="text-amber-500 font-extrabold tracking-wide uppercase">Embedded
+                                    Systems</span>
                             </div>
                         </div>
                     </div>
@@ -364,7 +420,7 @@
         </a>
         <a href="pocketcal.html" class="dock-item">
             <i data-lucide="calendar"></i>
-            <span>Calendar</span>
+            <span>PocketCal</span>
         </a>
         <a href="settings.html" class="dock-item">
             <i data-lucide="settings"></i>
@@ -384,7 +440,7 @@
         // Physics-driven Falling Skill Icons Geometry
         document.addEventListener('DOMContentLoaded', () => {
             gsap.registerPlugin(ScrollTrigger);
-            
+
             // Loop through each box grid and apply heavy bounce staggered drop logic
             const categoryBoxes = document.querySelectorAll('.skill-category');
             categoryBoxes.forEach(category => {

@@ -63,16 +63,24 @@
         target.classList.remove('hidden');
         target.classList.add('active', 'block');
 
-        // Toggle buttons visual
-        const incomeBtn = document.querySelector('button[onclick="switchType(\'income\')"]');
-        const expenseBtn = document.querySelector('button[onclick="switchType(\'expense\')"]');
+        const incomeBtn = document.getElementById('btnIncomeType');
+        const expenseBtn = document.getElementById('btnExpenseType');
+        const switcherPill = document.getElementById('typeSwitcherPill');
         
         if (type === 'income') {
-            incomeBtn.className = "px-6 py-2 rounded-xl text-sm font-bold bg-emerald-500 text-white shadow-md transition-transform active:scale-95";
-            expenseBtn.className = "px-6 py-2 rounded-xl text-sm font-bold bg-transparent text-muted hover:bg-glass-hover transition-colors";
+            if (switcherPill) {
+                switcherPill.style.transform = 'translateX(0%)';
+                switcherPill.style.backgroundColor = '#10b981';
+            }
+            if (incomeBtn) incomeBtn.className = "relative flex-1 py-2 text-sm font-bold rounded-xl text-white transition-colors duration-300 z-10";
+            if (expenseBtn) expenseBtn.className = "relative flex-1 py-2 text-sm font-bold rounded-xl text-muted hover:text-white transition-colors duration-300 z-10";
         } else {
-            expenseBtn.className = "px-6 py-2 rounded-xl text-sm font-bold bg-red-500 text-white shadow-md transition-transform active:scale-95";
-            incomeBtn.className = "px-6 py-2 rounded-xl text-sm font-bold bg-transparent text-muted hover:bg-glass-hover transition-colors";
+            if (switcherPill) {
+                switcherPill.style.transform = 'translateX(100%)';
+                switcherPill.style.backgroundColor = '#ef4444';
+            }
+            if (expenseBtn) expenseBtn.className = "relative flex-1 py-2 text-sm font-bold rounded-xl text-white transition-colors duration-300 z-10";
+            if (incomeBtn) incomeBtn.className = "relative flex-1 py-2 text-sm font-bold rounded-xl text-muted hover:text-white transition-colors duration-300 z-10";
         }
     };
 
@@ -371,6 +379,83 @@
                     scales: {
                         y: { grid: { color: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' } },
                         x: { grid: { display:false } }
+                    }
+                }
+            });
+        }
+
+        // 4. Daily Activity (Current Month)
+        const ctxDaily = document.getElementById('dailyActivityChart');
+        if (ctxDaily) {
+            const currentM = today.slice(0, 7);
+            const daysInMonth = new Date(today.slice(0, 4), today.slice(5, 7), 0).getDate();
+            const dailyData = Array(daysInMonth).fill(0);
+            
+            data.filter(d => d.type === 'expense' && d.date.startsWith(currentM)).forEach(d => {
+                const day = parseInt(d.date.slice(8, 10), 10);
+                dailyData[day - 1] += Number(d.amount);
+            });
+            const dLabels = Array.from({length: daysInMonth}, (_, i) => i + 1);
+
+            charts.daily = new Chart(ctxDaily, {
+                type: 'line',
+                data: {
+                    labels: dLabels,
+                    datasets: [{
+                        label: 'Daily Exps',
+                        data: dailyData,
+                        borderColor: '#ef4444',
+                        backgroundColor: 'rgba(239, 68, 68, 0.2)',
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { display: false },
+                        x: { display: true, grid: { display: false }, ticks: { maxTicksLimit: 10 } }
+                    }
+                }
+            });
+        }
+
+        // 5. Weekday Activity (Polar Area)
+        const ctxW = document.getElementById('weekdayActivityChart');
+        if (ctxW) {
+            const weekdayTotals = [0,0,0,0,0,0,0]; // Sun..Sat
+            data.filter(d => d.type === 'expense').forEach(d => {
+                let dateObj = new Date(d.date);
+                weekdayTotals[dateObj.getDay()] += Number(d.amount);
+            });
+
+            charts.weekday = new Chart(ctxW, {
+                type: 'polarArea',
+                data: {
+                    labels: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+                    datasets: [{
+                        label: 'Weekday Spends',
+                        data: weekdayTotals,
+                        backgroundColor: [
+                            'rgba(239, 68, 68, 0.6)',
+                            'rgba(245, 158, 11, 0.6)',
+                            'rgba(16, 185, 129, 0.6)',
+                            'rgba(59, 130, 246, 0.6)',
+                            'rgba(139, 92, 246, 0.6)',
+                            'rgba(236, 72, 153, 0.6)',
+                            'rgba(99, 102, 241, 0.6)'
+                        ],
+                        borderWidth: 1,
+                        borderColor: isDark ? '#1e293b' : '#ffffff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        r: { ticks: { display: false }, grid: { color: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)' } }
                     }
                 }
             });

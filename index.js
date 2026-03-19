@@ -31,7 +31,7 @@
         const monthlyExpense = state.spendlyData
             .filter(t => t.date && t.date.startsWith(currentMonth) && t.type === 'expense')
             .reduce((sum, t) => sum + Number(t.amount || 0), 0);
-        
+
         const monthlyIncome = state.spendlyData
             .filter(t => t.date && t.date.startsWith(currentMonth) && t.type === 'income')
             .reduce((sum, t) => sum + Number(t.amount || 0), 0);
@@ -67,9 +67,9 @@
 
     function animateValueUpdate(elementId, value) {
         const el = document.getElementById(elementId);
-        if(!el) return;
+        if (!el) return;
         el.textContent = fmt(value);
-        
+
         // Trigger reflow for animation restart
         el.classList.remove('flash-update');
         void el.offsetWidth;
@@ -99,26 +99,26 @@
 
         const date = new Date();
         const hour = date.getHours();
-        
+
         const emojiArray = [
-            '🌌','🌃','🦉','🦇','🐺','🌅','🌄','☕','🍳','🌞','😎','🏖️',
-            '🏜️','🏙️','🚶','🏃','🌇','🌆','🌙','🌟','🌠','🛌','😴','💤'
+            '🌌', '🌃', '🦉', '🦇', '🐺', '🌅', '🌄', '☕', '🍳', '🌞', '😎', '🏖️',
+            '🏜️', '🏙️', '🚶', '🏃', '🌇', '🌆', '🌙', '🌟', '🌠', '🛌', '😴', '💤'
         ];
         const currentEmoji = emojiArray[hour];
-        
+
         let greeting = "";
         if (hour >= 0 && hour < 3) greeting = "Late night";
         else if (hour >= 3 && hour < 6) greeting = "Early morning";
         else if (hour >= 6 && hour < 9) greeting = "Morning";
         else if (hour >= 9 && hour < 12) greeting = "Late morning";
         else if (hour >= 12 && hour < 15) greeting = "Afternoon";
-        else if (hour >= 15 && hour < 18) greeting = "Late afternoon";
+        else if (hour >= 15 && hour < 18) greeting = "Late Afternoon";
         else if (hour >= 18 && hour < 21) greeting = "Evening";
         else greeting = "Night";
 
-        let randEmoji = ['✨','💫','🌟','🔥','🥂'][Math.floor(Math.random() * 5)];
-        let finalGreeting = `Good ${greeting} ${currentEmoji}<br><span class="text-gradient">${state.username}</span> ${randEmoji}`;
-        
+        let randEmoji = ['✨', '💫', '🌟', '🔥', '🥂'][Math.floor(Math.random() * 5)];
+        let finalGreeting = `${greeting} ${currentEmoji}<br><span class="text-gradient">${state.username}</span> ${randEmoji}`;
+
         if (date.getDay() === 5) {
             finalGreeting = `Jummah Mubarak 🕌<br><span class="text-gradient">${state.username}</span> - Good ${greeting} ${currentEmoji}`;
         }
@@ -131,7 +131,8 @@
     // ----------------------------------------------------
     function speakAssistantGreeting() {
         if (localStorage.getItem("voiceGreeting") === "off") return;
-        
+        if (localStorage.getItem("app_opened_before") === "true") return;
+
         let hasSpoken = false;
 
         const hour = new Date().getHours();
@@ -157,12 +158,13 @@
             const voices = speechSynthesis.getVoices();
             const savedURI = localStorage.getItem('fin_voiceURI');
             let preferred = null;
-            if(savedURI) preferred = voices.find(v => v.voiceURI === savedURI);
-            if(!preferred) preferred = voices.find(v => v.name.includes("Google US English") || v.name.includes("Samantha")) || voices[0];
+            if (savedURI) preferred = voices.find(v => v.voiceURI === savedURI);
+            if (!preferred) preferred = voices.find(v => v.name.includes("Google US English") || v.name.includes("Samantha")) || voices[0];
             if (preferred) speech.voice = preferred;
 
             speech.onstart = () => {
                 hasSpoken = true;
+                localStorage.setItem("app_opened_before", "true");
                 document.removeEventListener('click', runSpeech);
                 document.removeEventListener('touchstart', runSpeech);
             };
@@ -189,7 +191,7 @@
         }
 
         const promptEl = document.getElementById('installPrompt');
-        if(promptEl) {
+        if (promptEl) {
             promptEl.style.display = 'block'; // Force show
             setTimeout(() => promptEl.classList.add('show'), 100);
         }
@@ -200,20 +202,20 @@
         });
 
         document.getElementById('installBtn')?.addEventListener('click', async () => {
-            if(!deferredPrompt) return;
+            if (!deferredPrompt) return;
             deferredPrompt.prompt();
             const { outcome } = await deferredPrompt.userChoice;
-            if(outcome === 'accepted') {
+            if (outcome === 'accepted') {
                 showSnackbar('MoneyFlow installed!');
             }
             deferredPrompt = null;
             document.getElementById('installPrompt').classList.remove('show');
-            setTimeout(() => document.getElementById('installPrompt').style.display='none', 600);
+            setTimeout(() => document.getElementById('installPrompt').style.display = 'none', 600);
         });
 
         document.getElementById('dismissBtn')?.addEventListener('click', () => {
             document.getElementById('installPrompt').classList.remove('show');
-            setTimeout(() => document.getElementById('installPrompt').style.display='none', 600);
+            setTimeout(() => document.getElementById('installPrompt').style.display = 'none', 600);
             localStorage.setItem('installDismissed', 'true');
         });
     }
@@ -225,7 +227,7 @@
         updateTextGreeting();
         updateDashboard();
         initPWA();
-        
+
         // Voice greeting after a tiny timeout to ensure it feels natural
         setTimeout(speakAssistantGreeting, 1200);
 

@@ -39,6 +39,10 @@
                 class="glass-button w-10 h-10 rounded-full flex items-center justify-center hover:-translate-x-1">
                 <i data-lucide="arrow-left" class="w-5 h-5"></i>
             </a>
+            <div class="brand-logo-wave hidden sm:block">
+                <div class="wave wave1"></div>
+                <div class="wave wave2"></div>
+            </div>
             <span class="brand-text">Settings</span>
         </div>
         <div class="header-controls">
@@ -60,6 +64,14 @@
 
                 <div class="space-y-6 relative z-10">
                     <div
+                        class="flex justify-between items-center bg-glass-bg border border-glass-border p-4 rounded-xl">
+                        <div>
+                            <h3 class="font-bold text-lg">App Theme</h3>
+                            <p class="text-sm text-muted">Currently active theme.</p>
+                        </div>
+                        <span class="theme-name-display px-4 py-2 rounded-xl text-sm font-bold bg-glass-bg border border-glass-border shadow-sm text-main">Loading...</span>
+                    </div>
+                    <div
                         class="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-glass-bg border border-glass-border p-4 rounded-xl gap-4">
                         <div class="flex-1">
                             <h3 class="font-bold text-lg">MoneyFlow Greeting Voice</h3>
@@ -75,6 +87,30 @@
                             <p class="text-sm text-muted">Enable auto-speaking on Hub</p>
                         </div>
                         <button id="toggleVoiceBtn" class="px-6 py-2 rounded-xl text-sm font-bold transition"></button>
+                    </div>
+
+                    <div
+                        class="flex justify-between items-center bg-glass-bg border border-glass-border p-4 rounded-xl">
+                        <div>
+                            <h3 class="font-bold text-lg">MoneyFlow Haptics</h3>
+                            <p class="text-sm text-muted">Vibrate on interactions</p>
+                        </div>
+                        <button id="toggleHapticBtn" class="px-6 py-2 rounded-xl text-sm font-bold transition"></button>
+                    </div>
+
+                    <div
+                        class="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-glass-bg border border-glass-border p-4 rounded-xl gap-4">
+                        <div class="flex-1">
+                            <h3 class="font-bold text-lg">Base Currency</h3>
+                            <p class="text-sm text-muted">Select ledger format symbol.</p>
+                            <select id="currencySelect" class="glass-input mt-3 font-semibold text-main">
+                                <option value="₹">₹ INR</option>
+                                <option value="$">$ USD</option>
+                                <option value="€">€ EUR</option>
+                                <option value="£">£ GBP</option>
+                                <option value="¥">¥ JPY</option>
+                            </select>
+                        </div>
                     </div>
 
                     <div

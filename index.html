@@ -1,437 +1,233 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>MoneyFlow - Personal Finance Dashboard</title>
+  <title>MoneyFlow - Home</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#10b981">
+
+  <!-- External CSS -->
   <link rel="stylesheet" href="global.css">
   <link rel="stylesheet" href="index.css">
-  <link rel="manifest" href="manifest.json">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-  
-  <!-- PWA Meta Tags -->
-  <meta name="theme-color" content="#10b981">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="MoneyFlow">
-  <link rel="apple-touch-icon" href="./icon-192.png">
-  <link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png">
-  <link rel="icon" type="image/png" sizes="512x512" href="./icon-512.png">
+
+  <!-- Tailwind Script for runtime styling (Development mode / Custom) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: ['class', '[data-theme="dark"]'],
+      theme: {
+        extend: {
+          colors: {
+            emerald: { 500: '#10b981' }
+          }
+        }
+      }
+    }
+  </script>
 </head>
+
 <body>
-  
-<!-- Splash Screen -->
-<div class="splash-screen" id="splashScreen">
-  <div class="splash-glass"></div>
 
-  <div class="splash-container">
-    <!-- Animated Background Bubbles -->
-    <div class="splash-bg-circles">
-      <div class="circle circle-1"></div>
-      <div class="circle circle-2"></div>
-      <div class="circle circle-3"></div>
+  <!-- SVG Gooey Filter for Liquid Background -->
+  <svg style="visibility: hidden; position: absolute;" width="0" height="0" xmlns="http://www.w3.org/2000/svg"
+    version="1.1">
+    <defs>
+      <filter id="gooey-filter">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="20" result="blur" />
+        <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 30 -10" result="goo" />
+        <feBlend in="SourceGraphic" in2="goo" />
+      </filter>
+    </defs>
+  </svg>
+
+  <!-- Liquid Background Container -->
+  <div class="liquid-bg-container">
+    <div class="liquid-blob"></div>
+    <div class="liquid-blob"></div>
+  </div>
+
+  <!-- Global Floating Header -->
+  <header class="global-header glass-panel">
+    <div class="brand">
+      <span class="brand-text">MoneyFlow</span>
     </div>
+    <div class="header-controls">
 
-    <!-- Logo Container -->
-    <div class="splash-logo-wrapper">
-      <svg class="splash-logo" width="120" height="120" viewBox="0 0 120 120">
-        <defs>
-          <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" style="stop-color:#10b981;stop-opacity:1" />
-            <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
-          </linearGradient>
-          <filter id="glow">
-            <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
-            <feMerge>
-              <feMergeNode in="coloredBlur"/>
-              <feMergeNode in="SourceGraphic"/>
-            </feMerge>
-          </filter>
-        </defs>
-
-        <!-- Outer rotating ring -->
-        <circle cx="60" cy="60" r="54" fill="none"
-                stroke="url(#logoGrad)" stroke-width="2" opacity="0.28">
-          <animateTransform
-            attributeName="transform"
-            attributeType="XML"
-            type="rotate"
-            from="0 60 60"
-            to="360 60 60"
-            dur="4s"
-            repeatCount="indefinite"/>
-        </circle>
-
-        <!-- Main circle with soft dash animation -->
-        <circle cx="60" cy="60" r="50" fill="none"
-                stroke="url(#logoGrad)" stroke-width="4" filter="url(#glow)"
-                stroke-linecap="round" stroke-dasharray="240 120">
-          <animate attributeName="stroke-dashoffset"
-                   from="0" to="360"
-                   dur="3s"
-                   repeatCount="indefinite"/>
-        </circle>
-
-        <!-- Inner glow circle -->
-        <circle cx="60" cy="60" r="46" fill="none"
-                stroke="url(#logoGrad)" stroke-width="1" opacity="0.5">
-          <animate attributeName="r" values="46;48;46" dur="2.2s" repeatCount="indefinite"/>
-          <animate attributeName="opacity" values="0.5;0.9;0.5" dur="2.2s" repeatCount="indefinite"/>
-        </circle>
-
-        <!-- Rupee symbol -->
-        <text x="60" y="75" font-family="Inter, system-ui" font-size="36"
-              font-weight="800" fill="url(#logoGrad)" text-anchor="middle"
-              filter="url(#glow)">₹</text>
-      </svg>
-
-      <!-- Pulse rings around logo -->
-      <div class="pulse-ring pulse-ring-1"></div>
-      <div class="pulse-ring pulse-ring-2"></div>
-      <div class="pulse-ring pulse-ring-3"></div>
-    </div>
-
-    <!-- Brand Text -->
-    <h2 class="splash-text">
-      <span class="text-word text-word-1">Money</span>
-      <span class="text-word text-word-2">Flow</span>
-    </h2>
-
-    <!-- Tagline -->
-    <p class="splash-tagline">Track. Analyze. Grow.</p>
-
-    <!-- Loading Bar -->
-    <div class="loading-bar-container">
-      <div class="loading-bar"></div>
-    </div>
-
-    <!-- Loading Text -->
-    <p class="loading-text">
-      <span class="loading-dots">Loading</span>
-    </p>
-  </div>
-</div>
-
-<!-- Header -->
-<header class="header">
-   <div class="header-left">
-     <svg class="brand-logo" viewBox="0 0 100 100">
-       <defs>
-         <linearGradient id="brandGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-           <stop offset="0%" style="stop-color:#10b981"/>
-           <stop offset="100%" style="stop-color:#3b82f6"/>
-         </linearGradient>
-       </defs>
-       <circle cx="50" cy="50" r="45" fill="url(#brandGrad)"/>
-       <text x="50" y="65" font-size="40" font-weight="800" fill="white" text-anchor="middle">₹</text>
-     </svg>
-     <h1 class="brand-name">MoneyFlow</h1>
-   
-   <div class="header-right">
-     <div class="theme-toggle">
-       <div class="theme-toggle-slider">☀️</div>
-     </div>
-     <div class="profile-btn" onclick="window.location.href='profile.html'">
-       <img src="Imad.jpg" alt="Profile" id="profileImage" loading="lazy">
-     </div>
-   </div>
-</header>
-
-<!-- Main Container -->
-<div class="container">
-  
-  <!-- Welcome Section -->
-  <section class="welcome-section scroll-fade-in">
-     <h2 class="welcome-greeting" id="welcomeText">Welcome back!</h2>
-     <p class="text-muted">Your financial overview at a glance</p>
-  </section>
-
-  <!-- Install Prompt -->
-  <div class="install-prompt" id="installPrompt" style="display: none;">
-     <div class="install-card">
-       <div class="install-icon">📱</div>
-       <div class="install-content">
-         <h3>Install MoneyFlow App</h3>
-         <p>Add to your home screen for quick access</p>
-       </div>
-       <button class="btn btn-primary" id="installBtn">Install</button>
-       <button class="btn btn-secondary" id="dismissBtn">Later</button>
-     </div>
-  </div>
-
-<!-- Summary Cards -->
-<div class="widget-grid">
-
-  <!-- Today's Expense -->
-  <div class="card scroll-fade-in" style="animation-delay: 0.1s">
-    <div class="summary-icon">💰</div>
-    <div class="summary-label">Today's Expense</div>
-    <div class="summary-value" id="todayExpense">₹0</div>
-  </div>
-
-  <!-- All-Time Balance -->
-  <div class="card scroll-fade-in" style="animation-delay: 0.4s">
-    <div class="summary-icon">💎</div>
-    <div class="summary-label">All-Time Balance</div>
-    <div class="summary-value" id="totalBalance">₹0</div>
-  </div>
-
-  <!-- Monthly Expense -->
-  <div class="card scroll-fade-in" style="animation-delay: 0.2s">
-    <div class="summary-icon">📊</div>
-    <div class="summary-label">Monthly Expense</div>
-    <div class="summary-value" id="monthExpense">₹0</div>
-  </div>
-
-  <!-- This Month Pocket -->
-  <div class="card scroll-fade-in" style="animation-delay: 0.3s">
-    <div class="summary-icon">📅</div>
-    <div class="summary-label">This Month Pocket</div>
-    <div class="summary-value" id="monthPocket">₹0</div>
-  </div>
-
-</div>
-
-
-<!-- Smart Financial Insight -->
-<div class="finance-insight scroll-fade-in" style="animation-delay:0.5s">
-
-  <div class="insight-card">
-    <div class="insight-icon">🧠</div>
-
-    <div class="insight-content">
-      <h4>Smart Insight</h4>
-      <p id="financeInsightMsg">
-        Analyzing your spending...
-      </p>
-    </div>
-
-  </div>
-
-</div>
-
-  <!-- Data Management Section -->
-  <section class="data-management-section scroll-blur">
-     <h3 class="section-title">💾 Data Management</h3>
-     <div class="action-grid">
-       <button class="btn btn-primary" onclick="exportAllData()">
-         <span>📤 Export All Data</span>
-       </button>
-       <button class="btn btn-secondary" onclick="openModal('#importModal')">
-         <span>📥 Import Data</span>
-       </button>
-       <button class="btn btn-danger" onclick="openModal('#devModal')">
-         <span>🛠️ Developer Options</span>
-       </button>
-     </div>
-  </section>
-
-<!-- Quick Actions -->
-<section class="quick-actions scroll-blur">
-  <h3 class="section-title">Quick Actions</h3>
-  <div class="action-grid">
-    
-    <button class="btn btn-primary" onclick="window.location.href='spendly.html'">
-      <span>💸 Spendly</span>
-    </button>
-
-    <button class="btn btn-primary" onclick="window.location.href='nexus.html'">
-      <span>🌐 Nexus</span>
-    </button>
-
-    <button class="btn btn-primary" onclick="window.location.href='pocketcal.html'">
-      <span>📅 PocketCal</span>
-    </button>
-
-    <button class="btn btn-secondary" onclick="window.location.href='feedback.html'">
-      <span>📝 Feedback</span>
-    </button>
-
-  </div>
-</section>
-
-<!-- User Settings Section -->
-<section class="user-settings-section scroll-blur">
-  <h3 class="section-title">⚙️ User Settings</h3>
-  
-  <div class="settings-grid">
-
-    <!-- Set Name Card -->
-    <div class="settings-card">
-      <div class="settings-icon">👤</div>
-      <h4 class="settings-title">Personalize Your Experience</h4>
-      <p class="settings-description">
-        Set your name to see personalized greetings throughout the app.
-      </p>
-      <button class="btn btn-secondary btn-block" onclick="openModal('#nameModal')">
-        ✏️ Set Your Name
+      <!-- Audio Architecture -->
+      <audio id="globalMusicPlayer" src="music/judas-ladygaga.mp3" loop hidden></audio>
+      <!-- Music Control -->
+      <button class="glass-button w-10 h-10 rounded-full flex items-center justify-center relative shadow-lg"
+        id="musicIconBtn" onclick="toggleGlobalMusic()">
+        <svg class="absolute inset-0 w-full h-full -rotate-90 pointer-events-none" viewBox="0 0 40 40">
+          <circle cx="20" cy="20" r="18" fill="none" class="text-emerald-500" stroke-width="2" id="musicProgressRing"
+            style="stroke-dasharray: 113; stroke-dashoffset: 113; transition: stroke-dashoffset 0.1s linear;"
+            stroke="currentColor"></circle>
+        </svg>
+        <i data-lucide="play" class="w-4 h-4 text-emerald-500 z-10 block pointer-events-none" id="musicStatusIcon"
+          style="margin-left: 2px;"></i>
       </button>
-    </div>
-    
-    <!-- Developer Profile Card -->
-    <div class="settings-card">
-      <div class="settings-icon">💻</div>
-      <h4 class="settings-title">Meet the Developer</h4>
-      <p class="settings-description">
-        Learn more about the creator of MoneyFlow and get in touch.
-      </p>
-      <button class="btn btn-secondary btn-block" onclick="window.location.href='profile.html'">
-        👋 Hi, Here!!
+      <audio id="globalMusicPlayer" src="music/judas-ladygaga.mp3" loop hidden></audio>
+
+      <!-- Inky Theme Toggle -->
+      <button class="theme-toggle-btn glass-button" id="themeToggleBtn">
+        <i data-lucide="sun"></i>
       </button>
+
+      <!-- Profile Link -->
+      <a href="profile.html" class="profile-icon-btn">
+        <img src="Imad.jpg" alt="Profile"
+          onerror="this.src='https://ui-avatars.com/api/?name=User&background=10b981&color=fff'">
+      </a>
+    </div>
+  </header>
+
+  <!-- Main Dashboard Content -->
+  <main class="main-content">
+
+    <!-- Welcome Section (Parallax Speed 0.1) -->
+    <section class="mt-8 mb-12" data-speed="0.1">
+      <h1 class="text-4xl md:text-5xl font-extrabold mb-2" id="welcomeText">Welcome, User</h1>
+      <p class="text-muted text-lg">Your financial overview.</p>
+    </section>
+
+    <!-- Install PWA Popup -->
+    <div id="installPrompt" style="display: none;" class="glass-panel p-6">
+      <div class="flex items-start justify-between">
+        <div>
+          <h3 class="text-xl font-bold text-gradient mb-1">Install MoneyFlow PWA</h3>
+          <p class="text-muted text-sm">Add to home screen for the full native Antigravity experience.</p>
+        </div>
+        <i data-lucide="smartphone" class="text-emerald-500 w-8 h-8"></i>
+      </div>
+      <div class="mt-4 flex gap-4">
+        <button id="installBtn" class="glass-button px-6 py-2 rounded-xl text-sm font-semibold">Install Now</button>
+        <button id="dismissBtn"
+          class="px-6 py-2 rounded-xl text-sm font-semibold text-muted hover:text-main transition">Later</button>
+      </div>
     </div>
 
-    <!-- Feedback Card -->
-    <div class="settings-card">
-      <div class="settings-icon">💬</div>
-      <h4 class="settings-title">Share Your Feedback</h4>
-      <p class="settings-description">
-        Help us improve! Share your reviews, suggestions, or report issues.
-      </p>
-      <button class="btn btn-secondary btn-block" onclick="window.location.href='feedback.html'">
-        📝 Give Feedback
-      </button>
-    </div>
+    <!-- Analytics Bento Grid -->
+    <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+      <!-- Card 1 -->
+      <div class="glass-panel p-6 ag-card-reveal flex flex-col justify-between h-40" data-speed="0.15">
+        <div class="flex justify-between items-center mb-4">
+          <span class="text-muted font-medium">Today's Expense</span>
+          <i data-lucide="trending-down" class="text-accent-danger w-5 h-5"></i>
+        </div>
+        <h2 class="text-3xl font-extrabold" id="todayExpense">₹0</h2>
+      </div>
 
-    <!-- ✅ NEW: Voice Greeting Card -->
-    <div class="settings-card">
-      <div class="settings-icon">🎙️</div>
-      <h4 class="settings-title">Voice Greeting</h4>
-      <p class="settings-description">
-        Enable AI voice greeting when you open the app.
-      </p>
+      <!-- Card 2 -->
+      <div class="glass-panel p-6 ag-card-reveal flex flex-col justify-between h-40" data-speed="0.2">
+        <div class="flex justify-between items-center mb-4">
+          <span class="text-muted font-medium">All-Time Balance</span>
+          <i data-lucide="activity" class="text-emerald-500 w-5 h-5"></i>
+        </div>
+        <h2 class="text-3xl font-extrabold" id="totalBalance">₹0</h2>
+      </div>
 
-      <!-- Toggle -->
-      <label class="toggle-switch">
-        <input type="checkbox" id="voiceToggle" checked>
-        <span class="slider"></span>
-      </label>
+      <!-- Card 3 -->
+      <div class="glass-panel p-6 ag-card-reveal flex flex-col justify-between h-40" data-speed="0.25">
+        <div class="flex justify-between items-center mb-4">
+          <span class="text-muted font-medium">Monthly Expense</span>
+          <i data-lucide="bar-chart-2" class="text-accent-info w-5 h-5"></i>
+        </div>
+        <h2 class="text-3xl font-extrabold" id="monthExpense">₹0</h2>
+      </div>
 
-      <div class="voice-select">
-  <label class="voice-label">Choose Voice</label>
-  
-  <select id="voiceSelect" class="voice-dropdown">
-    <option value="male1">Male - Deep</option>
-    <option value="male2">Male - Smooth</option>
-    <option value="female1">Female - Soft</option>
-    <option value="female2">Female - Cute</option>
-  </select>
-</div>
-    </div>
+      <!-- Card 4 -->
+      <div class="glass-panel p-6 ag-card-reveal flex flex-col justify-between h-40" data-speed="0.3">
+        <div class="flex justify-between items-center mb-4">
+          <span class="text-muted font-medium">This Month Pocket</span>
+          <i data-lucide="wallet" class="text-emerald-500 w-5 h-5"></i>
+        </div>
+        <h2 class="text-3xl font-extrabold" id="monthPocket">₹0</h2>
+      </div>
+    </section>
 
-  </div>
-</section>
+    <!-- Smart Insights -->
+    <section class="mb-16 glass-panel p-8 ag-card-reveal relative overflow-hidden" data-speed="0.12">
+      <!-- Decorative blur orb -->
+      <div class="absolute -top-10 -right-10 w-32 h-32 bg-emerald-500/20 rounded-full blur-2xl"></div>
 
-<!-- Set Name Modal -->
-<div class="modal" id="nameModal">
-  <div class="modal-content">
-     <div class="modal-header">
-       <h2 class="modal-title">Set Your Name</h2>
-       <button class="modal-close" onclick="closeModal('#nameModal')">&times;</button>
-     </div>
-     <form onsubmit="saveName(event)">
-       <div class="form-group">
-         <label class="form-label">Enter Your Name</label>
-         <input type="text" class="form-input" id="userName" placeholder="Your Name" required>
-       </div>
-       <button type="submit" class="btn btn-primary">Save Name</button>
-     </form>
-  </div>
-</div>
+      <div class="flex items-center gap-4 mb-4">
+        <div class="p-3 bg-emerald-500/10 rounded-2xl border border-emerald-500/20">
+          <i data-lucide="brain" class="text-emerald-500 w-6 h-6"></i>
+        </div>
+        <h3 class="text-2xl font-bold">Smart Insight</h3>
+      </div>
+      <p class="text-lg text-muted ml-1" id="financeInsightMsg">Analyzing your liquid metrics...</p>
+    </section>
 
-<!-- Import Data Modal -->
-<div class="modal" id="importModal">
-  <div class="modal-content">
-     <div class="modal-header">
-       <h2 class="modal-title">Import Data</h2>
-       <button class="modal-close" onclick="closeModal('#importModal')">&times;</button>
-     </div>
-     <div class="import-section">
-       <p class="import-info">Select a MoneyFlow backup file (.json) to restore your data.</p>
-       <div class="form-group">
-         <input type="file" id="importFile" class="form-input" accept=".json" required>
-       </div>
-       <div class="import-preview" id="importPreview" style="display: none;"></div>
-       <button type="button" class="btn btn-primary" onclick="processImport()" id="confirmImportBtn" disabled>Import Data</button>
-       <p class="import-warning text-muted">⚠️ This will replace all existing data</p>
-     </div>
-  </div>
-</div>
+    <!-- Features Quick Access -->
+    <section class="mb-20">
+      <h3 class="text-xl font-bold mb-6 ml-2" data-speed="0.05">Quick Actions</h3>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <a href="spendly.html"
+          class="glass-panel p-6 flex flex-col items-center justify-center gap-3 hover:bg-emerald-500/10 transition group text-decoration-none"
+          data-speed="0.2">
+          <i data-lucide="receipt" class="w-8 h-8 text-emerald-500 group-hover:scale-110 transition-transform"></i>
+          <span class="font-semibold mt-2">Spendly</span>
+        </a>
+        <a href="pocketcal.html"
+          class="glass-panel p-6 flex flex-col items-center justify-center gap-3 hover:bg-emerald-500/10 transition group text-decoration-none"
+          data-speed="0.3">
+          <i data-lucide="calendar-days"
+            class="w-8 h-8 text-emerald-500 group-hover:scale-110 transition-transform"></i>
+          <span class="font-semibold mt-2">PocketCal</span>
+        </a>
+        <a href="feedback.html"
+          class="glass-panel p-6 flex flex-col items-center justify-center gap-3 hover:bg-emerald-500/10 transition group text-decoration-none"
+          data-speed="0.4">
+          <i data-lucide="message-square"
+            class="w-8 h-8 text-emerald-500 group-hover:scale-110 transition-transform"></i>
+          <span class="font-semibold mt-2">Feedback</span>
+        </a>
+        <a href="howtouse.html"
+          class="glass-panel p-6 flex flex-col items-center justify-center gap-3 hover:bg-emerald-500/10 transition group text-decoration-none"
+          data-speed="0.5">
+          <i data-lucide="book-open" class="w-8 h-8 text-emerald-500 group-hover:scale-110 transition-transform"></i>
+          <span class="font-semibold mt-2">How to Use</span>
+        </a>
+      </div>
+    </section>
 
-<!-- Developer Modal -->
-<div class="modal" id="devModal">
-  <div class="modal-content">
-     <div class="modal-header">
-       <h2 class="modal-title">Developer Options</h2>
-       <button class="modal-close" onclick="closeModal('#devModal')">&times;</button>
-     </div>
-     <div class="dev-options">
-       <button class="btn btn-danger" onclick="clearAllData()">🗑️ Clear All Data</button>
-       <button class="btn btn-secondary" onclick="viewStorage()">📊 View Storage</button>
-       <button class="btn btn-secondary" onclick="downloadBackup()">💾 Download Backup</button>
-     </div>
-  </div>
-</div>
+  </main>
 
-<!-- Footer -->
-<footer class="footer">
-   <div class="footer-content">
-     <div class="footer-section">
-       <h3>About MoneyFlow</h3>
-       <p>A comprehensive personal finance tracking application designed for complete money management.</p>
-     </div>
-     
-     <div class="footer-section">
-       <h3>Quick Links</h3>
-       <ul>
-         <li><a href="howtouse.html">How To Use</a></li>
-         <li><a href="profile.html">About Developer</a></li>
-         <li><a href="feedback.html">Give Feedback</a></li>
-         <li><a href="terms-conditions.html">Terms & Conditions</a></li>
-         <li><a href="privacy-policy.html">Privacy Policy</a></li>
-       </ul>
-     </div>
-     
-     <div class="footer-section">
-       <h3>Developer</h3>
-       <p><strong>Imad Khan</strong></p>
-       <a href="https://www.instagram.com/_imxd12" target="_blank" rel="noopener noreferrer"><p class="profile-handle">@imxd12</p></a>
-       <p><a href="mailto:imadak999@gmail.com">imadak999@gmail.com</a></p>
-     </div>
-   </div>
-   
-   <div class="footer-bottom">
-     <p>&copy; <span id="currentYear"></span> MoneyFlow by Imad Khan. All rights reserved.</p>
-   </div>
-</footer>
 
-<!-- Bottom Navigation -->
-<nav class="bottom-nav" data-active="0">
-   <div class="nav-liquid"></div>
-   <a href="index.html" class="nav-item active" id="nav-home">
-     <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
-     <span>Home</span>
-   </a>
-   <a href="spendly.html" class="nav-item" id="nav-spend">
-     <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1.41 16.09V20h-2.67v-1.93c-1.71-.36-3.16-1.46-3.27-3.4h1.96c.1 1.05.82 1.87 2.65 1.87 1.96 0 2.4-.98 2.4-1.59 0-.83-.44-1.61-2.67-2.14-2.48-.6-4.18-1.62-4.18-3.67 0-1.72 1.39-2.84 3.11-3.21V4h2.67v1.95c1.86.45 2.79 1.86 2.85 3.39H14.3c-.05-1.11-.64-1.87-2.22-1.87-1.5 0-2.4.68-2.4 1.64 0 .84.65 1.39 2.67 1.91s4.18 1.39 4.18 3.91c-.01 1.83-1.38 2.83-3.12 3.16z"/></svg>
-     <span>Spendly</span>
-   </a>
-   <a href="pocketcal.html" class="nav-item" id="nav-pocket">
-     <svg viewBox="0 0 24 24"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zM9 14H7v-2h2v2zm4 0h-2v-2h2v2zm4 0h-2v-2h2v2zm-8 4H7v-2h2v2zm4 0h-2v-2h2v2zm4 0h-2v-2h2v2z"/></svg>
-     <span>PocketCal</span>
-   </a>
-</nav>
 
-<!-- Floating Music Button -->
-<div class="music-fab" id="musicFab">
-  <button class="music-btn" id="musicToggle">
-    <span id="musicIcon">▶</span>
-  </button>
-</div>
+  <!-- Bottom Navigation Dock -->
+  <nav class="bottom-dock glass-dock">
+    <div class="dock-liquid-indicator"></div>
+    <a href="index.html" class="dock-item active">
+      <i data-lucide="home"></i>
+      <span>Home</span>
+    </a>
+    <a href="spendly.html" class="dock-item">
+      <i data-lucide="pie-chart"></i>
+      <span>Spendly</span>
+    </a>
+    <a href="pocketcal.html" class="dock-item">
+      <i data-lucide="calendar"></i>
+      <span>Calendar</span>
+    </a>
+    <a href="settings.html" class="dock-item">
+      <i data-lucide="settings"></i>
+      <span>Settings</span>
+    </a>
+  </nav>
 
-<audio id="musicPlayer"></audio>
+  <!-- CDNs for Smooth Experiences -->
+  <script src="https://unpkg.com/@studio-freight/lenis@1.0.39/dist/lenis.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
 
-<script src="global.js"></script>
-<script src="index.js"></script>
+  <!-- Scripts -->
+  <script src="global.js"></script>
+  <script src="index.js"></script>
 </body>
+
 </html>

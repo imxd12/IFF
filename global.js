@@ -33,12 +33,12 @@
   };
 
   window.fmt = function (amount) {
-    return new Intl.NumberFormat('en-IN', {
-      style: 'currency',
-      currency: 'INR',
+    const sym = localStorage.getItem('fin_currency') || '₹';
+    const numstr = Number(amount || 0).toLocaleString('en-IN', {
       minimumFractionDigits: 0,
       maximumFractionDigits: 0
-    }).format(Number(amount) || 0);
+    });
+    return sym + numstr;
   };
 
   // ----------------------------------------------------
@@ -157,6 +157,11 @@
   function applyTheme(theme) {
     document.documentElement.setAttribute('data-theme', theme);
     localStorage.setItem('fin_theme', theme);
+
+    const themeNames = document.querySelectorAll('.theme-name-display');
+    themeNames.forEach(el => {
+      el.textContent = theme === 'dark' ? 'Obsidian Black' : 'Ceramic White';
+    });
   }
 
   window.initInkyTheme = function () {
@@ -333,6 +338,15 @@
     if (window.lucide) {
       lucide.createIcons();
     }
+    // 5. Global Haptics (10ms light tap)
+    document.body.addEventListener('click', (e) => {
+      const target = e.target.closest('button, a, .list-item, select, input, .ag-card-reveal');
+      if (target) {
+        if (localStorage.getItem('fin_haptic') !== 'false' && navigator.vibrate) {
+          navigator.vibrate(10);
+        }
+      }
+    });
   });
 
 })();

@@ -30,7 +30,13 @@
 
 <body>
 
-  <!-- SVG Gooey Filter for Liquid Background -->
+  <!-- Startup Splash Screen -->
+  <div id="mfSplashScreen" class="mf-splash">
+    <div class="mf-splash-logo">MoneyFlow</div>
+    <div class="mf-loader-bar">
+      <div class="mf-loader-progress"></div>
+    </div>
+  </div>  <!-- SVG Gooey Filter for Liquid Background -->
   <svg style="visibility: hidden; position: absolute;" width="0" height="0" xmlns="http://www.w3.org/2000/svg"
     version="1.1">
     <defs>
@@ -101,7 +107,7 @@
       <div class="flex items-start justify-between">
         <div>
           <h3 class="text-xl font-bold text-gradient mb-1">Install MoneyFlow PWA</h3>
-          <p class="text-muted text-sm">Add to home screen for the full native Antigravity experience.</p>
+          <p class="text-muted text-sm">Add to home screen for the full native experience.</p>
         </div>
         <i data-lucide="smartphone" class="text-emerald-500 w-8 h-8"></i>
       </div>
@@ -162,33 +168,46 @@
         </div>
         <h3 class="text-2xl font-bold">Smart Insight</h3>
       </div>
-      <p class="text-lg text-muted ml-1" id="financeInsightMsg">Analyzing your liquid metrics...</p>
+      <p class="text-lg text-muted ml-1" id="financeInsightMsg">Analyzing your metrics...</p>
     </section>
 
     <!-- Detailed Explanation: Why MoneyFlow -->
     <section class="mb-16 ag-card-reveal" data-speed="0.08">
       <div class="text-center mb-8">
         <h3 class="text-3xl font-extrabold mb-3">Why MoneyFlow?</h3>
-        <p class="text-muted max-w-xl mx-auto">Redefining the way you interact with financial numbers through engineering and aesthetics.</p>
+        <p class="text-muted max-w-xl mx-auto">Redefining the way you interact with financial numbers through
+          engineering and aesthetics.</p>
       </div>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div class="glass-panel p-8 rounded-2xl relative overflow-hidden group">
-            <div class="absolute -right-4 -top-4 w-20 h-20 bg-emerald-500/10 rounded-full blur-xl group-hover:bg-emerald-500/20 transition-colors"></div>
-            <i data-lucide="shield-check" class="w-10 h-10 text-emerald-500 mb-4"></i>
-            <h4 class="text-xl font-bold mb-2">100% Offline & Private</h4>
-            <p class="text-sm text-muted leading-relaxed">Your data never leaves your device. MoneyFlow operates strictly on a sandboxed local-first PWA architecture ensuring total cryptographically isolated privacy from the internet.</p>
+          <div
+            class="absolute -right-4 -top-4 w-20 h-20 bg-emerald-500/10 rounded-full blur-xl group-hover:bg-emerald-500/20 transition-colors">
+          </div>
+          <i data-lucide="shield-check" class="w-10 h-10 text-emerald-500 mb-4"></i>
+          <h4 class="text-xl font-bold mb-2">100% Offline & Private</h4>
+          <p class="text-sm text-muted leading-relaxed">Your data never leaves your device. MoneyFlow operates strictly
+            on a sandboxed local-first PWA architecture ensuring total cryptographically isolated privacy from the
+            internet.</p>
         </div>
         <div class="glass-panel p-8 rounded-2xl relative overflow-hidden group">
-            <div class="absolute -right-4 -top-4 w-20 h-20 bg-blue-500/10 rounded-full blur-xl group-hover:bg-blue-500/20 transition-colors"></div>
-            <i data-lucide="waves" class="w-10 h-10 text-blue-500 mb-4"></i>
-            <h4 class="text-xl font-bold mb-2">Liquid Interface UX</h4>
-            <p class="text-sm text-muted leading-relaxed">Built with a custom physics engine combining GSAP ScrollTriggers and lenis.js. Traverse a beautiful user interface that fluidly adapts to your gestures, bounces realistically, and scales perfectly.</p>
+          <div
+            class="absolute -right-4 -top-4 w-20 h-20 bg-blue-500/10 rounded-full blur-xl group-hover:bg-blue-500/20 transition-colors">
+          </div>
+          <i data-lucide="waves" class="w-10 h-10 text-blue-500 mb-4"></i>
+          <h4 class="text-xl font-bold mb-2">Liquid Interface UX</h4>
+          <p class="text-sm text-muted leading-relaxed">Built with a custom physics engine combining GSAP ScrollTriggers
+            and lenis.js. Traverse a beautiful user interface that fluidly adapts to your gestures, bounces
+            realistically, and scales perfectly.</p>
         </div>
         <div class="glass-panel p-8 rounded-2xl relative overflow-hidden group">
-            <div class="absolute -right-4 -top-4 w-20 h-20 bg-amber-500/10 rounded-full blur-xl group-hover:bg-amber-500/20 transition-colors"></div>
-            <i data-lucide="zap" class="w-10 h-10 text-amber-500 mb-4"></i>
-            <h4 class="text-xl font-bold mb-2">Unified Analytics</h4>
-            <p class="text-sm text-muted leading-relaxed">Simultaneously log expenses via the Spendly Ledger and map overarching monthly budgets inside the PocketCal visual matrix. Everything magically syncs together instantaneously without loader spinners.</p>
+          <div
+            class="absolute -right-4 -top-4 w-20 h-20 bg-amber-500/10 rounded-full blur-xl group-hover:bg-amber-500/20 transition-colors">
+          </div>
+          <i data-lucide="zap" class="w-10 h-10 text-amber-500 mb-4"></i>
+          <h4 class="text-xl font-bold mb-2">Unified Analytics</h4>
+          <p class="text-sm text-muted leading-relaxed">Simultaneously log expenses via the Spendly Ledger and map
+            overarching monthly budgets inside the PocketCal visual matrix. Everything magically syncs together
+            instantaneously without loader spinners.</p>
         </div>
       </div>
     </section>

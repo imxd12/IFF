@@ -99,6 +99,36 @@
         });
     }
 
+    // UI Sound Toggle
+    const soundToggle = document.getElementById('toggleSoundBtn');
+    if(soundToggle) {
+        const updateSoundBtn = () => {
+            // Default is ON
+            const val = localStorage.getItem('fin_sound');
+            const isOff = (val === 'off');
+            soundToggle.textContent = isOff ? 'Turn ON' : 'Turn OFF';
+            soundToggle.className = isOff ? 
+                'px-6 py-2 rounded-xl text-sm font-bold bg-glass-bg border border-glass-border text-muted hover:text-white transition active:scale-95' :
+                'px-6 py-2 rounded-xl text-sm font-bold bg-emerald-500 text-white shadow-md active:scale-95 transition';
+        };
+        updateSoundBtn();
+        
+        soundToggle.addEventListener('click', () => {
+            const val = localStorage.getItem('fin_sound');
+            const isOff = (val === 'off');
+            localStorage.setItem('fin_sound', isOff ? 'on' : 'off');
+            updateSoundBtn();
+            
+            // Play corresponding directional sound if turned ON or OFF
+            if(window.playUISound) {
+               window.playUISound(isOff ? 'on' : 'off');
+            }
+            
+            if(isOff) window.showSnackbar('UI Sounds enabled! 🎵');
+            else window.showSnackbar('UI Sounds disabled 🔇');
+        });
+    }
+
     // Currency Formatter Select
     const currencySelect = document.getElementById('currencySelect');
     if(currencySelect) {
@@ -112,12 +142,26 @@
 
     // Personal Identity
     const nameInput = document.getElementById('usernameInput');
+    const dobInput = document.getElementById('dobInput');
+    const genderInput = document.getElementById('genderInput');
+    const bioInput = document.getElementById('bioInput');
+    const locationInput = document.getElementById('locationInput');
+    
     if(nameInput) {
-        nameInput.value = localStorage.getItem('fin_userName') || 'User';
-        window.saveName = function() {
-            const nm = nameInput.value.trim();
-            localStorage.setItem('fin_userName', nm || 'User');
-            window.showSnackbar('Name saved successfully! ✨');
+        nameInput.value = localStorage.getItem('fin_userName') || '';
+        if(dobInput) dobInput.value = localStorage.getItem('userDOB') || '';
+        if(genderInput) genderInput.value = localStorage.getItem('userGender') || '';
+        if(bioInput) bioInput.value = localStorage.getItem('userBio') || '';
+        if(locationInput) locationInput.value = localStorage.getItem('userLocation') || '';
+
+        window.saveIdentity = function() {
+            localStorage.setItem('fin_userName', nameInput.value.trim() || 'User');
+            if(dobInput) localStorage.setItem('userDOB', dobInput.value);
+            if(genderInput) localStorage.setItem('userGender', genderInput.value);
+            if(bioInput) localStorage.setItem('userBio', bioInput.value.trim());
+            if(locationInput) localStorage.setItem('userLocation', locationInput.value.trim());
+            
+            window.showSnackbar('Profile saved successfully! ✨');
         };
     }
 

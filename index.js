@@ -142,9 +142,14 @@
         else if (hour < 17) timeGreeting = "Good afternoon";
         else timeGreeting = "Good evening";
 
-        let message = `Asalamwalikum, ${state.username}. ${timeGreeting}. Welcome to money flow.`;
+        const dob = localStorage.getItem('userDOB');
+        const dobDate = dob ? new Date(dob) : null;
+        const isBirthday = dobDate && dobDate.getMonth() === date.getMonth() && dobDate.getDate() === date.getDate();
+        let bdayWish = isBirthday ? " Happy birthday!" : "";
+
+        let message = `Asalamwalikum, ${state.username}. ${timeGreeting}.${bdayWish} Welcome to money flow.`;
         if (date.getDay() === 5) {
-            message = `Asalamwalikum, Jummah Mubarak, ${state.username}. ${timeGreeting}. Welcome to money flow.`;
+            message = `Asalamwalikum, Jummah Mubarak, ${state.username}. ${timeGreeting}.${bdayWish} Welcome to money flow.`;
         }
 
         const runSpeech = () => {

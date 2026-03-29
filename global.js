@@ -229,10 +229,21 @@
     const indicator = document.querySelector('.dock-liquid-indicator');
     
     if(activeItem && indicator) {
-      const updateIndicator = (el) => {
+      let currentLeft = 0;
+
+      const updateIndicator = (el, isClick = false) => {
         const rect = el.getBoundingClientRect();
         const navRect = el.parentElement.getBoundingClientRect();
-        indicator.style.transform = `translateX(${rect.left - navRect.left}px)`;
+        const targetLeft = rect.left - navRect.left;
+        
+        // Add morph stretch if distance is large enough
+        if (isClick && Math.abs(targetLeft - currentLeft) > 50) {
+            indicator.classList.add('morph-stretch');
+            setTimeout(() => indicator.classList.remove('morph-stretch'), 250);
+        }
+        
+        currentLeft = targetLeft;
+        indicator.style.transform = `translateX(${targetLeft}px)`;
         indicator.style.width = `${rect.width}px`;
       };
 
@@ -241,10 +252,19 @@
 
       // CLICK
       document.querySelectorAll('.dock-item').forEach(item => {
-        item.addEventListener('click', function(e) {
-          // It will navigate anyway since they are anchor tags, but we animate before page unload
-          updateIndicator(this);
+        item.addEventListener('click', function() {
+          updateIndicator(this, true);
         });
+      });
+
+      // DEBOUNCED RESIZE
+      let resizeTimer;
+      window.addEventListener('resize', () => {
+          clearTimeout(resizeTimer);
+          resizeTimer = setTimeout(() => {
+              const currentActive = document.querySelector('.dock-item.active');
+              if(currentActive) updateIndicator(currentActive);
+          }, 150);
       });
     }
   };
@@ -325,6 +345,283 @@
   };
 
   // ----------------------------------------------------
+  // 7. NEW ANTIGRAVITY UPGRADES (SOUND, SKILLS, BIRTHDAY, SPLASH, RIPPLE)
+  // ----------------------------------------------------
+
+  // A. Advanced UI Sound Engine (Web Audio API Synth - Zero Delay)
+  let _audioCtx = null;
+  
+  window.playUISound = function(type = 'tap') {
+    if (localStorage.getItem('fin_sound') === 'off') return;
+
+    try {
+      if (!_audioCtx) {
+        _audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (_audioCtx.state === 'suspended') _audioCtx.resume();
+
+      const osc = _audioCtx.createOscillator();
+      const gain = _audioCtx.createGain();
+      const t = _audioCtx.currentTime;
+
+      osc.connect(gain);
+      gain.connect(_audioCtx.destination);
+
+      if (type === 'tap') {
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(600, t);
+        osc.frequency.exponentialRampToValueAtTime(300, t + 0.05);
+        gain.gain.setValueAtTime(0.08, t);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.05);
+        osc.start(t);
+        osc.stop(t + 0.05);
+      } else if (type === 'on') {
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(400, t);
+        osc.frequency.linearRampToValueAtTime(800, t + 0.1);
+        gain.gain.setValueAtTime(0.03, t);
+        gain.gain.linearRampToValueAtTime(0, t + 0.1);
+        osc.start(t);
+        osc.stop(t + 0.1);
+      } else if (type === 'off') {
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(600, t);
+        osc.frequency.linearRampToValueAtTime(200, t + 0.15);
+        gain.gain.setValueAtTime(0.03, t);
+        gain.gain.linearRampToValueAtTime(0, t + 0.15);
+        osc.start(t);
+        osc.stop(t + 0.15);
+      } else if (type === 'whoosh') {
+        // Quick noise burst for "back / swipe"
+        const bufferSize = _audioCtx.sampleRate * 0.15;
+        const buffer = _audioCtx.createBuffer(1, bufferSize, _audioCtx.sampleRate);
+        const output = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+          output[i] = Math.random() * 2 - 1; // white noise
+        }
+        const whiteNoise = _audioCtx.createBufferSource();
+        whiteNoise.buffer = buffer;
+        
+        // Filter it
+        const filter = _audioCtx.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(1000, t);
+        filter.frequency.linearRampToValueAtTime(100, t + 0.15);
+        
+        whiteNoise.connect(filter);
+        filter.connect(gain);
+        
+        gain.gain.setValueAtTime(0.08, t);
+        gain.gain.exponentialRampToValueAtTime(0.01, t + 0.15);
+        
+        whiteNoise.start(t);
+        whiteNoise.stop(t + 0.15);
+      }
+    } catch(e) { /* Ignore */ }
+  };
+
+  // Backwards compat wrap
+  window.playClickSound = () => window.playUISound('tap');
+
+  window.initClickSound = function() {
+    document.body.addEventListener('pointerdown', (e) => {
+      const target = e.target.closest('button, a, .list-item, select, input, .ag-card-reveal, .skill-box');
+      if (target) {
+        // Check if back button
+        if(target.innerHTML && target.innerHTML.includes('arrow-left')) {
+            window.playUISound('whoosh');
+        } else {
+            window.playUISound('tap');
+        }
+      }
+    });
+  };
+
+  // B. Ripple Effect
+  window.initRippleEffect = function() {
+    document.body.addEventListener('click', (e) => {
+      const target = e.target.closest('button, a.glass-button, .ripple-btn');
+      if (target) {
+        const rect = target.getBoundingClientRect();
+        const ripple = document.createElement('span');
+        const diameter = Math.max(rect.width, rect.height);
+        const radius = diameter / 2;
+        
+        ripple.style.width = ripple.style.height = `${diameter}px`;
+        ripple.style.left = `${e.clientX - rect.left - radius}px`;
+        ripple.style.top = `${e.clientY - rect.top - radius}px`;
+        ripple.classList.add('ripple-span');
+        
+        target.classList.add('ripple-btn');
+        target.appendChild(ripple);
+        
+        setTimeout(() => {
+          ripple.remove();
+        }, 600);
+      }
+    });
+  };
+
+  // C. Smart Birthday Feature
+  window.initBirthdayCheck = function() {
+    const dob = localStorage.getItem('userDOB');
+    if (!dob) return;
+    
+    const username = localStorage.getItem('username') || 'User';
+    const dobDate = new Date(dob);
+    const today = new Date();
+    
+    if (dobDate.getMonth() === today.getMonth() && dobDate.getDate() === today.getDate()) {
+      // Check if already wished today
+      const lastWished = localStorage.getItem('lastWishedYear');
+      if (lastWished != today.getFullYear()) {
+        localStorage.setItem('lastWishedYear', today.getFullYear());
+        
+        // Create popup
+        const div = document.createElement('div');
+        div.className = 'mf-birthday-popup';
+        div.innerHTML = `
+          <div class="text-4xl mb-4">🎉🎂🎁</div>
+          <h2>Happy Birthday,<br>${username}!</h2>
+          <p class="text-muted mt-2">Wishing you a fantastic day from MoneyFlow!</p>
+        `;
+        document.body.appendChild(div);
+        
+        // Confetti
+        const cContainer = document.createElement('div');
+        cContainer.className = 'confetti-container';
+        document.body.appendChild(cContainer);
+        
+        const colors = ['#f00', '#0f0', '#00f', '#ff0', '#f0f', '#0ff'];
+        for(let i=0; i<50; i++) {
+          const c = document.createElement('div');
+          c.className = 'confetti';
+          c.style.left = Math.random() * 100 + 'vw';
+          c.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+          cContainer.appendChild(c);
+          
+          gsap.fromTo(c, 
+            { y: -10, opacity: 1, rotation: 0 }, 
+            { 
+              y: window.innerHeight + 10, 
+              opacity: 0, 
+              rotation: Math.random() * 360, 
+              duration: 2 + Math.random() * 2,
+              delay: Math.random(),
+              ease: "power1.out"
+            }
+          );
+        }
+        
+        // Show Popup
+        setTimeout(() => {
+          div.classList.add('show');
+          if(window.playClickSound) window.playClickSound(); // Ding!
+          
+          setTimeout(() => {
+            div.classList.remove('show');
+            setTimeout(() => {
+              div.remove();
+              cContainer.remove();
+            }, 600);
+          }, 5000);
+        }, 1000);
+      }
+    }
+  };
+
+  // D. Splash Screen
+  window.initSplashScreen = function() {
+    const splash = document.getElementById('mfSplashScreen');
+    if (splash) {
+      setTimeout(() => {
+        splash.classList.add('hidden');
+        setTimeout(() => splash.remove(), 500);
+      }, 1500);
+    }
+  };
+
+  // E. Skill Popups logic
+  const SKILL_DATA = {
+    "HTML5": { desc: "The standard markup language for documents designed to be displayed in a web browser.", example: "Structuring the layout of the MoneyFlow dashboard." },
+    "CSS3": { desc: "A style sheet language used for describing the presentation of a document written in HTML.", example: "Creating the glassmorphic Liquid Interface effects." },
+    "JS Engine": { desc: "Programming language that conforms to the ECMAScript specification handling interactions.", example: "Powering the physics-based GSAP scroll animations." },
+    "PWA INTERFACES": { desc: "Web applications that use modern web capabilities to provide a native app-like experience.", example: "Enabling MoneyFlow to be deeply installed offline on your mobile." },
+    "Python": { desc: "A high-level passing programming language with rapid execution mechanics.", example: "Writing automation scripts and backend logic layers." },
+    "ES6+": { desc: "Modern JavaScript updates that introduce simpler syntax and powerful new methods.", example: "Using Arrow Functions and Promises for data caching." },
+    "C/C++": { desc: "Powerful general-purpose languages used for systemic and hardware-level tasks.", example: "Developing low-level robotic controllers." },
+    "Arduino": { desc: "An open-source electronic prototyping platform enabling users to create interactive electronic objects.", example: "Reading sensor data from motors for robotics." },
+    "Raspberry Pi": { desc: "A series of small single-board computers used to learn programming and create hardware projects.", example: "Acting as the brain for an automated attendance system." },
+    "IoT": { desc: "Internet of Things represents connected sensor networks communicating via the Internet.", example: "Tracking remote EV diagnostic metrics." },
+    "Git Versioning": { desc: "A distributed version control system tracking changes in source code.", example: "Managing code branches safely for MoneyFlow production." },
+    "Chart.js Nodes": { desc: "A community maintained open-source visualization library.", example: "Rendering the responsive dual-chart analytics in Spendly." },
+    "Automation Engines": { desc: "Systems designed to operate automatically with varied control loops.", example: "IRABOT TechEd manufacturing workflow processes." },
+    "Robotic Kinematics": { desc: "Study of the motion of multi-degree of freedom robotic setups.", example: "Calculating joint degrees for an articulated arm." },
+    "Embedded Systems": { desc: "A computer system with a dedicated function within a larger mechanical structure.", example: "Running real-time vehicle fault diagnostics." }
+  };
+
+  window.initSkillPopup = function() {
+    const boxes = document.querySelectorAll('.skill-box');
+    if (boxes.length === 0) return;
+    
+    // Ensure modal container exists
+    let modal = document.getElementById('skillModal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'skillModal';
+      modal.className = 'modal-overlay';
+      modal.innerHTML = `
+        <div class="modal-content-glass max-w-sm w-full relative">
+          <button class="absolute top-4 right-4 text-muted hover:text-red-500 transition-colors" onclick="document.getElementById('skillModal').classList.remove('active')">
+            <i data-lucide="x"></i>
+          </button>
+          <div class="text-center">
+            <div id="smIcon" class="w-16 h-16 mx-auto mb-4 bg-glass-hover rounded-2xl flex items-center justify-center border border-glass-border shadow-lg"></div>
+            <h2 id="smTitle" class="text-2xl font-extrabold mb-2 text-gradient">Skill Name</h2>
+            <p id="smDesc" class="text-sm text-muted mb-4">Description goes here.</p>
+            <div class="bg-glass-bg border border-glass-border p-3 rounded-xl text-left">
+              <span class="text-xs font-bold text-accent-primary uppercase tracking-wider mb-1 block">Real-Life Example</span>
+              <p id="smExample" class="text-sm text-main font-medium">Example practical application.</p>
+            </div>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(modal);
+      // Click outside to close
+      modal.addEventListener('click', (e) => {
+        if(e.target === modal) modal.classList.remove('active');
+      });
+    }
+
+    boxes.forEach(box => {
+      box.addEventListener('click', function() {
+        const textSpan = this.querySelector('span');
+        const iconElem = this.querySelector('i');
+        const skillName = textSpan ? textSpan.textContent.trim() : 'Unknown';
+        
+        const details = SKILL_DATA[skillName] || { desc: "A core competency mastered to deliver reliable professional solutions across stacks.", example: "Applied consistently to achieve high-quality results in modern development environments." };
+        
+        document.getElementById('smTitle').textContent = skillName;
+        document.getElementById('smDesc').textContent = details.desc;
+        document.getElementById('smExample').textContent = details.example;
+        
+        // Copy icon
+        const iconContainer = document.getElementById('smIcon');
+        if (iconElem) {
+          iconContainer.innerHTML = '';
+          const clonedIcon = iconElem.cloneNode(true);
+          clonedIcon.classList.remove('w-8', 'h-8', 'w-10', 'h-10');
+          clonedIcon.classList.add('w-8', 'h-8');
+          iconContainer.appendChild(clonedIcon);
+        }
+        
+        modal.classList.add('active');
+        if(window.lucide) lucide.createIcons();
+      });
+    });
+  };
+
+  // ----------------------------------------------------
   // BOOTSTRAP
   // ----------------------------------------------------
   document.addEventListener("DOMContentLoaded", () => {
@@ -338,9 +635,18 @@
     if (window.lucide) {
       lucide.createIcons();
     }
-    // 5. Global Haptics (10ms light tap)
+    // 5. Upgrade Initializations
+    initClickSound();
+    initRippleEffect();
+    initSplashScreen();
+    initBirthdayCheck();
+    
+    // Defer skill popups slightly to ensure DOM is ready
+    setTimeout(initSkillPopup, 100);
+
+    // 6. Global Haptics (10ms light tap)
     document.body.addEventListener('click', (e) => {
-      const target = e.target.closest('button, a, .list-item, select, input, .ag-card-reveal');
+      const target = e.target.closest('button, a, .list-item, select, input, .ag-card-reveal, .skill-box');
       if (target) {
         if (localStorage.getItem('fin_haptic') !== 'false' && navigator.vibrate) {
           navigator.vibrate(10);

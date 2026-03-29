@@ -99,6 +99,15 @@
                     </div>
 
                     <div
+                        class="flex justify-between items-center bg-glass-bg border border-glass-border p-4 rounded-xl">
+                        <div>
+                            <h3 class="font-bold text-lg">MoneyFlow UI Sounds</h3>
+                            <p class="text-sm text-muted">Acoustic feedback engine</p>
+                        </div>
+                        <button id="toggleSoundBtn" class="px-6 py-2 rounded-xl text-sm font-bold transition"></button>
+                    </div>
+
+                    <div
                         class="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-glass-bg border border-glass-border p-4 rounded-xl gap-4">
                         <div class="flex-1">
                             <h3 class="font-bold text-lg">Base Currency</h3>
@@ -114,13 +123,39 @@
                     </div>
 
                     <div
-                        class="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-glass-bg border border-glass-border p-4 rounded-xl gap-4">
-                        <div class="flex-1">
-                            <h3 class="font-bold text-lg">Personal Identity</h3>
-                            <input type="text" id="usernameInput" class="glass-input mt-2" placeholder="Your name">
+                        class="flex flex-col bg-glass-bg border border-glass-border p-5 rounded-xl gap-4">
+                        <div class="flex justify-between items-center mb-2">
+                            <h3 class="font-bold text-lg flex items-center gap-2"><i data-lucide="user" class="w-5 h-5 text-emerald-500"></i> Personal Identity</h3>
+                            <button class="px-6 py-2 rounded-xl text-sm font-bold glass-button"
+                                onclick="window.saveIdentity()">Save Profile</button>
                         </div>
-                        <button class="px-6 py-3 rounded-xl text-sm font-bold glass-button mt-auto"
-                            onclick="window.saveName()">Save</button>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-muted mb-1">Name</label>
+                                <input type="text" id="usernameInput" class="glass-input" placeholder="Your name">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-muted mb-1">Date of Birth</label>
+                                <input type="date" id="dobInput" class="glass-input">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-muted mb-1">Gender</label>
+                                <select id="genderInput" class="glass-input">
+                                    <option value="">Select Gender</option>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-muted mb-1">Location</label>
+                                <input type="text" id="locationInput" class="glass-input" placeholder="e.g. Navi Mumbai">
+                            </div>
+                            <div class="sm:col-span-2">
+                                <label class="block text-xs font-bold text-muted mb-1">Short Bio</label>
+                                <textarea id="bioInput" class="glass-input" rows="2" placeholder="Tell us about yourself..."></textarea>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>

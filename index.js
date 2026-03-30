@@ -131,16 +131,35 @@
     // ----------------------------------------------------
     function speakAssistantGreeting() {
         if (localStorage.getItem("voiceGreeting") === "off") return;
-        if (localStorage.getItem("app_opened_before") === "true") return;
+        // Use sessionStorage instead of localStorage so it plays once per app session (each time app is opened)
+        if (sessionStorage.getItem("app_session_started") === "true") return;
 
         let hasSpoken = false;
 
         const hour = new Date().getHours();
         const date = new Date();
+
         let timeGreeting = "Good day";
-        if (hour < 12) timeGreeting = "Good morning";
-        else if (hour < 17) timeGreeting = "Good afternoon";
-        else timeGreeting = "Good evening";
+
+        if (hour >= 0 && hour < 3) {
+            timeGreeting = "Late night";
+        } else if (hour >= 3 && hour < 6) {
+            timeGreeting = "Early morning";
+        } else if (hour >= 6 && hour < 9) {
+            timeGreeting = "Morning";
+        } else if (hour >= 9 && hour < 12) {
+            timeGreeting = "Late morning";
+        } else if (hour >= 12 && hour < 15) {
+            timeGreeting = "Afternoon";
+        } else if (hour >= 15 && hour < 18) {
+            timeGreeting = "Late afternoon";
+        } else if (hour >= 18 && hour < 21) {
+            timeGreeting = "Evening";
+        } else if (hour >= 21 && hour < 24) {
+            timeGreeting = "Early Night";
+        } else {
+            timeGreeting = "Good Night";
+        }
 
         const dob = localStorage.getItem('userDOB');
         const dobDate = dob ? new Date(dob) : null;
@@ -160,22 +179,30 @@
             speech.rate = 0.95;
             speech.pitch = 1;
 
-            const voices = speechSynthesis.getVoices();
-            const savedURI = localStorage.getItem('fin_voiceURI');
-            let preferred = null;
-            if (savedURI) preferred = voices.find(v => v.voiceURI === savedURI);
-            if (!preferred) preferred = voices.find(v => v.name.includes("Google US English") || v.name.includes("Samantha")) || voices[0];
-            if (preferred) speech.voice = preferred;
-
             speech.onstart = () => {
                 hasSpoken = true;
-                localStorage.setItem("app_opened_before", "true");
+                sessionStorage.setItem("app_session_started", "true");
                 document.removeEventListener('click', runSpeech);
                 document.removeEventListener('touchstart', runSpeech);
             };
 
-            speechSynthesis.cancel();
-            speechSynthesis.speak(speech);
+            const loadVoiceAndSpeak = () => {
+                const voices = speechSynthesis.getVoices();
+                const savedURI = localStorage.getItem('fin_voiceURI');
+                let preferred = null;
+                if (savedURI) preferred = voices.find(v => v.voiceURI === savedURI);
+                if (!preferred) preferred = voices.find(v => v.name.includes("Google US English") || v.name.includes("Samantha")) || voices[0];
+                if (preferred) speech.voice = preferred;
+
+                speechSynthesis.cancel();
+                speechSynthesis.speak(speech);
+            };
+
+            if (speechSynthesis.getVoices().length === 0) {
+                speechSynthesis.addEventListener('voiceschanged', loadVoiceAndSpeak, { once: true });
+            } else {
+                loadVoiceAndSpeak();
+            }
         };
 
         // Try playing immediately (Allowed on installed PWAs / Desktop)

@@ -225,48 +225,7 @@
   // 5. BOTTOM NAVIGATION DOCK LOGIC
   // ----------------------------------------------------
   window.initDockIndicator = function() {
-    const activeItem = document.querySelector('.dock-item.active');
-    const indicator = document.querySelector('.dock-liquid-indicator');
-    
-    if(activeItem && indicator) {
-      let currentLeft = 0;
-
-      const updateIndicator = (el, isClick = false) => {
-        const rect = el.getBoundingClientRect();
-        const navRect = el.parentElement.getBoundingClientRect();
-        const targetLeft = rect.left - navRect.left;
-        
-        // Add morph stretch if distance is large enough
-        if (isClick && Math.abs(targetLeft - currentLeft) > 50) {
-            indicator.classList.add('morph-stretch');
-            setTimeout(() => indicator.classList.remove('morph-stretch'), 250);
-        }
-        
-        currentLeft = targetLeft;
-        indicator.style.transform = `translateX(${targetLeft}px)`;
-        indicator.style.width = `${rect.width}px`;
-      };
-
-      // INIT
-      setTimeout(() => updateIndicator(activeItem), 100);
-
-      // CLICK
-      document.querySelectorAll('.dock-item').forEach(item => {
-        item.addEventListener('click', function() {
-          updateIndicator(this, true);
-        });
-      });
-
-      // DEBOUNCED RESIZE
-      let resizeTimer;
-      window.addEventListener('resize', () => {
-          clearTimeout(resizeTimer);
-          resizeTimer = setTimeout(() => {
-              const currentActive = document.querySelector('.dock-item.active');
-              if(currentActive) updateIndicator(currentActive);
-          }, 150);
-      });
-    }
+    // Removed for minimalistic navbar design
   };
 
   // ----------------------------------------------------

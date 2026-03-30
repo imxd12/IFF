@@ -345,18 +345,6 @@ body {
   padding: 0 10px;
 }
 
-/* Liquid indicator inside dock */
-.dock-liquid-indicator {
-  position: absolute;
-  top: 10px;
-  height: 52px;
-  width: 52px;
-  background: var(--nav-active);
-  border-radius: 26px;
-  z-index: -1;
-  transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), width 0.3s ease;
-  pointer-events: none;
-}
 
 .dock-item {
   width: 52px;
@@ -591,12 +579,23 @@ html.lenis {
 }
 
 @keyframes mf-pulse {
-  0%, 100% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.05); opacity: 0.8; }
+
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  50% {
+    transform: scale(1.05);
+    opacity: 0.8;
+  }
 }
 
 @keyframes mf-load {
-  to { left: 0; }
+  to {
+    left: 0;
+  }
 }
 
 /* Specific Transaction Alert Popup */
@@ -627,7 +626,7 @@ html.lenis {
   border-radius: 20px;
   font-weight: 800;
   font-size: 1.1rem;
-  box-shadow: 0 15px 40px rgba(0,0,0,0.25);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
   z-index: 10001;
   opacity: 0;
   pointer-events: none;
@@ -642,8 +641,15 @@ html.lenis {
   transform: translateX(-50%) scale(1) translateY(0);
 }
 
-.mf-tx-income { border-bottom: 4px solid var(--accent-primary); color: var(--accent-primary); }
-.mf-tx-expense { border-bottom: 4px solid var(--accent-danger); color: var(--accent-danger); }
+.mf-tx-income {
+  border-bottom: 4px solid var(--accent-primary);
+  color: var(--accent-primary);
+}
+
+.mf-tx-expense {
+  border-bottom: 4px solid var(--accent-danger);
+  color: var(--accent-danger);
+}
 
 /* Skill Interactive Boxes */
 .skill-box {
@@ -656,16 +662,16 @@ html.lenis {
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  box-shadow: 0 0 15px rgba(255,255,255,0);
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0);
   transition: box-shadow 0.3s;
 }
 
 .skill-box:hover::after {
-  box-shadow: 0 0 15px rgba(255,255,255,0.2);
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
 }
 
 [data-theme="dark"] .skill-box:hover::after {
-  box-shadow: 0 0 15px rgba(255,255,255,0.05);
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);
 }
 
 /* Birthday Confetti & Popup */
@@ -684,7 +690,7 @@ html.lenis {
   opacity: 0;
   visibility: hidden;
   transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-  box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
 }
 
 .mf-birthday-popup.show {
@@ -729,23 +735,12 @@ html.lenis {
   will-change: transform;
 }
 
-/* Enhancing Dock Indicator Glow and Liquid Morph Stretch */
-.dock-liquid-indicator {
-  box-shadow: 0 0 15px var(--accent-primary);
-  /* Use transition for transform and width, easing is paramount for liquid feel */
-  transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), 
-              width 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), 
-              background-color 0.4s;
-  will-change: transform, width;
-}
-
-/* Fired dynamically by JS to simulate liquid droplet splitting */
-.morph-stretch {
-  width: 90px !important;
-  border-radius: 15px !important;
-}
 
 /* Modal optimizations for performance */
-.modal-overlay, .modal-content-glass, .mf-tx-popup, .mf-tx-overlay, .ag-card-reveal {
+.modal-overlay,
+.modal-content-glass,
+.mf-tx-popup,
+.mf-tx-overlay,
+.ag-card-reveal {
   will-change: transform, opacity;
 }

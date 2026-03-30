@@ -202,7 +202,7 @@
         document.getElementById('incomeDate').value = today;
 
         updateUI();
-        showSnackbar('Income added successfully! 💰');
+        showTransactionPopup('income');
     });
 
     document.getElementById('expenseForm').addEventListener('submit', (e) => {
@@ -224,8 +224,47 @@
         expenseCategoryEl.dispatchEvent(new Event('change'));
 
         updateUI();
-        showSnackbar('Expense added successfully! 💸');
+        showTransactionPopup('expense');
     });
+
+    function showTransactionPopup(type) {
+        let popup = document.getElementById('mfTxPopup');
+        let overlay = document.getElementById('mfTxOverlay');
+        
+        if (!overlay) {
+            overlay = document.createElement('div');
+            overlay.id = 'mfTxOverlay';
+            overlay.className = 'mf-tx-overlay';
+            document.body.appendChild(overlay);
+        }
+        
+        if (!popup) {
+            popup = document.createElement('div');
+            popup.id = 'mfTxPopup';
+            popup.className = 'mf-tx-popup';
+            document.body.appendChild(popup);
+        }
+        
+        let icon = type === 'income' ? '<i data-lucide="arrow-down-to-line"></i>' : '<i data-lucide="arrow-up-from-line"></i>';
+        let msg = type === 'income' ? 'Income Added ✅' : 'Expense Added 💸';
+        let cls = type === 'income' ? 'mf-tx-income' : 'mf-tx-expense';
+        
+        popup.innerHTML = `${icon} <span>${msg}</span>`;
+        popup.className = `mf-tx-popup ${cls}`;
+        if(window.lucide) lucide.createIcons();
+        if(window.playUISound) window.playUISound(type === 'income' ? 'on' : 'off');
+        else if(window.playClickSound) window.playClickSound();
+
+        // Reveal
+        overlay.classList.add('show');
+        popup.classList.add('show');
+        
+        clearTimeout(window.txPopupTimer);
+        window.txPopupTimer = setTimeout(() => {
+            popup.classList.remove('show');
+            overlay.classList.remove('show');
+        }, 2200);
+    }
 
     // ----------------------------------------------------
     // EDIT & DELETE

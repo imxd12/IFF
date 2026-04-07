@@ -15,7 +15,7 @@
         Bills: ['📱 Mobile Recharge', '💡 Electricity', '📶 Data Pack', '🏦 Bank Charges', '🌊 Water', '🌐 WiFi', '🎬 Netflix/Prime', '💳 Credit Card Bill', 'All'],
         Health: ['💊 Medicines', '🧴 Skin Care', '🩺 Doctor Visit', '🧠 Mental Therapy', '🏥 Hospital', '🦷 Dental', '🧘 Yoga', '🏋️ Gym', 'All'],
         Entertainment: ['🎬 Movies', '🎮 Games', '🎵 Music', '🎥 YouTube Premium', '🍿 Outing', '🎡 Fun Activities', '🎂 Party', 'All'],
-        Education: ['📚 Books', '🖊️ Stationary', '🏫 College Fees', '📝 Exam Fees', '💻 Online Course', '🧑‍🏫 Coaching Classes', 'All'],
+        Education: ['📚 Books', '🖊️ Stationary', '🏫 College Fees', '📘 College Manual Fees', '📝 Exam Fees', '💻 Online Course', '🧑‍🏫 Coaching Classes', '🎓 Tuition Fees', '📑 Admission Fees', '🧾 Library Fees', '🧪 Lab Fees', '🚌 Transportation Fees', '🏠 Hostel Fees', '📖 Study Materials', 'All'],
         Savings: ['🏦 Bank Saving', '💰 Cash Saving', '📈 Mutual Funds', '📊 Stocks', '💳 SIP', '🏅 Gold', '🚨 Emergency Fund', 'All'],
         Family: ['🍛 Family Food', '🎁 Gifts', '🎉 Festivals', '👶 Kids', '👵 Medical Care', '🏠 Home Needs', 'All'],
         Other: ['💇 Haircut', '💅 Salon', '📦 Courier', '🚗 Vehicle Service', '💵 Charity', '🚬 Smoking', '🍺 Alcohol', 'All']

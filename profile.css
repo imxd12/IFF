@@ -627,3 +627,48 @@ html {
 .active-glow {
     position: absolute; width: 30px; height: 30px; background: #06b6d4; filter: blur(15px); opacity: 0.5; z-index: -1;
 }
+
+/* ========================================
+   RESPONSIVE DESIGN UPGRADES (MOBILE FIRST)
+======================================================================== */
+@media (max-width: 640px) {
+    .pr-main-wrap { padding-top: 90px; padding-bottom: 100px; }
+    
+    .cyber-hero { padding: 3rem 1.5rem; margin-bottom: 3rem; border-radius: 20px; }
+    
+    .avatar-hologram { width: 140px; height: 140px; margin-bottom: 1.5rem; }
+    .hero-name { font-size: 2.2rem; margin-bottom: 0.25rem; }
+    .cyber-handle { font-size: 1rem; margin-bottom: 0.5rem; }
+    .cyber-title-wrap { padding: 0.4rem 1.2rem; }
+    .cyber-title { font-size: 0.75rem; letter-spacing: 2px; }
+    
+    .hero-bio-container { padding: 0 10px; margin-top: 1rem; margin-bottom: 1.5rem; }
+    .hero-bio { font-size: 0.95rem; line-height: 1.6; }
+    
+    .hero-actions { gap: 1rem; flex-direction: column; width: 100%; }
+    .cyber-btn { padding: 0.8rem 1.5rem; font-size: 0.85rem; width: 100%; justify-content: center; }
+    
+    .cyber-timeline-layout { padding-left: 10px; margin-bottom: 4rem; }
+    .cyber-heading { font-size: 1.3rem; padding: 0.4rem 1rem; margin-bottom: 2rem; }
+    
+    .timeline-item { padding-left: 2.5rem; }
+    .timeline-content { padding: 1rem; border-radius: 16px; }
+    
+    .tc-header { flex-direction: column; gap: 0.5rem; align-items: flex-start; }
+    .tc-header h4 { font-size: 1.1rem; }
+    .cyber-loc-btn { position: absolute; top: 1rem; right: 1rem; }
+    
+    .skill-node { padding: 1rem 0.5rem; }
+    .robotics-cluster .skill-node { padding: 1.5rem 0.5rem; }
+    .cortex-cluster { padding: 1.5rem 1rem; border-radius: 20px; }
+
+    #skillModalContent { padding: 1.5rem; border-radius: 1.5rem; }
+    #modalTitle { font-size: 1.5rem; }
+}
+
+@media (min-width: 641px) and (max-width: 1024px) {
+    .cyber-hero { padding: 4rem 2rem; }
+    .hero-name { font-size: 2.8rem; }
+    .avatar-hologram { width: 160px; height: 160px; }
+    .skill-node { padding: 1.25rem 1rem; }
+}

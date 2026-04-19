@@ -492,12 +492,41 @@
   // D. Splash Screen
   window.initSplashScreen = function() {
     const splash = document.getElementById('mfSplashScreen');
-    if (splash) {
-      setTimeout(() => {
-        splash.classList.add('hidden');
-        setTimeout(() => splash.remove(), 500);
-      }, 1500);
+    if (!splash) return;
+    
+    // Play splash only on first open across app session
+    if (sessionStorage.getItem('mf_splash_seen') === 'true') {
+        splash.style.display = 'none'; // Instant hide with no animation if already seen
+        return;
     }
+    
+    // Set to true so it doesn't play repeatedly on refresh
+    sessionStorage.setItem('mf_splash_seen', 'true');
+    
+    const messages = [
+        "Initializing Neural Engine...",
+        "Syncing Data Core...",
+        "Establishing Secure Context...",
+        "Loading Antigravity UI...",
+        "Welcome to MoneyFlow..."
+    ];
+    
+    const textEl = document.getElementById('splashLoadText');
+    let mIdx = 0;
+    
+    if (textEl) {
+        const txtInterval = setInterval(() => {
+            mIdx++;
+            if(mIdx < messages.length) textEl.textContent = messages[mIdx];
+            else clearInterval(txtInterval);
+        }, 1100);
+    }
+    
+    // 5.8 seconds total runtime to match loader bar
+    setTimeout(() => {
+        splash.classList.add('hidden');
+        setTimeout(() => splash.remove(), 1000); // 1s wait for CSS opacity transition to complete
+    }, 5500);
   };
 
   // E. Skill Popups logic

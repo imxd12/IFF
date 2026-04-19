@@ -32,11 +32,22 @@
 
   <!-- Startup Splash Screen -->
   <div id="mfSplashScreen" class="mf-splash">
-    <div class="mf-splash-logo">MoneyFlow</div>
-    <div class="mf-loader-bar">
-      <div class="mf-loader-progress"></div>
+    <div class="mf-splash-brand-wrap">
+        <div class="mf-splash-logo-wave">
+            <div class="wave wave1"></div>
+            <div class="wave wave2"></div>
+        </div>
+        <div class="mf-splash-text">MoneyFlow</div>
     </div>
-  </div>  <!-- SVG Gooey Filter for Liquid Background -->
+    <div class="mf-loader-container">
+        <div class="mf-loader-bar">
+            <div class="mf-loader-progress"></div>
+        </div>
+        <div class="mf-loading-text" id="splashLoadText">Initializing Neural Engine...</div>
+    </div>
+  </div> 
+
+  <!-- SVG Gooey Filter for Liquid Background -->
   <svg style="visibility: hidden; position: absolute;" width="0" height="0" xmlns="http://www.w3.org/2000/svg"
     version="1.1">
     <defs>
@@ -69,14 +80,14 @@
       <audio id="globalMusicPlayer" src="music/judas-ladygaga.mp3" loop hidden></audio>
       <!-- Music Control -->
       <button class="glass-button w-10 h-10 rounded-full flex items-center justify-center relative shadow-lg"
-        id="musicIconBtn" onclick="toggleGlobalMusic()">
+        id="musicIconBtn">
         <svg class="absolute inset-0 w-full h-full -rotate-90 pointer-events-none" viewBox="0 0 40 40">
           <circle cx="20" cy="20" r="18" fill="none" class="text-emerald-500" stroke-width="2" id="musicProgressRing"
-            style="stroke-dasharray: 113; stroke-dashoffset: 113; transition: stroke-dashoffset 0.1s linear;"
+            style="stroke-dasharray: 113; stroke-dashoffset: 113; transition: stroke-dashoffset 0.1s linear, stroke 0.3s ease;"
             stroke="currentColor"></circle>
         </svg>
         <i data-lucide="play" class="w-4 h-4 text-emerald-500 z-10 block pointer-events-none" id="musicStatusIcon"
-          style="margin-left: 2px;"></i>
+          style="margin-left: 2px; transition: transform 0.2s ease;"></i>
       </button>
       <audio id="globalMusicPlayer" src="music/judas-ladygaga.mp3" loop hidden></audio>
 
@@ -245,39 +256,99 @@
       </div>
     </section>
 
-  </main>
+    <!-- Neural Beats Music Player Modal -->
+    <div id="musicPlayerModal" class="modal-overlay">
+      <div class="modal-content-glass max-w-sm w-full relative p-6 border border-glass-border">
+        <!-- Close Button -->
+        <button id="closeMusicModalBtn" class="absolute top-4 right-4 text-muted hover:text-red-500 transition-colors">
+          <i data-lucide="x"></i>
+        </button>
+
+        <div class="text-center mt-2">
+          <!-- Visualizer/Album Art Box -->
+          <div
+            class="w-24 h-24 mx-auto mb-4 bg-black/20 dark:bg-black/50 rounded-2xl flex flex-col items-center justify-center border border-emerald-500/30 shadow-[0_0_20px_rgba(16,185,129,0.2)] relative overflow-hidden"
+            id="musicVisualizerBox">
+            <div class="absolute inset-0 bg-gradient-to-tr from-emerald-500/20 to-blue-500/20 pointer-events-none">
+            </div>
+            <i data-lucide="music" class="w-10 h-10 text-emerald-400 mb-1 z-10" id="musicModalIcon"></i>
+            <div class="flex gap-1 items-end h-4 z-10" id="miniEQ">
+              <div class="w-1 bg-emerald-500 rounded-t h-2 animate-bounce" style="animation-delay: 0.1s"></div>
+              <div class="w-1 bg-emerald-500 rounded-t h-4 animate-bounce" style="animation-delay: 0.2s"></div>
+              <div class="w-1 bg-emerald-500 rounded-t h-3 animate-bounce" style="animation-delay: 0.3s"></div>
+            </div>
+          </div>
+
+          <h2 id="modalTrackName"
+            class="text-xl font-extrabold mb-1 bg-gradient-to-r from-emerald-400 to-cyan-500 text-transparent bg-clip-text truncate">
+            Default Track</h2>
+          <p class="text-xs font-bold text-muted mb-6 uppercase tracking-widest">Neural Audio Stream</p>
+
+          <!-- Progress Bar -->
+          <div class="mb-6 px-2">
+            <div class="flex justify-between text-[10px] text-muted font-mono mb-2">
+              <span id="musicModalCurrentTime">0:00</span>
+              <span id="musicModalDuration">0:00</span>
+            </div>
+            <input type="range" id="musicModalSeek" value="0" min="0" max="100"
+              class="w-full h-1 bg-gray-600 rounded-full appearance-none cursor-pointer focus:outline-none accent-emerald-500">
+          </div>
+
+          <!-- Controls -->
+          <div class="flex justify-center items-center gap-6 mb-6">
+            <button id="musicModalPrev" class="text-muted hover:text-white transition-transform active:scale-90"><i
+                data-lucide="skip-back" class="fill-current w-6 h-6"></i></button>
+            <button id="musicModalPlayPause"
+              class="w-14 h-14 bg-emerald-500 text-white rounded-full flex items-center justify-center hover:bg-emerald-400 transition-all active:scale-90 shadow-[0_0_15px_rgba(16,185,129,0.5)]">
+              <i data-lucide="play" class="fill-current w-6 h-6 ml-1" id="musicModalPlayIcon"></i>
+            </button>
+            <button id="musicModalNext" class="text-muted hover:text-white transition-transform active:scale-90"><i
+                data-lucide="skip-forward" class="fill-current w-6 h-6"></i></button>
+          </div>
+
+          <!-- Hidden File Input -->
+          <input type="file" id="localAudioFile" accept="audio/*" class="hidden">
+
+          <!-- Action Buttons -->
+          <button id="loadDeviceAudioBtn"
+            class="w-full py-3 bg-white/5 border border-white/10 hover:bg-emerald-500/10 hover:border-emerald-500/30 rounded-xl flex items-center justify-center gap-2 text-sm font-semibold transition-all">
+            <i data-lucide="folder-search" class="w-4 h-4 text-emerald-400"></i> Load Device Audio
+          </button>
+        </div>
+      </div>
+    </div>
 
 
 
-  <!-- Bottom Navigation Dock -->
-  <nav class="bottom-dock glass-dock">
-    <a href="index.html" class="dock-item active">
-      <i data-lucide="home"></i>
-      <span>Home</span>
-    </a>
-    <a href="spendly.html" class="dock-item">
-      <i data-lucide="pie-chart"></i>
-      <span>Spendly</span>
-    </a>
-    <a href="pocketcal.html" class="dock-item">
-      <i data-lucide="calendar"></i>
-      <span>PocketCal</span>
-    </a>
-    <a href="settings.html" class="dock-item">
-      <i data-lucide="settings"></i>
-      <span>Settings</span>
-    </a>
-  </nav>
+    <!-- Bottom Navigation Dock -->
+    <nav class="bottom-dock glass-dock">
+      <a href="index.html" class="dock-item active">
+        <i data-lucide="home"></i>
+        <span>Home</span>
+      </a>
+      <a href="spendly.html" class="dock-item">
+        <i data-lucide="pie-chart"></i>
+        <span>Spendly</span>
+      </a>
+      <a href="pocketcal.html" class="dock-item">
+        <i data-lucide="calendar"></i>
+        <span>PocketCal</span>
+      </a>
+      <a href="settings.html" class="dock-item">
+        <i data-lucide="settings"></i>
+        <span>Settings</span>
+      </a>
+    </nav>
 
-  <!-- CDNs for Smooth Experiences -->
-  <script src="https://unpkg.com/@studio-freight/lenis@1.0.39/dist/lenis.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-  <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- CDNs for Smooth Experiences -->
+    <script src="https://unpkg.com/@studio-freight/lenis@1.0.39/dist/lenis.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
 
-  <!-- Scripts -->
-  <script src="global.js"></script>
-  <script src="index.js"></script>
+    <!-- Scripts -->
+    <script src="global.js"></script>
+    <script src="index.js"></script>
 </body>
 
 </html>

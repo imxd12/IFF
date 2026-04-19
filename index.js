@@ -109,8 +109,8 @@
         let greeting = "";
         if (hour >= 0 && hour < 3) greeting = "Late night";
         else if (hour >= 3 && hour < 6) greeting = "Early morning";
-        else if (hour >= 6 && hour < 9) greeting = "Morning";
-        else if (hour >= 9 && hour < 12) greeting = "Late morning";
+        else if (hour >= 6 && hour < 10) greeting = "Morning";
+        else if (hour >= 10 && hour < 12) greeting = "Late morning";
         else if (hour >= 12 && hour < 15) greeting = "Afternoon";
         else if (hour >= 15 && hour < 18) greeting = "Late Afternoon";
         else if (hour >= 18 && hour < 21) greeting = "Evening";
@@ -253,12 +253,158 @@
     }
 
     // ----------------------------------------------------
+    // NEURAL BEATS - LONG PRESS MUSIC MODAL LOGIC
+    // ----------------------------------------------------
+    function initMusicModalLogic() {
+        const musicBtn = document.getElementById('musicIconBtn');
+        const modal = document.getElementById('musicPlayerModal');
+        if (!musicBtn || !modal) return;
+
+        let pressTimer = null;
+        let isLongPress = false;
+        
+        // Formatter for MM:SS
+        const formatTime = (time) => {
+            if(isNaN(time)) return "0:00";
+            const min = Math.floor(time / 60);
+            const sec = Math.floor(time % 60);
+            return `${min}:${sec < 10 ? '0' : ''}${sec}`;
+        };
+
+        // UI references
+        const player = document.getElementById('globalMusicPlayer');
+        const playPauseBtn = document.getElementById('musicModalPlayPause');
+        const playIcon = document.getElementById('musicModalPlayIcon');
+        const modalTrackName = document.getElementById('modalTrackName');
+        const currentTimeEl = document.getElementById('musicModalCurrentTime');
+        const durationEl = document.getElementById('musicModalDuration');
+        const seekSlider = document.getElementById('musicModalSeek');
+        const fileInput = document.getElementById('localAudioFile');
+        const loadBtn = document.getElementById('loadDeviceAudioBtn');
+
+        // Long Press Events
+        const startPress = (e) => {
+            if (e.button && e.button !== 0) return; // Only left click
+            isLongPress = false;
+            musicBtn.style.transform = 'scale(0.9)'; // Provide visual feedback of pressing
+            
+            pressTimer = setTimeout(() => {
+                isLongPress = true;
+                // Vibrate if allowed
+                if (navigator.vibrate) navigator.vibrate([50, 50, 50]);
+                // Open Modal
+                modal.classList.add('active');
+                updateModalUIState();
+            }, 3000); // 3 seconds
+        };
+
+        const cancelPress = () => {
+            clearTimeout(pressTimer);
+            musicBtn.style.transform = 'scale(1)';
+        };
+
+        const executeClick = (e) => {
+            cancelPress();
+            if(!isLongPress) {
+                // Was just a normal click
+                if(window.toggleGlobalMusic) window.toggleGlobalMusic();
+                updateModalUIState();
+            }
+        };
+
+        musicBtn.addEventListener('pointerdown', startPress);
+        musicBtn.addEventListener('pointerup', executeClick);
+        musicBtn.addEventListener('pointerleave', cancelPress);
+
+        // Modal Controls
+        document.getElementById('closeMusicModalBtn').addEventListener('click', () => {
+            modal.classList.remove('active');
+        });
+
+        modal.addEventListener('click', (e) => {
+            // Close if clicking overlay directly
+            if(e.target === modal) modal.classList.remove('active');
+        });
+
+        // Sync Modal UI
+        const updateModalUIState = () => {
+             if (player.paused) {
+                 playIcon.setAttribute('data-lucide', 'play');
+                 document.getElementById('miniEQ').style.opacity = '0.3';
+             } else {
+                 playIcon.setAttribute('data-lucide', 'pause');
+                 document.getElementById('miniEQ').style.opacity = '1';
+             }
+             if(window.lucide) lucide.createIcons();
+        };
+
+        playPauseBtn.addEventListener('click', () => {
+            if(window.toggleGlobalMusic) window.toggleGlobalMusic();
+            updateModalUIState();
+        });
+
+        // Skip buttons (just simulated skip by 15s since single track)
+        document.getElementById('musicModalNext').addEventListener('click', () => {
+            player.currentTime += 15;
+        });
+        document.getElementById('musicModalPrev').addEventListener('click', () => {
+            player.currentTime = Math.max(0, player.currentTime - 15);
+        });
+
+        // Update progress bar
+        player.addEventListener('timeupdate', () => {
+            if(!modal.classList.contains('active')) return; // Save perf
+            
+            currentTimeEl.textContent = formatTime(player.currentTime);
+            if(player.duration) {
+                durationEl.textContent = formatTime(player.duration);
+                seekSlider.value = (player.currentTime / player.duration) * 100;
+            }
+        });
+        
+        // Ensure duration updates on load
+        player.addEventListener('loadedmetadata', () => {
+            durationEl.textContent = formatTime(player.duration);
+        });
+
+        seekSlider.addEventListener('input', (e) => {
+            const seekTime = (e.target.value / 100) * player.duration;
+            player.currentTime = seekTime;
+        });
+
+        // Load Device Audio handling
+        loadBtn.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const url = URL.createObjectURL(file);
+                player.src = url;
+                modalTrackName.textContent = file.name.replace(/\.[^/.]+$/, ""); // remove extension
+                player.play().then(() => {
+                    if (window.toggleGlobalMusic && player.paused) window.toggleGlobalMusic(); // sync global state
+                    updateModalUIState();
+                    // Force the global header icon to show pause
+                    const headerIcon = document.getElementById("musicStatusIcon");
+                    if(headerIcon) headerIcon.setAttribute('data-lucide', 'pause');
+                    if(window.lucide) lucide.createIcons();
+                }).catch(e => console.log('Autoplay prevented', e));
+                
+                showSnackbar('Loaded local audio track successfully.');
+            }
+        });
+    }
+
+    // ----------------------------------------------------
     // BOOTSTRAP
     // ----------------------------------------------------
     window.addEventListener('DOMContentLoaded', () => {
         updateTextGreeting();
         updateDashboard();
         initPWA();
+        initMusicModalLogic();
 
         // Voice greeting after a tiny timeout to ensure it feels natural
         setTimeout(speakAssistantGreeting, 1200);

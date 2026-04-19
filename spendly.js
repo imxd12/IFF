@@ -8,17 +8,17 @@
 
     // Categories
     const categoryMap = {
-        Travel: ['🛺 Rickshaw', '🚍 BEST Bus', '🚌 Luxury Bus', '🚗 Taxi', '🚖 Local Transport', '🚇 Metro', '🚆 Train', '🚕 Ola/Uber', '🛵 Bike Petrol', '⛽ Fuel', '🅿️ Parking', '🛤️ Toll', '🎫 Monthly Pass', '🚶 Walking', '🚲 Bicycle', 'All'],
-        Food: ['🍳 Breakfast', '🥪 Lunch', '🍛 Dinner', '🍿 Snacks', '☕ Tea/Chai', '🥤 Cold Drinks', '🥤 Juice', '🍲 Home Food', '🍔 Outside Food', '🥙 Street Food', '🛒 Groceries', '🥬 Vegetables', '🍎 Fruits', 'All'],
-        Rent: ['🏠 House Rent', '🏡 PG/Hostel', '🏢 Room Rent', '💡 Electricity Bill', '💧 Water Bill', '🔥 Gas Cylinder', '🌐 Internet/WiFi', '📱 Mobile Recharge', 'All'],
-        Shopping: ['👕 Clothes', '👟 Shoes', '🧢 Daily Wear', '🧴 Personal Care', '📱 Mobile', '💻 Laptop', '🛍️ Online Shopping', 'All'],
-        Bills: ['📱 Mobile Recharge', '💡 Electricity', '📶 Data Pack', '🏦 Bank Charges', '🌊 Water', '🌐 WiFi', '🎬 Netflix/Prime', '💳 Credit Card Bill', 'All'],
-        Health: ['💊 Medicines', '🧴 Skin Care', '🩺 Doctor Visit', '🧠 Mental Therapy', '🏥 Hospital', '🦷 Dental', '🧘 Yoga', '🏋️ Gym', 'All'],
-        Entertainment: ['🎬 Movies', '🎮 Games', '🎵 Music', '🎥 YouTube Premium', '🍿 Outing', '🎡 Fun Activities', '🎂 Party', 'All'],
-        Education: ['📚 Books', '🖊️ Stationary', '🏫 College Fees', '📘 College Manual Fees', '📝 Exam Fees', '💻 Online Course', '🧑‍🏫 Coaching Classes', '🎓 Tuition Fees', '📑 Admission Fees', '🧾 Library Fees', '🧪 Lab Fees', '🚌 Transportation Fees', '🏠 Hostel Fees', '📖 Study Materials', 'All'],
-        Savings: ['🏦 Bank Saving', '💰 Cash Saving', '📈 Mutual Funds', '📊 Stocks', '💳 SIP', '🏅 Gold', '🚨 Emergency Fund', 'All'],
-        Family: ['🍛 Family Food', '🎁 Gifts', '🎉 Festivals', '👶 Kids', '👵 Medical Care', '🏠 Home Needs', 'All'],
-        Other: ['💇 Haircut', '💅 Salon', '📦 Courier', '🚗 Vehicle Service', '💵 Charity', '🚬 Smoking', '🍺 Alcohol', 'All']
+        Travel: ['🛺 Auto/Rickshaw', '🤝 Shared Auto', '🚍 BEST/City Bus', '🚇 Metro', '🚆 Local Train', '🚌 Long Journey', '🛵 Bike Petrol', '⛽ Fuel/Diesel', '🚗 Taxi/Cab', '🚲 Bicycle', '🛤️ Toll/Parking', '🎫 Monthly Pass', 'All'],
+        Food: ['🥛 Milk/Doodh', '🌾 Ration/Kirana', '🥬 Vegetables/Mandi', '🍎 Fruits', '🍞 Bakery/Bread', '🍗 Non-Veg/Meat', '🌶️ Masala/Spices', '🍳 Breakfast', '🍛 Lunch/Dinner', '☕ Tea/Chai', '🥙 Street Food', '🍔 Outside Junk', '🥤 Cold Drinks', 'All'],
+        'Home & Rent': ['🏠 House Rent', '🏡 PG/Hostel', '🧹 Maid/Bai', '🔥 Gas Cylinder', '🚰 Drinking Water/Can', '🔌 Hardware/Tools', '🧴 Detergent/Soaps', '📰 Newspaper', 'All'],
+        Bills: ['💡 Electricity Bill', '📱 Mobile Recharge', '🌐 WiFi/Broadband', '📺 Cable/DTH', '🏦 Bank Charges', '💳 Credit Card Bill', '🌊 Water Bill', 'All'],
+        Shopping: ['👕 Clothes', '👟 Shoes/Chappal', '🧢 Daily Wear', '🧴 Personal Care', '🧵 Tailor/Stitching', '📱 Gadgets', '🛍️ Online Sale', 'All'],
+        Health: ['💊 Medicines/Pharmacy', '🩺 Doctor Visit/Clinic', '🏥 Hospital', '🩸 Blood Test/Pathology', '🦷 Dental', '🧴 Skin Care', '🧘 Yoga/Gym', 'All'],
+        Education: ['🖨️ Printout/Xerox', '📄 Assignment/Project', '📚 Text Books', '📓 Notebooks/Registers', '🖊️ Stationary (Pens/Pencils)', '🎒 Bag/Accessories', '🏫 School/College Fees', '🧑‍🏫 Tuition/Coaching', '📝 Exam Form/Fees', '💻 Cyber Cafe', '💻 Online Course', 'All'],
+        Entertainment: ['🎬 Movies/Theater', '🎥 OTT (Netflix/Prime)', '🍿 Outing/Mela', '🎮 Games', '🎡 Fun Activities', '🎵 Spotify/Music', 'All'],
+        Savings: ['🏦 Bank Deposit', '💰 Cash Piggubank', '📈 Mutual Funds/SIP', '🏅 Gold/Jewelry', '🚨 Emergency Fund', 'All'],
+        Family: ['🎉 Festivals/Puja', '🎁 Gifts/Shagun', '👶 Kids Fees/Toys', '🍛 Family Dinner', '👵 Parent Medicine', '🏠 Home Repair', 'All'],
+        Other: ['💇 Haircut/Barber', '👚 Laundry/Dhobi', '📦 Courier/Post', '🚗 Bike/Auto Service', '💵 Charity/Zakat', '💸 Lost/Stolen', '🚬 Smoking/Pan', '🍺 Alcohol', 'All']
     };
 
     let data = loadData('fin_spendly') || [];

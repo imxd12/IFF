@@ -1,463 +1,625 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en" data-theme="dark">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>MoneyFlow - Profile</title>
+    <title>Imad Khan - Neural Profile</title>
 
     <link rel="stylesheet" href="global.css">
+    <link rel="stylesheet" href="profile.css">
 
+    <!-- Tailwind for rapid utilities -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = { darkMode: ['class', '[data-theme="dark"]'] }
     </script>
 </head>
 
-<body>
+<body class="profile-body">
 
-    <svg style="visibility: hidden; position: absolute;" width="0" height="0">
+    <!-- SVG Gooey Filter for Liquid Background -->
+    <svg style="visibility: hidden; position: absolute;" width="0" height="0" xmlns="http://www.w3.org/2000/svg" version="1.1">
         <defs>
             <filter id="gooey-filter">
                 <feGaussianBlur in="SourceGraphic" stdDeviation="20" result="blur" />
-                <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 30 -10"
-                    result="goo" />
+                <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 30 -10" result="goo" />
                 <feBlend in="SourceGraphic" in2="goo" />
             </filter>
         </defs>
     </svg>
 
+    <!-- Liquid Background Container -->
     <div class="liquid-bg-container">
         <div class="liquid-blob"></div>
         <div class="liquid-blob"></div>
     </div>
 
-    <header class="global-header glass-panel">
-        <div class="brand flex items-center gap-3">
+    <!-- Header -->
+    <header class="global-header cyber-glass-header pr-header-fixed">
+        <div class="brand flex items-center gap-3 relative z-10">
             <a href="javascript:history.back()"
-                class="glass-button w-10 h-10 rounded-full flex items-center justify-center hover:-translate-x-1">
-                <i data-lucide="arrow-left" class="w-5 h-5"></i>
+                class="glass-button magnetic-btn w-10 h-10 rounded-full flex items-center justify-center border border-white/10 cyber-glass-base">
+                <i data-lucide="chevron-left" class="w-5 h-5"></i>
             </a>
             <div class="brand-logo-wave hidden sm:block">
                 <div class="wave wave1"></div>
                 <div class="wave wave2"></div>
             </div>
-            <span class="brand-text">Profile</span>
+            <span
+                class="brand-text neon-text-glow font-bold uppercase tracking-widest text-sm theme-text">Profile</span>
         </div>
-        <div class="header-controls">
-            <button class="theme-toggle-btn glass-button" id="themeToggleBtn"><i data-lucide="sun"></i></button>
+        <div class="header-controls relative z-10">
+            <button class="theme-toggle-btn glass-button magnetic-btn border border-white/10 cyber-glass-base"
+                id="themeToggleBtn"><i data-lucide="sun"></i></button>
         </div>
     </header>
 
-    <main class="main-content flex flex-col items-center">
+    <main class="pr-main-wrap">
 
-        <!-- Preamble / Hero -->
-        <div class="glass-panel w-full max-w-4xl p-8 mb-12 ag-card-reveal text-center relative overflow-hidden"
-            data-speed="0.1">
-            <div class="absolute top-0 right-0 w-64 h-64 bg-emerald-500/20 rounded-full blur-3xl -z-10"></div>
+        <!-- Clean Container (No 3D Scroll Perspective) -->
+        <div class="pr-scene">
 
-            <div class="relative w-32 h-32 mx-auto mb-6">
-                <div class="absolute inset-0 bg-emerald-500 rounded-full animate-pulse blur-xl opacity-50"></div>
-                <img src="Imad.jpg" alt="Imad"
-                    class="relative w-full h-full object-cover rounded-full border-4 border-emerald-500 shadow-2xl"
-                    onerror="this.src='https://ui-avatars.com/api/?name=Imad&background=10b981&color=fff'">
-            </div>
+            <!-- Hero Section -->
+            <section class="cyber-hero cyber-card glass-panel" data-speed="0.8">
 
-            <h1 class="text-4xl font-extrabold mb-2 text-gradient flex justify-center items-center gap-2">
-                Imad Khan <i data-lucide="badge-check" class="text-blue-500 w-8 h-8"></i>
-            </h1>
-            <a href="https://www.instagram.com/_imxd12" target="_blank"
-                class="text-emerald-500 font-bold hover:underline">@imxd12</a>
-            <p class="text-lg text-emerald-600 font-bold mb-4 mt-2">Developer | MoneyFlow Creator</p>
+                <div class="hero-glow-back"></div>
 
-            <div
-                class="flex justify-center items-center gap-2 text-muted mb-8 text-sm bg-glass-bg border border-glass-border px-4 py-2 rounded-full inline-flex">
-                <i data-lucide="map-pin" class="w-4 h-4 text-red-500"></i> Navi Mumbai, India
-            </div>
-
-            <p class="text-muted mb-8 max-w-2xl mx-auto leading-relaxed text-left">
-                Hey there! I'm a passionate frontend developer and tech enthusiast who loves turning ideas into reality
-                through code. As the creator of MoneyFlow, I believe in building tools that solve real problems—helping
-                people take control of their finances with beautiful, intuitive interfaces. Currently pursuing
-                Electrical & Computer Engineering while specializing in Automation & Robotics, I blend hardware
-                knowledge with software expertise to create innovative solutions. When I'm not coding, you'll find me
-                exploring new technologies, optimizing workflows, or working on the next big feature for MoneyFlow! 🚀
-            </p>
-
-            <div class="flex justify-center gap-4 flex-wrap">
-                <a href="mailto:imadak999@gmail.com"
-                    class="glass-button px-6 py-3 rounded-xl font-bold flex items-center gap-2">
-                    <i data-lucide="mail"></i> Email Me
-                </a>
-                <a href="https://wa.me/918097814934" target="_blank"
-                    class="px-6 py-3 rounded-xl font-bold flex items-center gap-2 bg-[#25D366] text-white shadow-lg active:scale-95 transition-transform hover:bg-[#1ebd5c]">
-                    <i data-lucide="message-circle"></i> WhatsApp
-                </a>
-                <a href="resume.pdf" target="_blank"
-                    class="glass-button px-6 py-3 rounded-xl font-bold flex items-center gap-2">
-                    <i data-lucide="file-text"></i> Resume
-                </a>
-            </div>
-        </div>
-
-        <!-- Grid Layout for Resume details -->
-        <div class="w-full max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-8 mb-20">
-
-            <!-- Education Section -->
-            <div class="profile-section glass-panel p-8 ag-card-reveal" data-speed="0.2">
-                <h4 class="section-heading text-2xl font-bold mb-6 flex items-center gap-3">
-                    <span class="section-icon text-emerald-500">🎓</span>
-                    Education
-                </h4>
-                <div class="section-content space-y-6">
-                    <div class="edu-item pl-4 border-l-2 border-emerald-500/30">
-                        <div class="edu-header flex justify-between items-center mb-1">
-                            <strong class="font-bold text-lg">B.E (Expected June 2028)</strong>
-                            <a href="https://maps.app.goo.gl/xcGfMsNk44Qse9CLA" target="_blank"
-                                class="location-link bg-glass-hover p-2 rounded-full hover:scale-110 transition-transform"
-                                title="View on Google Maps">
-                                <svg width="16" height="16" fill="#10b981" viewBox="0 0 24 24">
-                                    <path
-                                        d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z" />
-                                </svg>
-                            </a>
-                        </div>
-                        <p class="edu-course text-emerald-500 font-semibold mb-1">Electrical & Computer Engineering</p>
-                        <p class="edu-institution text-sm text-muted">Anjuman-I-Islam's Kalsekar Technical Campus,
-                            Panvel - Navi Mumbai</p>
+                <div class="avatar-hologram">
+                    <div class="hologram-rings">
+                        <div class="ring ring-1"></div>
+                        <div class="ring ring-2"></div>
+                        <div class="ring ring-3"></div>
                     </div>
+                    <img src="Imad.jpg" alt="Imad" class="pr-avatar-img"
+                        onerror="this.src='https://ui-avatars.com/api/?name=Imad&background=06b6d4&color=fff'">
 
-                    <div class="edu-item pl-4 border-l-2 border-emerald-500/30">
-                        <div class="edu-header flex justify-between items-center mb-1">
-                            <strong class="font-bold text-lg">Diploma (June 2024)</strong>
-                            <a href="https://maps.app.goo.gl/bUB4eSrFojxXSUjy9" target="_blank"
-                                class="location-link bg-glass-hover p-2 rounded-full hover:scale-110 transition-transform"
-                                title="View on Google Maps">
-                                <svg width="16" height="16" fill="#10b981" viewBox="0 0 24 24">
-                                    <path
-                                        d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z" />
-                                </svg>
-                            </a>
-                        </div>
-                        <p class="edu-course text-emerald-500 font-semibold mb-1">Automation & Robotics</p>
-                        <p class="edu-institution text-sm text-muted">Anjuman-I-Islam's Abdul Razzaq Kalsekar
-                            Polytechnic,<br> Panvel - Navi Mumbai</p>
-                    </div>
-
-                    <div class="edu-item pl-4 border-l-2 border-emerald-500/30">
-                        <div class="edu-header flex justify-between items-center mb-1">
-                            <strong class="font-bold text-lg">S.S.C (March 2021)</strong>
-                            <a href="https://maps.app.goo.gl/mbEHeidS6EWQ3zmr5" target="_blank"
-                                class="location-link bg-glass-hover p-2 rounded-full hover:scale-110 transition-transform"
-                                title="View on Google Maps">
-                                <svg width="16" height="16" fill="#10b981" viewBox="0 0 24 24">
-                                    <path
-                                        d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z" />
-                                </svg>
-                            </a>
-                        </div>
-                        <p class="edu-institution text-sm text-muted">St. Francis Xavier's English Medium High School,
-                            Ajgoan</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Work Experience & Certs Column -->
-            <div class="space-y-8 flex flex-col">
-                <!-- Work Experience Section -->
-                <div class="profile-section glass-panel p-8 ag-card-reveal h-fit" data-speed="0.25">
-                    <h4 class="section-heading text-2xl font-bold mb-6 flex items-center gap-3">
-                        <span class="section-icon text-blue-500">💼</span>
-                        Work Experience
-                    </h4>
-                    <div class="section-content">
-                        <div class="work-item pl-4 border-l-2 border-blue-500/30">
-                            <div class="work-header flex justify-between items-center mb-1">
-                                <strong class="font-bold text-lg">IRABOT TechEd LLP</strong>
-                                <a href="https://maps.app.goo.gl/cVu78nW3DoMW48V88" target="_blank"
-                                    class="location-link bg-glass-hover p-2 rounded-full hover:scale-110 transition-transform"
-                                    title="View on Google Maps">
-                                    <svg width="16" height="16" fill="#3b82f6" viewBox="0 0 24 24">
-                                        <path
-                                            d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z" />
-                                    </svg>
-                                </a>
-                            </div>
-                            <p class="work-period text-xs font-bold text-blue-500 mb-2">June 2023 - July 2023</p>
-                            <p class="work-description text-sm text-muted">Completed a six-week industrial internship in
-                                Automation and Robotics. Gained hands-on experience in industrial automation systems,
-                                robotics programming, and real-world applications of automation technology.</p>
-                        </div>
+                    <!-- Orbiting Badges -->
+                    <div class="orbit-container">
+                        <div class="floating-badge badge-1"><i data-lucide="code-2"></i></div>
+                        <div class="floating-badge badge-2"><i data-lucide="cpu"></i></div>
+                        <div class="floating-badge badge-3"><i data-lucide="fingerprint"></i></div>
                     </div>
                 </div>
 
-                <!-- Professional Certifications Section -->
-                <div class="profile-section glass-panel p-8 ag-card-reveal h-fit" data-speed="0.3">
-                    <h4 class="section-heading text-2xl font-bold mb-6 flex items-center gap-3">
-                        <span class="section-icon text-amber-500">📜</span>
-                        Professional Certifications
-                    </h4>
-                    <div class="section-content space-y-6 text-sm text-muted">
-                        <div class="cert-item pl-4 border-l-2 border-amber-500/30">
-                            <div class="cert-header mb-1">
-                                <strong class="font-bold text-lg text-foreground">📄 Research Publication</strong>
-                            </div>
-                            <p class="cert-description">"Automated Attendance Marking System Using Raspberry Pi"
-                                published in International Journal of Research and Analytical Reviews (IJRAR)</p>
-                        </div>
-                        <div class="cert-item pl-4 border-l-2 border-amber-500/30">
-                            <div class="cert-header mb-1">
-                                <strong class="font-bold text-lg text-foreground">🏆 NEUROFEST 2024</strong>
-                            </div>
-                            <p class="cert-description">Participation Certificate - State Level Project Competition
-                                (Anjuman-I-Islam Abdul Razzaq Kalsekar Polytechnic, Panvel)</p>
-                        </div>
-                        <div class="cert-item pl-4 border-l-2 border-amber-500/30">
-                            <div class="cert-header mb-1">
-                                <strong class="font-bold text-lg text-foreground">🏆 TECHNOVATION 2024</strong>
-                            </div>
-                            <p class="cert-description">Participation Certificate - State Level Project Competition
-                                (Vivekanand Education Society's Polytechnic, Chembur)</p>
-                        </div>
-                        <div class="cert-item pl-4 border-l-2 border-amber-500/30">
-                            <div class="cert-header mb-1">
-                                <strong class="font-bold text-lg text-foreground">⚡ EV Maintenance Technician
-                                    Training</strong>
-                            </div>
-                            <p class="cert-description">Completed industry-certified training at Mahindra & Mahindra
-                                (Centum Foundation), gaining hands-on knowledge of electric vehicle systems,
-                                diagnostics, and safety (Sep 202 – Nov 2025)</p>
-                        </div>
+                <div class="hero-content">
+                    <h1 class="hero-name split-text theme-text-strong">
+                        Imad Khan <i data-lucide="check-circle" class="verify-icon text-cyan-400"></i>
+                    </h1>
+
+                    <a href="https://www.instagram.com/_imxd12" target="_blank" class="cyber-handle">@imxd12</a>
+
+                    <div class="cyber-title-wrap">
+                        <span class="cyber-title">Architect | MoneyFlow Creator</span>
+                    </div>
+
+                    <div class="location-badge theme-glass-sub">
+                        <i data-lucide="crosshair" class="text-rose-500 w-4 h-4 mr-1"></i> Navi Mumbai, IND
+                    </div>
+
+                    <div class="hero-bio-container opacity-0 translate-y-4 mt-6 mb-8 max-w-md mx-auto">
+                        <p class="hero-bio theme-text text-sm leading-relaxed bg-white/10 dark:bg-black/30 p-4 rounded-2xl border border-white/10 shadow-inner backdrop-blur-md">
+                            I'm a frontend developer and tech enthusiast merging digital interfaces with hardware realities.
+                            As the creator of MoneyFlow, I build financial tools with <span
+                                class="text-cyan-500 light:text-cyan-600 font-extrabold">beautiful, fluid UI</span>. Pursuing
+                            Electrical & Computer Engineering (Automation & Robotics), I engineer the future. Currently
+                            optimizing workflows and writing the next big feature for MoneyFlow! 🚀
+                        </p>
+                    </div>
+
+                    <div class="hero-actions">
+                        <a href="mailto:imadak999@gmail.com" class="cyber-btn magnetic-btn">
+                            <i data-lucide="mail"></i> <span>Initiate Comms</span>
+                        </a>
+                        <a href="https://wa.me/918097814934" target="_blank" class="cyber-btn btn-emerald magnetic-btn">
+                            <i data-lucide="message-square"></i> <span>WhatsApp</span>
+                        </a>
+                        <a href="resume.pdf" target="_blank" class="cyber-btn btn-outline magnetic-btn">
+                            <i data-lucide="file-json-2"></i> <span>Extract Data</span>
+                        </a>
                     </div>
                 </div>
+            </section>
+
+            <!-- Unified Timeline Structure (No Scroll Animation) -->
+            <div class="cyber-timeline-layout">
+                <div class="timeline-progress-line theme-border">
+                    <div class="timeline-progress-fill" style="height: 100%;"></div>
+                </div>
+
+                <!-- Education Section -->
+                <section class="timeline-section" id="education">
+                    <h3
+                        class="cyber-heading theme-glass-heading font-extrabold uppercase tracking-widest text-[#a855f7]">
+                        <i data-lucide="graduation-cap" class="mr-2"></i> Academic Protocol
+                    </h3>
+
+                    <div class="timeline-track">
+                        <div class="timeline-item">
+                            <div class="timeline-node node-purple"></div>
+                            <div class="timeline-content cyber-card glass-panel">
+                                <div class="tc-header">
+                                    <h4 class="text-purple-500 light:text-purple-600 font-bold text-lg">B.E. (Expected
+                                        June 2028)</h4>
+                                    <a href="https://maps.app.goo.gl/xcGfMsNk44Qse9CLA" target="_blank"
+                                        class="cyber-loc-btn theme-glass-sub magnetic-btn"><i data-lucide="map"></i></a>
+                                </div>
+                                <p class="tc-sub font-semibold theme-text">Electrical & Computer Engineering</p>
+                                <p class="tc-desc theme-text-muted text-sm mt-2">Anjuman-I-Islam's Kalsekar Technical
+                                    Campus, Panvel - Navi Mumbai</p>
+                                <div class="card-edge-glow"></div>
+                            </div>
+                        </div>
+
+                        <div class="timeline-item">
+                            <div class="timeline-node node-purple"></div>
+                            <div class="timeline-content cyber-card glass-panel">
+                                <div class="tc-header">
+                                    <h4 class="text-purple-500 font-bold text-lg">Diploma (June 2024)</h4>
+                                    <a href="https://maps.app.goo.gl/bUB4eSrFojxXSUjy9" target="_blank"
+                                        class="cyber-loc-btn theme-glass-sub magnetic-btn"><i data-lucide="map"></i></a>
+                                </div>
+                                <p class="tc-sub font-semibold theme-text">Automation & Robotics</p>
+                                <p class="tc-desc theme-text-muted text-sm mt-2">Anjuman-I-Islam's Abdul Razzaq Kalsekar
+                                    Polytechnic, Panvel</p>
+                                <div class="card-edge-glow"></div>
+                            </div>
+                        </div>
+
+                        <div class="timeline-item">
+                            <div class="timeline-node node-purple"></div>
+                            <div class="timeline-content cyber-card glass-panel">
+                                <div class="tc-header">
+                                    <h4 class="text-purple-500 font-bold text-lg">S.S.C (March 2021)</h4>
+                                    <a href="https://maps.app.goo.gl/mbEHeidS6EWQ3zmr5" target="_blank"
+                                        class="cyber-loc-btn theme-glass-sub magnetic-btn"><i data-lucide="map"></i></a>
+                                </div>
+                                <p class="tc-desc theme-text-muted text-sm mt-2">St. Francis Xavier's English Medium
+                                    High School, Ajgoan</p>
+                                <div class="card-edge-glow"></div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Experience Section -->
+                <section class="timeline-section" id="experience">
+                    <h3
+                        class="cyber-heading theme-glass-heading font-extrabold uppercase tracking-widest text-[#06b6d4]">
+                        <i data-lucide="briefcase" class="mr-2"></i> Field Operations
+                    </h3>
+                    <div class="timeline-track">
+                        <div class="timeline-item">
+                            <div class="timeline-node node-cyan"></div>
+                            <div class="timeline-content cyber-card glass-panel">
+                                <div class="tc-header">
+                                    <h4 class="text-cyan-500 font-bold text-lg">IRABOT TechEd LLP</h4>
+                                    <a href="https://maps.app.goo.gl/cVu78nW3DoMW48V88" target="_blank"
+                                        class="cyber-loc-btn theme-glass-sub magnetic-btn"><i data-lucide="map"></i></a>
+                                </div>
+                                <p class="tc-sub text-cyan-600 dark:text-cyan-200 text-sm mt-1 mb-2 font-mono">CYCLE:
+                                    06/2023 - 07/2023</p>
+                                <p class="tc-desc theme-text-muted text-sm leading-relaxed">Completed a six-week
+                                    industrial internship in Automation and Robotics. Gained hands-on experience in
+                                    industrial automation systems, robotics programming, and real-world applications of
+                                    automation technology.</p>
+                                <div class="card-edge-glow"></div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Certifications Section -->
+                <section class="timeline-section" id="certs">
+                    <h3
+                        class="cyber-heading theme-glass-heading font-extrabold uppercase tracking-widest text-[#10b981]">
+                        <i data-lucide="award" class="mr-2"></i> Achievements & Certs
+                    </h3>
+                    <div class="timeline-track">
+                        <div class="timeline-item">
+                            <div class="timeline-node node-emerald"></div>
+                            <div class="timeline-content cyber-card glass-panel">
+                                <h4 class="text-emerald-500 font-bold text-md mb-2 flex items-center"><i
+                                        data-lucide="book-open" class="mr-2 w-4 h-4"></i> Research Publication</h4>
+                                <p class="tc-desc theme-text-muted text-sm">"Automated Attendance Marking System Using
+                                    Raspberry Pi" published in International Journal of Research and Analytical Reviews
+                                    (IJRAR).</p>
+                                <div class="card-edge-glow"></div>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-node node-emerald"></div>
+                            <div class="timeline-content cyber-card glass-panel">
+                                <h4 class="text-emerald-500 font-bold text-md mb-2 flex items-center"><i
+                                        data-lucide="trophy" class="mr-2 w-4 h-4"></i> NEUROFEST 2024</h4>
+                                <p class="tc-desc theme-text-muted text-sm">Participation Certificate - State Level
+                                    Project Competition (Anjuman-I-Islam Abdul Razzaq Kalsekar Polytechnic, Panvel)</p>
+                                <div class="card-edge-glow"></div>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-node node-emerald"></div>
+                            <div class="timeline-content cyber-card glass-panel">
+                                <h4 class="text-emerald-500 font-bold text-md mb-2 flex items-center"><i
+                                        data-lucide="trophy" class="mr-2 w-4 h-4"></i> TECHNOVATION 2024</h4>
+                                <p class="tc-desc theme-text-muted text-sm">Participation Certificate - State Level
+                                    Project Competition (Vivekanand Education Society's Polytechnic, Chembur)</p>
+                                <div class="card-edge-glow"></div>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-node node-emerald"></div>
+                            <div class="timeline-content cyber-card glass-panel">
+                                <h4 class="text-emerald-500 font-bold text-md mb-2 flex items-center"><i
+                                        data-lucide="zap" class="mr-2 w-4 h-4"></i> EV Maintenance Training</h4>
+                                <p class="tc-desc theme-text-muted text-sm">Completed industry-certified training at
+                                    Mahindra & Mahindra (Centum Foundation), gaining hands-on knowledge of electric
+                                    vehicle systems, diagnostics, and safety (Sep 2024 – Nov 2025).</p>
+                                <div class="card-edge-glow"></div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
             </div>
 
-            <!-- Skills Section -->
-            <div class="profile-section w-full mb-12 ag-card-reveal" data-speed="0.15" id="skillGridTrigger">
-                <h4
-                    class="section-heading text-3xl font-bold mb-10 flex justify-center items-center gap-3 w-full text-center">
-                    <span class="section-icon text-purple-500">💻</span>
-                    Core Stack & Technologies
-                </h4>
-                <div class="section-content grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    <!-- Web Development -->
-                    <div class="skill-category glass-panel p-6 rounded-2xl relative overflow-hidden group">
-                        <div
-                            class="absolute -right-6 -top-6 w-24 h-24 bg-purple-500/10 rounded-full blur-2xl group-hover:bg-purple-500/20 transition-colors">
+            <!-- Tech Cortex (Skills) -->
+            <section class="cyber-skills-hub">
+                <h3
+                    class="cyber-heading theme-glass-heading text-center mx-auto mb-8 font-extrabold uppercase tracking-widest text-[#f43f5e] w-max">
+                    <i data-lucide="network" class="mr-2 inline-block"></i> Tech Cortex
+                </h3>
+
+                <div class="cortex-grid">
+                    <!-- Web Dev -->
+                    <div class="cortex-cluster cyber-card glass-panel group">
+                        <div class="cluster-header mb-4 border-b border-rose-500/30 pb-2">
+                            <h5 class="text-rose-500 font-bold flex items-center"><i data-lucide="globe"
+                                    class="mr-2"></i> Neural Net / Web</h5>
                         </div>
-                        <h5
-                            class="category-title font-extrabold flex items-center gap-2 mb-6 text-lg border-b border-glass-border pb-3">
-                            <span
-                                class="category-icon text-purple-500 drop-shadow-[0_0_8px_rgba(168,85,247,0.5)]">🌐</span>
-                            Web Development
-                        </h5>
-                        <div class="fluid-skill-grid text-xs font-bold text-center">
-                            <div
-                                class="skill-box bg-glass-hover p-4 rounded-xl flex flex-col items-center gap-2 border border-glass-border/50 hover:border-emerald-500/50 transition-colors">
-                                <i data-lucide="layout-template" class="w-8 h-8 text-orange-500 skill-icon"></i>
-                                <span class="text-muted">HTML5</span>
+                        <div class="node-grid">
+                            <div class="skill-node theme-node-bg cursor-pointer hover:shadow-[0_0_15px_rgba(244,63,94,0.4)] hover:border-rose-500/50"
+                                onclick="openSkillModal('html')">
+                                <i data-lucide="layout-template" class="text-orange-500"></i><span
+                                    class="text-xs font-mono mt-1 theme-text">HTML/CSS</span>
                             </div>
-                            <div
-                                class="skill-box bg-glass-hover p-4 rounded-xl flex flex-col items-center gap-2 border border-glass-border/50 hover:border-emerald-500/50 transition-colors">
-                                <i data-lucide="palette" class="w-8 h-8 text-blue-500 skill-icon"></i>
-                                <span class="text-muted">CSS3</span>
+                            <div class="skill-node theme-node-bg cursor-pointer hover:shadow-[0_0_15px_rgba(234,179,8,0.4)] hover:border-yellow-400/50"
+                                onclick="openSkillModal('js')">
+                                <i data-lucide="file-code-2" class="text-yellow-500"></i><span
+                                    class="text-xs font-mono mt-1 text-yellow-500">JS Engine</span>
                             </div>
-                            <div
-                                class="skill-box bg-glass-hover p-4 rounded-xl flex flex-col items-center gap-2 border border-glass-border/50 hover:border-emerald-500/50 transition-colors">
-                                <i data-lucide="file-code-2"
-                                    class="w-8 h-8 text-yellow-400 skill-icon drop-shadow-[0_0_8px_rgba(250,204,21,0.5)]"></i>
-                                <span class="text-emerald-500">JS Engine</span>
-                            </div>
-                            <div
-                                class="skill-box bg-glass-hover p-4 rounded-xl flex flex-col items-center gap-2 border border-glass-border/50 hover:border-emerald-500/50 transition-colors">
-                                <i data-lucide="smartphone" class="w-8 h-8 text-emerald-500 skill-icon"></i>
-                                <span class="text-emerald-500 font-extrabold tracking-widest">PWA INTERFACES</span>
+                            <div class="skill-node theme-node-bg cursor-pointer hover:shadow-[0_0_15px_rgba(6,182,212,0.4)] hover:border-cyan-400/50 col-span-2 bg-cyan-500/10"
+                                onclick="openSkillModal('pwa')">
+                                <i data-lucide="smartphone" class="text-cyan-500 mb-1"></i><span
+                                    class="text-xs font-mono font-bold text-cyan-500">PWA INTERFACES</span>
                             </div>
                         </div>
+                        <div class="card-edge-glow"></div>
                     </div>
 
-                    <!-- Programming Languages -->
-                    <div class="skill-category glass-panel p-6 rounded-2xl relative overflow-hidden group">
-                        <div
-                            class="absolute -right-6 -top-6 w-24 h-24 bg-emerald-500/10 rounded-full blur-2xl group-hover:bg-emerald-500/20 transition-colors">
+                    <!-- Programming -->
+                    <div class="cortex-cluster cyber-card glass-panel group">
+                        <div class="cluster-header mb-4 border-b border-blue-500/30 pb-2">
+                            <h5 class="text-blue-500 font-bold flex items-center"><i data-lucide="terminal"
+                                    class="mr-2"></i> Logic Core</h5>
                         </div>
-                        <h5
-                            class="category-title font-extrabold flex items-center gap-2 mb-6 text-lg border-b border-glass-border pb-3">
-                            <span
-                                class="category-icon text-emerald-500 drop-shadow-[0_0_8px_rgba(16,185,129,0.5)]">👨‍💻</span>
-                            Programming
-                        </h5>
-                        <div class="fluid-skill-grid text-xs font-bold text-center">
-                            <div
-                                class="skill-box bg-glass-hover p-4 rounded-xl flex flex-col items-center gap-2 border border-glass-border/50 hover:border-emerald-500/50 transition-colors">
-                                <i data-lucide="terminal-square" class="w-8 h-8 text-blue-400 skill-icon"></i>
-                                <span class="text-muted">Python</span>
+                        <div class="node-grid">
+                            <div class="skill-node theme-node-bg cursor-pointer hover:shadow-[0_0_15px_rgba(59,130,246,0.4)] hover:border-blue-500/50"
+                                onclick="openSkillModal('python')">
+                                <i data-lucide="bot" class="text-blue-500"></i><span
+                                    class="text-xs font-mono mt-1 theme-text">Python</span>
                             </div>
-                            <div
-                                class="skill-box bg-glass-hover p-4 rounded-xl flex flex-col items-center gap-2 border border-glass-border/50 hover:border-emerald-500/50 transition-colors">
-                                <i data-lucide="code-2"
-                                    class="w-8 h-8 text-emerald-500 skill-icon drop-shadow-[0_0_8px_rgba(16,185,129,0.5)]"></i>
-                                <span class="text-emerald-500">ES6+</span>
+                            <div class="skill-node theme-node-bg cursor-pointer hover:shadow-[0_0_15px_rgba(244,63,94,0.4)] hover:border-rose-400/50"
+                                onclick="openSkillModal('es6')">
+                                <i data-lucide="brackets" class="text-rose-500"></i><span
+                                    class="text-xs font-mono mt-1 text-rose-500">ES6+</span>
                             </div>
-                            <div
-                                class="skill-box bg-glass-hover p-4 rounded-xl flex flex-col items-center gap-2 border border-glass-border/50 hover:border-emerald-500/50 transition-colors">
-                                <i data-lucide="cpu" class="w-8 h-8 text-muted skill-icon"></i>
-                                <span class="text-muted">C/C++</span>
+                            <div class="skill-node theme-node-bg cursor-pointer hover:shadow-[0_0_15px_rgba(156,163,175,0.4)] hover:border-gray-400/50 col-span-2"
+                                onclick="openSkillModal('c')">
+                                <i data-lucide="cpu" class="text-gray-500"></i><span
+                                    class="text-xs font-mono mt-1 theme-text">C/C++</span>
                             </div>
                         </div>
+                        <div class="card-edge-glow"></div>
                     </div>
 
-                    <!-- Hardware & IoT -->
-                    <div class="skill-category glass-panel p-6 rounded-2xl relative overflow-hidden group">
-                        <div
-                            class="absolute -right-6 -top-6 w-24 h-24 bg-amber-500/10 rounded-full blur-2xl group-hover:bg-amber-500/20 transition-colors">
-                        </div>
-                        <h5
-                            class="category-title font-extrabold flex items-center gap-2 mb-6 text-lg border-b border-glass-border pb-3">
-                            <span
-                                class="category-icon text-amber-500 drop-shadow-[0_0_8px_rgba(245,158,11,0.5)]">🔌</span>
-                            Hardware & IoT
-                        </h5>
-                        <div class="fluid-skill-grid text-xs font-bold text-center">
-                            <div
-                                class="skill-box bg-glass-hover p-4 rounded-xl flex flex-col items-center gap-2 border border-glass-border/50 hover:border-emerald-500/50 transition-colors">
-                                <i data-lucide="microchip" class="w-8 h-8 text-cyan-500 skill-icon"></i>
-                                <span class="text-muted">Arduino</span>
-                            </div>
-                            <div
-                                class="skill-box bg-glass-hover p-4 rounded-xl flex flex-col items-center gap-2 border border-glass-border/50 hover:border-emerald-500/50 transition-colors">
-                                <i data-lucide="hard-drive"
-                                    class="w-8 h-8 text-red-500 skill-icon drop-shadow-[0_0_8px_rgba(239,68,68,0.5)]"></i>
-                                <span class="text-red-500">Raspberry Pi</span>
-                            </div>
-                            <div
-                                class="skill-box bg-glass-hover p-4 rounded-xl flex flex-col items-center gap-2 border border-glass-border/50 hover:border-emerald-500/50 transition-colors">
-                                <i data-lucide="wifi" class="w-8 h-8 text-amber-500 skill-icon"></i>
-                                <span class="text-muted">IoT</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Tools & Frameworks -->
-                    <div class="skill-category glass-panel p-6 rounded-2xl relative overflow-hidden group">
-                        <div
-                            class="absolute -right-6 -top-6 w-24 h-24 bg-orange-500/10 rounded-full blur-2xl group-hover:bg-orange-500/20 transition-colors">
-                        </div>
-                        <h5
-                            class="category-title font-extrabold flex items-center gap-2 mb-6 text-lg border-b border-glass-border pb-3">
-                            <span
-                                class="category-icon text-orange-500 drop-shadow-[0_0_8px_rgba(249,115,22,0.5)]">🛠️</span>
-                            Tools & Logic
-                        </h5>
-                        <div class="fluid-skill-grid text-xs font-bold text-center">
-                            <div
-                                class="skill-box bg-glass-hover p-4 rounded-xl flex flex-col items-center gap-2 border border-glass-border/50 hover:border-emerald-500/50 transition-colors">
-                                <i data-lucide="git-branch"
-                                    class="w-8 h-8 text-orange-500 skill-icon drop-shadow-[0_0_8px_rgba(249,115,22,0.5)]"></i>
-                                <span class="text-orange-500">Git Versioning</span>
-                            </div>
-                            <div
-                                class="skill-box bg-glass-hover p-4 rounded-xl flex flex-col items-center gap-2 border border-glass-border/50 hover:border-emerald-500/50 transition-colors">
-                                <i data-lucide="pie-chart" class="w-8 h-8 text-emerald-500 skill-icon"></i>
-                                <span class="text-muted">Chart.js Nodes</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Robotics -->
+                    <!-- Hardware & Robotics -->
                     <div
-                        class="skill-category glass-panel p-6 rounded-2xl relative overflow-hidden group md:col-span-2 lg:col-span-2">
-                        <div
-                            class="absolute -right-6 -top-6 w-32 h-32 bg-blue-500/10 rounded-full blur-2xl group-hover:bg-blue-500/20 transition-colors">
+                        class="cortex-cluster cyber-card glass-panel group col-span-1 md:col-span-2 lg:col-span-3 robotics-cluster">
+                        <div class="cluster-header mb-6 border-b border-amber-500/30 pb-2 justify-center flex">
+                            <h5 class="text-amber-500 font-bold flex items-center text-xl uppercase tracking-widest"><i
+                                    data-lucide="cpu" class="mr-2"></i> Robotics & Hardware</h5>
                         </div>
-                        <h5
-                            class="category-title font-extrabold flex items-center gap-2 mb-6 text-lg border-b border-glass-border pb-3">
-                            <span
-                                class="category-icon text-blue-500 drop-shadow-[0_0_8px_rgba(59,130,246,0.5)]">🤖</span>
-                            Robotics Engineering
-                        </h5>
-                        <div class="fluid-skill-grid text-xs font-bold text-center">
-                            <div
-                                class="skill-box bg-glass-hover p-6 rounded-xl flex flex-col items-center justify-center gap-3 border border-glass-border/50 hover:border-emerald-500/50 transition-colors">
-                                <i data-lucide="settings"
-                                    class="w-10 h-10 text-blue-500 skill-icon drop-shadow-[0_0_8px_rgba(59,130,246,0.5)]"></i>
-                                <span class="text-blue-500 font-extrabold tracking-wide uppercase">Automation
-                                    Engines</span>
+                        <div class="node-grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <div class="skill-node py-6 theme-node-bg cursor-pointer hover:shadow-[0_0_20px_rgba(6,182,212,0.4)] hover:border-cyan-500/50"
+                                onclick="openSkillModal('arduino')">
+                                <i data-lucide="microchip" class="text-cyan-500 w-8 h-8 mb-2"></i><span
+                                    class="text-xs font-mono mt-1 theme-text">Arduino</span>
                             </div>
-                            <div
-                                class="skill-box bg-glass-hover p-6 rounded-xl flex flex-col items-center justify-center gap-3 border border-glass-border/50 hover:border-emerald-500/50 transition-colors">
-                                <i data-lucide="bot"
-                                    class="w-10 h-10 text-emerald-500 skill-icon drop-shadow-[0_0_8px_rgba(16,185,129,0.5)]"></i>
-                                <span class="text-emerald-500 font-extrabold tracking-wide uppercase">Robotic
-                                    Kinematics</span>
+                            <div class="skill-node py-6 theme-node-bg cursor-pointer hover:shadow-[0_0_20px_rgba(239,68,68,0.4)] hover:border-red-500/50"
+                                onclick="openSkillModal('raspberry')">
+                                <i data-lucide="hard-drive" class="text-red-500 w-8 h-8 mb-2 pulse-anim"></i><span
+                                    class="text-xs font-mono mt-1 font-bold text-red-500">Raspberry Pi</span>
                             </div>
-                            <div
-                                class="skill-box bg-glass-hover p-6 rounded-xl flex flex-col items-center justify-center gap-3 border border-glass-border/50 hover:border-emerald-500/50 transition-colors">
-                                <i data-lucide="memory-stick"
-                                    class="w-10 h-10 text-amber-500 skill-icon drop-shadow-[0_0_8px_rgba(245,158,11,0.5)]"></i>
-                                <span class="text-amber-500 font-extrabold tracking-wide uppercase">Embedded
-                                    Systems</span>
+                            <div class="skill-node py-6 theme-node-bg cursor-pointer hover:shadow-[0_0_20px_rgba(168,85,247,0.4)] hover:border-purple-500/50"
+                                onclick="openSkillModal('kinematics')">
+                                <i data-lucide="settings" class="text-purple-500 w-8 h-8 mb-2 spin-anim"></i><span
+                                    class="text-xs font-mono mt-1 uppercase text-purple-500">Kinematics</span>
+                            </div>
+                            <div class="skill-node py-6 theme-node-bg cursor-pointer hover:shadow-[0_0_20px_rgba(245,158,11,0.4)] hover:border-amber-500/50 bg-amber-500/10"
+                                onclick="openSkillModal('iot')">
+                                <i data-lucide="rss" class="text-amber-500 w-8 h-8 mb-2 float-anim"></i><span
+                                    class="text-xs font-mono mt-1 font-bold text-amber-500">IoT Ecosystem</span>
                             </div>
                         </div>
+                        <div class="card-edge-glow"></div>
                     </div>
-
                 </div>
-            </div>
+            </section>
 
         </div>
-
     </main>
 
-    <nav class="bottom-dock glass-dock">
-        <a href="index.html" class="dock-item">
+    <nav class="bottom-dock glass-dock pwa-dock cyber-glass-base border-t border-white/10 cyber-dock z-40 fixed">
+        <a href="index.html" class="dock-item magnetic-btn theme-text">
             <i data-lucide="home"></i>
             <span>Home</span>
         </a>
-        <a href="spendly.html" class="dock-item">
+        <a href="spendly.html" class="dock-item magnetic-btn theme-text">
             <i data-lucide="pie-chart"></i>
             <span>Spendly</span>
         </a>
-        <a href="pocketcal.html" class="dock-item">
+        <a href="pocketcal.html" class="dock-item magnetic-btn theme-text">
             <i data-lucide="calendar"></i>
             <span>PocketCal</span>
         </a>
-        <a href="settings.html" class="dock-item">
-            <i data-lucide="settings"></i>
-            <span>Settings</span>
+        <a href="settings.html" class="dock-item magnetic-btn active-hub">
+            <div class="active-glow"></div>
+            <i data-lucide="user"></i>
+            <span>Profile</span>
         </a>
     </nav>
 
+    <!-- Transparent Skill Modal -->
+    <div id="skillModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4">
+        <div id="skillModalOverlay" class="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity opacity-0"
+            onclick="closeSkillModal()"></div>
+        <div id="skillModalContent"
+            class="cyber-card glass-panel theme-border p-6 md:p-8 max-w-md w-full relative z-10 scale-95 opacity-0 transition-all duration-300 transform-gpu translate-y-4">
+            <button onclick="closeSkillModal()"
+                class="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+            <div id="modalIconWrap"
+                class="mb-4 inline-flex p-3 rounded-xl bg-white/5 border border-white/10 theme-node-bg">
+                <i id="modalIcon" data-lucide="code-2" class="w-8 h-8 text-cyan-400"></i>
+            </div>
+            <h2 id="modalTitle" class="text-2xl font-bold mb-2 theme-text-strong uppercase tracking-wider">Skill Title
+            </h2>
+            <div class="w-12 h-1 bg-cyan-500 rounded mb-4" id="modalLine"></div>
+            <p id="modalDesc" class="theme-text-muted leading-relaxed mb-6">Detailed description goes here...</p>
+
+            <div class="bg-black/20 dark:bg-black/40 rounded-lg p-4 border border-white/5">
+                <h4 class="text-xs uppercase text-gray-500 mb-2 font-bold tracking-widest">Proficiency & Uses</h4>
+                <div class="flex flex-wrap gap-2" id="modalTags">
+                    <!-- Tags go here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- CDNs -->
-    <script src="https://unpkg.com/@studio-freight/lenis@1.0.39/dist/lenis.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
 
+    <!-- Global functions -->
     <script src="global.js"></script>
 
     <script>
-        // Physics-driven Falling Skill Icons Geometry
+        // Modal Data Map
+        const skillDetails = {
+            html: { title: "HTML5/CSS3", icon: "layout-template", color: "text-orange-500", bar: "bg-orange-500", desc: "The foundational pillars of the web. I build semantic, highly accessible HTML structures and style them with advanced vanilla CSS, including hardware-accelerated animations, grid/flexbox layouts, and custom properties for dynamic theming.", tags: ["Responsive", "Animations", "UI Design"] },
+            js: { title: "JS Engine", icon: "file-code-2", color: "text-yellow-500", bar: "bg-yellow-500", desc: "Vanilla JavaScript forms the core logic of my applications. I specialize in DOM manipulation, event-driven programming, and complex data handling without relying strictly on heavy frameworks.", tags: ["Vanilla JS", "DOM", "Async/Await"] },
+            pwa: { title: "PWA Interfaces", icon: "smartphone", color: "text-cyan-500", bar: "bg-cyan-500", desc: "Progressive Web Apps bridge the gap between web and native. I implement service workers for offline caching, Web App Manifests for home-screen installation, and fluid user experiences mimicking native apps.", tags: ["Service Workers", "Offline", "Mobile First"] },
+            python: { title: "Python", icon: "bot", color: "text-blue-500", bar: "bg-blue-500", desc: "Used efficiently for backend scripting, data processing, and automation tasks. Python serves as the logical backbone for analytical processing required in robotic engines or data tools.", tags: ["Data", "Scripting", "Automation"] },
+            es6: { title: "ES6+", icon: "brackets", color: "text-rose-500", bar: "bg-rose-500", desc: "Modern JavaScript utilizing arrow functions, destructuring, promises, and modules. I write clean, modular, and highly maintainable codebases.", tags: ["Modern JS", "Modules", "Clean Code"] },
+            c: { title: "C/C++", icon: "cpu", color: "text-gray-500", bar: "bg-gray-500", desc: "Crucial for hardware-level programming. Used extensively to write highly performant code for microcontrollers and embedded systems where memory and speed are critical.", tags: ["Embedded", "Performance", "Low-level"] },
+            arduino: { title: "Arduino", icon: "microchip", color: "text-cyan-500", bar: "bg-cyan-500", desc: "Developing control systems and interfacing with sensors/actuators. I design customized embedded solutions for various robotic and automation use cases.", tags: ["Sensors", "C++", "Hardware"] },
+            raspberry: { title: "Raspberry Pi", icon: "hard-drive", color: "text-red-500", bar: "bg-red-500", desc: "Leveraging Pi as a central processing hub for IoT systems, including running lightweight servers, physical computing tasks, and automated data collection units.", tags: ["IoT", "Linux", "Server"] },
+            kinematics: { title: "Kinematics", icon: "settings", color: "text-purple-500", bar: "bg-purple-500", desc: "Understanding the geometry of motion. Applied in robotics to calculate the motion of robotic arms, wheels, and joints without considering the forces that cause the motion.", tags: ["Robotics", "Math", "Motion"] },
+            iot: { title: "IoT Ecosystems", icon: "rss", color: "text-amber-500", bar: "bg-amber-500", desc: "Connecting the physical world to the digital realm. I build full pipelines spanning from edge devices gathering physical data to cloud-based monitoring interfaces.", tags: ["MQTT", "Connectivity", "Edge Computing"] }
+        };
+
+        const modal = document.getElementById('skillModal');
+        const modalOverlay = document.getElementById('skillModalOverlay');
+        const modalContent = document.getElementById('skillModalContent');
+
+        function openSkillModal(skillId) {
+            const data = skillDetails[skillId];
+            if (!data) return;
+
+            // Populate data
+            document.getElementById('modalTitle').textContent = data.title;
+            document.getElementById('modalDesc').textContent = data.desc;
+
+            const iconEl = document.getElementById('modalIcon');
+            iconEl.setAttribute('data-lucide', data.icon);
+            iconEl.className = `w-8 h-8 ${data.color}`;
+
+            document.getElementById('modalLine').className = `w-12 h-1 rounded mb-4 ${data.bar}`;
+
+            const tagsContainer = document.getElementById('modalTags');
+            tagsContainer.innerHTML = data.tags.map(tag =>
+                `<span class="px-2 py-1 bg-white/10 rounded text-xs font-semibold theme-text border border-white/5">${tag}</span>`
+            ).join('');
+
+            lucide.createIcons();
+
+            // Show modal
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+
+            // Re-flow
+            void modal.offsetWidth;
+
+            // Animate in
+            modalOverlay.classList.remove('opacity-0');
+            modalOverlay.classList.add('opacity-100');
+
+            modalContent.classList.remove('scale-95', 'opacity-0', 'translate-y-4');
+            modalContent.classList.add('scale-100', 'opacity-100', 'translate-y-0');
+        }
+
+        function closeSkillModal() {
+            // Animate out
+            modalOverlay.classList.remove('opacity-100');
+            modalOverlay.classList.add('opacity-0');
+
+            modalContent.classList.remove('scale-100', 'opacity-100', 'translate-y-0');
+            modalContent.classList.add('scale-95', 'opacity-0', 'translate-y-4');
+
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }, 300);
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+
+            // Custom Text Splitter for Hero Title (Load animation only, no scroll triggers)
+            const splitTextEl = document.querySelector('.split-text');
+            if (splitTextEl) {
+                const text = splitTextEl.innerText;
+                splitTextEl.innerHTML = '';
+                const chars = text.split('');
+                chars.forEach(char => {
+                    if (char === ' ') {
+                        splitTextEl.innerHTML += `&nbsp;`;
+                    } else {
+                        splitTextEl.innerHTML += `<span class="char" style="display:inline-block; opacity:0; transform:translateY(20px) rotateX(-45deg);">${char}</span>`;
+                    }
+                });
+                splitTextEl.innerHTML += ` <i data-lucide="check-circle" class="verify-icon text-cyan-400 inline-block align-middle ml-2 opacity-0" style="width:1.5rem;height:1.5rem;"></i>`;
+                lucide.createIcons();
+            }
+
+            // Cinematic Load Animation
+            const masterTl = gsap.timeline();
+            masterTl.to('.char', {
+                y: 0, rotateX: 0, opacity: 1, duration: 0.8, stagger: 0.05, ease: 'back.out(1.7)'
+            })
+                .to('.verify-icon', { opacity: 1, scale: 1, duration: 0.4, ease: 'back.out(2)' }, "-=0.2")
+                .to('.cyber-title-wrap', { width: '100%', duration: 0.6, ease: 'power3.inOut' }, "-=0.4")
+                .to('.cyber-title', { opacity: 1, duration: 0.3 }, "-=0.2")
+                .to('.hero-bio-container', { y: 0, opacity: 1, duration: 0.6, ease: 'power2.out' }, "-=0.2")
+                .fromTo('.hero-actions .cyber-btn', { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4, stagger: 0.1 }, "-=0.4");
+
+            // Register ScrollTrigger for Timeline Line
             gsap.registerPlugin(ScrollTrigger);
 
-            // Loop through each box grid and apply heavy bounce staggered drop logic
-            const categoryBoxes = document.querySelectorAll('.skill-category');
-            categoryBoxes.forEach(category => {
-                const icons = category.querySelectorAll('.skill-icon');
-                gsap.from(icons, {
+            const timelineItems = gsap.utils.toArray('.timeline-item');
+
+            // Set initial state for items
+            gsap.set(timelineItems, {
+                opacity: 0,
+                x: -30,
+                rotateY: 15,
+                z: -50
+            });
+
+            // Animate timeline line down on scroll
+            gsap.fromTo(".timeline-progress-fill",
+                { height: "0%" },
+                {
                     scrollTrigger: {
-                        trigger: category,
-                        start: "top 80%",
+                        trigger: ".cyber-timeline-layout",
+                        start: "top 60%",
+                        end: "bottom 80%",
+                        scrub: 1
+                    },
+                    height: "100%",
+                    ease: "none"
+                }
+            );
+
+            // Stagger reveal of timeline items
+            timelineItems.forEach((item, i) => {
+                const node = item.querySelector('.timeline-node');
+
+                // Flip items into view
+                gsap.to(item, {
+                    scrollTrigger: {
+                        trigger: item,
+                        start: "top 85%",
                         toggleActions: "play none none reverse"
                     },
-                    y: -60,
-                    opacity: 0,
-                    scale: 0.5,
+                    opacity: 1,
+                    x: 0,
+                    rotateY: 0,
+                    z: 0,
                     duration: 0.8,
-                    stagger: 0.1,
-                    ease: "bounce.out"
+                    ease: "power3.out"
+                });
+
+                // Node pop
+                gsap.from(node, {
+                    scrollTrigger: {
+                        trigger: item,
+                        start: "top 85%"
+                    },
+                    scale: 0,
+                    duration: 0.5,
+                    ease: "back.out(2)",
+                    delay: 0.2
                 });
             });
+
+            // Interactive Hologram Avatar Mouse Move
+            const hologram = document.querySelector('.avatar-hologram');
+            const heroSection = document.querySelector('.cyber-hero');
+
+            if (heroSection && hologram) {
+                heroSection.addEventListener('mousemove', (e) => {
+                    const rect = hologram.getBoundingClientRect();
+                    const x = e.clientX - rect.left - (rect.width / 2);
+                    const y = e.clientY - rect.top - (rect.height / 2);
+
+                    const xPct = x / rect.width;
+                    const yPct = y / rect.height;
+
+                    gsap.to(hologram, {
+                        rotateY: xPct * 30,
+                        rotateX: -yPct * 30,
+                        x: xPct * 20,
+                        y: yPct * 20,
+                        transformPerspective: 1000,
+                        duration: 0.5,
+                        ease: "power2.out"
+                    });
+                });
+
+                heroSection.addEventListener('mouseleave', () => {
+                    gsap.to(hologram, { rotateY: 0, rotateX: 0, x: 0, y: 0, duration: 1, ease: "elastic.out(1, 0.3)" });
+                });
+            }
+
+            // Magnetic Buttons
+            const magneticBtns = document.querySelectorAll('.magnetic-btn');
+            magneticBtns.forEach(btn => {
+                btn.addEventListener('mousemove', (e) => {
+                    const rect = btn.getBoundingClientRect();
+                    const x = e.clientX - rect.left - rect.width / 2;
+                    const y = e.clientY - rect.top - rect.height / 2;
+                    gsap.to(btn, { x: x * 0.4, y: y * 0.4, duration: 0.3, ease: "power2.out" });
+                });
+                btn.addEventListener('mouseleave', () => {
+                    gsap.to(btn, { x: 0, y: 0, duration: 0.5, ease: "elastic.out(1, 0.3)" });
+                });
+            });
+
+            // Theme logic is now completely handled by global.js 
+            // ensuring seamless persistence across all tabs and files.
         });
     </script>
 </body>

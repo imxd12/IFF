@@ -93,8 +93,9 @@
                         <span class="cyber-title">Architect | MoneyFlow Creator</span>
                     </div>
 
-                    <div class="location-badge theme-glass-sub">
-                        <i data-lucide="crosshair" class="text-rose-500 w-4 h-4 mr-1"></i> Navi Mumbai, IND
+                    <div class="location-badge theme-glass-sub" id="locationBadge">
+                        <i data-lucide="crosshair" class="text-rose-500 w-4 h-4 mr-1" id="locationIcon"></i>
+                        <span id="locationText" class="location-detect-pulse">Detecting location...</span>
                     </div>
 
                     <div class="hero-bio-container opacity-0 translate-y-4 mt-6 mb-8 max-w-md mx-auto">
@@ -621,6 +622,76 @@
             // Theme logic is now completely handled by global.js 
             // ensuring seamless persistence across all tabs and files.
         });
+        // ── LIVE GEOLOCATION ENGINE ───────────────────────────────────────
+        (function initGeoLocation() {
+            const badge    = document.getElementById('locationText');
+            const iconEl   = document.getElementById('locationIcon');
+            if (!badge) return;
+
+            // Show cached instantly while we attempt fresh fetch
+            const cached = localStorage.getItem('userLocation');
+            if (cached) {
+                badge.textContent = cached;
+                badge.classList.remove('location-detect-pulse');
+            }
+
+            if (!navigator.geolocation) {
+                badge.textContent = cached || 'Location not supported';
+                badge.classList.remove('location-detect-pulse');
+                return;
+            }
+
+            navigator.geolocation.getCurrentPosition(
+                async (pos) => {
+                    try {
+                        const { latitude: lat, longitude: lon } = pos.coords;
+
+                        // Nominatim reverse geocode — free, no API key needed
+                        const res  = await fetch(
+                            `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&zoom=10&addressdetails=1`,
+                            { headers: { 'Accept-Language': 'en' } }
+                        );
+                        const json = await res.json();
+                        const addr = json.address || {};
+
+                        // Build "City, Country" label — prefer suburb → city → town → state
+                        const city    = addr.suburb || addr.city || addr.town || addr.county || addr.state || '';
+                        const country = addr.country_code ? addr.country_code.toUpperCase() : (addr.country || '');
+                        const label   = city ? `${city}, ${country}` : (json.display_name?.split(',')[0] || 'Unknown');
+
+                        badge.textContent = label;
+                        badge.classList.remove('location-detect-pulse');
+
+                        // Swap icon to map-pin on success
+                        iconEl.setAttribute('data-lucide', 'map-pin');
+                        iconEl.className = 'text-rose-500 w-4 h-4 mr-1';
+                        lucide.createIcons();
+
+                        // Persist for passbook PDF + settings display
+                        localStorage.setItem('userLocation', label);
+
+                    } catch (err) {
+                        badge.textContent = cached || 'Location Error';
+                        badge.classList.remove('location-detect-pulse');
+                        console.warn('Reverse geocode failed:', err);
+                    }
+                },
+                (err) => {
+                    // Permission denied or timeout
+                    badge.textContent = cached || 'Location Denied';
+                    badge.classList.remove('location-detect-pulse');
+                    iconEl.setAttribute('data-lucide', 'map-pin-off');
+                    iconEl.className = 'text-gray-400 w-4 h-4 mr-1';
+                    lucide.createIcons();
+                    console.warn('Geolocation error:', err.message);
+                },
+                {
+                    enableHighAccuracy: false,   // city-level is enough
+                    timeout: 8000,
+                    maximumAge: 1000 * 60 * 30   // accept 30-min cached GPS fix
+                }
+            );
+        })();
     </script>
 </body>
 

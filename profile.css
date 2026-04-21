@@ -371,6 +371,18 @@ html {
 }
 [data-theme="light"] .location-badge { box-shadow: none; color: #475569; }
 
+/* GPS detecting pulse animation */
+@keyframes locationPulse {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.4; }
+}
+.location-detect-pulse {
+    animation: locationPulse 1.2s ease-in-out infinite;
+    font-style: italic;
+    letter-spacing: 0.5px;
+}
+
+
 .hero-bio {
     color: #cbd5e1;
     max-width: 750px;

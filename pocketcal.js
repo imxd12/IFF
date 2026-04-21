@@ -480,92 +480,238 @@
         document.querySelector(id).classList.remove('active');
     };
 
+    // Strip leading emoji from strings for PDF (Helvetica doesn't render Unicode emoji)
+    function pcEmojiStrip(str) {
+        if (!str) return '';
+        return str.replace(/^(\p{Emoji_Presentation}|\p{Extended_Pictographic})+\s*/u, '').trim();
+    }
+
     window.exportPDF = function(period) {
         if (!window.jspdf) { showSnackbar('PDF library not ready', 'error'); return; }
-        
-        let filteredData = [];
-        const now = new Date();
-        let periodLabel = '';
 
-        if (period === 'month') {
-            const monthStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
-            filteredData = data.filter(d => d.date.startsWith(monthStr));
-            periodLabel = now.toLocaleString('en-US', { month: 'long', year: 'numeric' });
-        } else if (period === 'year') {
-            const yearStr = now.getFullYear().toString();
-            filteredData = data.filter(d => d.date.startsWith(yearStr));
-            periodLabel = yearStr;
-        } else {
-            filteredData = [...data];
-            periodLabel = 'All Time History';
-        }
+        try {
+            const now = new Date();
+            const tzOff = now.getTimezoneOffset() * 60000;
+            const todayStr = (new Date(Date.now() - tzOff)).toISOString().split('T')[0];
+            const printDate = now.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
 
-        // Passbook Calculation
-        const sortedAsc = [...data].sort((a,b)=> new Date(a.date) - new Date(b.date));
-        let runningBal = 0;
-        const passbookData = sortedAsc.map(d => {
-            runningBal += Number(d.amount); // PocketCal only tracks Income
-            return {
-                date: d.date,
-                desc: d.category + (d.notes ? `\n${d.notes}` : ''),
-                dr: '-', // No expenses in PocketCal natively
-                cr: d.amount,
-                bal: runningBal
-            };
-        });
+            // Determine period label & filter rows from full running-balance calculation
+            let periodLabel = '';
+            const sortedAll = [...data].sort((a, b) => new Date(a.date) - new Date(b.date));
+            let runBal = 0;
+            let totalCr = 0;
 
-        let exportRows = passbookData;
-        if(period === 'month') {
-            const monthStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
-            exportRows = passbookData.filter(d => d.date.startsWith(monthStr));
-        } else if (period === 'year') {
-            const yearStr = now.getFullYear().toString();
-            exportRows = passbookData.filter(d => d.date.startsWith(yearStr));
-        }
+            const allPassbook = sortedAll.map((d, idx) => {
+                const amt = Number(d.amount || 0);
+                runBal  += amt;
+                totalCr += amt;
+                // Strip emoji for PDF-safe text, preserve notes on new line
+                const catClean  = pcEmojiStrip(d.category || '\uD83D\uDCB5 Pocket Money');
+                const noteClean = d.notes && d.notes.trim() ? d.notes.trim() : '';
+                const rawDesc   = noteClean ? catClean + '\n' + noteClean : catClean;
+                return {
+                    globalIdx: idx,
+                    date: d.date,
+                    desc: rawDesc,
+                    cr:   amt.toFixed(2),
+                    bal:  runBal.toFixed(2)
+                };
+            });
 
-        if (exportRows.length === 0) {
-            showSnackbar('No data found for this period', 'warning');
-            return;
-        }
-
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF('p', 'pt', 'a4');
-        const pageWidth = doc.internal.pageSize.getWidth();
-        
-        doc.setFillColor(248, 250, 252);
-        doc.rect(0, 0, pageWidth, 5000, 'F');
-        doc.setFillColor(16, 185, 129);
-        doc.rect(0, 0, pageWidth, 120, 'F');
-
-        doc.setTextColor(255, 255, 255);
-        doc.setFont("helvetica", "bold");
-        doc.setFontSize(26);
-        doc.text("PocketCal Passbook", pageWidth / 2, 60, { align: "center" });
-        doc.setFontSize(14);
-        doc.text(`Period: ${periodLabel}`, pageWidth / 2, 85, { align: "center" });
-
-        const tableRows = exportRows.map(r => [
-            r.date, r.desc, r.dr, r.cr, r.bal.toFixed(2)
-        ]);
-
-        doc.autoTable({
-            startY: 140,
-            head: [['Date', 'Description', 'Debit (Dr)', 'Credit (Cr)', 'Balance (₹)']],
-            body: tableRows,
-            theme: 'striped',
-            headStyles: { fillColor: [16, 185, 129] },
-            styles: { font: 'helvetica', fontSize: 10 },
-            didParseCell: function(data) {
-                if (data.section === 'body') {
-                    if (data.column.index === 3 && data.cell.raw !== '-') data.cell.styles.textColor = [16, 185, 129];
-                    if (data.column.index === 4) data.cell.styles.fontStyle = 'bold';
-                }
+            let exportRows;
+            if (period === 'month') {
+                const ms = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+                exportRows  = allPassbook.filter(r => r.date.startsWith(ms));
+                periodLabel = now.toLocaleString('en-IN', { month: 'long', year: 'numeric' });
+                // recalc totals for filtered period
+                totalCr = exportRows.reduce((s, r) => s + Number(r.cr), 0);
+                runBal  = exportRows.length ? Number(exportRows[exportRows.length - 1].bal) : 0;
+            } else if (period === 'year') {
+                const ys = now.getFullYear().toString();
+                exportRows  = allPassbook.filter(r => r.date.startsWith(ys));
+                periodLabel = ys;
+                totalCr = exportRows.reduce((s, r) => s + Number(r.cr), 0);
+                runBal  = exportRows.length ? Number(exportRows[exportRows.length - 1].bal) : 0;
+            } else {
+                exportRows  = allPassbook;
+                periodLabel = 'All Time History';
             }
-        });
 
-        doc.save(`PocketCal_${periodLabel.replace(' ','_')}.pdf`);
-        closeModal('#pdfModal');
-        showSnackbar('Calendar Report Downloaded! 🗓️');
+            if (exportRows.length === 0) {
+                showSnackbar('No data found for this period', 'warning');
+                return;
+            }
+
+            // Re-index serial numbers for the visible slice
+            const passbookRows = exportRows.map((r, i) => ({ ...r, sno: String(i + 1) }));
+
+            // ── PDF setup ────────────────────────────────────────────────
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF('p', 'pt', 'a4');
+            const PW  = doc.internal.pageSize.getWidth();
+            const PH  = doc.internal.pageSize.getHeight();
+
+            // Colour palette — HDFC-style
+            const NAVY  = [0,   44,  95];
+            const GOLD  = [201, 153,  49];
+            const WHITE = [255, 255, 255];
+            const LGREY = [245, 246, 248];
+            const DGREY = [80,  80,  80];
+            const GREEN = [0,  130,  80];
+            const RED   = [200, 30,   30];
+
+            const fillRect = (x, y, w, h, rgb) => {
+                doc.setFillColor(...rgb);
+                doc.rect(x, y, w, h, 'F');
+            };
+            const txt = (text, x, y, opts = {}) => {
+                doc.setFont(opts.font || 'helvetica', opts.style || 'normal');
+                doc.setFontSize(opts.size || 10);
+                doc.setTextColor(...(opts.color || DGREY));
+                doc.text(String(text), x, y, { align: opts.align || 'left', maxWidth: opts.maxW });
+            };
+
+            // ── Header band ──────────────────────────────────────────────
+            fillRect(0, 0, PW, 110, NAVY);
+            txt('MoneyFlow', 36, 44, { style: 'bold', size: 22, color: WHITE });
+            txt('PocketCal — Daily Pocket Money Tracker', 36, 62, { size: 9.5, color: GOLD });
+            txt('POCKET MONEY PASSBOOK', PW - 36, 44, { style: 'bold', size: 13, color: WHITE, align: 'right' });
+            txt('Statement of Account', PW - 36, 62, { size: 9, color: GOLD, align: 'right' });
+            fillRect(0, 110, PW, 4, GOLD);
+
+            // ── Account info box ─────────────────────────────────────────
+            fillRect(36, 126, PW - 72, 90, LGREY);
+            doc.setDrawColor(...GOLD);
+            doc.setLineWidth(0.8);
+            doc.rect(36, 126, PW - 72, 90);
+
+            const userName   = localStorage.getItem('fin_userName') || 'Account Holder';
+            const userGender = localStorage.getItem('userGender')   || '';
+            const userLoc    = localStorage.getItem('userLocation')  || 'India';
+            // Stable account number from username hash
+            const acSeed     = [...userName].reduce((h, c) => ((h << 5) - h + c.charCodeAt(0)) | 0, 0);
+            const acNo       = 'PC-' + String(Math.abs(acSeed) % 100000000).padStart(8, '0');
+
+            txt('Account Holder :',  48, 148, { style: 'bold', size: 9, color: NAVY });
+            txt(userName,            170, 148, { style: 'bold', size: 9, color: [20,20,20] });
+            txt('Account No. :',     48, 165, { style: 'bold', size: 9, color: NAVY });
+            txt(acNo,                170, 165, { size: 9, color: [20,20,20] });
+            txt('Location :',        48, 182, { style: 'bold', size: 9, color: NAVY });
+            txt(userLoc + (userGender ? '  |  ' + userGender : ''), 170, 182, { size: 9, color: [20,20,20] });
+
+            txt('Statement Period :', PW / 2 + 10, 148, { style: 'bold', size: 9, color: NAVY });
+            txt(periodLabel,          PW / 2 + 130, 148, { size: 9, color: [20,20,20] });
+            txt('Print Date :',       PW / 2 + 10, 165, { style: 'bold', size: 9, color: NAVY });
+            txt(printDate,            PW / 2 + 130, 165, { size: 9, color: [20,20,20] });
+            txt('Total Entries :',    PW / 2 + 10, 182, { style: 'bold', size: 9, color: NAVY });
+            txt(String(passbookRows.length), PW / 2 + 130, 182, { size: 9, color: [20,20,20] });
+
+            // ── Passbook table ───────────────────────────────────────────
+            const tableBody = passbookRows.map(r => [
+                r.sno,
+                r.date,
+                r.desc,
+                '',   // No Debit in PocketCal
+                '₹ ' + Number(r.cr).toLocaleString('en-IN', { minimumFractionDigits: 2 }),
+                '₹ ' + Number(r.bal).toLocaleString('en-IN', { minimumFractionDigits: 2 })
+            ]);
+
+            doc.autoTable({
+                startY: 228,
+                margin: { left: 36, right: 36 },
+                head: [['#', 'Date', 'Description / Narration', 'Debit (Dr)', 'Credit (Cr)', 'Balance']],
+                body: tableBody,
+                theme: 'plain',
+                headStyles: {
+                    fillColor: NAVY,
+                    textColor: WHITE,
+                    fontStyle: 'bold',
+                    fontSize: 8.5,
+                    halign: 'center',
+                    cellPadding: { top: 6, bottom: 6, left: 5, right: 5 },
+                    lineColor: GOLD,
+                    lineWidth: 0.4
+                },
+                bodyStyles: {
+                    fontSize: 8,
+                    cellPadding: { top: 5, bottom: 5, left: 5, right: 5 },
+                    lineColor: [210, 215, 220],
+                    lineWidth: 0.3,
+                    valign: 'middle'
+                },
+                alternateRowStyles: { fillColor: [250, 251, 253] },
+                columnStyles: {
+                    0: { halign: 'center', cellWidth: 22, textColor: DGREY },
+                    1: { halign: 'center', cellWidth: 62, textColor: [40,40,40] },
+                    2: { halign: 'left',   cellWidth: 'auto', textColor: [30,30,30] },
+                    3: { halign: 'right',  cellWidth: 65, textColor: [180,180,180] },
+                    4: { halign: 'right',  cellWidth: 70 },
+                    5: { halign: 'right',  cellWidth: 78, fontStyle: 'bold' }
+                },
+                didParseCell: function(hookData) {
+                    if (hookData.section !== 'body') return;
+                    // Credit — green
+                    if (hookData.column.index === 4) hookData.cell.styles.textColor = GREEN;
+                    // Balance — navy
+                    if (hookData.column.index === 5) {
+                        hookData.cell.styles.textColor = NAVY;
+                        hookData.cell.styles.fontStyle = 'bold';
+                    }
+                },
+                willDrawCell: function(hookData) {
+                    if (hookData.section === 'body' && hookData.column.index === 0) {
+                        // Green left accent stripe (all credits in PocketCal)
+                        doc.setFillColor(...GREEN);
+                        doc.rect(hookData.cell.x, hookData.cell.y, 2.5, hookData.cell.height, 'F');
+                    }
+                }
+            });
+
+            // ── Summary band ─────────────────────────────────────────────
+            const finalY = doc.lastAutoTable.finalY + 18;
+            if (finalY + 70 < PH - 40) {
+                fillRect(36, finalY, PW - 72, 58, [240, 244, 250]);
+                doc.setDrawColor(...NAVY);
+                doc.setLineWidth(0.5);
+                doc.rect(36, finalY, PW - 72, 58);
+
+                txt('STATEMENT SUMMARY', 48, finalY + 16, { style: 'bold', size: 8.5, color: NAVY });
+
+                const col2 = PW / 3;
+                const col3 = (PW / 3) * 2;
+
+                txt('Total Pocket Money',   48,   finalY + 33, { size: 8, color: DGREY });
+                txt('Total Debit',          col2, finalY + 33, { size: 8, color: DGREY });
+                txt('Closing Balance',      col3, finalY + 33, { size: 8, color: DGREY });
+
+                txt('₹ ' + totalCr.toLocaleString('en-IN', { minimumFractionDigits: 2 }),
+                    48,   finalY + 49, { style: 'bold', size: 9.5, color: GREEN });
+                txt('₹ 0.00', col2, finalY + 49, { style: 'bold', size: 9.5, color: DGREY });
+                txt('₹ ' + Math.abs(runBal).toLocaleString('en-IN', { minimumFractionDigits: 2 }),
+                    col3, finalY + 49, { style: 'bold', size: 9.5, color: NAVY });
+            }
+
+            // ── Page footer ──────────────────────────────────────────────
+            const totalPages = doc.internal.getNumberOfPages();
+            for (let pg = 1; pg <= totalPages; pg++) {
+                doc.setPage(pg);
+                fillRect(0, PH - 28, PW, 28, NAVY);
+                txt('MoneyFlow PocketCal  •  This is a computer-generated statement.',
+                    PW / 2, PH - 14, { size: 7.5, color: [180, 200, 220], align: 'center' });
+                txt(`Page ${pg} of ${totalPages}`,
+                    PW - 36, PH - 14, { size: 7.5, color: GOLD, align: 'right' });
+            }
+
+            // ── Save ─────────────────────────────────────────────────────
+            const safeLabel = periodLabel.replace(/\s+/g, '_');
+            doc.save(`PocketCal_Passbook_${safeLabel}_${todayStr}.pdf`);
+            closeModal('#pdfModal');
+            showSnackbar('Calendar Report Downloaded! 🗓️');
+
+        } catch (err) {
+            console.error('PocketCal PDF error:', err);
+            showSnackbar('PDF Generation Failed: ' + err.message, 'error');
+        }
     };
 
     // ----------------------------------------------------

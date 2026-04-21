@@ -502,7 +502,7 @@
     }
 
     // ----------------------------------------------------
-    // PDF BANK PASSBOOK EXPORT (USING JSPDF + AUTOTABLE)
+    // PDF BANK PASSBOOK EXPORT — HDFC STYLE (JSPDF + AUTOTABLE)
     // ----------------------------------------------------
     window.openPDFModal = function() {
         document.getElementById('pdfModal').classList.add('active');
@@ -516,112 +516,281 @@
         });
     });
 
+    // Strip emoji prefix from category strings for PDF-safe rendering
+    // jsPDF Helvetica cannot render Unicode emoji glyphs — we extract the text label
+    function emojiStrip(str) {
+        if (!str) return '';
+        // Remove leading emoji character(s) followed by optional space
+        return str.replace(/^(\p{Emoji_Presentation}|\p{Extended_Pictographic})+\s*/u, '').trim();
+    }
+
     window.generatePDF = function() {
         try {
-            if(!window.jspdf) {
-                showSnackbar('PDF generator loading... please try again.', 'error');
+            if (!window.jspdf) {
+                showSnackbar('PDF generator loading… please try again.', 'error');
                 return;
             }
 
-            const doc = new window.jspdf.jsPDF();
+            // ── 1. Date filtering ──────────────────────────────────────────
+            const range   = document.querySelector('input[name="pdfRange"]:checked').value;
+            const nToday  = new Date();
+            const tzOff   = nToday.getTimezoneOffset() * 60000;
+            const todayStr= (new Date(Date.now() - tzOff)).toISOString().split('T')[0];
 
-            const range = document.querySelector('input[name="pdfRange"]:checked').value;
             let filteredData = [...data];
-            const nToday = new Date();
-            // Timezones can shift, lets pad it to locale just in case, or use naive ISO split
-            const tzoffset = nToday.getTimezoneOffset() * 60000;
-            const todayStr = (new Date(Date.now() - tzoffset)).toISOString().split('T')[0];
-
             if (range === 'today') {
                 filteredData = filteredData.filter(d => d.date === todayStr);
             } else if (range === 'week') {
-                const lastWeek = new Date(nToday);
-                lastWeek.setDate(lastWeek.getDate() - 7);
-                const lwStr = (new Date(lastWeek.getTime() - tzoffset)).toISOString().split('T')[0];
+                const lw = new Date(nToday); lw.setDate(lw.getDate() - 7);
+                const lwStr = (new Date(lw.getTime() - tzOff)).toISOString().split('T')[0];
                 filteredData = filteredData.filter(d => d.date >= lwStr && d.date <= todayStr);
             } else if (range === 'month') {
-                const currentMonth = todayStr.slice(0,7);
-                filteredData = filteredData.filter(d => d.date.startsWith(currentMonth));
+                filteredData = filteredData.filter(d => d.date.startsWith(todayStr.slice(0,7)));
             } else if (range === 'year') {
-                const currentYear = todayStr.slice(0,4);
-                filteredData = filteredData.filter(d => d.date.startsWith(currentYear));
+                filteredData = filteredData.filter(d => d.date.startsWith(todayStr.slice(0,4)));
             } else if (range === 'custom') {
                 const sDate = document.getElementById('pdfStartDate').value;
                 const eDate = document.getElementById('pdfEndDate').value;
-                if(!sDate || !eDate) {
-                    showSnackbar('Please select both start and end dates', 'error');
-                    return;
-                }
+                if (!sDate || !eDate) { showSnackbar('Please select both dates', 'error'); return; }
                 filteredData = filteredData.filter(d => d.date >= sDate && d.date <= eDate);
             }
-            
-            if(filteredData.length === 0) {
-                showSnackbar('No transactions found in this range', 'info');
-                return;
-            }
 
-            // Passbook: Date | Description | Dr/Cr | Balance
-            const sortedAsc = filteredData.sort((a,b)=> new Date(a.date) - new Date(b.date));
-            let runningBal = 0;
-            const passbookData = sortedAsc.map(d => {
+            if (filteredData.length === 0) { showSnackbar('No transactions in this range', 'info'); return; }
+
+            // ── 2. Build passbook rows (sorted ASC) ───────────────────────
+            const sortedAsc = filteredData.sort((a, b) => new Date(a.date) - new Date(b.date));
+            let runBal = 0, totalDr = 0, totalCr = 0;
+
+            const passbookRows = sortedAsc.map((d, idx) => {
                 const isInc = d.type === 'income';
-                runningBal += (isInc ? Number(d.amount) : -Number(d.amount));
-                
+                const amt   = Number(d.amount || 0);
+                runBal     += isInc ? amt : -amt;
+                if (isInc) totalCr += amt; else totalDr += amt;
+
+                // Build a PDF-safe description:
+                // Line 1 — cleaned category (emoji stripped for Helvetica compat)
+                // Line 2 — sub-category if present
+                // Line 3 — user notes if present
+                const catClean  = emojiStrip(d.category);
+                const subClean  = d.sub   && d.sub.trim()   ? emojiStrip(d.sub)   : '';
+                const noteClean = d.notes && d.notes.trim() ? d.notes.trim()       : '';
+
+                let descParts = [catClean];
+                if (subClean)  descParts.push(subClean);
+                if (noteClean) descParts.push(noteClean);
+                const rawDesc = descParts.join('\n');
+
                 return {
+                    sno:  String(idx + 1),
                     date: d.date,
-                    desc: d.category + (d.sub ? ` - ${d.sub}` : '') + (d.notes ? `\n${d.notes}` : ''),
-                    dr: !isInc ? d.amount : '-', // Debit
-                    cr: isInc ? d.amount : '-',  // Credit
-                    bal: runningBal
+                    desc: rawDesc,
+                    dr:   !isInc ? amt.toFixed(2) : '',
+                    cr:   isInc  ? amt.toFixed(2) : '',
+                    bal:  runBal.toFixed(2),
+                    type: isInc ? 'cr' : 'dr'
                 };
             });
 
-            let exportRows = passbookData;
-            
-            if(exportRows.length === 0){
-                showSnackbar('No data to export for this range.');
-                return;
-            }
+            // ── 3. PDF setup (A4 portrait, pt) ────────────────────────────
+            const { jsPDF } = window.jspdf;
+            const doc       = new jsPDF('p', 'pt', 'a4');
+            const PW        = doc.internal.pageSize.getWidth();   // 595.28
+            const PH        = doc.internal.pageSize.getHeight();  // 841.89
 
-            // Write Header info to PDF
-            doc.setFontSize(20);
-            doc.setTextColor(16, 185, 129);
-            doc.text('MoneyFlow Analytics', 14, 22);
-            
-            doc.setFontSize(10);
-            doc.setTextColor(100);
-            doc.text(`Report Range: ${range.toUpperCase()}`, 14, 30);
-            doc.text(`Generated on: ${todayStr}`, 14, 35);
-            doc.text(`Total Transactions: ${passbookData.length}`, 14, 40);
+            // HDFC colour palette
+            const NAVY   = [0,   44,  95];   // #002C5F deep navy
+            const MAROON = [161,  25,  47];  // #A1192F HDFC red
+            const GOLD   = [201, 153,  49];  // #C99931 accent gold
+            const WHITE  = [255, 255, 255];
+            const LGREY  = [245, 246, 248];
+            const DGREY  = [80,  80,  80];
+            const GREEN  = [0,  130,  80];
+            const RED    = [200,  30,  30];
 
-            const tableRows = exportRows.map(r => [
-                r.date, r.desc, r.dr, r.cr, r.bal.toFixed(2)
+            // Helper: draw a filled rectangle
+            const fillRect = (x, y, w, h, rgb) => {
+                doc.setFillColor(...rgb);
+                doc.rect(x, y, w, h, 'F');
+            };
+
+            // Helper: draw text
+            const txt = (text, x, y, opts = {}) => {
+                doc.setFont(opts.font || 'helvetica', opts.style || 'normal');
+                doc.setFontSize(opts.size || 10);
+                doc.setTextColor(...(opts.color || DGREY));
+                doc.text(String(text), x, y, { align: opts.align || 'left', maxWidth: opts.maxW });
+            };
+
+            // ── 4. COVER HEADER BAND ──────────────────────────────────────
+            fillRect(0, 0, PW, 110, NAVY);
+
+            // Bank name (left)
+            txt('MoneyFlow', 36, 44, { font: 'helvetica', style: 'bold', size: 22, color: WHITE });
+            txt('Personal Finance Bank', 36, 62, { size: 9.5, color: GOLD });
+
+            // Right side branding line
+            txt('ACCOUNT PASSBOOK', PW - 36, 44, { style: 'bold', size: 14, color: WHITE, align: 'right' });
+            txt('Statement of Account', PW - 36, 62, { size: 9, color: GOLD, align: 'right' });
+
+            // Gold divider strip
+            fillRect(0, 110, PW, 4, GOLD);
+
+            // ── 5. ACCOUNT HOLDER INFO BOX ───────────────────────────────
+            fillRect(36, 126, PW - 72, 90, LGREY);
+            doc.setDrawColor(...GOLD);
+            doc.setLineWidth(0.8);
+            doc.rect(36, 126, PW - 72, 90);
+
+            // ── Account info — pull from Settings localStorage keys ────────
+            const userName    = localStorage.getItem('fin_userName') || 'Account Holder';
+            const userGender  = localStorage.getItem('userGender')  || '';
+            const userLocation= localStorage.getItem('userLocation')|| 'India';
+            // Generate stable account number from username hash
+            const acSeed      = [...userName].reduce((h, c) => ((h << 5) - h + c.charCodeAt(0)) | 0, 0);
+            const acNo        = 'MF-' + String(Math.abs(acSeed) % 100000000).padStart(8, '0');
+            const rangeLabels = { today:'Today', week:'Last 7 Days', month:'This Month', year:'This Year', custom:'Custom Range' };
+            const periodLabel = rangeLabels[range] || range;
+            const printDate   = nToday.toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' });
+
+            txt('Account Holder :', 48, 148, { style: 'bold', size: 9, color: NAVY });
+            txt(userName,           170, 148, { style: 'bold', size: 9, color: [20,20,20] });
+
+            txt('Account No. :',   48, 165, { style: 'bold', size: 9, color: NAVY });
+            txt(acNo,              170, 165, { size: 9, color: [20,20,20] });
+
+            txt('Location :',      48, 182, { style: 'bold', size: 9, color: NAVY });
+            txt(userLocation + (userGender ? '  |  ' + userGender : ''), 170, 182, { size: 9, color: [20,20,20] });
+
+            txt('Statement Period :', PW / 2 + 10, 148, { style: 'bold', size: 9, color: NAVY });
+            txt(periodLabel,          PW / 2 + 130, 148, { size: 9, color: [20,20,20] });
+
+            txt('Print Date :',     PW / 2 + 10, 165, { style: 'bold', size: 9, color: NAVY });
+            txt(printDate,          PW / 2 + 130, 165, { size: 9, color: [20,20,20] });
+
+            txt('Total Entries :',  PW / 2 + 10, 182, { style: 'bold', size: 9, color: NAVY });
+            txt(String(passbookRows.length), PW / 2 + 130, 182, { size: 9, color: [20,20,20] });
+
+            // ── 6. PASSBOOK TABLE ─────────────────────────────────────────
+            const tableBody = passbookRows.map(r => [
+                r.sno,
+                r.date,
+                r.desc,
+                r.dr  ? '₹ ' + Number(r.dr).toLocaleString('en-IN', {minimumFractionDigits:2}) : '',
+                r.cr  ? '₹ ' + Number(r.cr).toLocaleString('en-IN', {minimumFractionDigits:2}) : '',
+                '₹ ' + Number(r.bal).toLocaleString('en-IN', {minimumFractionDigits:2})
             ]);
 
-            // AutoTable
             doc.autoTable({
-                startY: 50,
-                head: [['Date', 'Description', 'Debit (Dr)', 'Credit (Cr)', 'Balance (₹)']],
-                body: tableRows,
-                theme: 'striped',
-                headStyles: { fillColor: [16, 185, 129] },
-                styles: { font: 'helvetica', fontSize: 10 },
-                didParseCell: function(data) {
-                    if (data.section === 'body') {
-                        if (data.column.index === 2 && data.cell.raw !== '-') data.cell.styles.textColor = [239, 68, 68];
-                        if (data.column.index === 3 && data.cell.raw !== '-') data.cell.styles.textColor = [16, 185, 129];
-                        if (data.column.index === 4) data.cell.styles.fontStyle = 'bold';
+                startY: 228,
+                margin: { left: 36, right: 36 },
+                head: [['#', 'Date', 'Description / Narration', 'Debit (Dr)', 'Credit (Cr)', 'Balance']],
+                body: tableBody,
+                theme: 'plain',
+                headStyles: {
+                    fillColor: NAVY,
+                    textColor: WHITE,
+                    fontStyle: 'bold',
+                    fontSize: 8.5,
+                    halign: 'center',
+                    cellPadding: { top:6, bottom:6, left:5, right:5 },
+                    lineColor: GOLD,
+                    lineWidth: 0.4
+                },
+                bodyStyles: {
+                    fontSize: 8,
+                    cellPadding: { top:5, bottom:5, left:5, right:5 },
+                    lineColor: [210, 215, 220],
+                    lineWidth: 0.3,
+                    valign: 'middle'
+                },
+                alternateRowStyles: {
+                    fillColor: [250, 251, 253]
+                },
+                columnStyles: {
+                    0: { halign: 'center', cellWidth: 22, textColor: DGREY },
+                    1: { halign: 'center', cellWidth: 62, textColor: [40,40,40] },
+                    2: { halign: 'left',   cellWidth: 'auto', textColor: [30,30,30] },
+                    3: { halign: 'right',  cellWidth: 70 },
+                    4: { halign: 'right',  cellWidth: 70 },
+                    5: { halign: 'right',  cellWidth: 78, fontStyle: 'bold' }
+                },
+                didParseCell: function(hookData) {
+                    if (hookData.section !== 'body') return;
+                    const rowData = passbookRows[hookData.row.index];
+                    if (!rowData) return;
+
+                    // Debit column — red
+                    if (hookData.column.index === 3 && rowData.type === 'dr') {
+                        hookData.cell.styles.textColor = RED;
+                    }
+                    // Credit column — green
+                    if (hookData.column.index === 4 && rowData.type === 'cr') {
+                        hookData.cell.styles.textColor = GREEN;
+                    }
+                    // Balance — navy bold
+                    if (hookData.column.index === 5) {
+                        hookData.cell.styles.textColor = Number(rowData.bal) < 0 ? RED : NAVY;
+                        hookData.cell.styles.fontStyle = 'bold';
+                    }
+                },
+                willDrawCell: function(hookData) {
+                    // Draw left border accent on each body row
+                    if (hookData.section === 'body') {
+                        const rowData = passbookRows[hookData.row.index];
+                        if (rowData && hookData.column.index === 0) {
+                            doc.setFillColor(...(rowData.type === 'cr' ? GREEN : RED));
+                            doc.rect(hookData.cell.x, hookData.cell.y, 2.5, hookData.cell.height, 'F');
+                        }
                     }
                 }
             });
 
-            doc.save(`MoneyFlow_Passbook_${todayStr}.pdf`);
+            // ── 7. SUMMARY FOOTER BAND ────────────────────────────────────
+            const finalY = doc.lastAutoTable.finalY + 18;
+
+            if (finalY + 70 < PH - 40) {
+                fillRect(36, finalY, PW - 72, 58, [240, 244, 250]);
+                doc.setDrawColor(...NAVY);
+                doc.setLineWidth(0.5);
+                doc.rect(36, finalY, PW - 72, 58);
+
+                txt('STATEMENT SUMMARY', 48, finalY + 16, { style: 'bold', size: 8.5, color: NAVY });
+
+                const col2 = PW / 3;
+                const col3 = (PW / 3) * 2;
+
+                txt('Total Credits (Income)', 48,   finalY + 33, { size: 8, color: DGREY });
+                txt('Total Debits (Expense)',  col2, finalY + 33, { size: 8, color: DGREY });
+                txt('Closing Balance',         col3, finalY + 33, { size: 8, color: DGREY });
+
+                txt('₹ ' + totalCr.toLocaleString('en-IN',{minimumFractionDigits:2}),
+                    48,   finalY + 49, { style:'bold', size:9.5, color: GREEN });
+                txt('₹ ' + totalDr.toLocaleString('en-IN',{minimumFractionDigits:2}),
+                    col2, finalY + 49, { style:'bold', size:9.5, color: RED });
+                txt('₹ ' + runBal.toLocaleString('en-IN',{minimumFractionDigits:2}),
+                    col3, finalY + 49, { style:'bold', size:9.5, color: runBal < 0 ? RED : NAVY });
+            }
+
+            // ── 8. PAGE FOOTER (each page) ────────────────────────────────
+            const totalPages = doc.internal.getNumberOfPages();
+            for (let pg = 1; pg <= totalPages; pg++) {
+                doc.setPage(pg);
+                fillRect(0, PH - 28, PW, 28, NAVY);
+                txt('MoneyFlow Personal Finance  •  This is a computer-generated statement.',
+                    PW / 2, PH - 14, { size: 7.5, color: [180,200,220], align: 'center' });
+                txt(`Page ${pg} of ${totalPages}`,
+                    PW - 36, PH - 14, { size: 7.5, color: GOLD, align: 'right' });
+            }
+
+            // ── 9. Save ───────────────────────────────────────────────────
+            const safePeriod = periodLabel.replace(/\s+/g, '_');
+            doc.save(`MoneyFlow_Passbook_${safePeriod}_${todayStr}.pdf`);
             closeModal('#pdfModal');
             showSnackbar('Passbook PDF Exported Successfully! 🎉');
 
-        } catch (e) {
-            console.error(e);
-            showSnackbar('PDF Generation Failed.', 'error');
+        } catch (err) {
+            console.error('PDF generation error:', err);
+            showSnackbar('PDF Generation Failed: ' + err.message, 'error');
         }
     };
 

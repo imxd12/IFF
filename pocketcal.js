@@ -147,20 +147,26 @@
     });
 
     document.getElementById('pcDelete').addEventListener('click', () => {
-        if(!confirm('Delete this entry?')) return;
-        const existing = data.find(d => d.date === selectedDate);
-        
-        data = data.filter(d => d.date !== selectedDate);
-        saveData('fin_pocketcal', data);
+        window.showConfirmModal(
+            'Delete Entry?', 
+            'This pocketcal entry will be permanently deleted.', 
+            'Delete', 
+            () => {
+                const existing = data.find(d => d.date === selectedDate);
+                
+                data = data.filter(d => d.date !== selectedDate);
+                saveData('fin_pocketcal', data);
 
-        // SYNC DELETION TO SPENDLY
-        if(existing) {
-            deleteSpendlyForPocketCal(existing.id);
-        }
+                // SYNC DELETION TO SPENDLY
+                if(existing) {
+                    deleteSpendlyForPocketCal(existing.id);
+                }
 
-        renderCalendar();
-        closeEntryModal();
-        showSnackbar('Entry deleted! 🗑️');
+                renderCalendar();
+                closeEntryModal();
+                showSnackbar('Entry deleted! 🗑️');
+            }
+        );
     });
 
     function syncPocketToSpendly(newEntry, oldEntry) {
@@ -720,6 +726,34 @@
     window.addEventListener('DOMContentLoaded', () => {
         renderCalendar();
         document.addEventListener('themeChanged', renderCharts);
+
+        // Load Custom Categories
+        const pcCatSelect = document.getElementById('pcCategory');
+        if (pcCatSelect) {
+            const fullCategoryMap = window.loadData('fin_full_category_map');
+            
+            if (fullCategoryMap && fullCategoryMap.incomeList && fullCategoryMap.incomeList.length > 0) {
+                fullCategoryMap.incomeList.forEach(cat => {
+                    const opt = document.createElement('option');
+                    opt.value = cat;
+                    opt.textContent = cat;
+                    pcCatSelect.appendChild(opt);
+                });
+            }
+            
+            // Just for flexibility, we can still load expense categories, but they are now nested
+            if (fullCategoryMap && fullCategoryMap.expenseMap) {
+                Object.values(fullCategoryMap.expenseMap).forEach(subList => {
+                    subList.forEach(cat => {
+                        if (cat === 'All') return;
+                        const opt = document.createElement('option');
+                        opt.value = cat;
+                        opt.textContent = cat;
+                        pcCatSelect.appendChild(opt);
+                    });
+                });
+            }
+        }
     });
 
 })();

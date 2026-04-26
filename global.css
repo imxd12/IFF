@@ -50,6 +50,11 @@
   padding: 0;
 }
 
+html {
+    /* Fluid typography base: scales between 14px on mobile and 16px on desktop */
+    font-size: clamp(14px, 1.2vw + 10px, 16px);
+}
+
 body {
   background-color: var(--bg-color);
   color: var(--text-main);
@@ -803,4 +808,53 @@ html.lenis {
 .mf-tx-overlay,
 .ag-card-reveal {
   will-change: transform, opacity;
+}
+
+/* ========================================================================
+   8. PRIVACY MODE
+======================================================================== */
+body.privacy-mode h2[id*="total"],
+body.privacy-mode h2[id*="Balance"],
+body.privacy-mode .privacy-blur {
+    filter: blur(8px);
+    transition: filter 0.3s ease;
+}
+body.privacy-mode h2[id*="total"]:hover,
+body.privacy-mode h2[id*="Balance"]:hover,
+body.privacy-mode .privacy-blur:hover {
+    filter: blur(0px);
+}
+
+/* ========================================================================
+   9. GLOBAL MODAL ENGINE (CUSTOM FORM UI)
+======================================================================== */
+.global-modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.global-modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.global-modal-content {
+    transform: scale(0.9) translateY(20px);
+    opacity: 0;
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.global-modal-overlay.active .global-modal-content {
+    transform: scale(1) translateY(0);
+    opacity: 1;
 }

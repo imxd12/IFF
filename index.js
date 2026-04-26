@@ -62,6 +62,34 @@
         animateValueUpdate('monthPocket', monthPocket);
         animateValueUpdate('totalBalance', totalBalance);
 
+        // AI Spend Predictor Logic
+        const currentMonthTotalDays = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate();
+        const currentDay = new Date().getDate();
+        
+        let runRate = 0;
+        let predictedSpend = 0;
+        if(currentDay > 0) {
+            runRate = monthlyExpense / currentDay;
+            predictedSpend = runRate * currentMonthTotalDays;
+        }
+
+        const aiPredictedSpendEl = document.getElementById('aiPredictedSpend');
+        const aiRunRateEl = document.getElementById('aiRunRate');
+        const aiPredictorBarEl = document.getElementById('aiPredictorBar');
+
+        if(aiPredictedSpendEl) aiPredictedSpendEl.textContent = `₹${predictedSpend.toFixed(0)}`;
+        if(aiRunRateEl) aiRunRateEl.textContent = `₹${runRate.toFixed(0)} / day`;
+        
+        if(aiPredictorBarEl) {
+            let budget = monthlyIncome > 0 ? monthlyIncome : (predictedSpend > 0 ? predictedSpend * 1.2 : 100); 
+            let barWidth = Math.min((predictedSpend / budget) * 100, 100);
+            aiPredictorBarEl.style.width = `${barWidth}%`;
+            
+            if(barWidth > 90) aiPredictorBarEl.className = "h-full transition-all duration-1000 ease-out bg-rose-500";
+            else if(barWidth > 70) aiPredictorBarEl.className = "h-full transition-all duration-1000 ease-out bg-amber-500";
+            else aiPredictorBarEl.className = "h-full transition-all duration-1000 ease-out bg-emerald-500";
+        }
+
         generateInsight(percent);
     }
 
@@ -91,8 +119,58 @@
     }
 
     // ----------------------------------------------------
-    // CONSTANT GREETINGS
+    // WEATHER & GREETINGS
     // ----------------------------------------------------
+    async function initWeather() {
+        const weatherBadge = document.getElementById('weatherBadge');
+        if (!weatherBadge) return;
+
+        const setWeatherUI = (temp, code) => {
+            let icon = 'cloud';
+            let color = 'text-gray-400';
+            let condition = 'Cloudy';
+            let animation = 'animate-pulse';
+
+            if (code === 0) { icon = 'sun'; color = 'text-amber-400'; condition = 'Clear Sky'; animation = 'animate-[spin_10s_linear_infinite]'; }
+            else if (code >= 1 && code <= 3) { icon = 'cloud-sun'; color = 'text-blue-300'; condition = 'Partly Cloudy'; animation = 'animate-pulse'; }
+            else if (code >= 45 && code <= 48) { icon = 'wind'; color = 'text-gray-400'; condition = 'Foggy'; animation = 'animate-pulse'; }
+            else if (code >= 51 && code <= 67) { icon = 'cloud-rain'; color = 'text-blue-400'; condition = 'Rainy'; animation = 'animate-bounce'; }
+            else if (code >= 71 && code <= 77) { icon = 'snowflake'; color = 'text-cyan-200'; condition = 'Snowing'; animation = 'animate-[spin_3s_linear_infinite]'; }
+            else if (code >= 80 && code <= 82) { icon = 'cloud-rain'; color = 'text-blue-500'; condition = 'Showers'; animation = 'animate-bounce'; }
+            else if (code >= 95) { icon = 'cloud-lightning'; color = 'text-yellow-400'; condition = 'Thunderstorm'; animation = 'animate-pulse'; }
+
+            // Custom Temperature Overrides
+            if (temp >= 35) { icon = 'sun'; color = 'text-amber-500'; condition = 'Hot & Sunny'; animation = 'animate-[spin_4s_linear_infinite]'; }
+            if (temp < 25 && temp > 15 && code === 0) { icon = 'sun'; color = 'text-amber-300'; condition = 'Pleasant'; }
+            if (temp < 10) { icon = 'snowflake'; color = 'text-cyan-200'; condition = 'Freezing'; animation = 'animate-[spin_3s_linear_infinite]'; }
+
+            weatherBadge.innerHTML = `<i data-lucide="${icon}" class="w-4 h-4 ${color} ${animation}"></i> <span class="text-white/80">${temp}°C • ${condition}</span>`;
+            if (window.lucide) lucide.createIcons();
+        };
+
+        const fetchWeather = async (lat, lon) => {
+            try {
+                const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code`);
+                const data = await res.json();
+                const temp = Math.round(data.current.temperature_2m);
+                const code = data.current.weather_code;
+                setWeatherUI(temp, code);
+            } catch (e) {
+                weatherBadge.innerHTML = `<i data-lucide="cloud-off" class="w-4 h-4 text-red-400"></i> <span class="text-white/50">Weather Offline</span>`;
+                if (window.lucide) lucide.createIcons();
+            }
+        };
+
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                pos => fetchWeather(pos.coords.latitude, pos.coords.longitude),
+                () => setWeatherUI(28, 1) // Fallback if denied
+            );
+        } else {
+            setWeatherUI(28, 1);
+        }
+    }
+
     function updateTextGreeting() {
         const welcomeEl = document.getElementById('welcomeText');
         if (!welcomeEl) return;
@@ -166,9 +244,20 @@
         const isBirthday = dobDate && dobDate.getMonth() === date.getMonth() && dobDate.getDate() === date.getDate();
         let bdayWish = isBirthday ? " Happy birthday!" : "";
 
-        let message = `Asalamwalikum, ${state.username}. ${timeGreeting}.${bdayWish} Welcome to money flow.`;
+        // AI Financial Pulse
+        const currentMonth = new Date().toISOString().slice(0, 7);
+        const monthlyExpense = state.spendlyData
+            .filter(t => t.date && t.date.startsWith(currentMonth) && t.type === 'expense')
+            .reduce((sum, t) => sum + Number(t.amount || 0), 0);
+            
+        let pulseMsg = "";
+        if(monthlyExpense > 0) {
+            pulseMsg = ` You have spent ${monthlyExpense} rupees this month.`;
+        }
+
+        let message = `Asalamwalikum, ${state.username}. ${timeGreeting}.${bdayWish}${pulseMsg} Welcome to money flow.`;
         if (date.getDay() === 5) {
-            message = `Asalamwalikum, Jummah Mubarak, ${state.username}. ${timeGreeting}.${bdayWish} Welcome to money flow.`;
+            message = `Asalamwalikum, Jummah Mubarak, ${state.username}. ${timeGreeting}.${bdayWish}${pulseMsg} Welcome to money flow.`;
         }
 
         const runSpeech = () => {
@@ -262,8 +351,13 @@
 
         let pressTimer = null;
         let isLongPress = false;
+
+        let playlist = [];
+        let currentTrackIndex = 0;
         
-        // Formatter for MM:SS
+        let audioCtx, analyser, dataArray, canvasCtx;
+        let isVisualizerInit = false;
+
         const formatTime = (time) => {
             if(isNaN(time)) return "0:00";
             const min = Math.floor(time / 60);
@@ -271,7 +365,6 @@
             return `${min}:${sec < 10 ? '0' : ''}${sec}`;
         };
 
-        // UI references
         const player = document.getElementById('globalMusicPlayer');
         const playPauseBtn = document.getElementById('musicModalPlayPause');
         const playIcon = document.getElementById('musicModalPlayIcon');
@@ -279,23 +372,83 @@
         const currentTimeEl = document.getElementById('musicModalCurrentTime');
         const durationEl = document.getElementById('musicModalDuration');
         const seekSlider = document.getElementById('musicModalSeek');
+        const volSlider = document.getElementById('musicModalVolume');
         const fileInput = document.getElementById('localAudioFile');
         const loadBtn = document.getElementById('loadDeviceAudioBtn');
+        const visualizerBox = document.getElementById('musicVisualizerBox');
+        const canvas = document.getElementById('audioVisualizerCanvas');
 
-        // Long Press Events
+        // Init Volume
+        const savedVol = localStorage.getItem('fin_musicVolume');
+        if(savedVol !== null && volSlider) {
+            player.volume = parseFloat(savedVol);
+            volSlider.value = parseFloat(savedVol) * 100;
+            volSlider.style.setProperty('--val', `${volSlider.value}%`);
+        } else if (volSlider) {
+            volSlider.value = player.volume * 100;
+            volSlider.style.setProperty('--val', `${volSlider.value}%`);
+        }
+
+        const initVisualizer = () => {
+            if(isVisualizerInit || !canvas) return;
+            try {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                audioCtx = new AudioContext();
+                const source = audioCtx.createMediaElementSource(player);
+                analyser = audioCtx.createAnalyser();
+                analyser.fftSize = 64; 
+                source.connect(analyser);
+                analyser.connect(audioCtx.destination);
+                
+                canvasCtx = canvas.getContext('2d');
+                const bufferLength = analyser.frequencyBinCount;
+                dataArray = new Uint8Array(bufferLength);
+                isVisualizerInit = true;
+                drawVisualizer();
+            } catch(e) {
+                console.log("Audio API init error (maybe CORS):", e);
+            }
+        };
+
+        const drawVisualizer = () => {
+            requestAnimationFrame(drawVisualizer);
+            if(!isVisualizerInit || !canvas || player.paused) return;
+            
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+            
+            analyser.getByteFrequencyData(dataArray);
+            
+            canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            const barWidth = (canvas.width / dataArray.length) * 1.5;
+            let barHeight;
+            let x = 0;
+            
+            for(let i = 0; i < dataArray.length; i++) {
+                barHeight = dataArray[i] / 2.5; 
+                
+                const gradient = canvasCtx.createLinearGradient(0, canvas.height, 0, 0);
+                gradient.addColorStop(0, '#10b981'); // Emerald
+                gradient.addColorStop(1, '#06b6d4'); // Cyan
+                
+                canvasCtx.fillStyle = gradient;
+                canvasCtx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
+                x += barWidth + 1;
+            }
+        };
+
         const startPress = (e) => {
-            if (e.button && e.button !== 0) return; // Only left click
+            if (e.button && e.button !== 0) return;
             isLongPress = false;
-            musicBtn.style.transform = 'scale(0.9)'; // Provide visual feedback of pressing
+            musicBtn.style.transform = 'scale(0.9)';
             
             pressTimer = setTimeout(() => {
                 isLongPress = true;
-                // Vibrate if allowed
                 if (navigator.vibrate) navigator.vibrate([50, 50, 50]);
-                // Open Modal
                 modal.classList.add('active');
                 updateModalUIState();
-            }, 3000); // 3 seconds
+            }, 3000); 
         };
 
         const cancelPress = () => {
@@ -306,7 +459,6 @@
         const executeClick = (e) => {
             cancelPress();
             if(!isLongPress) {
-                // Was just a normal click
                 if(window.toggleGlobalMusic) window.toggleGlobalMusic();
                 updateModalUIState();
             }
@@ -316,83 +468,129 @@
         musicBtn.addEventListener('pointerup', executeClick);
         musicBtn.addEventListener('pointerleave', cancelPress);
 
-        // Modal Controls
         document.getElementById('closeMusicModalBtn').addEventListener('click', () => {
             modal.classList.remove('active');
         });
 
         modal.addEventListener('click', (e) => {
-            // Close if clicking overlay directly
             if(e.target === modal) modal.classList.remove('active');
         });
 
-        // Sync Modal UI
         const updateModalUIState = () => {
              if (player.paused) {
                  playIcon.setAttribute('data-lucide', 'play');
-                 document.getElementById('miniEQ').style.opacity = '0.3';
+                 if(visualizerBox) visualizerBox.classList.remove('animate-vinyl');
              } else {
                  playIcon.setAttribute('data-lucide', 'pause');
-                 document.getElementById('miniEQ').style.opacity = '1';
+                 if(visualizerBox) visualizerBox.classList.add('animate-vinyl');
+                 if(audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
              }
              if(window.lucide) lucide.createIcons();
         };
 
+        const playTrack = (index) => {
+            if(playlist.length === 0) return;
+            if(index >= playlist.length) index = 0;
+            if(index < 0) index = playlist.length - 1;
+            
+            currentTrackIndex = index;
+            const track = playlist[currentTrackIndex];
+            
+            player.src = track.url;
+            modalTrackName.textContent = track.name;
+            player.play().then(() => {
+                initVisualizer();
+                updateModalUIState();
+                const headerIcon = document.getElementById("musicStatusIcon");
+                if(headerIcon) headerIcon.setAttribute('data-lucide', 'pause');
+                if(window.lucide) lucide.createIcons();
+            }).catch(e => console.log('Autoplay prevented', e));
+        };
+
         playPauseBtn.addEventListener('click', () => {
-            if(window.toggleGlobalMusic) window.toggleGlobalMusic();
+            if(window.toggleGlobalMusic) {
+                window.toggleGlobalMusic();
+            } else {
+                if(player.paused) player.play(); else player.pause();
+            }
+            initVisualizer();
             updateModalUIState();
         });
 
-        // Skip buttons (just simulated skip by 15s since single track)
         document.getElementById('musicModalNext').addEventListener('click', () => {
-            player.currentTime += 15;
+            if(playlist.length > 0) {
+                playTrack(currentTrackIndex + 1);
+            } else {
+                player.currentTime += 15;
+            }
         });
         document.getElementById('musicModalPrev').addEventListener('click', () => {
-            player.currentTime = Math.max(0, player.currentTime - 15);
+            if(playlist.length > 0) {
+                playTrack(currentTrackIndex - 1);
+            } else {
+                player.currentTime = Math.max(0, player.currentTime - 15);
+            }
         });
 
-        // Update progress bar
         player.addEventListener('timeupdate', () => {
-            if(!modal.classList.contains('active')) return; // Save perf
-            
+            if(!modal.classList.contains('active')) return;
             currentTimeEl.textContent = formatTime(player.currentTime);
             if(player.duration) {
                 durationEl.textContent = formatTime(player.duration);
-                seekSlider.value = (player.currentTime / player.duration) * 100;
+                const progress = (player.currentTime / player.duration) * 100;
+                seekSlider.value = progress;
+                seekSlider.style.setProperty('--val', `${progress}%`);
             }
         });
         
-        // Ensure duration updates on load
         player.addEventListener('loadedmetadata', () => {
             durationEl.textContent = formatTime(player.duration);
         });
 
+        player.addEventListener('ended', () => {
+            if(playlist.length > 0) {
+                playTrack(currentTrackIndex + 1);
+            }
+        });
+
         seekSlider.addEventListener('input', (e) => {
-            const seekTime = (e.target.value / 100) * player.duration;
+            const val = e.target.value;
+            e.target.style.setProperty('--val', `${val}%`);
+            const seekTime = (val / 100) * player.duration;
             player.currentTime = seekTime;
         });
 
-        // Load Device Audio handling
+        if(volSlider) {
+            volSlider.addEventListener('input', (e) => {
+                const val = e.target.value;
+                e.target.style.setProperty('--val', `${val}%`);
+                const vol = val / 100;
+                player.volume = vol;
+                localStorage.setItem('fin_musicVolume', vol);
+            });
+        }
+
         loadBtn.addEventListener('click', () => {
             fileInput.click();
         });
 
         fileInput.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (file) {
-                const url = URL.createObjectURL(file);
-                player.src = url;
-                modalTrackName.textContent = file.name.replace(/\.[^/.]+$/, ""); // remove extension
-                player.play().then(() => {
-                    if (window.toggleGlobalMusic && player.paused) window.toggleGlobalMusic(); // sync global state
-                    updateModalUIState();
-                    // Force the global header icon to show pause
-                    const headerIcon = document.getElementById("musicStatusIcon");
-                    if(headerIcon) headerIcon.setAttribute('data-lucide', 'pause');
-                    if(window.lucide) lucide.createIcons();
-                }).catch(e => console.log('Autoplay prevented', e));
+            const files = Array.from(e.target.files);
+            if (files.length > 0) {
+                const wasEmpty = playlist.length === 0;
                 
-                showSnackbar('Loaded local audio track successfully.');
+                files.forEach(file => {
+                    playlist.push({
+                        name: file.name.replace(/\.[^/.]+$/, ""),
+                        url: URL.createObjectURL(file)
+                    });
+                });
+                
+                showSnackbar(`Loaded ${files.length} audio track(s) ✨`);
+                
+                if(wasEmpty) {
+                    playTrack(0);
+                }
             }
         });
     }
@@ -401,6 +599,7 @@
     // BOOTSTRAP
     // ----------------------------------------------------
     window.addEventListener('DOMContentLoaded', () => {
+        initWeather();
         updateTextGreeting();
         updateDashboard();
         initPWA();

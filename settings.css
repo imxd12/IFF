@@ -1,0 +1,300 @@
+/* ========================================================================
+   MONEYFLOW - SETTINGS.CSS
+   Premium Tabs, Custom Range Sliders, Animated Currency Dropdown
+======================================================================== */
+
+/* Tab Content Areas */
+.tab-pane {
+    display: none;
+    animation: fadeSlideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.tab-pane.active {
+    display: block;
+}
+
+@keyframes fadeSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Custom Range Slider */
+.premium-slider {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 8px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 4px;
+    outline: none;
+    transition: background 0.3s;
+    /* We'll update the background via inline style --val in JS */
+    background-image: linear-gradient(var(--accent-primary), var(--accent-primary));
+    background-size: var(--val, 50%) 100%;
+    background-repeat: no-repeat;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.3);
+}
+
+.premium-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #ffffff;
+    cursor: pointer;
+    box-shadow: 0 0 15px rgba(var(--accent-primary-rgb), 0.6), inset 0 -2px 4px rgba(0,0,0,0.2);
+    border: 2px solid var(--accent-primary);
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s;
+}
+
+.premium-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.3);
+    box-shadow: 0 0 20px rgba(var(--accent-primary-rgb), 0.8), inset 0 -2px 4px rgba(0,0,0,0.2);
+}
+
+.premium-slider::-webkit-slider-thumb:active {
+    transform: scale(0.9);
+}
+
+.premium-slider::-moz-range-thumb {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #ffffff;
+    cursor: pointer;
+    box-shadow: 0 0 15px rgba(var(--accent-primary-rgb), 0.6), inset 0 -2px 4px rgba(0,0,0,0.2);
+    border: 2px solid var(--accent-primary);
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s;
+}
+
+.premium-slider::-moz-range-thumb:hover {
+    transform: scale(1.3);
+    box-shadow: 0 0 20px rgba(var(--accent-primary-rgb), 0.8), inset 0 -2px 4px rgba(0,0,0,0.2);
+}
+
+.premium-slider::-moz-range-thumb:active {
+    transform: scale(0.9);
+}
+
+/* Intensity Display */
+.intensity-badge {
+    background: var(--glass-hover);
+    color: var(--accent-primary);
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 800;
+    min-width: 3rem;
+    text-align: center;
+}
+
+/* Custom Currency Dropdown */
+.currency-dropdown {
+    position: relative;
+    width: 100%;
+}
+
+.currency-toggle {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 0.75rem;
+    color: var(--text-main);
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.currency-toggle:hover {
+    background: var(--glass-hover);
+}
+
+.currency-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    margin-top: 0.5rem;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 0.75rem;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    z-index: 50;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    max-height: 250px;
+    display: flex;
+    flex-direction: column;
+}
+
+.currency-dropdown.open .currency-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.currency-search-container {
+    padding: 0.75rem;
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.currency-search-input {
+    width: 100%;
+    background: var(--glass-hover);
+    border: 1px solid var(--glass-border);
+    color: var(--text-main);
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    outline: none;
+}
+.currency-search-input:focus {
+    border-color: var(--accent-primary);
+}
+
+.currency-list {
+    overflow-y: auto;
+    flex: 1;
+    padding: 0.5rem;
+    scrollbar-width: thin;
+}
+.currency-list::-webkit-scrollbar {
+    width: 4px;
+}
+.currency-list::-webkit-scrollbar-thumb {
+    background: var(--glass-border);
+    border-radius: 4px;
+}
+
+.currency-option {
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.5rem;
+    color: var(--text-main);
+    cursor: pointer;
+    font-size: 0.875rem;
+    font-weight: 600;
+    transition: background 0.2s;
+    display: flex;
+    justify-content: space-between;
+}
+.currency-option:hover {
+    background: var(--glass-hover);
+    color: var(--accent-primary);
+}
+.currency-option.selected {
+    background: rgba(var(--accent-primary-rgb), 0.1);
+    color: var(--accent-primary);
+}
+
+/* User Identity Avatar Area */
+.identity-avatar-container {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary, #8b5cf6));
+    margin: 0 auto 1.5rem auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 2rem;
+    font-weight: 900;
+    box-shadow: 0 8px 25px rgba(var(--accent-primary-rgb), 0.4);
+    position: relative;
+}
+.identity-avatar-edit {
+    position: absolute;
+    bottom: -5px;
+    right: -5px;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-main);
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+/* ========================================================================
+   SETTINGS UI POLISH & HOVER STATES
+======================================================================== */
+
+#tab-general > .space-y-4 > div,
+#tab-data > .space-y-4 > div,
+#tab-finance > .space-y-4 > div {
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s, border-color 0.3s;
+}
+
+#tab-general > .space-y-4 > div:hover,
+#tab-data > .space-y-4 > div:hover,
+#tab-finance > .space-y-4 > div:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+    border-color: rgba(var(--accent-primary-rgb), 0.3);
+}
+
+/* Category Manager Polish */
+.cat-manager-wrapper {
+    background: linear-gradient(145deg, rgba(var(--glass-bg-rgb), 0.8), rgba(var(--glass-bg-rgb), 0.3));
+    border: 1px solid rgba(245, 158, 11, 0.2); /* amber tint */
+    box-shadow: inset 0 1px 1px rgba(255,255,255,0.05), 0 10px 30px rgba(0,0,0,0.1);
+}
+
+.cat-item-card {
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    background: rgba(0,0,0,0.15);
+    border: 1px solid transparent;
+}
+
+.cat-item-card:hover {
+    background: rgba(245, 158, 11, 0.08);
+    border-color: rgba(245, 158, 11, 0.2);
+    transform: translateX(4px);
+}
+
+.cat-item-card button {
+    opacity: 0.6;
+    transition: opacity 0.2s, transform 0.2s;
+}
+.cat-item-card:hover button {
+    opacity: 1;
+}
+.cat-item-card button:hover {
+    transform: scale(1.15) rotate(5deg);
+}
+
+/* Modern Select Styling for Category Manager */
+#mainCategorySelect {
+    cursor: pointer;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23f59e0b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 1rem;
+    padding-right: 2.5rem;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+#mainCategorySelect:hover {
+    border-color: rgba(245, 158, 11, 0.5);
+    box-shadow: 0 0 15px rgba(245, 158, 11, 0.1);
+}

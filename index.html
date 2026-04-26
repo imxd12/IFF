@@ -109,6 +109,9 @@
 
     <!-- Welcome Section (Parallax Speed 0.1) -->
     <section class="mt-8 mb-12" data-speed="0.1">
+      <div id="weatherBadge" class="inline-flex items-center gap-2 px-3 py-1.5 bg-black/20 border border-white/5 rounded-full backdrop-blur-sm text-xs font-bold text-muted mb-4 cursor-pointer transition-all hover:bg-white/5 shadow-lg">
+         <i data-lucide="cloud" class="w-4 h-4 animate-pulse text-blue-300"></i> <span>Detecting Atmosphere...</span>
+      </div>
       <h1 class="text-4xl md:text-5xl font-extrabold mb-2" id="welcomeText">Welcome, User</h1>
       <p class="text-muted text-lg">Your financial overview.</p>
     </section>
@@ -168,18 +171,48 @@
       </div>
     </section>
 
-    <!-- Smart Insights -->
-    <section class="mb-16 glass-panel p-8 ag-card-reveal relative overflow-hidden" data-speed="0.12">
-      <!-- Decorative blur orb -->
-      <div class="absolute -top-10 -right-10 w-32 h-32 bg-emerald-500/20 rounded-full blur-2xl"></div>
-
-      <div class="flex items-center gap-4 mb-4">
-        <div class="p-3 bg-emerald-500/10 rounded-2xl border border-emerald-500/20">
-          <i data-lucide="brain" class="text-emerald-500 w-6 h-6"></i>
+    <!-- Smart Insights & AI Predictor -->
+    <section class="mb-16 grid grid-cols-1 lg:grid-cols-2 gap-6">
+      
+      <!-- Smart Insight Card -->
+      <div class="glass-panel p-8 ag-card-reveal relative overflow-hidden h-full flex flex-col justify-center" data-speed="0.12">
+        <div class="absolute -top-10 -right-10 w-32 h-32 bg-emerald-500/20 rounded-full blur-2xl pointer-events-none"></div>
+        <div class="flex items-center gap-4 mb-4 relative z-10">
+          <div class="p-3 bg-emerald-500/10 rounded-2xl border border-emerald-500/20">
+            <i data-lucide="brain" class="text-emerald-500 w-6 h-6"></i>
+          </div>
+          <h3 class="text-2xl font-bold">Smart Insight</h3>
         </div>
-        <h3 class="text-2xl font-bold">Smart Insight</h3>
+        <p class="text-lg text-muted ml-1 relative z-10 leading-relaxed" id="financeInsightMsg">Analyzing your metrics...</p>
       </div>
-      <p class="text-lg text-muted ml-1" id="financeInsightMsg">Analyzing your metrics...</p>
+
+      <!-- AI Spend Predictor -->
+      <div class="glass-panel p-8 ag-card-reveal relative overflow-hidden h-full flex flex-col justify-center" data-speed="0.15">
+        <div class="absolute -bottom-10 -left-10 w-32 h-32 bg-amber-500/10 rounded-full blur-2xl pointer-events-none"></div>
+        <div class="flex items-center justify-between mb-4 relative z-10">
+          <div class="flex items-center gap-4">
+            <div class="p-3 bg-amber-500/10 rounded-2xl border border-amber-500/20">
+              <i data-lucide="trending-up" class="text-amber-500 w-6 h-6"></i>
+            </div>
+            <h3 class="text-2xl font-bold">AI Spend Predictor</h3>
+          </div>
+          <span class="text-[10px] font-bold bg-white/10 px-2 py-1 rounded-lg text-muted border border-white/5 uppercase tracking-wider">Forecast</span>
+        </div>
+        <div class="flex justify-between items-end relative z-10 mt-2">
+          <div>
+            <p class="text-sm text-muted mb-1">Predicted Month End Expense</p>
+            <h2 class="text-3xl font-extrabold text-amber-500" id="aiPredictedSpend">₹0</h2>
+          </div>
+          <div class="text-right">
+            <p class="text-xs text-muted mb-1">Current Run-Rate</p>
+            <span class="text-sm font-bold text-rose-400" id="aiRunRate">₹0 / day</span>
+          </div>
+        </div>
+        <div class="w-full bg-black/20 h-2 mt-5 rounded-full overflow-hidden relative z-10 border border-white/5">
+          <div class="h-full bg-gradient-to-r from-emerald-500 via-amber-500 to-rose-500 transition-all duration-1000 ease-out" id="aiPredictorBar" style="width: 0%"></div>
+        </div>
+      </div>
+
     </section>
 
     <!-- Detailed Explanation: Why MoneyFlow -->
@@ -260,23 +293,23 @@
     <div id="musicPlayerModal" class="modal-overlay">
       <div class="modal-content-glass max-w-sm w-full relative p-6 border border-glass-border">
         <!-- Close Button -->
-        <button id="closeMusicModalBtn" class="absolute top-4 right-4 text-muted hover:text-red-500 transition-colors">
-          <i data-lucide="x"></i>
+        <button type="button" id="closeMusicModalBtn" class="absolute top-4 right-4 text-muted hover:text-red-500 transition-colors z-50 bg-white/5 border border-white/10 p-2.5 rounded-full backdrop-blur-md cursor-pointer hover:bg-white/10 active:scale-90">
+          <i data-lucide="x" class="w-5 h-5"></i>
         </button>
 
         <div class="text-center mt-2">
           <!-- Visualizer/Album Art Box -->
           <div
-            class="w-24 h-24 mx-auto mb-4 bg-black/20 dark:bg-black/50 rounded-2xl flex flex-col items-center justify-center border border-emerald-500/30 shadow-[0_0_20px_rgba(16,185,129,0.2)] relative overflow-hidden"
+            class="w-32 h-32 mx-auto mb-4 bg-black/40 rounded-full flex flex-col items-center justify-center border-4 border-emerald-500/30 shadow-[0_0_30px_rgba(16,185,129,0.3)] relative overflow-hidden transition-all duration-500"
             id="musicVisualizerBox">
-            <div class="absolute inset-0 bg-gradient-to-tr from-emerald-500/20 to-blue-500/20 pointer-events-none">
-            </div>
-            <i data-lucide="music" class="w-10 h-10 text-emerald-400 mb-1 z-10" id="musicModalIcon"></i>
-            <div class="flex gap-1 items-end h-4 z-10" id="miniEQ">
-              <div class="w-1 bg-emerald-500 rounded-t h-2 animate-bounce" style="animation-delay: 0.1s"></div>
-              <div class="w-1 bg-emerald-500 rounded-t h-4 animate-bounce" style="animation-delay: 0.2s"></div>
-              <div class="w-1 bg-emerald-500 rounded-t h-3 animate-bounce" style="animation-delay: 0.3s"></div>
-            </div>
+            <!-- Vinyl Record Grooves -->
+            <div class="absolute inset-0 rounded-full border border-white/5 m-2 pointer-events-none"></div>
+            <div class="absolute inset-0 rounded-full border border-white/5 m-4 pointer-events-none"></div>
+            <div class="absolute inset-0 rounded-full border border-white/5 m-6 pointer-events-none"></div>
+            <div class="absolute inset-0 rounded-full border border-white/5 m-8 pointer-events-none"></div>
+            
+            <i data-lucide="music" class="w-8 h-8 text-emerald-400 z-10" id="musicModalIcon"></i>
+            <canvas id="audioVisualizerCanvas" class="absolute inset-0 w-full h-full z-0 opacity-80" style="mix-blend-mode: screen;"></canvas>
           </div>
 
           <h2 id="modalTrackName"
@@ -285,13 +318,20 @@
           <p class="text-xs font-bold text-muted mb-6 uppercase tracking-widest">Neural Audio Stream</p>
 
           <!-- Progress Bar -->
-          <div class="mb-6 px-2">
+          <div class="mb-4 px-2">
             <div class="flex justify-between text-[10px] text-muted font-mono mb-2">
               <span id="musicModalCurrentTime">0:00</span>
               <span id="musicModalDuration">0:00</span>
             </div>
             <input type="range" id="musicModalSeek" value="0" min="0" max="100"
-              class="w-full h-1 bg-gray-600 rounded-full appearance-none cursor-pointer focus:outline-none accent-emerald-500">
+              class="w-full h-1.5 bg-gray-600 rounded-full appearance-none cursor-pointer focus:outline-none accent-emerald-500 hover:h-2 transition-all" style="--val: 0%; background: linear-gradient(to right, #10b981 var(--val), #4b5563 var(--val));">
+          </div>
+
+          <!-- Volume Control -->
+          <div class="mb-6 px-2 flex items-center gap-3">
+            <i data-lucide="volume-2" class="w-4 h-4 text-muted"></i>
+            <input type="range" id="musicModalVolume" value="100" min="0" max="100"
+              class="flex-1 h-1 bg-gray-600 rounded-full appearance-none cursor-pointer focus:outline-none accent-emerald-500 hover:h-1.5 transition-all" style="--val: 100%; background: linear-gradient(to right, #10b981 var(--val), #4b5563 var(--val));">
           </div>
 
           <!-- Controls -->
@@ -306,8 +346,8 @@
                 data-lucide="skip-forward" class="fill-current w-6 h-6"></i></button>
           </div>
 
-          <!-- Hidden File Input -->
-          <input type="file" id="localAudioFile" accept="audio/*" class="hidden">
+          <!-- Hidden File Input (Multiple supported) -->
+          <input type="file" id="localAudioFile" accept="audio/*" multiple class="hidden">
 
           <!-- Action Buttons -->
           <button id="loadDeviceAudioBtn"

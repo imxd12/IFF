@@ -42,6 +42,13 @@
   };
 
   // ----------------------------------------------------
+  // 1b. PRIVACY MODE INIT
+  // ----------------------------------------------------
+  if (localStorage.getItem('fin_privacy_mode') === 'true') {
+      document.body.classList.add('privacy-mode');
+  }
+
+  // ----------------------------------------------------
   // 2. SNACKBAR NOTIFICATION
   // ----------------------------------------------------
   window.showSnackbar = function (message, type = 'success') {
@@ -312,6 +319,13 @@
   
   window.playUISound = function(type = 'tap') {
     if (localStorage.getItem('fin_sound') === 'off') return;
+    
+    let intensityRaw = localStorage.getItem('fin_sound_intensity');
+    let intensity = intensityRaw ? parseInt(intensityRaw, 10) : 50;
+    if (intensity === 0) return;
+    
+    // Scale baseline gain (50 = 1x multiplier)
+    const mult = intensity / 50;
 
     try {
       if (!_audioCtx) {
@@ -330,15 +344,15 @@
         osc.type = 'sine';
         osc.frequency.setValueAtTime(600, t);
         osc.frequency.exponentialRampToValueAtTime(300, t + 0.05);
-        gain.gain.setValueAtTime(0.08, t);
-        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.05);
+        gain.gain.setValueAtTime(0.08 * mult, t);
+        gain.gain.exponentialRampToValueAtTime(0.001 * mult, t + 0.05);
         osc.start(t);
         osc.stop(t + 0.05);
       } else if (type === 'on') {
         osc.type = 'triangle';
         osc.frequency.setValueAtTime(400, t);
         osc.frequency.linearRampToValueAtTime(800, t + 0.1);
-        gain.gain.setValueAtTime(0.03, t);
+        gain.gain.setValueAtTime(0.03 * mult, t);
         gain.gain.linearRampToValueAtTime(0, t + 0.1);
         osc.start(t);
         osc.stop(t + 0.1);
@@ -346,7 +360,7 @@
         osc.type = 'triangle';
         osc.frequency.setValueAtTime(600, t);
         osc.frequency.linearRampToValueAtTime(200, t + 0.15);
-        gain.gain.setValueAtTime(0.03, t);
+        gain.gain.setValueAtTime(0.03 * mult, t);
         gain.gain.linearRampToValueAtTime(0, t + 0.15);
         osc.start(t);
         osc.stop(t + 0.15);
@@ -370,8 +384,8 @@
         whiteNoise.connect(filter);
         filter.connect(gain);
         
-        gain.gain.setValueAtTime(0.08, t);
-        gain.gain.exponentialRampToValueAtTime(0.01, t + 0.15);
+        gain.gain.setValueAtTime(0.08 * mult, t);
+        gain.gain.exponentialRampToValueAtTime(0.01 * mult, t + 0.15);
         
         whiteNoise.start(t);
         whiteNoise.stop(t + 0.15);
@@ -632,15 +646,83 @@
     // Defer skill popups slightly to ensure DOM is ready
     setTimeout(initSkillPopup, 100);
 
-    // 6. Global Haptics (10ms light tap)
+    // 6. Global Haptics (Variable intensity)
     document.body.addEventListener('click', (e) => {
-      const target = e.target.closest('button, a, .list-item, select, input, .ag-card-reveal, .skill-box');
+      const target = e.target.closest('button, a, .list-item, select, input, .ag-card-reveal, .skill-box, .tab-btn');
       if (target) {
         if (localStorage.getItem('fin_haptic') !== 'false' && navigator.vibrate) {
-          navigator.vibrate(10);
+          let hapticRaw = localStorage.getItem('fin_haptic_intensity');
+          let hapticInt = hapticRaw ? parseInt(hapticRaw, 10) : 50;
+          if (hapticInt > 0) {
+            // Map 1-100 to 2ms - 40ms vibration duration
+            let duration = Math.max(2, Math.floor(hapticInt * 0.4));
+            navigator.vibrate(duration);
+          }
         }
       }
     });
   });
+
+  // ----------------------------------------------------
+  // GLOBAL MODAL ENGINE (REPLACES PROMPT / CONFIRM)
+  // ----------------------------------------------------
+  window.showConfirmModal = function(title, text, confirmBtnText, onConfirm) {
+      if(window.playUISound) window.playUISound('tap');
+      const overlay = document.createElement('div');
+      overlay.className = 'global-modal-overlay active';
+      overlay.innerHTML = `
+          <div class="global-modal-content max-w-sm w-full mx-4 relative p-6 border border-white/10 shadow-[0_0_40px_rgba(239,68,68,0.15)] rounded-3xl overflow-hidden backdrop-blur-2xl bg-black/40">
+              <div class="absolute inset-0 bg-gradient-to-br from-rose-500/10 to-transparent pointer-events-none"></div>
+              <div class="w-16 h-16 rounded-full bg-rose-500/20 border border-rose-500/30 flex items-center justify-center mx-auto mb-4 text-rose-400">
+                  <i data-lucide="alert-triangle" class="w-8 h-8"></i>
+              </div>
+              <h2 class="text-2xl font-extrabold mb-2 text-center theme-text">${title}</h2>
+              <p class="text-sm text-center text-muted mb-6 relative z-10">${text}</p>
+              <div class="flex gap-3 relative z-10">
+                  <button class="flex-1 py-3 rounded-xl font-bold bg-white/5 text-muted hover:text-white transition-colors border border-white/10" id="btnCancelModal">Cancel</button>
+                  <button class="flex-1 py-3 rounded-xl font-bold bg-rose-500 text-white shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all" id="btnConfirmModal">${confirmBtnText}</button>
+              </div>
+          </div>
+      `;
+      document.body.appendChild(overlay);
+      if (window.lucide) lucide.createIcons();
+      
+      const close = () => { overlay.classList.remove('active'); setTimeout(()=>overlay.remove(), 300); };
+      document.getElementById('btnCancelModal').onclick = close;
+      document.getElementById('btnConfirmModal').onclick = () => {
+          close();
+          onConfirm();
+      };
+  };
+
+  window.showPromptModal = function(title, defaultValue, placeholder, onConfirm) {
+      if(window.playUISound) window.playUISound('tap');
+      const overlay = document.createElement('div');
+      overlay.className = 'global-modal-overlay active';
+      overlay.innerHTML = `
+          <div class="global-modal-content max-w-sm w-full mx-4 relative p-6 border border-white/10 shadow-[0_0_40px_rgba(59,130,246,0.15)] rounded-3xl overflow-hidden backdrop-blur-2xl bg-black/40">
+              <div class="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-transparent pointer-events-none"></div>
+              <h2 class="text-xl font-extrabold mb-4 text-center theme-text flex justify-center items-center gap-2 relative z-10"><i data-lucide="edit-3" class="text-blue-500 w-5 h-5"></i> ${title}</h2>
+              <input type="text" id="promptModalInput" class="glass-input w-full mb-6 !py-3 text-center text-lg shadow-inner relative z-10 border-blue-500/30" placeholder="${placeholder}" value="${defaultValue}">
+              <div class="flex gap-3 relative z-10">
+                  <button class="flex-1 py-3 rounded-xl font-bold bg-white/5 text-muted hover:text-white transition-colors border border-white/10" id="btnCancelPrompt">Cancel</button>
+                  <button class="flex-1 py-3 rounded-xl font-bold bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all" id="btnConfirmPrompt">Save</button>
+              </div>
+          </div>
+      `;
+      document.body.appendChild(overlay);
+      if (window.lucide) lucide.createIcons();
+      
+      const input = document.getElementById('promptModalInput');
+      input.focus();
+      
+      const close = () => { overlay.classList.remove('active'); setTimeout(()=>overlay.remove(), 300); };
+      document.getElementById('btnCancelPrompt').onclick = close;
+      document.getElementById('btnConfirmPrompt').onclick = () => {
+          const val = input.value;
+          close();
+          onConfirm(val);
+      };
+  };
 
 })();

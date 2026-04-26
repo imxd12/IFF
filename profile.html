@@ -19,11 +19,13 @@
 <body class="profile-body">
 
     <!-- SVG Gooey Filter for Liquid Background -->
-    <svg style="visibility: hidden; position: absolute;" width="0" height="0" xmlns="http://www.w3.org/2000/svg" version="1.1">
+    <svg style="visibility: hidden; position: absolute;" width="0" height="0" xmlns="http://www.w3.org/2000/svg"
+        version="1.1">
         <defs>
             <filter id="gooey-filter">
                 <feGaussianBlur in="SourceGraphic" stdDeviation="20" result="blur" />
-                <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 30 -10" result="goo" />
+                <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 30 -10"
+                    result="goo" />
                 <feBlend in="SourceGraphic" in2="goo" />
             </filter>
         </defs>
@@ -36,7 +38,7 @@
     </div>
 
     <!-- Header -->
-    <header class="global-header cyber-glass-header pr-header-fixed">
+    <header class="global-header cyber-glass-header pr-header-fixed z-[100]">
         <div class="brand flex items-center gap-3 relative z-10">
             <a href="javascript:history.back()"
                 class="glass-button magnetic-btn w-10 h-10 rounded-full flex items-center justify-center border border-white/10 cyber-glass-base">
@@ -99,10 +101,13 @@
                     </div>
 
                     <div class="hero-bio-container opacity-0 translate-y-4 mt-6 mb-8 max-w-md mx-auto">
-                        <p class="hero-bio theme-text text-sm leading-relaxed bg-white/10 dark:bg-black/30 p-4 rounded-2xl border border-white/10 shadow-inner backdrop-blur-md">
-                            I'm a frontend developer and tech enthusiast merging digital interfaces with hardware realities.
+                        <p
+                            class="hero-bio theme-text text-sm leading-relaxed bg-white/10 dark:bg-black/30 p-4 rounded-2xl border border-white/10 shadow-inner backdrop-blur-md">
+                            I'm a frontend developer and tech enthusiast merging digital interfaces with hardware
+                            realities.
                             As the creator of MoneyFlow, I build financial tools with <span
-                                class="text-cyan-500 light:text-cyan-600 font-extrabold">beautiful, fluid UI</span>. Pursuing
+                                class="text-cyan-500 light:text-cyan-600 font-extrabold">beautiful, fluid UI</span>.
+                            Pursuing
                             Electrical & Computer Engineering (Automation & Robotics), I engineer the future. Currently
                             optimizing workflows and writing the next big feature for MoneyFlow! 🚀
                         </p>
@@ -125,7 +130,9 @@
             <!-- Unified Timeline Structure (No Scroll Animation) -->
             <div class="cyber-timeline-layout">
                 <div class="timeline-progress-line theme-border">
-                    <div class="timeline-progress-fill" style="height: 100%;"></div>
+                    <div class="timeline-progress-fill" style="height: 100%;">
+                        <div class="timeline-glow-point"></div>
+                    </div>
                 </div>
 
                 <!-- Education Section -->
@@ -259,6 +266,21 @@
                                 <div class="card-edge-glow"></div>
                             </div>
                         </div>
+                        <div class="timeline-item">
+                            <div class="timeline-node node-emerald"></div>
+                            <div class="timeline-content cyber-card glass-panel">
+                                <h4 class="text-emerald-500 font-bold text-md mb-2 flex items-center"><i
+                                        data-lucide="code" class="mr-2 w-4 h-4"></i> Algorithm X Hackathon</h4>
+                                <p
+                                    class="tc-sub text-emerald-600 dark:text-emerald-300 text-xs mt-1 mb-2 font-mono font-bold tracking-widest uppercase">
+                                    32 Hrs National Level</p>
+                                <p class="tc-desc theme-text-muted text-sm leading-relaxed">Developed <span
+                                        class="text-emerald-400 font-semibold">"Lost And Found Protocols"</span>.
+                                    Certificate of Participation awarded by Programmers Club - AI's Kalsekar Technical
+                                    Campus (2026).</p>
+                                <div class="card-edge-glow"></div>
+                            </div>
+                        </div>
                     </div>
                 </section>
             </div>
@@ -314,10 +336,15 @@
                                 <i data-lucide="brackets" class="text-rose-500"></i><span
                                     class="text-xs font-mono mt-1 text-rose-500">ES6+</span>
                             </div>
-                            <div class="skill-node theme-node-bg cursor-pointer hover:shadow-[0_0_15px_rgba(156,163,175,0.4)] hover:border-gray-400/50 col-span-2"
+                            <div class="skill-node theme-node-bg cursor-pointer hover:shadow-[0_0_15px_rgba(156,163,175,0.4)] hover:border-gray-400/50"
                                 onclick="openSkillModal('c')">
                                 <i data-lucide="cpu" class="text-gray-500"></i><span
                                     class="text-xs font-mono mt-1 theme-text">C/C++</span>
+                            </div>
+                            <div class="skill-node theme-node-bg cursor-pointer hover:shadow-[0_0_15px_rgba(239,68,68,0.4)] hover:border-red-500/50"
+                                onclick="openSkillModal('java')">
+                                <i data-lucide="coffee" class="text-red-500"></i><span
+                                    class="text-xs font-mono mt-1 text-red-500">Java</span>
                             </div>
                         </div>
                         <div class="card-edge-glow"></div>
@@ -351,6 +378,26 @@
                                 <i data-lucide="rss" class="text-amber-500 w-8 h-8 mb-2 float-anim"></i><span
                                     class="text-xs font-mono mt-1 font-bold text-amber-500">IoT Ecosystem</span>
                             </div>
+                            <div class="skill-node py-6 theme-node-bg cursor-pointer hover:shadow-[0_0_20px_rgba(20,184,166,0.4)] hover:border-teal-500/50"
+                                onclick="openSkillModal('esp32')">
+                                <i data-lucide="cpu" class="text-teal-500 w-8 h-8 mb-2"></i><span
+                                    class="text-xs font-mono mt-1 font-bold text-teal-500">ESP32 / MCU</span>
+                            </div>
+                            <div class="skill-node py-6 theme-node-bg cursor-pointer hover:shadow-[0_0_20px_rgba(249,115,22,0.4)] hover:border-orange-500/50 bg-orange-500/5"
+                                onclick="openSkillModal('plc')">
+                                <i data-lucide="server" class="text-orange-500 w-8 h-8 mb-2"></i><span
+                                    class="text-xs font-mono mt-1 font-bold text-orange-500">PLC - SCADA</span>
+                            </div>
+                            <div class="skill-node py-6 theme-node-bg cursor-pointer hover:shadow-[0_0_20px_rgba(99,102,241,0.4)] hover:border-indigo-500/50"
+                                onclick="openSkillModal('rpa')">
+                                <i data-lucide="bot" class="text-indigo-500 w-8 h-8 mb-2 float-anim"></i><span
+                                    class="text-xs font-mono mt-1 font-bold text-indigo-500">RPA Logic</span>
+                            </div>
+                            <div class="skill-node py-6 theme-node-bg cursor-pointer hover:shadow-[0_0_20px_rgba(132,204,22,0.4)] hover:border-lime-500/50 bg-lime-500/5"
+                                onclick="openSkillModal('robotics_prog')">
+                                <i data-lucide="terminal" class="text-lime-500 w-8 h-8 mb-2 pulse-anim"></i><span
+                                    class="text-xs font-mono mt-1 font-bold text-lime-500">Robotics Prog</span>
+                            </div>
                         </div>
                         <div class="card-edge-glow"></div>
                     </div>
@@ -360,7 +407,7 @@
         </div>
     </main>
 
-    <nav class="bottom-dock glass-dock pwa-dock cyber-glass-base border-t border-white/10 cyber-dock z-40 fixed">
+    <nav class="bottom-dock glass-dock pwa-dock cyber-glass-base border-t border-white/10 cyber-dock z-[100] fixed">
         <a href="index.html" class="dock-item magnetic-btn theme-text">
             <i data-lucide="home"></i>
             <span>Home</span>
@@ -373,10 +420,9 @@
             <i data-lucide="calendar"></i>
             <span>PocketCal</span>
         </a>
-      <a href="settings.html" class="dock-item">
-        <i data-lucide="settings"></i>
-        <span>Settings</span>
-      </a>
+        <a href="settings.html" class="dock-item">
+            <i data-lucide="settings"></i>
+            <span>Settings</span>
         </a>
     </nav>
 
@@ -425,10 +471,15 @@
             python: { title: "Python", icon: "bot", color: "text-blue-500", bar: "bg-blue-500", desc: "Used efficiently for backend scripting, data processing, and automation tasks. Python serves as the logical backbone for analytical processing required in robotic engines or data tools.", tags: ["Data", "Scripting", "Automation"] },
             es6: { title: "ES6+", icon: "brackets", color: "text-rose-500", bar: "bg-rose-500", desc: "Modern JavaScript utilizing arrow functions, destructuring, promises, and modules. I write clean, modular, and highly maintainable codebases.", tags: ["Modern JS", "Modules", "Clean Code"] },
             c: { title: "C/C++", icon: "cpu", color: "text-gray-500", bar: "bg-gray-500", desc: "Crucial for hardware-level programming. Used extensively to write highly performant code for microcontrollers and embedded systems where memory and speed are critical.", tags: ["Embedded", "Performance", "Low-level"] },
+            java: { title: "Java", icon: "coffee", color: "text-red-500", bar: "bg-red-500", desc: "Object-oriented programming using Java for enterprise-level applications, Android development, and robust backend services. Skilled in JVM optimization and design patterns.", tags: ["OOP", "Android", "Backend"] },
             arduino: { title: "Arduino", icon: "microchip", color: "text-cyan-500", bar: "bg-cyan-500", desc: "Developing control systems and interfacing with sensors/actuators. I design customized embedded solutions for various robotic and automation use cases.", tags: ["Sensors", "C++", "Hardware"] },
             raspberry: { title: "Raspberry Pi", icon: "hard-drive", color: "text-red-500", bar: "bg-red-500", desc: "Leveraging Pi as a central processing hub for IoT systems, including running lightweight servers, physical computing tasks, and automated data collection units.", tags: ["IoT", "Linux", "Server"] },
             kinematics: { title: "Kinematics", icon: "settings", color: "text-purple-500", bar: "bg-purple-500", desc: "Understanding the geometry of motion. Applied in robotics to calculate the motion of robotic arms, wheels, and joints without considering the forces that cause the motion.", tags: ["Robotics", "Math", "Motion"] },
-            iot: { title: "IoT Ecosystems", icon: "rss", color: "text-amber-500", bar: "bg-amber-500", desc: "Connecting the physical world to the digital realm. I build full pipelines spanning from edge devices gathering physical data to cloud-based monitoring interfaces.", tags: ["MQTT", "Connectivity", "Edge Computing"] }
+            iot: { title: "IoT Ecosystems", icon: "rss", color: "text-amber-500", bar: "bg-amber-500", desc: "Connecting the physical world to the digital realm. I build full pipelines spanning from edge devices gathering physical data to cloud-based monitoring interfaces.", tags: ["MQTT", "Connectivity", "Edge Computing"] },
+            esp32: { title: "ESP32 / MCU", icon: "cpu", color: "text-teal-500", bar: "bg-teal-500", desc: "Advanced microcontroller programming utilizing ESP32 for high-performance edge computing, Wi-Fi/Bluetooth integrations, and complex embedded protocols.", tags: ["Wireless", "C/C++", "Edge"] },
+            plc: { title: "PLC - SCADA", icon: "server", color: "text-orange-500", bar: "bg-orange-500", desc: "Designing and programming Programmable Logic Controllers. Utilizing SCADA interfaces for real-time industrial monitoring, data acquisition, and automated manufacturing pipelines.", tags: ["Industrial", "Automation", "Ladder Logic"] },
+            rpa: { title: "Robotic Process Automation", icon: "bot", color: "text-indigo-500", bar: "bg-indigo-500", desc: "Developing software bots to automate repetitive, rules-based digital tasks. Integrating AI engines to streamline workflows across disparate business applications.", tags: ["Bot", "Efficiency", "Workflows"] },
+            robotics_prog: { title: "Robotics Programming", icon: "terminal", color: "text-lime-500", bar: "bg-lime-500", desc: "Writing complex algorithms for autonomous and semi-autonomous robots. Focusing on path planning, sensor fusion, and real-time operating systems (RTOS).", tags: ["Algorithms", "ROS", "Control Systems"] }
         };
 
         const modal = document.getElementById('skillModal');
@@ -563,16 +614,21 @@
                     ease: "power3.out"
                 });
 
-                // Node pop
+                // Node pop & Flash
                 gsap.from(node, {
                     scrollTrigger: {
                         trigger: item,
-                        start: "top 85%"
+                        start: "top 75%",
+                        onEnter: () => {
+                            node.classList.add('node-flash');
+                            if (window.playUISound) window.playUISound('tap');
+                            setTimeout(() => node.classList.remove('node-flash'), 500);
+                        }
                     },
                     scale: 0,
                     duration: 0.5,
                     ease: "back.out(2)",
-                    delay: 0.2
+                    delay: 0.1
                 });
             });
 
@@ -624,8 +680,8 @@
         });
         // ── LIVE GEOLOCATION ENGINE ───────────────────────────────────────
         (function initGeoLocation() {
-            const badge    = document.getElementById('locationText');
-            const iconEl   = document.getElementById('locationIcon');
+            const badge = document.getElementById('locationText');
+            const iconEl = document.getElementById('locationIcon');
             if (!badge) return;
 
             // Show cached instantly while we attempt fresh fetch
@@ -647,17 +703,26 @@
                         const { latitude: lat, longitude: lon } = pos.coords;
 
                         // Nominatim reverse geocode — free, no API key needed
-                        const res  = await fetch(
+                        const res = await fetch(
                             `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&zoom=10&addressdetails=1`,
                             { headers: { 'Accept-Language': 'en' } }
                         );
                         const json = await res.json();
                         const addr = json.address || {};
 
-                        // Build "City, Country" label — prefer suburb → city → town → state
-                        const city    = addr.suburb || addr.city || addr.town || addr.county || addr.state || '';
+                        // Build "Suburb / City / State, IN" label
+                        const suburb = addr.suburb || addr.neighbourhood || '';
+                        const city = addr.city || addr.town || addr.county || '';
+                        const state = addr.state || '';
                         const country = addr.country_code ? addr.country_code.toUpperCase() : (addr.country || '');
-                        const label   = city ? `${city}, ${country}` : (json.display_name?.split(',')[0] || 'Unknown');
+
+                        let parts = [];
+                        if (suburb) parts.push(suburb);
+                        if (city && city !== suburb) parts.push(city);
+                        if (state && state !== city) parts.push(state);
+
+                        let label = parts.length > 0 ? parts.join(' / ') : (json.display_name?.split(',')[0] || 'Unknown');
+                        if (country) label += `, ${country}`;
 
                         badge.textContent = label;
                         badge.classList.remove('location-detect-pulse');

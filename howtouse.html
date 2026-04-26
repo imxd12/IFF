@@ -70,10 +70,7 @@
                     <ul class="list-disc pl-6 space-y-2">
                         <li><strong>Real-Time Cards:</strong> Instantly view Today's Expense, All-Time Balance, and
                             customized monthly insights.</li>
-                        <li><strong>AI Smart Insights:</strong> Neural-styled guidance and suggestions based on your
-                            logging frequency.</li>
-                        <li><strong>Quick Access:</strong> Navigate to any core feature (Spendly, PocketCal, Feedback)
-                            with a single tap.</li>
+                        <li><strong>AI Voice Greetings:</strong> The app greets you contextually based on the time of day.</li>
                         <li><strong>PWA Integration:</strong> Install MoneyFlow directly to your home screen via the
                             prompt for a full-screen, native-app experience!</li>
                     </ul>
@@ -81,69 +78,57 @@
             </div>
 
             <div class="glass-panel p-6 ag-card-reveal" data-speed="0.2">
-                <h3 class="text-xl font-bold flex items-center gap-3 mb-4 text-blue-500">
-                    <i data-lucide="pie-chart"></i> 2. Spendly Analytics
+                <h3 class="text-xl font-bold flex items-center gap-3 mb-4 text-amber-500">
+                    <i data-lucide="tags"></i> 2. Advanced Category Manager
                 </h3>
                 <div class="text-muted leading-relaxed space-y-3">
-                    <p>Spendly is your core ledger. Log every single daily transactional movement—whether it's an
-                        impromptu expense or an unexpected income.</p>
+                    <p>Control exactly how your finances are tagged. Navigate to the <strong>Settings -> Finance</strong> tab to access the powerful Category Manager.</p>
                     <ul class="list-disc pl-6 space-y-2">
-                        <li><strong>Liquid Toggle:</strong> Seamlessly flip between Income and Expense logging using the
-                            centered liquid slider.</li>
-                        <li><strong>Categorizations:</strong> Assign universal tags (e.g., Food, Travel) for visual
-                            Chart.js mappings.</li>
-                        <li><strong>Dynamic Data Viz:</strong> Observe up to 4 real-time graphs recalculating instantly
-                            right as you log transactions.</li>
+                        <li><strong>Parent/Child Structure:</strong> Select a main category (e.g., Food) and directly add or edit specific subcategories (e.g., McDonald's, Groceries).</li>
+                        <li><strong>Custom Form UI:</strong> Enjoy beautiful, glassmorphic modal prompts for editing and deleting items, completely replacing ugly browser popups.</li>
+                        <li><strong>Instant Sync:</strong> Changes made here immediately update the dropdowns in both <strong>Spendly</strong> and <strong>PocketCal</strong>.</li>
                     </ul>
                 </div>
             </div>
 
             <div class="glass-panel p-6 ag-card-reveal" data-speed="0.25">
-                <h3 class="text-xl font-bold flex items-center gap-3 mb-4 text-amber-500">
-                    <i data-lucide="calendar"></i> 3. PocketCal Engine
+                <h3 class="text-xl font-bold flex items-center gap-3 mb-4 text-blue-500">
+                    <i data-lucide="pie-chart"></i> 3. Spendly & PocketCal Engines
                 </h3>
                 <div class="text-muted leading-relaxed space-y-3">
-                    <p>PocketCal translates arbitrary financial numbers into a chronological, scannable day-grid,
-                        originally designed for managing "Pocket Money" allowances but robust enough for anything.</p>
+                    <p>Log every transactional movement and map it across two powerful ledgers.</p>
                     <ul class="list-disc pl-6 space-y-2">
-                        <li><strong>Visual Day Grid:</strong> Instantly see which days you gained money (green rings) vs
-                            days you spent heavily.</li>
-                        <li><strong>Magic Syncing:</strong> When you add an income explicitly labeled <em>"💵 Pocket
-                                Money"</em> inside Spendly, it magically bridges over into your PocketCal balance.</li>
-                        <li><strong>Extreme Scaling:</strong> The UI is protected from layout-breakage, shrinking texts
-                            down intelligently to fit ANY device constraint globally.</li>
+                        <li><strong>Spendly:</strong> Core analytics ledger. Swap between Income and Expense logging using the liquid toggle. Features live Chart.js visualizations.</li>
+                        <li><strong>PocketCal:</strong> A visual day-grid designed for allowances. Instantly see green rings for income days and red for expenses.</li>
+                        <li><strong>Magic Syncing:</strong> Adding an income labeled <em>"💵 Pocket Money"</em> inside Spendly magically bridges into your PocketCal balance.</li>
                     </ul>
                 </div>
             </div>
 
             <div class="glass-panel p-6 ag-card-reveal" data-speed="0.3">
-                <h3 class="text-xl font-bold flex items-center gap-3 mb-4 text-indigo-500">
-                    <i data-lucide="moon"></i> 4. The Inky Theme Switch
+                <h3 class="text-xl font-bold flex items-center gap-3 mb-4 text-rose-500">
+                    <i data-lucide="shield"></i> 4. Privacy Mode & Data Safety
                 </h3>
                 <div class="text-muted leading-relaxed space-y-3">
-                    <p>Why stick to one reality? MoneyFlow boasts a pristine light aesthetic ("Ceramic White") and a
-                        highly optimized dark mode ("Obsidian Black").</p>
+                    <p>Your data never leaves your device. MoneyFlow uses your browser's Local Storage exclusively.</p>
                     <ul class="list-disc pl-6 space-y-2">
-                        <li><strong>Liquid Expansion:</strong> Tap the Sun/Moon icon in the overarching header to
-                            initiate an expanding clip-path sequence spanning the whole DOM.</li>
-                        <li><strong>Engine Support:</strong> Uses the cutting-edge ViewTransitions API natively baked
-                            into modern browser pipelines.</li>
+                        <li><strong>Privacy Mode:</strong> Enable this in Settings to automatically blur your total balances on the dashboard. Simply hover over the blurred text to temporarily reveal your balance.</li>
+                        <li><strong>Offline First:</strong> Since everything is local, the app works entirely offline.</li>
+                        <li><strong>Complete Control:</strong> You can wipe your data completely from the Settings menu at any time.</li>
                     </ul>
                 </div>
             </div>
 
             <div class="glass-panel p-6 ag-card-reveal" data-speed="0.35">
-                <h3 class="text-xl font-bold flex items-center gap-3 mb-4 text-emerald-500">
-                    <i data-lucide="file-down"></i> 5. Bank Passbook Exports
+                <h3 class="text-xl font-bold flex items-center gap-3 mb-4 text-indigo-500">
+                    <i data-lucide="file-down"></i> 5. Professional Passbook Export
                 </h3>
                 <div class="text-muted leading-relaxed space-y-3">
-                    <p>Sometimes you need official records—for parents, audits, or personal archiving. MoneyFlow
-                        computes real-time PDFs in your browser locally.</p>
+                    <p>Generate highly professional, HDFC-style PDF bank statements directly from your device.</p>
                     <ul class="list-disc pl-6 space-y-2">
-                        <li><strong>Instant Compilation:</strong> Clicking "Export PDF" instantly stitches your
-                            transactions into a standard A4 format without relying on a remote cloud.</li>
-                        <li><strong>Dr/Cr Architecture:</strong> Automatically routes your flows into professional Debit
-                            and Credit structures alongside running balances.</li>
+                        <li><strong>Instant Compilation:</strong> Clicking "Export PDF" stitches your transactions into a standard A4 format without any cloud processing.</li>
+                        <li><strong>Dr/Cr Architecture:</strong> Automatically routes your flows into professional Debit and Credit structures alongside a calculated running balance.</li>
+                        <li><strong>Full Emoji Support:</strong> Category emojis are fully preserved in the PDF output using standard system fonts.</li>
                     </ul>
                 </div>
             </div>
@@ -153,13 +138,10 @@
                     <i data-lucide="sparkles"></i> 6. The Antigravity Ecosystem
                 </h3>
                 <div class="text-muted leading-relaxed space-y-3">
-                    <p>MoneyFlow is completely governed by a localized physics engine, marrying structural layouts with
-                        fluid motions.</p>
+                    <p>MoneyFlow is governed by a localized physics engine, marrying structural layouts with fluid motions.</p>
                     <ul class="list-disc pl-6 space-y-2">
-                        <li><strong>Scroll Physics:</strong> As you traverse sections, distinct cards float at unalike
-                            speeds using GSAP ScrollTrigger computations.</li>
-                        <li><strong>Feedback Mechanisms:</strong> If enabled inside your Settings, the app physically
-                            taps your device's vibration motors upon major interactions.</li>
+                        <li><strong>The Inky Theme Switch:</strong> Toggle between "Obsidian Black" and "Ceramic White" triggering an expanding clip-path sequence.</li>
+                        <li><strong>Tactile Haptics & Sound:</strong> The app physically taps your device's vibration motors and plays subtle UI sounds. You can adjust their intensity in Settings.</li>
                     </ul>
                 </div>
             </div>

@@ -6,8 +6,8 @@
 (function () {
     'use strict';
 
-    // Categories
-    const categoryMap = {
+    // Default Map
+    const defaultCategoryMap = {
         Travel: ['🛺 Auto/Rickshaw', '🤝 Shared Auto', '🚍 BEST/City Bus', '🚇 Metro', '🚆 Local Train', '🚌 Long Journey', '🛵 Bike Petrol', '⛽ Fuel/Diesel', '🚗 Taxi/Cab', '🚲 Bicycle', '🛤️ Toll/Parking', '🎫 Monthly Pass', 'All'],
         Food: ['🥛 Milk/Doodh', '🌾 Ration/Kirana', '🥬 Vegetables/Mandi', '🍎 Fruits', '🍞 Bakery/Bread', '🍗 Non-Veg/Meat', '🌶️ Masala/Spices', '🍳 Breakfast', '🍛 Lunch/Dinner', '☕ Tea/Chai', '🥙 Street Food', '🍔 Outside Junk', '🥤 Cold Drinks', 'All'],
         'Home & Rent': ['🏠 House Rent', '🏡 PG/Hostel', '🧹 Maid/Bai', '🔥 Gas Cylinder', '🚰 Drinking Water/Can', '🔌 Hardware/Tools', '🧴 Detergent/Soaps', '📰 Newspaper', 'All'],
@@ -18,9 +18,27 @@
         Entertainment: ['🎬 Movies/Theater', '🎥 OTT (Netflix/Prime)', '🍿 Outing/Mela', '🎮 Games', '🎡 Fun Activities', '🎵 Spotify/Music', 'All'],
         Savings: ['🏦 Bank Deposit', '💰 Cash Piggubank', '📈 Mutual Funds/SIP', '🏅 Gold/Jewelry', '🚨 Emergency Fund', 'All'],
         Family: ['🎉 Festivals/Puja', '🎁 Gifts/Shagun', '👶 Kids Fees/Toys', '🍛 Family Dinner', '👵 Parent Medicine', '🏠 Home Repair', 'All'],
-        Program: ['💻 Hackathon', '🏆 Competition', '🎤 Seminar/Workshop', '📢 Event Participation', '🧑‍💻 Coding Contest', '🚀 Startup Event', '📜 Certification Program', '🌐 Tech Meetup', 'All'],
         Other: ['💇 Haircut/Barber', '👚 Laundry/Dhobi', '📦 Courier/Post', '🚗 Bike/Auto Service', '💵 Charity/Zakat', '💸 Lost/Stolen', '🚬 Smoking/Pan', '🍺 Alcohol', 'All']
     };
+
+    let fullCategoryMap = window.loadData('fin_full_category_map') || {
+        expenseMap: JSON.parse(JSON.stringify(defaultCategoryMap)),
+        incomeList: []
+    };
+
+    // Backward compatibility for old custom categories
+    const oldCustomCats = window.loadData('fin_custom_categories');
+    if (oldCustomCats && !window.loadData('fin_full_category_map')) {
+        if (oldCustomCats.expense && oldCustomCats.expense.length > 0) {
+            fullCategoryMap.expenseMap['Custom'] = oldCustomCats.expense;
+        }
+        if (oldCustomCats.income && oldCustomCats.income.length > 0) {
+            fullCategoryMap.incomeList = oldCustomCats.income;
+        }
+        window.saveData('fin_full_category_map', fullCategoryMap);
+    }
+    
+    const categoryMap = fullCategoryMap.expenseMap;
 
     let data = loadData('fin_spendly') || [];
     let showLimit = 6;
@@ -32,8 +50,19 @@
     // Elements
     const expenseCategoryEl = document.getElementById('expenseCategory');
     const expenseSubEl = document.getElementById('expenseSub');
+    const incomeCategoryEl = document.getElementById('incomeCategory');
 
-    // Init Categories
+    // Init Custom Income Categories
+    if (incomeCategoryEl && fullCategoryMap.incomeList && fullCategoryMap.incomeList.length > 0) {
+        fullCategoryMap.incomeList.forEach(cat => {
+            const opt = document.createElement('option');
+            opt.value = cat;
+            opt.textContent = cat;
+            incomeCategoryEl.appendChild(opt);
+        });
+    }
+
+    // Init Expense Categories
     if (expenseCategoryEl) {
         expenseCategoryEl.innerHTML = Object.keys(categoryMap)
             .map((c) => `<option value="${c}">${c}</option>`).join('');
@@ -317,20 +346,26 @@
     });
 
     window.deleteTransaction = function() {
-        if(!confirm("Delete transaction permanently?")) return;
-        const id = Number(document.getElementById('editId').value);
-        const tx = data.find(d => d.id === id);
-        
-        data = data.filter(d => d.id !== id);
-        saveData('fin_spendly', data);
+        window.showConfirmModal(
+            'Delete Transaction?', 
+            'Are you sure you want to delete this permanently?', 
+            'Delete', 
+            () => {
+                const id = Number(document.getElementById('editId').value);
+                const tx = data.find(d => d.id === id);
+                
+                data = data.filter(d => d.id !== id);
+                saveData('fin_spendly', data);
 
-        if(tx && tx.type === 'income' && tx.category.includes('Pocket Money')){
-            deletePocketCalForSpendly(tx.date);
-        }
+                if(tx && tx.type === 'income' && tx.category.includes('Pocket Money')){
+                    deletePocketCalForSpendly(tx.date);
+                }
 
-        closeModal('#editModal');
-        updateUI();
-        showSnackbar('Deleted successfully.');
+                closeModal('#editModal');
+                updateUI();
+                showSnackbar('Deleted successfully.');
+            }
+        );
     };
 
     // ----------------------------------------------------
@@ -818,6 +853,74 @@
         calcTotals();
         renderList(document.getElementById('searchInput') ? document.getElementById('searchInput').value : '');
         renderCharts();
+    }
+
+    // ----------------------------------------------------
+    // AI SMART AUTO-CATEGORIZATION
+    // ----------------------------------------------------
+    const expenseNotesEl = document.getElementById('expenseNotes');
+    if(expenseNotesEl) {
+        let lastMatchedWord = "";
+        expenseNotesEl.addEventListener('input', (e) => {
+            const val = e.target.value.toLowerCase();
+            const catSelect = document.getElementById('expenseCategory');
+            const subSelect = document.getElementById('expenseSub');
+            if(!catSelect || !subSelect) return;
+            
+            let matchedMain = null;
+            let matchedSub = null;
+            let matchedWord = null;
+            
+            const keywordMap = {
+                'zomato': ['🍔 Food & Dining', 'Swiggy / Zomato'],
+                'swiggy': ['🍔 Food & Dining', 'Swiggy / Zomato'],
+                'mcdonalds': ['🍔 Food & Dining', 'Fast Food'],
+                'uber': ['🚕 Transportation', 'Uber / Ola'],
+                'ola': ['🚕 Transportation', 'Uber / Ola'],
+                'train': ['🚕 Transportation', 'Public Transit'],
+                'flight': ['🚕 Transportation', 'Flights'],
+                'amazon': ['🛍️ Shopping', 'Online Shopping'],
+                'flipkart': ['🛍️ Shopping', 'Online Shopping'],
+                'movie': ['🎬 Entertainment', 'Movies'],
+                'netflix': ['🎬 Entertainment', 'Subscriptions'],
+                'spotify': ['🎬 Entertainment', 'Subscriptions'],
+                'hospital': ['💊 Health & Fitness', 'Medical'],
+                'pharmacy': ['💊 Health & Fitness', 'Medical'],
+                'gym': ['💊 Health & Fitness', 'Gym'],
+                'wifi': ['🧾 Bills & Utilities', 'Internet'],
+                'recharge': ['🧾 Bills & Utilities', 'Mobile Recharge']
+            };
+
+            for(const [keyword, [main, sub]] of Object.entries(keywordMap)) {
+                if(val.includes(keyword)) {
+                    matchedMain = main;
+                    matchedSub = sub;
+                    matchedWord = keyword;
+                    break;
+                }
+            }
+
+            if(matchedMain && matchedWord !== lastMatchedWord) {
+                lastMatchedWord = matchedWord;
+                // Ensure the main category exists in the dropdown options
+                const mainExists = Array.from(catSelect.options).some(opt => opt.value === matchedMain);
+                if(mainExists && catSelect.value !== matchedMain) {
+                    catSelect.value = matchedMain;
+                    // Dispatch change event to trigger sub-category population
+                    catSelect.dispatchEvent(new Event('change'));
+                }
+                
+                // Ensure subcategory exists
+                setTimeout(() => {
+                    const subExists = Array.from(subSelect.options).some(opt => opt.value === matchedSub);
+                    if(subExists && subSelect.value !== matchedSub) {
+                        subSelect.value = matchedSub;
+                        if(window.playUISound) window.playUISound('success');
+                        showSnackbar(`AI Auto-Selected: ${matchedSub} ✨`);
+                    }
+                }, 50);
+            }
+        });
     }
 
     window.addEventListener('DOMContentLoaded', () => {

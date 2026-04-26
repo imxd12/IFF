@@ -291,7 +291,7 @@
     <div class="modal-overlay" id="pdfModal">
         <div class="modal-content-glass max-w-md w-full relative p-6 md:p-8 border border-white/10 shadow-[0_0_40px_rgba(16,185,129,0.15)] rounded-[2rem] max-h-[90vh] overflow-y-auto">
             <div class="absolute inset-0 bg-gradient-to-br from-emerald-500/10 to-transparent pointer-events-none"></div>
-            <button class="absolute top-5 right-5 text-muted hover:text-red-500 transition-colors z-10 bg-black/20 p-2 rounded-full backdrop-blur-md" onclick="closeModal('#pdfModal')">
+            <button type="button" class="absolute top-5 right-5 text-muted hover:text-red-500 transition-colors z-50 bg-white/5 border border-white/10 p-2.5 rounded-full backdrop-blur-md cursor-pointer hover:bg-white/10 active:scale-90" onclick="closeModal('#pdfModal')">
                 <i data-lucide="x" class="w-5 h-5"></i>
             </button>
             <h2 class="text-2xl font-extrabold mb-8 text-center text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400 flex justify-center items-center gap-2">
@@ -370,10 +370,10 @@
     <div class="modal-overlay" id="editModal">
         <div class="modal-content-glass max-w-sm w-full relative p-6 md:p-8 border border-white/10 shadow-[0_0_40px_rgba(59,130,246,0.15)] rounded-[2rem]">
             <div class="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-transparent pointer-events-none"></div>
-            <button class="absolute top-5 right-5 text-muted hover:text-red-500 transition-colors z-10 bg-black/20 p-2 rounded-full backdrop-blur-md" onclick="closeModal('#editModal')">
+            <button type="button" class="absolute top-5 right-5 text-muted hover:text-red-500 transition-colors z-50 bg-white/5 border border-white/10 p-2.5 rounded-full backdrop-blur-md cursor-pointer hover:bg-white/10 active:scale-90" onclick="closeModal('#editModal')">
                 <i data-lucide="x" class="w-5 h-5"></i>
             </button>
-            <h2 class="text-2xl font-extrabold mb-6 flex items-center gap-2 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400 relative z-10">
+            <h2 class="text-2xl font-extrabold mb-6 flex items-center gap-2 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400 relative z-10 mt-2">
                 <i data-lucide="edit-3" class="text-blue-400 w-6 h-6"></i> Modify Record
             </h2>
             <form id="editForm" class="relative z-10">

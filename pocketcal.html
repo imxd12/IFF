@@ -201,10 +201,10 @@
     <div class="modal-overlay" id="entryModal">
         <div class="modal-content-glass max-w-sm w-full relative p-6 md:p-8 border border-white/10 shadow-[0_0_40px_rgba(59,130,246,0.15)] rounded-[2rem] overflow-hidden">
             <div class="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-transparent pointer-events-none"></div>
-            <button class="absolute top-5 right-5 text-muted hover:text-red-500 transition-colors z-10 bg-black/20 p-2 rounded-full backdrop-blur-md" onclick="closeEntryModal()">
+            <button type="button" class="absolute top-5 right-5 text-muted hover:text-red-500 transition-colors z-50 bg-white/5 border border-white/10 p-2.5 rounded-full backdrop-blur-md cursor-pointer hover:bg-white/10 active:scale-90" onclick="closeEntryModal()">
                 <i data-lucide="x" class="w-5 h-5"></i>
             </button>
-            <h2 class="text-2xl font-extrabold mb-6 flex items-center gap-2 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400 z-10 relative" id="modalTitle">
+            <h2 class="text-2xl font-extrabold mb-6 flex items-center gap-2 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400 z-10 relative mt-2" id="modalTitle">
                 <i data-lucide="calendar-plus" class="text-blue-400 w-6 h-6"></i> Add Entry
             </h2>
 
@@ -223,7 +223,9 @@
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-muted mb-1 uppercase tracking-wider">Source</label>
-                        <input type="text" id="pcCategory" class="glass-input bg-black/20 text-muted" value="💵 Pocket Money" readonly>
+                        <select id="pcCategory" class="glass-input bg-black/20 text-muted">
+                            <option value="💵 Pocket Money">💵 Pocket Money</option>
+                        </select>
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-muted mb-1 uppercase tracking-wider">Notes</label>
@@ -248,7 +250,7 @@
     <!-- PDF Modal -->
     <div class="modal-overlay" id="pdfModal">
         <div class="modal-content-glass max-w-sm w-full relative p-8 border border-white/10 shadow-[0_0_40px_rgba(16,185,129,0.15)] rounded-[2rem]">
-            <button class="absolute top-5 right-5 text-muted hover:text-red-500 transition-colors bg-black/20 p-2 rounded-full backdrop-blur-md" onclick="closeModal('#pdfModal')">
+            <button type="button" class="absolute top-5 right-5 text-muted hover:text-red-500 transition-colors z-50 bg-white/5 border border-white/10 p-2.5 rounded-full backdrop-blur-md cursor-pointer hover:bg-white/10 active:scale-90" onclick="closeModal('#pdfModal')">
                 <i data-lucide="x" class="w-5 h-5"></i>
             </button>
             <div class="w-16 h-16 rounded-full bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center mx-auto mb-4 text-emerald-400">

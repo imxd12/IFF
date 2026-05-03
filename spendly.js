@@ -529,20 +529,54 @@
             data.filter(d => d.type === 'expense').forEach(d => {
                 cData[d.category] = (cData[d.category] || 0) + Number(d.amount);
             });
-            const labels = Object.keys(cData);
-            const vals = Object.values(cData);
-            if(labels.length > 0) {
+            
+            // Sort by amount descending
+            const sortedEntries = Object.entries(cData).sort((a, b) => b[1] - a[1]);
+            
+            let finalLabels = [];
+            let finalVals = [];
+            
+            if (sortedEntries.length > 6) {
+                // Take top 5
+                for (let i = 0; i < 5; i++) {
+                    finalLabels.push(sortedEntries[i][0]);
+                    finalVals.push(sortedEntries[i][1]);
+                }
+                // Group the rest as 'Other'
+                let otherSum = 0;
+                for (let i = 5; i < sortedEntries.length; i++) {
+                    otherSum += sortedEntries[i][1];
+                }
+                finalLabels.push('Other Categories');
+                finalVals.push(otherSum);
+            } else {
+                finalLabels = sortedEntries.map(e => e[0]);
+                finalVals = sortedEntries.map(e => e[1]);
+            }
+            
+            if(finalLabels.length > 0) {
                 charts.cat = new Chart(ctxC, {
                     type: 'pie',
                     data: {
-                        labels: labels,
+                        labels: finalLabels,
                         datasets: [{
-                            data: vals,
+                            data: finalVals,
                             backgroundColor: ['#10b981', '#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#14b8a6'],
                             borderWidth: 0
                         }]
                     },
-                    options: { plugins: { legend: { position: 'bottom' } } }
+                    options: { 
+                        plugins: { 
+                            legend: { 
+                                position: 'bottom',
+                                labels: {
+                                    boxWidth: 12,
+                                    padding: 15,
+                                    font: { size: 11 }
+                                }
+                            } 
+                        } 
+                    }
                 });
             }
         }

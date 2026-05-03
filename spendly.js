@@ -96,21 +96,30 @@
         const incomeBtn = document.getElementById('btnIncomeType');
         const expenseBtn = document.getElementById('btnExpenseType');
         const switcherPill = document.getElementById('typeSwitcherPill');
+        const switcherNeon = document.getElementById('typeSwitcherNeon');
         
         if (type === 'income') {
             if (switcherPill) {
                 switcherPill.style.transform = 'translateX(0%)';
-                switcherPill.style.backgroundColor = '#10b981';
+                switcherPill.style.boxShadow = '0 0 15px rgba(16, 185, 129, 0.3)';
+                switcherPill.style.backgroundColor = ''; // Clear inline background if any
             }
-            if (incomeBtn) incomeBtn.className = "relative flex-1 py-2 text-sm font-bold rounded-xl text-white transition-colors duration-300 z-10";
-            if (expenseBtn) expenseBtn.className = "relative flex-1 py-2 text-sm font-bold rounded-xl text-muted hover:text-white transition-colors duration-300 z-10";
+            if (switcherNeon) {
+                switcherNeon.className = 'absolute bottom-0 left-1/2 -translate-x-1/2 w-[60%] h-[3px] rounded-t-full bg-gradient-to-r from-emerald-400 to-teal-400 shadow-[0_0_12px_rgba(16,185,129,1)] transition-colors duration-500';
+            }
+            if (incomeBtn) incomeBtn.className = "relative flex-1 py-3 text-xs sm:text-sm font-black tracking-widest uppercase rounded-[1.75rem] text-white transition-colors duration-300 z-10 active:scale-95";
+            if (expenseBtn) expenseBtn.className = "relative flex-1 py-3 text-xs sm:text-sm font-black tracking-widest uppercase rounded-[1.75rem] text-muted hover:text-white transition-colors duration-300 z-10 active:scale-95";
         } else {
             if (switcherPill) {
                 switcherPill.style.transform = 'translateX(100%)';
-                switcherPill.style.backgroundColor = '#ef4444';
+                switcherPill.style.boxShadow = '0 0 15px rgba(239, 68, 68, 0.3)';
+                switcherPill.style.backgroundColor = ''; // Clear inline background if any
             }
-            if (expenseBtn) expenseBtn.className = "relative flex-1 py-2 text-sm font-bold rounded-xl text-white transition-colors duration-300 z-10";
-            if (incomeBtn) incomeBtn.className = "relative flex-1 py-2 text-sm font-bold rounded-xl text-muted hover:text-white transition-colors duration-300 z-10";
+            if (switcherNeon) {
+                switcherNeon.className = 'absolute bottom-0 left-1/2 -translate-x-1/2 w-[60%] h-[3px] rounded-t-full bg-gradient-to-r from-rose-400 to-red-500 shadow-[0_0_12px_rgba(239,68,68,1)] transition-colors duration-500';
+            }
+            if (expenseBtn) expenseBtn.className = "relative flex-1 py-3 text-xs sm:text-sm font-black tracking-widest uppercase rounded-[1.75rem] text-white transition-colors duration-300 z-10 active:scale-95";
+            if (incomeBtn) incomeBtn.className = "relative flex-1 py-3 text-xs sm:text-sm font-black tracking-widest uppercase rounded-[1.75rem] text-muted hover:text-white transition-colors duration-300 z-10 active:scale-95";
         }
     };
 
@@ -213,6 +222,45 @@
     // ----------------------------------------------------
     // ADD TRANSACTIONS
     // ----------------------------------------------------
+    // Pending entry for anomaly detection
+    window.pendingAnomalyEntry = null;
+
+    window.confirmAnomaly = function() {
+        if(window.pendingAnomalyEntry) {
+            data.push(window.pendingAnomalyEntry);
+            saveData('fin_spendly', data);
+            if(window.pendingAnomalyEntry.type === 'income') {
+                syncIncomeToPocketCal(window.pendingAnomalyEntry);
+                document.getElementById('incomeForm').reset();
+                document.getElementById('incomeDate').value = today;
+            } else {
+                document.getElementById('expenseForm').reset();
+                document.getElementById('expenseDate').value = today;
+                expenseCategoryEl.dispatchEvent(new Event('change'));
+            }
+            updateUI();
+            showTransactionPopup(window.pendingAnomalyEntry.type);
+            window.pendingAnomalyEntry = null;
+            document.getElementById('anomalyModal').classList.remove('active');
+        }
+    };
+
+    window.cancelAnomaly = function() {
+        window.pendingAnomalyEntry = null;
+        document.getElementById('anomalyModal').classList.remove('active');
+    };
+
+    function checkForAnomaly(entry) {
+        // Look for exact same amount and category in the last 24h
+        const recent = data.find(d => 
+            d.type === entry.type && 
+            d.amount === entry.amount && 
+            d.category === entry.category && 
+            d.date === entry.date
+        );
+        return recent != null;
+    }
+
     document.getElementById('incomeForm').addEventListener('submit', (e) => {
         e.preventDefault();
         const entry = {
@@ -224,6 +272,13 @@
             sub: '',
             notes: document.getElementById('incomeNotes').value
         };
+        
+        if(checkForAnomaly(entry)) {
+            window.pendingAnomalyEntry = entry;
+            document.getElementById('anomalyModal').classList.add('active');
+            return;
+        }
+
         data.push(entry);
         saveData('fin_spendly', data);
         syncIncomeToPocketCal(entry);
@@ -246,6 +301,13 @@
             sub: document.getElementById('expenseSub').value,
             notes: document.getElementById('expenseNotes').value
         };
+
+        if(checkForAnomaly(entry)) {
+            window.pendingAnomalyEntry = entry;
+            document.getElementById('anomalyModal').classList.add('active');
+            return;
+        }
+
         data.push(entry);
         saveData('fin_spendly', data);
 
@@ -307,7 +369,61 @@
         document.getElementById('editType').value = item.type;
         document.getElementById('editDate').value = item.date;
         document.getElementById('editAmount').value = item.amount;
-        document.getElementById('editCategory').value = item.type === 'income' ? item.category : `${item.category} - ${item.sub}`;
+
+        const catSelect = document.getElementById('editCategory');
+        const subSelect = document.getElementById('editSub');
+        
+        catSelect.innerHTML = '';
+        if (item.type === 'income') {
+            fullCategoryMap.incomeList.forEach(c => {
+                const opt = document.createElement('option');
+                opt.value = c; opt.textContent = c;
+                catSelect.appendChild(opt);
+            });
+            subSelect.innerHTML = '<option value="">N/A</option>';
+            subSelect.disabled = true;
+            subSelect.style.opacity = '0.5';
+        } else {
+            Object.keys(fullCategoryMap.expenseMap).forEach(c => {
+                const opt = document.createElement('option');
+                opt.value = c; opt.textContent = c;
+                catSelect.appendChild(opt);
+            });
+            subSelect.disabled = false;
+            subSelect.style.opacity = '1';
+        }
+        
+        catSelect.onchange = () => {
+            if (item.type === 'expense') {
+                subSelect.innerHTML = '';
+                const cat = catSelect.value;
+                if (fullCategoryMap.expenseMap[cat]) {
+                    fullCategoryMap.expenseMap[cat].forEach(s => {
+                        const opt = document.createElement('option');
+                        opt.value = s; opt.textContent = s;
+                        subSelect.appendChild(opt);
+                    });
+                }
+            }
+        };
+
+        catSelect.value = item.category || '';
+        if (!catSelect.value && item.category) {
+            const opt = document.createElement('option');
+            opt.value = item.category; opt.textContent = item.category;
+            catSelect.appendChild(opt);
+            catSelect.value = item.category;
+        }
+        
+        catSelect.dispatchEvent(new Event('change'));
+        
+        subSelect.value = item.sub || '';
+        if (!subSelect.value && item.sub && item.type === 'expense') {
+            const opt = document.createElement('option');
+            opt.value = item.sub; opt.textContent = item.sub;
+            subSelect.appendChild(opt);
+            subSelect.value = item.sub;
+        }
         document.getElementById('editNotes').value = item.notes || '';
 
         document.getElementById('editModal').classList.add('active');
@@ -327,9 +443,8 @@
 
             data[idx].date = document.getElementById('editDate').value;
             data[idx].amount = document.getElementById('editAmount').value;
-            // Free text edit simplifies categorical updates slightly
             data[idx].category = document.getElementById('editCategory').value;
-            data[idx].sub = ''; 
+            data[idx].sub = document.getElementById('editSub').value; 
             data[idx].notes = document.getElementById('editNotes').value;
 
             saveData('fin_spendly', data);
@@ -384,6 +499,10 @@
 
         Chart.defaults.color = textColor;
         Chart.defaults.font.family = "'Plus Jakarta Sans', sans-serif";
+        Chart.defaults.animation = {
+            duration: 2000,
+            easing: 'easeOutQuart'
+        };
 
         // 1. Doughnut
         const ctxD = document.getElementById('incomeExpenseChart');
@@ -531,7 +650,80 @@
                     plugins: { legend: { display: false } },
                     scales: {
                         r: { ticks: { display: false }, grid: { color: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)' } }
-                    }
+                    },
+                    animation: { delay: 400 } // staggered entry
+                }
+            });
+        }
+
+        // 6. Spending Spread (Radar)
+        const ctxRadar = document.getElementById('radarChart');
+        if (ctxRadar) {
+            const radarData = { 'Food': 0, 'Travel': 0, 'Shopping': 0, 'Health': 0, 'Entertainment': 0, 'Other': 0 };
+            data.filter(d => d.type === 'expense').forEach(d => {
+                let cat = d.category;
+                if(radarData[cat] === undefined) cat = 'Other';
+                radarData[cat] += Number(d.amount);
+            });
+            charts.radar = new Chart(ctxRadar, {
+                type: 'radar',
+                data: {
+                    labels: Object.keys(radarData),
+                    datasets: [{
+                        label: 'Expense Spread',
+                        data: Object.values(radarData),
+                        backgroundColor: 'rgba(245, 158, 11, 0.4)',
+                        borderColor: '#f59e0b',
+                        pointBackgroundColor: '#f59e0b',
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        r: { ticks: { display: false }, angleLines: { color: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)' }, grid: { color: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)' } }
+                    },
+                    animation: { delay: 600 } // staggered entry
+                }
+            });
+        }
+
+        // 7. Savings Trend (Line)
+        const ctxSavings = document.getElementById('savingsTrendChart');
+        if (ctxSavings) {
+            const monthlySavings = {};
+            data.forEach(d => {
+                const m = d.date.slice(0, 7);
+                if (!monthlySavings[m]) monthlySavings[m] = { inc: 0, exp: 0 };
+                monthlySavings[m][d.type === 'income' ? 'inc' : 'exp'] += Number(d.amount);
+            });
+            const sorted = Object.keys(monthlySavings).sort().slice(-6);
+            const savingsData = sorted.map(m => monthlySavings[m].inc - monthlySavings[m].exp);
+
+            charts.savingsTrend = new Chart(ctxSavings, {
+                type: 'line',
+                data: {
+                    labels: sorted,
+                    datasets: [{
+                        label: 'Net Savings',
+                        data: savingsData,
+                        borderColor: '#10b981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.2)',
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 4,
+                        pointBackgroundColor: '#10b981'
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { grid: { color: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' } },
+                        x: { grid: { display: false } }
+                    },
+                    animation: { delay: 800 } // staggered entry
                 }
             });
         }
@@ -848,12 +1040,199 @@
         if([...months].includes(currentVal)) sel.value = currentVal;
     }
 
+    function checkStreaks() {
+        const streakBanner = document.getElementById('streakBanner');
+        if (!streakBanner) return;
+        
+        let noJunkStreak = 0;
+        const todayObj = new Date();
+        
+        // Count consecutive days going backwards without 'Food' -> 'Outside Junk'
+        for(let i=0; i<30; i++) {
+            let d = new Date(todayObj);
+            d.setDate(d.getDate() - i);
+            let ds = d.toISOString().split('T')[0];
+            
+            let hasJunk = data.find(tx => tx.date === ds && tx.category === 'Food' && (tx.sub.includes('Outside') || tx.sub.includes('Street')));
+            if(hasJunk) break;
+            noJunkStreak++;
+        }
+
+        if(noJunkStreak >= 3) {
+            streakBanner.classList.remove('hidden');
+            document.getElementById('streakTitle').textContent = `🔥 ${noJunkStreak}-Day Cooking Streak!`;
+            document.getElementById('streakDesc').textContent = "You've avoided outside junk food. You're saving money and staying healthy!";
+        } else {
+            streakBanner.classList.add('hidden');
+        }
+    }
+
+    function checkBudgetAlert() {
+        const alertBanner = document.getElementById('budgetAlert');
+        if(!alertBanner) return;
+        
+        const currentM = today.slice(0, 7);
+        const daysInMonth = new Date(today.slice(0, 4), today.slice(5, 7), 0).getDate();
+        const currentDay = parseInt(today.slice(8, 10), 10);
+        
+        const monthlyIncome = data.filter(d => d.type === 'income' && d.date.startsWith(currentM)).reduce((s, d) => s + Number(d.amount), 0);
+        const monthlyExpense = data.filter(d => d.type === 'expense' && d.date.startsWith(currentM)).reduce((s, d) => s + Number(d.amount), 0);
+        
+        if(currentDay > 3 && monthlyIncome > 0) {
+            const velocity = monthlyExpense / currentDay;
+            const projected = velocity * daysInMonth;
+            if(projected > monthlyIncome) {
+                alertBanner.classList.remove('hidden');
+                document.getElementById('budgetAlertDesc').textContent = `At this rate (₹${velocity.toFixed(0)}/day), you're projected to spend ₹${projected.toFixed(0)} this month, exceeding your income!`;
+                return;
+            }
+        }
+        alertBanner.classList.add('hidden');
+    }
+
     function updateUI() {
         populateMonthFilter();
         calcTotals();
         renderList(document.getElementById('searchInput') ? document.getElementById('searchInput').value : '');
         renderCharts();
+        checkStreaks();
+        checkBudgetAlert();
     }
+
+    // ----------------------------------------------------
+    // AI SMART FEATURES
+    // ----------------------------------------------------
+
+    window.processSmartEntry = function() {
+        const input = document.getElementById('smartEntryInput').value.toLowerCase();
+        if(!input) return;
+        
+        // Simple NLP Heuristics
+        // Match numbers
+        const amountMatch = input.match(/\d+/);
+        if(!amountMatch) {
+            showSnackbar('Could not find an amount. Try "Spent 250 on food"');
+            return;
+        }
+        const amount = amountMatch[0];
+        
+        let type = 'expense';
+        if(input.includes('got') || input.includes('received') || input.includes('salary') || input.includes('pocket money')) {
+            type = 'income';
+        }
+
+        let cat = type === 'income' ? 'Other' : 'Other';
+        let sub = 'All';
+
+        // Smart Categorization Dictionary
+        if(type === 'expense') {
+            const aiDict = {
+                'zomato': ['🍔 Food & Dining', 'Swiggy / Zomato'],
+                'swiggy': ['🍔 Food & Dining', 'Swiggy / Zomato'],
+                'mcdonalds': ['🍔 Food & Dining', 'Fast Food'],
+                'pizza': ['🍔 Food & Dining', 'Fast Food'],
+                'lunch': ['🍔 Food & Dining', 'Dining Out'],
+                'dinner': ['🍔 Food & Dining', 'Dining Out'],
+                'uber': ['🚕 Transportation', 'Uber'],
+                'ola': ['🚕 Transportation', 'Ola'],
+                'auto': ['🚕 Transportation', 'Auto Rickshaw'],
+                'rickshaw': ['🚕 Transportation', 'Auto Rickshaw'],
+                'cab': ['🚕 Transportation', 'Cab'],
+                'train': ['🚕 Transportation', 'Train'],
+                'metro': ['🚕 Transportation', 'Metro'],
+                'best': ['🚕 Transportation', 'BEST Bus'],
+                'bus': ['🚕 Transportation', 'Bus'],
+                'flight': ['🚕 Transportation', 'Flights'],
+                'printout': ['📚 Education', 'Printout'],
+                'xerox': ['📚 Education', 'Xerox'],
+                'book': ['📚 Education', 'Books'],
+                'stationery': ['📚 Education', 'Stationery'],
+                'amazon': ['🛍️ Shopping', 'Amazon'],
+                'flipkart': ['🛍️ Shopping', 'Flipkart'],
+                'shirt': ['🛍️ Shopping', 'Clothing'],
+                'shoes': ['🛍️ Shopping', 'Clothing'],
+                'movie': ['🎬 Entertainment', 'Movies'],
+                'netflix': ['🎬 Entertainment', 'Netflix'],
+                'spotify': ['🎬 Entertainment', 'Spotify'],
+                'hospital': ['💊 Health & Fitness', 'Hospital'],
+                'doctor': ['💊 Health & Fitness', 'Medical'],
+                'pharmacy': ['💊 Health & Fitness', 'Pharmacy'],
+                'medicine': ['💊 Health & Fitness', 'Pharmacy'],
+                'gym': ['💊 Health & Fitness', 'Gym'],
+                'wifi': ['🧾 Bills & Utilities', 'Internet'],
+                'recharge': ['🧾 Bills & Utilities', 'Mobile Recharge'],
+                'electricity': ['🧾 Bills & Utilities', 'Electricity']
+            };
+
+            for(const [keyword, [mainCat, subCat]] of Object.entries(aiDict)) {
+                // simple boundary matching so "training" doesn't match "train"
+                if(new RegExp(`\\b${keyword}\\b`, 'i').test(input)) {
+                    cat = mainCat;
+                    sub = subCat;
+                    break;
+                }
+            }
+        } else {
+            if(input.includes('pocket')) cat = '💵 Pocket Money';
+            if(input.includes('salary')) cat = '💼 Salary';
+            if(input.includes('gift')) cat = '🎁 Gift/Eidi';
+        }
+
+        const entry = {
+            id: Date.now(),
+            type: type,
+            date: today,
+            amount: amount,
+            category: cat,
+            sub: sub,
+            notes: input // use the original string as notes
+        };
+
+        if(checkForAnomaly(entry)) {
+            window.pendingAnomalyEntry = entry;
+            document.getElementById('anomalyModal').classList.add('active');
+            return;
+        }
+
+        data.push(entry);
+        saveData('fin_spendly', data);
+        
+        if(type === 'income') syncIncomeToPocketCal(entry);
+
+        document.getElementById('smartEntryInput').value = '';
+        updateUI();
+        showTransactionPopup(type);
+    };
+
+    window.generateAIHealthReport = function() {
+        const container = document.getElementById('aiHealthReportContainer');
+        const textEl = document.getElementById('aiHealthReportText');
+        
+        container.classList.remove('hidden');
+        textEl.innerHTML = '<i class="lucide lucide-loader animate-spin w-5 h-5 inline-block mr-2"></i> Analyzing your data...';
+        
+        setTimeout(() => {
+            const currentM = today.slice(0, 7);
+            const monthlyIncome = data.filter(d => d.type === 'income' && d.date.startsWith(currentM)).reduce((s, d) => s + Number(d.amount), 0);
+            const monthlyExpense = data.filter(d => d.type === 'expense' && d.date.startsWith(currentM)).reduce((s, d) => s + Number(d.amount), 0);
+            
+            const savings = monthlyIncome - monthlyExpense;
+            const savingsRate = monthlyIncome > 0 ? (savings / monthlyIncome) * 100 : 0;
+            
+            let message = "";
+            if(monthlyExpense === 0) {
+                message = "You haven't spent anything this month yet. Great start! Keep logging your expenses to get insights.";
+            } else if(savings < 0) {
+                message = `<strong>Warning:</strong> You've spent ₹${Math.abs(savings)} more than your income this month. You need to review your top expenses immediately.`;
+            } else if(savingsRate > 20) {
+                message = `<strong>Awesome job!</strong> You are saving ${savingsRate.toFixed(1)}% of your income this month. Your financial discipline is paying off.`;
+            } else {
+                message = `You're on track, but your savings rate is only ${savingsRate.toFixed(1)}%. Try cutting down on non-essential categories like Entertainment and Outside Food to hit 20%.`;
+            }
+            
+            textEl.innerHTML = message;
+        }, 1200); // Fake delay for "AI processing" effect
+    };
 
     // ----------------------------------------------------
     // AI SMART AUTO-CATEGORIZATION
@@ -875,24 +1254,42 @@
                 'zomato': ['🍔 Food & Dining', 'Swiggy / Zomato'],
                 'swiggy': ['🍔 Food & Dining', 'Swiggy / Zomato'],
                 'mcdonalds': ['🍔 Food & Dining', 'Fast Food'],
-                'uber': ['🚕 Transportation', 'Uber / Ola'],
-                'ola': ['🚕 Transportation', 'Uber / Ola'],
-                'train': ['🚕 Transportation', 'Public Transit'],
+                'pizza': ['🍔 Food & Dining', 'Fast Food'],
+                'lunch': ['🍔 Food & Dining', 'Dining Out'],
+                'dinner': ['🍔 Food & Dining', 'Dining Out'],
+                'uber': ['🚕 Transportation', 'Uber'],
+                'ola': ['🚕 Transportation', 'Ola'],
+                'auto': ['🚕 Transportation', 'Auto Rickshaw'],
+                'rickshaw': ['🚕 Transportation', 'Auto Rickshaw'],
+                'cab': ['🚕 Transportation', 'Cab'],
+                'train': ['🚕 Transportation', 'Train'],
+                'metro': ['🚕 Transportation', 'Metro'],
+                'best': ['🚕 Transportation', 'BEST Bus'],
+                'bus': ['🚕 Transportation', 'Bus'],
                 'flight': ['🚕 Transportation', 'Flights'],
-                'amazon': ['🛍️ Shopping', 'Online Shopping'],
-                'flipkart': ['🛍️ Shopping', 'Online Shopping'],
+                'printout': ['📚 Education', 'Printout'],
+                'xerox': ['📚 Education', 'Xerox'],
+                'book': ['📚 Education', 'Books'],
+                'stationery': ['📚 Education', 'Stationery'],
+                'amazon': ['🛍️ Shopping', 'Amazon'],
+                'flipkart': ['🛍️ Shopping', 'Flipkart'],
+                'shirt': ['🛍️ Shopping', 'Clothing'],
+                'shoes': ['🛍️ Shopping', 'Clothing'],
                 'movie': ['🎬 Entertainment', 'Movies'],
-                'netflix': ['🎬 Entertainment', 'Subscriptions'],
-                'spotify': ['🎬 Entertainment', 'Subscriptions'],
-                'hospital': ['💊 Health & Fitness', 'Medical'],
-                'pharmacy': ['💊 Health & Fitness', 'Medical'],
+                'netflix': ['🎬 Entertainment', 'Netflix'],
+                'spotify': ['🎬 Entertainment', 'Spotify'],
+                'hospital': ['💊 Health & Fitness', 'Hospital'],
+                'doctor': ['💊 Health & Fitness', 'Medical'],
+                'pharmacy': ['💊 Health & Fitness', 'Pharmacy'],
+                'medicine': ['💊 Health & Fitness', 'Pharmacy'],
                 'gym': ['💊 Health & Fitness', 'Gym'],
                 'wifi': ['🧾 Bills & Utilities', 'Internet'],
-                'recharge': ['🧾 Bills & Utilities', 'Mobile Recharge']
+                'recharge': ['🧾 Bills & Utilities', 'Mobile Recharge'],
+                'electricity': ['🧾 Bills & Utilities', 'Electricity']
             };
 
             for(const [keyword, [main, sub]] of Object.entries(keywordMap)) {
-                if(val.includes(keyword)) {
+                if(new RegExp(`\\b${keyword}\\b`, 'i').test(val)) {
                     matchedMain = main;
                     matchedSub = sub;
                     matchedWord = keyword;
@@ -913,7 +1310,12 @@
                 // Ensure subcategory exists
                 setTimeout(() => {
                     const subExists = Array.from(subSelect.options).some(opt => opt.value === matchedSub);
-                    if(subExists && subSelect.value !== matchedSub) {
+                    if(!subExists) {
+                        const opt = document.createElement('option');
+                        opt.value = matchedSub; opt.textContent = matchedSub;
+                        subSelect.appendChild(opt);
+                    }
+                    if(subSelect.value !== matchedSub) {
                         subSelect.value = matchedSub;
                         if(window.playUISound) window.playUISound('success');
                         showSnackbar(`AI Auto-Selected: ${matchedSub} ✨`);

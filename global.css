@@ -884,3 +884,118 @@ body.reduce-motion .liquid-bg-container {
         display: none !important;
     }
 }
+
+/* ========================================================================
+   11. CUSTOM UI DROPDOWNS (Replaces native <select>)
+======================================================================== */
+.custom-dropdown {
+    position: relative;
+    width: 100%;
+}
+
+.custom-toggle {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 0.75rem;
+    color: var(--text-main);
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    min-height: 48px;
+}
+
+.custom-toggle:hover {
+    background: var(--glass-hover);
+}
+
+.custom-toggle.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.custom-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    margin-top: 0.5rem;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 0.75rem;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    z-index: 9999;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    max-height: 250px;
+    display: flex;
+    flex-direction: column;
+}
+
+.custom-dropdown.open .custom-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.custom-search-container {
+    padding: 0.75rem;
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.custom-search-input {
+    width: 100%;
+    background: var(--glass-hover);
+    border: 1px solid var(--glass-border);
+    color: var(--text-main);
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    outline: none;
+}
+.custom-search-input:focus {
+    border-color: var(--accent-primary);
+}
+
+.custom-list {
+    overflow-y: auto;
+    flex: 1;
+    padding: 0.5rem;
+    scrollbar-width: thin;
+}
+.custom-list::-webkit-scrollbar {
+    width: 4px;
+}
+.custom-list::-webkit-scrollbar-thumb {
+    background: var(--glass-border);
+    border-radius: 4px;
+}
+
+.custom-option {
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.5rem;
+    color: var(--text-main);
+    cursor: pointer;
+    font-size: 0.875rem;
+    font-weight: 600;
+    transition: background 0.2s;
+    display: flex;
+    justify-content: space-between;
+}
+.custom-option:hover {
+    background: var(--glass-hover);
+    color: var(--accent-primary);
+}
+.custom-option.selected {
+    background: rgba(var(--accent-primary-rgb), 0.1);
+    color: var(--accent-primary);
+}

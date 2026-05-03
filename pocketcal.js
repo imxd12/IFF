@@ -58,6 +58,7 @@
         updateSummary();
         renderCharts();
         if(typeof populatePocketMonthFilter === 'function') populatePocketMonthFilter();
+        if(typeof checkPcStreaks === 'function') checkPcStreaks();
     }
 
     // ----------------------------------------------------
@@ -101,7 +102,7 @@
         document.getElementById('pcAmount').value = entry ? entry.amount : '';
         document.getElementById('pcNotes').value = entry ? (entry.notes || '') : '';
         
-        document.getElementById('pcDelete').style.display = entry ? 'block' : 'none';
+        document.getElementById('pcDelete').style.display = entry ? 'flex' : 'none';
         document.getElementById('modalTitle').textContent = entry ? 'Edit Entry' : 'Add Entry';
         
         document.getElementById('entryModal').classList.add('active');
@@ -115,6 +116,43 @@
     // ----------------------------------------------------
     // FORM SUBMISSION AND 2 WAY SYNC LOGIC
     // ----------------------------------------------------
+
+    window.pendingPcAnomalyEntry = null;
+
+    window.confirmPcAnomaly = function() {
+        if(window.pendingPcAnomalyEntry) {
+            let existing = data.find(d => d.date === window.pendingPcAnomalyEntry.date);
+            data = data.filter(d => d.date !== window.pendingPcAnomalyEntry.date);
+            data.push(window.pendingPcAnomalyEntry);
+            saveData('fin_pocketcal', data);
+            syncPocketToSpendly(window.pendingPcAnomalyEntry, existing);
+            renderCalendar();
+            closeEntryModal();
+            showSnackbar('Entry saved! 💾');
+            
+            window.pendingPcAnomalyEntry = null;
+            document.getElementById('pcAnomalyModal').classList.remove('active');
+        }
+    };
+
+    window.cancelPcAnomaly = function() {
+        window.pendingPcAnomalyEntry = null;
+        document.getElementById('pcAnomalyModal').classList.remove('active');
+    };
+
+    function checkForPcAnomaly(amount, date) {
+        // Look for exact same amount in the last 5 days
+        const recent = data.find(d => {
+            if(d.date === date) return false;
+            let d1 = new Date(d.date);
+            let d2 = new Date(date);
+            let diff = Math.abs(d2 - d1) / (1000*60*60*24);
+            return diff <= 5 && Number(d.amount) === Number(amount);
+        });
+        return recent != null;
+    }
+
+
     document.getElementById('pcForm').addEventListener('submit', (e) => {
         e.preventDefault();
         
@@ -123,18 +161,23 @@
         const notes = document.getElementById('pcNotes').value;
         const category = document.getElementById('pcCategory').value;
         
-        // Remove old from pocketcal
-        let existing = data.find(d => d.date === date);
-        data = data.filter(d => d.date !== date);
-        
         const newEntry = {
-            id: existing ? existing.id : Date.now().toString(),
+            id: Date.now().toString(),
             date: date,
             amount: amount,
             category: category,
             notes: notes,
             source: 'pocketcal'
         };
+
+        if(checkForPcAnomaly(amount, date)) {
+            window.pendingPcAnomalyEntry = newEntry;
+            document.getElementById('pcAnomalyModal').classList.add('active');
+            return;
+        }
+        
+        let existing = data.find(d => d.date === date);
+        data = data.filter(d => d.date !== date);
         data.push(newEntry);
         saveData('fin_pocketcal', data);
 
@@ -199,6 +242,106 @@
     }
 
     // ----------------------------------------------------
+    // AI SMART FEATURES (POCKETCAL)
+    // ----------------------------------------------------
+
+    window.checkPcStreaks = function() {
+        const streakBanner = document.getElementById('pcStreakBanner');
+        if (!streakBanner) return;
+        
+        let loggingStreak = 0;
+        const todayObj = new Date();
+        
+        for(let i=0; i<30; i++) {
+            let d = new Date(todayObj);
+            d.setDate(d.getDate() - i);
+            let ds = d.toISOString().split('T')[0];
+            
+            let hasEntry = data.find(tx => tx.date === ds && Number(tx.amount) > 0);
+            if(hasEntry) loggingStreak++;
+            else if(i !== 0) break; // if missed yesterday or earlier, break streak
+        }
+
+        if(loggingStreak >= 3) {
+            streakBanner.classList.remove('hidden');
+            document.getElementById('pcStreakTitle').textContent = `🔥 ${loggingStreak}-Day Saving Streak!`;
+            document.getElementById('pcStreakDesc').textContent = "Consistent logging is the key to financial freedom.";
+        } else {
+            streakBanner.classList.add('hidden');
+        }
+    };
+
+    window.processPcSmartEntry = function() {
+        const input = document.getElementById('pcSmartEntryInput').value.toLowerCase();
+        if(!input) return;
+        
+        const amountMatch = input.match(/\d+/);
+        if(!amountMatch) {
+            showSnackbar('Could not find an amount. Try "Got 200 today"');
+            return;
+        }
+        const amount = Number(amountMatch[0]);
+        const todayStr = new Date().toISOString().split('T')[0];
+        
+        const newEntry = {
+            id: Date.now().toString(),
+            date: todayStr,
+            amount: amount,
+            category: '💵 Pocket Money',
+            notes: input,
+            source: 'pocketcal'
+        };
+
+        if(checkForPcAnomaly(amount, todayStr)) {
+            window.pendingPcAnomalyEntry = newEntry;
+            document.getElementById('pcAnomalyModal').classList.add('active');
+            return;
+        }
+
+        let existing = data.find(d => d.date === todayStr);
+        data = data.filter(d => d.date !== todayStr);
+        data.push(newEntry);
+        saveData('fin_pocketcal', data);
+
+        syncPocketToSpendly(newEntry, existing);
+
+        document.getElementById('pcSmartEntryInput').value = '';
+        renderCalendar();
+        showSnackbar(`Smart logged ₹${amount} for today! ⚡`);
+    };
+
+    window.generatePcAIReport = function() {
+        const container = document.getElementById('pcAiReportContainer');
+        const textEl = document.getElementById('pcAiReportText');
+        
+        container.classList.remove('hidden');
+        textEl.innerHTML = '<i class="lucide lucide-loader animate-spin w-5 h-5 inline-block mr-2"></i> Generating insights...';
+        
+        setTimeout(() => {
+            const currentM = `${current.getFullYear()}-${String(current.getMonth() + 1).padStart(2, '0')}`;
+            const prevM = `${current.getMonth()===0?current.getFullYear()-1:current.getFullYear()}-${String(current.getMonth()===0?12:current.getMonth()).padStart(2, '0')}`;
+            
+            const curTotal = data.filter(d => d.date && d.date.startsWith(currentM)).reduce((s, d) => s + Number(d.amount), 0);
+            const prevTotal = data.filter(d => d.date && d.date.startsWith(prevM)).reduce((s, d) => s + Number(d.amount), 0);
+            
+            let message = "";
+            if(curTotal === 0 && prevTotal === 0) {
+                message = "You don't have enough data for a detailed insight yet. Keep tracking!";
+            } else if(curTotal > prevTotal && prevTotal > 0) {
+                const diff = ((curTotal - prevTotal)/prevTotal*100).toFixed(0);
+                message = `<strong>Great progress!</strong> Your pocket savings this month are ₹${curTotal}, which is ${diff}% higher than last month. You're building a strong safety net.`;
+            } else if(curTotal < prevTotal && prevTotal > 0) {
+                const diff = ((prevTotal - curTotal)/prevTotal*100).toFixed(0);
+                message = `Your pocket savings are ₹${curTotal}, which is ${diff}% lower than last month. Consistency is key—try to put a small fixed amount away every day.`;
+            } else {
+                message = `You've saved ₹${curTotal} this month. Regular small savings compound over time!`;
+            }
+            
+            textEl.innerHTML = message;
+        }, 1200);
+    };
+
+    // ----------------------------------------------------
     // CONTROLS
     // ----------------------------------------------------
     document.getElementById('prevMonth').addEventListener('click', () => {
@@ -254,6 +397,10 @@
         charts = {};
         Chart.defaults.color = textColor;
         Chart.defaults.font.family = "'Plus Jakarta Sans', sans-serif";
+        Chart.defaults.animation = {
+            duration: 2000,
+            easing: 'easeOutQuart'
+        };
 
         const year = current.getFullYear();
         const month = current.getMonth();
@@ -469,7 +616,90 @@
                     scales: {
                         y: { display: false },
                         x: { display: true, grid: { display: false }, ticks: { maxTicksLimit: 10 } }
-                    }
+                    },
+                    animation: { delay: 400 }
+                }
+            });
+        }
+
+        const ctxConsistency = document.getElementById('consistencyChart');
+        if (ctxConsistency) {
+            const todayObj = new Date();
+            let daysPassed = daysInMonth;
+            if(year === todayObj.getFullYear() && month === todayObj.getMonth()) {
+                daysPassed = todayObj.getDate();
+            }
+
+            let logged = 0;
+            for (let i = 1; i <= daysPassed; i++) {
+                const ds = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
+                if (data.find(d => d.date === ds && Number(d.amount) > 0)) logged++;
+            }
+            let missed = daysPassed - logged;
+
+            charts.consistency = new Chart(ctxConsistency, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Logged', 'Missed'],
+                    datasets: [{
+                        data: [logged, missed],
+                        backgroundColor: ['#10b981', '#334155'],
+                        borderWidth: 0,
+                        hoverOffset: 10
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    cutout: '75%',
+                    animation: { delay: 600 }
+                }
+            });
+        }
+
+        const ctxMovingAvg = document.getElementById('movingAvgChart');
+        if (ctxMovingAvg) {
+            const maLabels = [], maValues = [];
+            const dailyArr = [];
+            
+            for (let i = 1; i <= daysInMonth; i++) {
+                const ds = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
+                const entry = data.find(d => d.date === ds);
+                dailyArr.push(entry ? Number(entry.amount) : 0);
+            }
+
+            for (let i = 0; i < daysInMonth; i++) {
+                maLabels.push(i + 1);
+                let sum = 0, count = 0;
+                for(let j=Math.max(0, i-6); j<=i; j++) {
+                    sum += dailyArr[j];
+                    count++;
+                }
+                maValues.push(sum/count);
+            }
+
+            charts.movingAvg = new Chart(ctxMovingAvg, {
+                type: 'line',
+                data: {
+                    labels: maLabels,
+                    datasets: [{
+                        label: '7-Day Moving Avg',
+                        data: maValues,
+                        borderColor: '#0ea5e9',
+                        backgroundColor: 'rgba(14, 165, 233, 0.2)',
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 0
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { display: false },
+                        x: { display: true, grid: { display: false }, ticks: { maxTicksLimit: 10 } }
+                    },
+                    animation: { delay: 800 }
                 }
             });
         }

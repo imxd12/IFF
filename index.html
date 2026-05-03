@@ -116,21 +116,26 @@
       <p class="text-muted text-lg">Your financial overview.</p>
     </section>
 
-    <!-- Install PWA Popup -->
-    <div id="installPrompt" style="display: none;" class="glass-panel p-6">
-      <div class="flex items-start justify-between">
-        <div>
-          <h3 class="text-xl font-bold text-gradient mb-1">Install MoneyFlow PWA</h3>
-          <p class="text-muted text-sm">Add to home screen for the full native experience.</p>
+    <!-- Install PWA Inline Card -->
+    <section id="installPrompt" style="display: none;" class="glass-panel p-6 mb-12 flex flex-col sm:flex-row items-center justify-between gap-4 max-w-3xl mx-auto rounded-[12px] border border-white/10 shadow-[0_0_20px_rgba(16,185,129,0.1)] transition-all">
+      <div class="flex items-center gap-4 text-left w-full sm:w-auto">
+        <div class="w-12 h-12 bg-emerald-500/10 rounded-full flex items-center justify-center flex-shrink-0 border border-emerald-500/20">
+          <i data-lucide="smartphone" class="text-emerald-500 w-6 h-6"></i>
         </div>
-        <i data-lucide="smartphone" class="text-emerald-500 w-8 h-8"></i>
+        <div>
+          <h3 class="text-lg font-bold text-gradient mb-0.5">MoneyFlow Native</h3>
+          <p class="text-muted text-xs">Install for full offline capabilities.</p>
+        </div>
       </div>
-      <div class="mt-4 flex gap-4">
-        <button id="installBtn" class="glass-button px-6 py-2 rounded-xl text-sm font-semibold">Install Now</button>
-        <button id="dismissBtn"
-          class="px-6 py-2 rounded-xl text-sm font-semibold text-muted hover:text-main transition">Later</button>
+      <div class="flex items-center gap-3 w-full sm:w-auto mt-2 sm:mt-0">
+        <button id="installBtn" class="flex-1 sm:flex-none bg-white/5 border border-white/10 px-6 py-2.5 rounded-[12px] text-sm font-bold text-white shadow-[0_0_15px_rgba(16,185,129,0.15)] hover:bg-emerald-500/20 hover:border-emerald-500/50 hover:shadow-[0_0_25px_rgba(16,185,129,0.4)] hover:text-emerald-400 transition-all flex items-center justify-center gap-2">
+          <i data-lucide="download" class="w-4 h-4"></i> <span id="installBtnText">Install App</span>
+        </button>
+        <button id="dismissBtn" class="p-2.5 rounded-[12px] text-muted hover:bg-white/10 transition-colors">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
       </div>
-    </div>
+    </section>
 
     <!-- Analytics Bento Grid -->
     <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">

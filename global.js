@@ -632,6 +632,155 @@
   };
 
   // ----------------------------------------------------
+  // 8. MONEYFLOW GREETING VOICE ENGINE
+  // ----------------------------------------------------
+  window.MoneyFlowVoiceEngine = {
+      greetings: {
+          en: { morning: "Good morning", afternoon: "Good afternoon", evening: "Good evening", night: "Good night", welcome: "{timeGreeting}, {username}. Welcome to MoneyFlow." },
+          hi: { morning: "सुप्रभात", afternoon: "नमस्कार", evening: "शुभ संध्या", night: "शुभ रात्रि", welcome: "{timeGreeting}, नमस्ते {username}. MoneyFlow में आपका स्वागत है।" },
+          ur: { morning: "صبح بخیر", afternoon: "السلام علیکم", evening: "شام بخیر", night: "شب بخیر", welcome: "{timeGreeting}, {username}. MoneyFlow میں آپ کا خوش آمدید ہے۔" },
+          mr: { morning: "शुभ सकाळ", afternoon: "नमस्कार", evening: "शुभ संध्या", night: "शुभ रात्री", welcome: "{timeGreeting}, नमस्कार {username}. MoneyFlow मध्ये तुमचं स्वागत आहे." },
+          gu: { morning: "સુપ્રભાત", afternoon: "નમસ્કાર", evening: "શુભ સાંજ", night: "શુભ રાત્રિ", welcome: "{timeGreeting}, નમસ્તે {username}. MoneyFlow માં તમારું સ્વાગત છે." },
+          pa: { morning: "ਸੁਪ੍ਰਭਾਤ", afternoon: "ਸਤ ਸ੍ਰੀ ਅਕਾਲ", evening: "ਸ਼ੁਭ ਸ਼ਾਮ", night: "ਸ਼ੁਭ ਰਾਤ", welcome: "{timeGreeting}, ਸਤ ਸ੍ਰੀ ਅਕਾਲ {username}. MoneyFlow ਵਿੱਚ ਤੁਹਾਡਾ ਸਵਾਗਤ ਹੈ।" },
+          ta: { morning: "காலை வணக்கம்", afternoon: "மதிய வணக்கம்", evening: "மாலை வணக்கம்", night: "இரவு வணக்கம்", welcome: "{timeGreeting}, வணக்கம் {username}. MoneyFlow இற்கு வரவேற்கிறோம்." },
+          te: { morning: "శుభోదయం", afternoon: "నమస్కారం", evening: "శుభ సాయంత్రం", night: "శుభరాత్రి", welcome: "{timeGreeting}, నమస్కారం {username}. MoneyFlow కు స్వాగతం." },
+          kn: { morning: "ಶುಭೋದಯ", afternoon: "ನಮಸ್ಕಾರ", evening: "ಶುಭ ಸಂಜೆ", night: "ಶುಭ ರಾತ್ರಿ", welcome: "{timeGreeting}, ನಮಸ್ಕಾರ {username}. MoneyFlow ಗೆ ಸ್ವಾಗತ." },
+          bn: { morning: "সুপ্রভাত", afternoon: "নমস্কার", evening: "শুভ সন্ধ্যা", night: "শুভ রাত্রি", welcome: "{timeGreeting}, নমস্কার {username}. MoneyFlow এ আপনাকে স্বাগতম।" },
+          ml: { morning: "സുപ്രഭാതം", afternoon: "നമസ്കാരം", evening: "ശുഭ സായാഹ്നം", night: "ശുഭരാത്രി", welcome: "{timeGreeting}, നമസ്കാരം {username}. MoneyFlow ലേക്ക് സ്വാഗതം." },
+          ja: { morning: "おはようございます", afternoon: "こんにちは", evening: "こんばんは", night: "おやすみなさい", welcome: "{timeGreeting} {username}さん。MoneyFlowへようこそ。" },
+          es: { morning: "Buenos días", afternoon: "Buenas tardes", evening: "Buenas noches", night: "Buenas noches", welcome: "{timeGreeting}, {username}. Bienvenido a MoneyFlow." },
+          fr: { morning: "Bonjour", afternoon: "Bon après-midi", evening: "Bonsoir", night: "Bonne nuit", welcome: "{timeGreeting}, {username}. Bienvenue à MoneyFlow." },
+          de: { morning: "Guten Morgen", afternoon: "Guten Tag", evening: "Guten Abend", night: "Gute Nacht", welcome: "{timeGreeting}, {username}. Willkommen bei MoneyFlow." }
+      },
+      bcpTags: {
+          en: 'en-US', hi: 'hi-IN', ur: 'ur-PK', mr: 'mr-IN', gu: 'gu-IN', pa: 'pa-IN', ta: 'ta-IN', te: 'te-IN', kn: 'kn-IN', bn: 'bn-IN', ml: 'ml-IN', ja: 'ja-JP', es: 'es-ES', fr: 'fr-FR', de: 'de-DE'
+      },
+      getTimeKey(hour) {
+          if (hour >= 5 && hour < 12) return "morning";
+          if (hour >= 12 && hour < 17) return "afternoon";
+          if (hour >= 17 && hour < 22) return "evening";
+          return "night";
+      },
+      getGreeting(language, timeKey, username, useName) {
+          const langData = this.greetings[language] || this.greetings['en'];
+          const timeGreeting = langData[timeKey] || langData.morning;
+          let finalName = (useName && username) ? username : '';
+          
+          let message = langData.welcome.replace('{timeGreeting}', timeGreeting);
+          if (finalName) {
+              message = message.replace('{username}', finalName);
+          } else {
+              message = message.replace(', {username}', '').replace(' {username}さん', '').replace(' {username}', '').replace('नमस्ते ', 'नमस्ते. ').replace('नमस्कार ', 'नमस्कार. ').replace('ਸਤ ਸ੍ਰੀ ਅਕਾਲ ', 'ਸਤ ਸ੍ਰੀ ਅਕਾਲ. ');
+          }
+          return message;
+      },
+      getVoiceForLang(langCode, savedURI = null) {
+          const voices = speechSynthesis.getVoices();
+          if (savedURI) {
+              const v = voices.find(v => v.voiceURI === savedURI);
+              if (v) return v;
+          }
+          const targetLang = this.bcpTags[langCode] || 'en-US';
+          let preferred = voices.find(v => v.lang.startsWith(targetLang) || v.lang.replace('_', '-').startsWith(targetLang));
+          if (!preferred) {
+              preferred = voices.find(v => v.name.includes("Google US English") || v.name.includes("Samantha")) || voices[0];
+          }
+          return preferred;
+      },
+      speak(forcePlay = false) {
+          if (localStorage.getItem("voiceGreeting") === "off") return;
+          if (!forcePlay && sessionStorage.getItem("app_session_started") === "true") return;
+          
+          let hasSpoken = false;
+          const hour = new Date().getHours();
+          const timeKey = this.getTimeKey(hour);
+          const langCode = localStorage.getItem('fin_language') || 'en';
+          const username = localStorage.getItem('fin_userName') || 'User';
+          const nameLang = localStorage.getItem('fin_nameLanguage') || langCode;
+          const useNameStr = localStorage.getItem('fin_useName');
+          const useName = useNameStr !== 'false';
+          
+          const langData = this.greetings[langCode] || this.greetings['en'];
+          const timeGreeting = langData[timeKey] || langData.morning;
+
+          const runSpeech = () => {
+              if (hasSpoken) return;
+              hasSpoken = true;
+              
+              if (!forcePlay) sessionStorage.setItem("app_session_started", "true");
+              document.removeEventListener('click', runSpeech);
+              document.removeEventListener('touchstart', runSpeech);
+
+              speechSynthesis.cancel();
+
+              try {
+                  const AudioContext = window.AudioContext || window.webkitAudioContext;
+                  const ctx = new AudioContext();
+                  const osc = ctx.createOscillator();
+                  const gain = ctx.createGain();
+                  osc.connect(gain);
+                  gain.connect(ctx.destination);
+                  osc.type = 'sine';
+                  osc.frequency.setValueAtTime(800, ctx.currentTime);
+                  osc.frequency.exponentialRampToValueAtTime(1200, ctx.currentTime + 0.1);
+                  gain.gain.setValueAtTime(0, ctx.currentTime);
+                  gain.gain.linearRampToValueAtTime(0.05, ctx.currentTime + 0.05);
+                  gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
+                  osc.start(ctx.currentTime);
+                  osc.stop(ctx.currentTime + 0.5);
+              } catch(e) {}
+
+              setTimeout(() => {
+                  if (useName && nameLang !== langCode && username.trim() !== '') {
+                      const parts = langData.welcome.split('{username}');
+                      if (parts.length === 2) {
+                          const part1Text = parts[0].replace('{timeGreeting}', timeGreeting);
+                          const part2Text = parts[1];
+                          
+                          const u1 = new SpeechSynthesisUtterance(part1Text);
+                          u1.voice = this.getVoiceForLang(langCode, localStorage.getItem('fin_voiceURI'));
+                          u1.rate = 0.85;
+                          
+                          const u2 = new SpeechSynthesisUtterance(username);
+                          u2.voice = this.getVoiceForLang(nameLang);
+                          u2.rate = 0.85;
+                          
+                          const u3 = new SpeechSynthesisUtterance(part2Text);
+                          u3.voice = this.getVoiceForLang(langCode, localStorage.getItem('fin_voiceURI'));
+                          u3.rate = 0.85;
+                          
+                          speechSynthesis.speak(u1);
+                          speechSynthesis.speak(u2);
+                          speechSynthesis.speak(u3);
+                      } else {
+                          const msg = this.getGreeting(langCode, timeKey, username, useName);
+                          const u = new SpeechSynthesisUtterance(msg);
+                          u.voice = this.getVoiceForLang(langCode, localStorage.getItem('fin_voiceURI'));
+                          u.rate = 0.85;
+                          speechSynthesis.speak(u);
+                      }
+                  } else {
+                      const msg = this.getGreeting(langCode, timeKey, username, useName);
+                      const u = new SpeechSynthesisUtterance(msg);
+                      u.voice = this.getVoiceForLang(langCode, localStorage.getItem('fin_voiceURI'));
+                      u.rate = 0.85;
+                      speechSynthesis.speak(u);
+                  }
+              }, 400);
+          };
+
+          if (speechSynthesis.getVoices().length === 0) {
+              speechSynthesis.addEventListener('voiceschanged', runSpeech, { once: true });
+          } else {
+              runSpeech();
+          }
+
+          document.addEventListener('click', runSpeech);
+          document.addEventListener('touchstart', runSpeech);
+      }
+  };
+
+  // ----------------------------------------------------
   // BOOTSTRAP
   // ----------------------------------------------------
   document.addEventListener("DOMContentLoaded", () => {
@@ -650,6 +799,7 @@
     initRippleEffect();
     initSplashScreen();
     initBirthdayCheck();
+    window.setupCustomDropdowns();
     
     // Defer skill popups slightly to ensure DOM is ready
     setTimeout(initSkillPopup, 100);
@@ -731,6 +881,163 @@
           close();
           onConfirm(val);
       };
+  };
+
+  // ----------------------------------------------------
+  // CUSTOM UI DROPDOWNS ENGINE
+  // ----------------------------------------------------
+  window.setupCustomDropdowns = function() {
+      const selects = document.querySelectorAll('select.custom-select');
+      
+      selects.forEach(select => {
+          // If already processed, we only update the options if needed (handled via observer later)
+          if (select.dataset.customUiGenerated === 'true') return;
+          
+          select.classList.add('hidden');
+          select.dataset.customUiGenerated = 'true';
+          
+          const hasSearch = select.dataset.search === 'true';
+          
+          // Wrapper
+          const wrapper = document.createElement('div');
+          wrapper.className = 'custom-dropdown relative w-full mb-1';
+          
+          // Toggle Button
+          const toggle = document.createElement('div');
+          toggle.className = 'custom-toggle';
+          
+          // Get initially selected text
+          let selectedText = 'Select Option';
+          if (select.options.length > 0) {
+              const selectedOpt = select.options[select.selectedIndex];
+              selectedText = selectedOpt ? selectedOpt.textContent : select.options[0].textContent;
+          }
+          
+          toggle.innerHTML = `
+              <span class="custom-toggle-text text-sm truncate">${selectedText}</span>
+              <i data-lucide="chevron-down" class="w-4 h-4 flex-shrink-0 text-muted ml-2"></i>
+          `;
+          
+          // Menu container
+          const menu = document.createElement('div');
+          menu.className = 'custom-menu';
+          
+          let searchContainerHtml = '';
+          if (hasSearch) {
+              searchContainerHtml = `
+                  <div class="custom-search-container">
+                      <input type="text" class="custom-search-input" placeholder="Search...">
+                  </div>
+              `;
+          }
+          
+          menu.innerHTML = `
+              ${searchContainerHtml}
+              <div class="custom-list"></div>
+          `;
+          
+          wrapper.appendChild(toggle);
+          wrapper.appendChild(menu);
+          select.parentNode.insertBefore(wrapper, select.nextSibling);
+          
+          if (window.lucide) window.lucide.createIcons({root: toggle});
+          
+          const toggleTextSpan = toggle.querySelector('.custom-toggle-text');
+          const listContainer = menu.querySelector('.custom-list');
+          const searchInput = menu.querySelector('.custom-search-input');
+          
+          // Render options
+          const renderOptions = (filter = '') => {
+              listContainer.innerHTML = '';
+              Array.from(select.options).forEach((opt, index) => {
+                  if (filter && !opt.textContent.toLowerCase().includes(filter.toLowerCase())) return;
+                  if (opt.value === '' && !opt.textContent.trim()) return; // Skip completely empty placeholder
+                  
+                  const optionEl = document.createElement('div');
+                  optionEl.className = 'custom-option';
+                  if (opt.selected) optionEl.classList.add('selected');
+                  
+                  optionEl.textContent = opt.textContent;
+                  
+                  optionEl.addEventListener('click', () => {
+                      // Update native select
+                      select.selectedIndex = index;
+                      // Update toggle UI
+                      toggleTextSpan.textContent = opt.textContent;
+                      // Trigger change event for listeners
+                      select.dispatchEvent(new Event('change', { bubbles: true }));
+                      
+                      // Close menu
+                      wrapper.classList.remove('open');
+                      
+                      // Update selected UI
+                      Array.from(listContainer.children).forEach(c => c.classList.remove('selected'));
+                      optionEl.classList.add('selected');
+                      
+                      if(window.playUISound) window.playUISound('tap');
+                  });
+                  listContainer.appendChild(optionEl);
+              });
+          };
+          
+          renderOptions();
+          
+          // Toggle UI Logic
+          toggle.addEventListener('click', (e) => {
+              e.stopPropagation();
+              if (select.disabled) return;
+              
+              const wasOpen = wrapper.classList.contains('open');
+              // Close all others
+              document.querySelectorAll('.custom-dropdown.open').forEach(d => d.classList.remove('open'));
+              
+              if (!wasOpen) {
+                  wrapper.classList.add('open');
+                  if (hasSearch && searchInput) {
+                      searchInput.value = '';
+                      renderOptions();
+                      setTimeout(() => searchInput.focus(), 100);
+                  }
+                  if(window.playUISound) window.playUISound('tap');
+              }
+          });
+          
+          if (hasSearch && searchInput) {
+              searchInput.addEventListener('input', (e) => {
+                  renderOptions(e.target.value);
+              });
+              searchInput.addEventListener('click', e => e.stopPropagation());
+          }
+          
+          // Close clicking outside
+          document.addEventListener('click', (e) => {
+              if (!wrapper.contains(e.target)) {
+                  wrapper.classList.remove('open');
+              }
+          });
+          
+          // Observer to watch for programmatic option changes (like category generation)
+          const observer = new MutationObserver(() => {
+              // Update toggle text in case selection changed via JS
+              if (select.options.length > 0) {
+                  const selectedOpt = select.options[select.selectedIndex];
+                  if(selectedOpt) toggleTextSpan.textContent = selectedOpt.textContent;
+              }
+              if (wrapper.classList.contains('open')) {
+                 renderOptions(searchInput ? searchInput.value : '');
+              } else {
+                 renderOptions();
+              }
+              
+              if (select.disabled) {
+                  toggle.classList.add('disabled');
+              } else {
+                  toggle.classList.remove('disabled');
+              }
+          });
+          
+          observer.observe(select, { childList: true, attributes: true, attributeFilter: ['disabled'] });
+      });
   };
 
 })();

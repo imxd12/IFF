@@ -162,7 +162,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <label class="block text-sm font-medium text-muted mb-2">Date</label>
-                        <input type="date" id="incomeDate" class="glass-input" required>
+                        <input type="text" id="incomeDate" class="glass-input custom-date" readonly required>
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-muted mb-2">Amount (₹)</label>
@@ -201,7 +201,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <label class="block text-sm font-medium text-muted mb-2">Date</label>
-                        <input type="date" id="expenseDate" class="glass-input" required>
+                        <input type="text" id="expenseDate" class="glass-input custom-date" readonly required>
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-muted mb-2">Amount (₹)</label>
@@ -423,11 +423,11 @@
                 style="display: none;">
                 <div>
                     <label class="block text-xs font-bold text-muted mb-2 uppercase tracking-wider">Start Date</label>
-                    <input type="date" class="glass-input font-bold py-3 text-center" id="pdfStartDate">
+                    <input type="text" class="glass-input font-bold py-3 text-center custom-date" id="pdfStartDate" readonly>
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-muted mb-2 uppercase tracking-wider">End Date</label>
-                    <input type="date" class="glass-input font-bold py-3 text-center" id="pdfEndDate">
+                    <input type="text" class="glass-input font-bold py-3 text-center custom-date" id="pdfEndDate" readonly>
                 </div>
             </div>
 
@@ -470,7 +470,7 @@
                 <div class="space-y-5">
                     <div>
                         <label class="block text-xs font-bold text-muted mb-1 uppercase tracking-wider">Date</label>
-                        <input type="date" id="editDate" class="glass-input py-3" required>
+                        <input type="text" id="editDate" class="glass-input py-3 custom-date" readonly required>
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-muted mb-1 uppercase tracking-wider">Amount</label>

@@ -54,41 +54,80 @@
     <main class="main-content flex flex-col items-center">
 
         <div class="w-full max-w-3xl space-y-6 pb-20">
-            <h1 class="text-3xl font-extrabold mb-4 pl-4" data-speed="0.1">Settings</h1>
 
-            <!-- Tab Navigation -->
-            <div class="relative flex bg-glass-bg backdrop-blur-md p-1 rounded-2xl border border-glass-border shadow-sm w-full mx-auto overflow-hidden mb-6">
-                <!-- Liquid sliding pill -->
-                <div id="tabSwitcherPill" class="absolute top-1 left-1 bottom-1 w-[calc(25%-4px)] sm:w-[calc(25%-8px)] bg-emerald-500 rounded-xl shadow-md transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]"></div>
-                
-                <button class="tab-btn relative flex-1 py-3 text-xs sm:text-sm font-bold rounded-xl text-white transition-colors duration-300 z-10" data-tab="tab-general" data-index="0"><i data-lucide="sliders" class="w-4 h-4 inline-block mb-1 sm:mb-0 sm:mr-1"></i> General</button>
-                <button class="tab-btn relative flex-1 py-3 text-xs sm:text-sm font-bold rounded-xl text-muted hover:text-white transition-colors duration-300 z-10" data-tab="tab-identity" data-index="1"><i data-lucide="user" class="w-4 h-4 inline-block mb-1 sm:mb-0 sm:mr-1"></i> Identity</button>
-                <button class="tab-btn relative flex-1 py-3 text-xs sm:text-sm font-bold rounded-xl text-muted hover:text-white transition-colors duration-300 z-10" data-tab="tab-finance" data-index="2"><i data-lucide="pie-chart" class="w-4 h-4 inline-block mb-1 sm:mb-0 sm:mr-1"></i> Finance</button>
-                <button class="tab-btn relative flex-1 py-3 text-xs sm:text-sm font-bold rounded-xl text-muted hover:text-white transition-colors duration-300 z-10" data-tab="tab-data" data-index="3"><i data-lucide="database" class="w-4 h-4 inline-block mb-1 sm:mb-0 sm:mr-1"></i> Data</button>
+
+            <!-- Premium Tab Navigation -->
+            <div
+                class="relative flex justify-between items-center bg-black/40 backdrop-blur-2xl p-2 rounded-[2rem] border border-white/10 shadow-[inset_0_2px_10px_rgba(0,0,0,0.5),0_10px_30px_rgba(0,0,0,0.2)] w-full max-w-2xl mx-auto mb-10 z-20">
+                <!-- Glowing Underline Sliding Pill -->
+                <div id="tabSwitcherPill"
+                    class="absolute top-2 bottom-2 left-2 w-[calc(25%-4px)] bg-white/10 rounded-[1.75rem] border border-white/20 shadow-[0_0_15px_rgba(255,255,255,0.1)] transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] backdrop-blur-md overflow-hidden">
+                    <!-- Bottom Neon Line -->
+                    <div
+                        class="absolute bottom-0 left-1/2 -translate-x-1/2 w-[60%] h-[3px] rounded-t-full bg-gradient-to-r from-cyan-400 to-blue-500 shadow-[0_0_12px_rgba(6,182,212,1)]">
+                    </div>
+                    <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-white/5 to-transparent"></div>
+                </div>
+
+                <button
+                    class="tab-btn group relative flex-1 py-3 sm:py-4 flex flex-col items-center justify-center gap-1.5 transition-all duration-300 z-10 text-white rounded-[1.75rem]"
+                    data-tab="tab-general" data-index="0">
+                    <i data-lucide="sliders"
+                        class="w-5 h-5 sm:w-6 sm:h-6 transition-transform duration-300 group-active:scale-90"></i>
+                    <span class="text-[9px] sm:text-xs font-black tracking-widest uppercase">General</span>
+                </button>
+                <button
+                    class="tab-btn group relative flex-1 py-3 sm:py-4 flex flex-col items-center justify-center gap-1.5 transition-all duration-300 z-10 text-muted hover:text-white rounded-[1.75rem]"
+                    data-tab="tab-identity" data-index="1">
+                    <i data-lucide="user"
+                        class="w-5 h-5 sm:w-6 sm:h-6 transition-transform duration-300 group-active:scale-90"></i>
+                    <span class="text-[9px] sm:text-xs font-black tracking-widest uppercase">Identity</span>
+                </button>
+                <button
+                    class="tab-btn group relative flex-1 py-3 sm:py-4 flex flex-col items-center justify-center gap-1.5 transition-all duration-300 z-10 text-muted hover:text-white rounded-[1.75rem]"
+                    data-tab="tab-finance" data-index="2">
+                    <i data-lucide="wallet"
+                        class="w-5 h-5 sm:w-6 sm:h-6 transition-transform duration-300 group-active:scale-90"></i>
+                    <span class="text-[9px] sm:text-xs font-black tracking-widest uppercase">Finance</span>
+                </button>
+                <button
+                    class="tab-btn group relative flex-1 py-3 sm:py-4 flex flex-col items-center justify-center gap-1.5 transition-all duration-300 z-10 text-muted hover:text-white rounded-[1.75rem]"
+                    data-tab="tab-data" data-index="3">
+                    <i data-lucide="database"
+                        class="w-5 h-5 sm:w-6 sm:h-6 transition-transform duration-300 group-active:scale-90"></i>
+                    <span class="text-[9px] sm:text-xs font-black tracking-widest uppercase">Data</span>
+                </button>
             </div>
 
             <!-- TAB 1: GENERAL -->
-            <section id="tab-general" class="tab-pane active glass-panel p-6 sm:p-8 relative overflow-hidden">
-                <div class="absolute -top-10 -right-10 w-32 h-32 bg-blue-500/10 rounded-full blur-2xl pointer-events-none"></div>
-                <h2 class="text-xl font-bold mb-6 flex items-center gap-2"><i data-lucide="settings" class="text-blue-500"></i> General Preferences</h2>
+            <section id="tab-general" class="tab-pane active glass-panel p-6 sm:p-8 relative overflow-hidden mt-2">
+                <div
+                    class="absolute -top-10 -right-10 w-32 h-32 bg-blue-500/10 rounded-full blur-2xl pointer-events-none">
+                </div>
+                <h2 class="text-xl font-bold mb-6 flex items-center gap-2"><i data-lucide="settings"
+                        class="text-blue-500"></i> General Preferences</h2>
 
                 <div class="space-y-4 relative z-10">
-                    <div class="flex justify-between items-center bg-glass-bg border border-glass-border p-4 rounded-xl">
+                    <div
+                        class="flex justify-between items-center bg-glass-bg border border-glass-border p-4 rounded-xl">
                         <div>
                             <h3 class="font-bold text-base sm:text-lg">App Theme</h3>
                             <p class="text-xs sm:text-sm text-muted">Currently active theme.</p>
                         </div>
-                        <button id="toggleAppThemeBtn" class="px-4 py-2 rounded-xl text-sm font-bold transition shadow-md bg-glass-bg border border-glass-border">Loading...</button>
+                        <button id="toggleAppThemeBtn"
+                            class="px-4 py-2 rounded-xl text-sm font-bold transition shadow-md bg-glass-bg border border-glass-border">Loading...</button>
                     </div>
 
-                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-glass-bg border border-glass-border p-4 rounded-xl gap-4">
+                    <div
+                        class="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-glass-bg border border-glass-border p-4 rounded-xl gap-4">
                         <div class="flex-1 w-full">
                             <div class="flex justify-between items-center w-full">
                                 <div>
                                     <h3 class="font-bold text-base sm:text-lg">MoneyFlow Greeting Voice</h3>
                                     <p class="text-xs sm:text-sm text-muted">Select high-quality synthesis voice.</p>
                                 </div>
-                                <button id="toggleVoiceBtn" class="px-4 py-2 rounded-xl text-sm font-bold bg-amber-500 text-white transition shadow-md">On</button>
+                                <button id="toggleVoiceBtn"
+                                    class="px-4 py-2 rounded-xl text-sm font-bold bg-amber-500 text-white transition shadow-md">On</button>
                             </div>
                             <select id="voiceSelect" class="glass-input mt-3 font-semibold w-full"></select>
                         </div>
@@ -115,30 +154,38 @@
                         </div>
                         <input type="range" id="soundSlider" class="premium-slider" min="0" max="100" value="50">
                     </div>
-                    
-                    <div class="flex justify-between items-center bg-glass-bg border border-glass-border p-4 rounded-xl">
+
+                    <div
+                        class="flex justify-between items-center bg-glass-bg border border-glass-border p-4 rounded-xl">
                         <div>
                             <h3 class="font-bold text-base sm:text-lg">Reduce Motion</h3>
                             <p class="text-xs sm:text-sm text-muted">Disable heavy animations</p>
                         </div>
-                        <button id="toggleMotionBtn" class="px-4 py-2 rounded-xl text-sm font-bold transition bg-glass-bg border border-glass-border">Off</button>
+                        <button id="toggleMotionBtn"
+                            class="px-4 py-2 rounded-xl text-sm font-bold transition bg-glass-bg border border-glass-border">Off</button>
                     </div>
                 </div>
             </section>
 
             <!-- TAB 2: IDENTITY -->
             <section id="tab-identity" class="tab-pane glass-panel p-6 sm:p-8 relative">
-                <div class="absolute -bottom-10 -left-10 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none"></div>
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-xl font-bold flex items-center gap-2"><i data-lucide="user-circle" class="text-emerald-500"></i> Personal Identity</h2>
-                    <button class="px-4 py-2 rounded-xl text-sm font-bold bg-emerald-500 text-white shadow-md hover:shadow-lg transition active:scale-95" onclick="window.saveIdentity()">Save</button>
+                <div
+                    class="absolute -bottom-10 -left-10 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none">
                 </div>
-                
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-xl font-bold flex items-center gap-2"><i data-lucide="user-circle"
+                            class="text-emerald-500"></i> Personal Identity</h2>
+                    <button
+                        class="px-4 py-2 rounded-xl text-sm font-bold bg-emerald-500 text-white shadow-md hover:shadow-lg transition active:scale-95"
+                        onclick="window.saveIdentity()">Save</button>
+                </div>
+
                 <div class="identity-avatar-container">
                     <span id="avatarInitials">U</span>
                 </div>
 
-                <div class="bg-glass-bg border border-glass-border p-5 rounded-xl grid grid-cols-1 sm:grid-cols-2 gap-4 relative z-10">
+                <div
+                    class="bg-glass-bg border border-glass-border p-5 rounded-xl grid grid-cols-1 sm:grid-cols-2 gap-4 relative z-10">
                     <div>
                         <label class="block text-xs font-bold text-muted mb-1">Full Name</label>
                         <input type="text" id="usernameInput" class="glass-input" placeholder="Your name">
@@ -161,10 +208,14 @@
                         <label class="block text-xs font-bold text-muted mb-1">Blood Group</label>
                         <select id="bloodInput" class="glass-input">
                             <option value="">Select</option>
-                            <option value="A+">A+</option><option value="A-">A-</option>
-                            <option value="B+">B+</option><option value="B-">B-</option>
-                            <option value="O+">O+</option><option value="O-">O-</option>
-                            <option value="AB+">AB+</option><option value="AB-">AB-</option>
+                            <option value="A+">A+</option>
+                            <option value="A-">A-</option>
+                            <option value="B+">B+</option>
+                            <option value="B-">B-</option>
+                            <option value="O+">O+</option>
+                            <option value="O-">O-</option>
+                            <option value="AB+">AB+</option>
+                            <option value="AB-">AB-</option>
                         </select>
                     </div>
                     <div>
@@ -173,21 +224,26 @@
                     </div>
                     <div class="sm:col-span-2">
                         <label class="block text-xs font-bold text-muted mb-1">Short Bio</label>
-                        <textarea id="bioInput" class="glass-input" rows="2" placeholder="Tell us about yourself..."></textarea>
+                        <textarea id="bioInput" class="glass-input" rows="2"
+                            placeholder="Tell us about yourself..."></textarea>
                     </div>
                 </div>
             </section>
 
             <!-- TAB 3: FINANCE -->
             <section id="tab-finance" class="tab-pane glass-panel p-6 sm:p-8 relative">
-                <div class="absolute top-1/2 right-0 w-32 h-32 bg-amber-500/10 rounded-full blur-2xl pointer-events-none"></div>
-                <h2 class="text-xl font-bold mb-6 flex items-center gap-2"><i data-lucide="wallet" class="text-amber-500"></i> Finance Preferences</h2>
+                <div
+                    class="absolute top-1/2 right-0 w-32 h-32 bg-amber-500/10 rounded-full blur-2xl pointer-events-none">
+                </div>
+                <h2 class="text-xl font-bold mb-6 flex items-center gap-2"><i data-lucide="wallet"
+                        class="text-amber-500"></i> Finance Preferences</h2>
 
                 <div class="space-y-4 relative z-10">
-                    <div class="flex flex-col bg-glass-bg border border-glass-border p-4 rounded-xl gap-2 relative z-50">
+                    <div
+                        class="flex flex-col bg-glass-bg border border-glass-border p-4 rounded-xl gap-2 relative z-50">
                         <h3 class="font-bold text-base sm:text-lg">Base Currency</h3>
                         <p class="text-xs sm:text-sm text-muted mb-2">Select your primary ledger format.</p>
-                        
+
                         <div class="currency-dropdown" id="currencyDropdown">
                             <div class="currency-toggle" id="currencyToggleBtn">
                                 <span id="selectedCurrencyDisplay">₹ INR (Indian Rupee)</span>
@@ -195,7 +251,8 @@
                             </div>
                             <div class="currency-menu">
                                 <div class="currency-search-container">
-                                    <input type="text" id="currencySearch" class="currency-search-input" placeholder="Search currency (e.g. USD)...">
+                                    <input type="text" id="currencySearch" class="currency-search-input"
+                                        placeholder="Search currency (e.g. USD)...">
                                 </div>
                                 <div class="currency-list" id="currencyList">
                                     <!-- Populated by JS -->
@@ -204,7 +261,8 @@
                         </div>
                     </div>
 
-                    <div class="flex justify-between items-center bg-glass-bg border border-glass-border p-4 rounded-xl">
+                    <div
+                        class="flex justify-between items-center bg-glass-bg border border-glass-border p-4 rounded-xl">
                         <div>
                             <h3 class="font-bold text-base sm:text-lg">Date Format</h3>
                             <p class="text-xs sm:text-sm text-muted">For receipts and logs</p>
@@ -215,43 +273,57 @@
                             <option value="YYYY-MM-DD">YYYY-MM-DD</option>
                         </select>
                     </div>
-                    
-                    <div class="flex justify-between items-center bg-glass-bg border border-glass-border p-4 rounded-xl">
+
+                    <div
+                        class="flex justify-between items-center bg-glass-bg border border-glass-border p-4 rounded-xl">
                         <div>
                             <h3 class="font-bold text-base sm:text-lg">Privacy Mode</h3>
                             <p class="text-xs sm:text-sm text-muted">Blur balances by default</p>
                         </div>
-                        <button id="togglePrivacyBtn" class="px-4 py-2 rounded-xl text-sm font-bold transition bg-glass-bg border border-glass-border">Off</button>
+                        <button id="togglePrivacyBtn"
+                            class="px-4 py-2 rounded-xl text-sm font-bold transition bg-glass-bg border border-glass-border">Off</button>
                     </div>
-                    
-                    <div class="flex justify-between items-center bg-glass-bg border border-glass-border p-4 rounded-xl">
+
+                    <div
+                        class="flex justify-between items-center bg-glass-bg border border-glass-border p-4 rounded-xl">
                         <div>
                             <h3 class="font-bold text-base sm:text-lg">Budget Alerts</h3>
                             <p class="text-xs sm:text-sm text-muted">Warn when near limits</p>
                         </div>
-                        <button id="toggleBudgetBtn" class="px-4 py-2 rounded-xl text-sm font-bold bg-amber-500 text-white transition shadow-md">On</button>
+                        <button id="toggleBudgetBtn"
+                            class="px-4 py-2 rounded-xl text-sm font-bold bg-amber-500 text-white transition shadow-md">On</button>
                     </div>
 
                     <!-- CATEGORY MANAGER -->
                     <div class="mt-10 cat-manager-wrapper p-5 rounded-2xl relative z-10 overflow-hidden">
-                        <div class="absolute -top-10 -right-10 w-40 h-40 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
-                        <h3 class="font-bold text-lg mb-1 flex items-center gap-2"><i data-lucide="tags" class="text-amber-500 w-5 h-5"></i> Category Manager</h3>
-                        <p class="text-sm text-muted mb-5 relative z-10">Manage your precise financial subcategories.</p>
-                        
+                        <div
+                            class="absolute -top-10 -right-10 w-40 h-40 bg-amber-500/10 rounded-full blur-3xl pointer-events-none">
+                        </div>
+                        <h3 class="font-bold text-lg mb-1 flex items-center gap-2"><i data-lucide="tags"
+                                class="text-amber-500 w-5 h-5"></i> Category Manager</h3>
+                        <p class="text-sm text-muted mb-5 relative z-10">Manage your precise financial subcategories.
+                        </p>
+
                         <div class="flex gap-2 mb-5 bg-black/20 p-1.5 rounded-xl border border-white/5 relative z-10">
-                            <button id="catTypeExpense" class="flex-1 py-2 rounded-lg text-sm font-bold bg-amber-500/20 text-amber-500 transition-all shadow-sm">Expense</button>
-                            <button id="catTypeIncome" class="flex-1 py-2 rounded-lg text-sm font-bold text-muted transition-all">Income</button>
+                            <button id="catTypeExpense"
+                                class="flex-1 py-2 rounded-lg text-sm font-bold bg-amber-500/20 text-amber-500 transition-all shadow-sm">Expense</button>
+                            <button id="catTypeIncome"
+                                class="flex-1 py-2 rounded-lg text-sm font-bold text-muted transition-all">Income</button>
                         </div>
-                        
+
                         <div id="mainCategorySelectContainer" class="mb-5 relative z-10">
-                            <select id="mainCategorySelect" class="glass-input !py-3 !px-4 text-sm font-bold text-amber-500 shadow-sm"></select>
+                            <select id="mainCategorySelect"
+                                class="glass-input !py-3 !px-4 text-sm font-bold text-amber-500 shadow-sm"></select>
                         </div>
-                        
+
                         <div class="flex gap-3 mb-5 relative z-10">
-                            <input type="text" id="newCategoryInput" class="glass-input flex-1 !py-3 shadow-sm" placeholder="e.g. 🛵 Travel - Rapido">
-                            <button id="addCategoryBtn" class="bg-gradient-to-r from-amber-500 to-orange-400 text-white px-5 py-3 rounded-xl text-sm font-bold shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all flex items-center justify-center"><i data-lucide="plus" class="w-5 h-5"></i></button>
+                            <input type="text" id="newCategoryInput" class="glass-input flex-1 !py-3 shadow-sm"
+                                placeholder="e.g. 🛵 Travel - Rapido">
+                            <button id="addCategoryBtn"
+                                class="bg-gradient-to-r from-amber-500 to-orange-400 text-white px-5 py-3 rounded-xl text-sm font-bold shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all flex items-center justify-center"><i
+                                    data-lucide="plus" class="w-5 h-5"></i></button>
                         </div>
-                        
+
                         <div id="customCategoryList" class="space-y-3 max-h-[220px] overflow-y-auto pr-2 relative z-10">
                             <!-- Populated by JS -->
                         </div>
@@ -261,8 +333,11 @@
 
             <!-- TAB 4: DATA -->
             <section id="tab-data" class="tab-pane glass-panel p-6 sm:p-8 relative">
-                <div class="absolute -top-10 -left-10 w-32 h-32 bg-purple-500/10 rounded-full blur-2xl pointer-events-none"></div>
-                <h2 class="text-xl font-bold mb-6 flex items-center gap-2"><i data-lucide="database" class="text-purple-500"></i> Data & Legal</h2>
+                <div
+                    class="absolute -top-10 -left-10 w-32 h-32 bg-purple-500/10 rounded-full blur-2xl pointer-events-none">
+                </div>
+                <h2 class="text-xl font-bold mb-6 flex items-center gap-2"><i data-lucide="database"
+                        class="text-purple-500"></i> Data & Legal</h2>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6 relative z-10">
                     <div class="bg-glass-bg border border-glass-border p-5 rounded-xl text-center">
@@ -270,8 +345,10 @@
                         <h3 class="font-bold mb-2">Export Data</h3>
                         <p class="text-xs text-muted mb-4">Download backup of ledgers.</p>
                         <div class="flex gap-2">
-                            <button onclick="window.exportDataJSON()" class="flex-1 glass-button py-2 rounded-lg font-bold text-emerald-500 text-xs">.JSON</button>
-                            <button onclick="window.exportDataCSV()" class="flex-1 glass-button py-2 rounded-lg font-bold text-emerald-500 text-xs">.CSV</button>
+                            <button onclick="window.exportDataJSON()"
+                                class="flex-1 glass-button py-2 rounded-lg font-bold text-emerald-500 text-xs">.JSON</button>
+                            <button onclick="window.exportDataCSV()"
+                                class="flex-1 glass-button py-2 rounded-lg font-bold text-emerald-500 text-xs">.CSV</button>
                         </div>
                     </div>
 
@@ -279,34 +356,49 @@
                         <i data-lucide="upload-cloud" class="w-8 h-8 text-blue-500 mx-auto mb-3"></i>
                         <h3 class="font-bold mb-2">Import JSON</h3>
                         <p class="text-xs text-muted mb-4">Overwrite current ledgers.</p>
-                        <input type="file" id="importFile" accept=".json" class="hidden" onchange="window.importDataJSON(this)">
-                        <button onclick="document.getElementById('importFile').click()" class="w-full glass-button py-2 rounded-lg font-bold text-blue-500">Import</button>
+                        <input type="file" id="importFile" accept=".json" class="hidden"
+                            onchange="window.importDataJSON(this)">
+                        <button onclick="document.getElementById('importFile').click()"
+                            class="w-full glass-button py-2 rounded-lg font-bold text-blue-500">Import</button>
                     </div>
                 </div>
-                
-                <div class="bg-glass-bg border border-glass-border p-4 rounded-xl mb-6 flex justify-between items-center relative z-10">
+
+                <div
+                    class="bg-glass-bg border border-glass-border p-4 rounded-xl mb-6 flex justify-between items-center relative z-10">
                     <div>
                         <h3 class="font-bold text-base">Auto-Backup (Simulated)</h3>
                         <p class="text-xs text-muted" id="lastBackupText">Last: Never</p>
                     </div>
-                    <button onclick="window.runSimulatedBackup()" class="glass-button p-2 rounded-lg text-purple-500"><i data-lucide="refresh-cw" class="w-5 h-5"></i></button>
+                    <button onclick="window.runSimulatedBackup()" class="glass-button p-2 rounded-lg text-purple-500"><i
+                            data-lucide="refresh-cw" class="w-5 h-5"></i></button>
                 </div>
 
-                <div class="flex justify-between items-center bg-red-500/5 border border-red-500/20 p-4 rounded-xl mb-6 relative z-10">
+                <div
+                    class="flex justify-between items-center bg-red-500/5 border border-red-500/20 p-4 rounded-xl mb-6 relative z-10">
                     <div>
                         <h3 class="font-bold text-base sm:text-lg text-red-500">Nuclear Wipe</h3>
                         <p class="text-xs sm:text-sm text-muted">Irrevocable data destruction.</p>
                     </div>
-                    <button class="px-4 py-2 rounded-xl text-sm font-bold bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white border border-red-500/30 transition active:scale-95" onclick="window.wipeData()">Reset</button>
+                    <button
+                        class="px-4 py-2 rounded-xl text-sm font-bold bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white border border-red-500/30 transition active:scale-95"
+                        onclick="window.wipeData()">Reset</button>
                 </div>
 
                 <div class="border-t border-glass-border pt-6 relative z-10">
                     <h3 class="font-bold mb-4 text-sm text-muted uppercase tracking-wider">Support & Legal</h3>
                     <div class="grid grid-cols-2 gap-3">
-                        <a href="howtouse.html" class="glass-button p-3 rounded-lg text-xs font-bold text-center flex items-center justify-center gap-2"><i data-lucide="help-circle" class="w-4 h-4 text-purple-500"></i> Help</a>
-                        <a href="feedback.html" class="glass-button p-3 rounded-lg text-xs font-bold text-center flex items-center justify-center gap-2"><i data-lucide="message-square" class="w-4 h-4 text-blue-500"></i> Feedback</a>
-                        <a href="privacy-policy.html" class="glass-button p-3 rounded-lg text-xs font-bold text-center flex items-center justify-center gap-2"><i data-lucide="shield" class="w-4 h-4 text-emerald-500"></i> Privacy</a>
-                        <a href="terms-conditions.html" class="glass-button p-3 rounded-lg text-xs font-bold text-center flex items-center justify-center gap-2"><i data-lucide="file-text" class="w-4 h-4 text-amber-500"></i> Terms</a>
+                        <a href="howtouse.html"
+                            class="glass-button p-3 rounded-lg text-xs font-bold text-center flex items-center justify-center gap-2"><i
+                                data-lucide="help-circle" class="w-4 h-4 text-purple-500"></i> Help</a>
+                        <a href="feedback.html"
+                            class="glass-button p-3 rounded-lg text-xs font-bold text-center flex items-center justify-center gap-2"><i
+                                data-lucide="message-square" class="w-4 h-4 text-blue-500"></i> Feedback</a>
+                        <a href="privacy-policy.html"
+                            class="glass-button p-3 rounded-lg text-xs font-bold text-center flex items-center justify-center gap-2"><i
+                                data-lucide="shield" class="w-4 h-4 text-emerald-500"></i> Privacy</a>
+                        <a href="terms-conditions.html"
+                            class="glass-button p-3 rounded-lg text-xs font-bold text-center flex items-center justify-center gap-2"><i
+                                data-lucide="file-text" class="w-4 h-4 text-amber-500"></i> Terms</a>
                     </div>
                     <div class="mt-6 text-center text-xs text-muted">
                         <p>MoneyFlow v2.0.1 Premium</p>
@@ -319,22 +411,22 @@
 
     <!-- Bottom Navigation Dock -->
     <nav class="bottom-dock glass-dock">
-      <a href="index.html" class="dock-item">
-        <i data-lucide="home"></i>
-        <span>Home</span>
-      </a>
-      <a href="spendly.html" class="dock-item">
-        <i data-lucide="pie-chart"></i>
-        <span>Spendly</span>
-      </a>
-      <a href="pocketcal.html" class="dock-item">
-        <i data-lucide="calendar"></i>
-        <span>PocketCal</span>
-      </a>
-      <a href="settings.html" class="dock-item active">
-        <i data-lucide="settings"></i>
-        <span>Settings</span>
-      </a>
+        <a href="index.html" class="dock-item">
+            <i data-lucide="home"></i>
+            <span>Home</span>
+        </a>
+        <a href="spendly.html" class="dock-item">
+            <i data-lucide="pie-chart"></i>
+            <span>Spendly</span>
+        </a>
+        <a href="pocketcal.html" class="dock-item">
+            <i data-lucide="calendar"></i>
+            <span>PocketCal</span>
+        </a>
+        <a href="settings.html" class="dock-item active">
+            <i data-lucide="settings"></i>
+            <span>Settings</span>
+        </a>
     </nav>
 
     <!-- CDNs -->
@@ -347,4 +439,4 @@
     <script src="settings.js"></script>
 </body>
 
-</html>s
+</html>

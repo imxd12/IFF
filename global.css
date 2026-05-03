@@ -858,3 +858,29 @@ body.privacy-mode .privacy-blur:hover {
     transform: scale(1) translateY(0);
     opacity: 1;
 }
+
+/* ========================================================================
+   10. REDUCE MOTION (ACCESSIBILITY)
+======================================================================== */
+body.reduce-motion * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+}
+
+body.reduce-motion .liquid-bg-container {
+    display: none !important; /* Hide heavy gooey SVG filter */
+}
+
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+        scroll-behavior: auto !important;
+    }
+    .liquid-bg-container {
+        display: none !important;
+    }
+}

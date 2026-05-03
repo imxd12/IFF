@@ -98,111 +98,7 @@
     text-align: center;
 }
 
-/* Custom Currency Dropdown */
-.currency-dropdown {
-    position: relative;
-    width: 100%;
-}
 
-.currency-toggle {
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.75rem 1rem;
-    background: var(--glass-bg);
-    border: 1px solid var(--glass-border);
-    border-radius: 0.75rem;
-    color: var(--text-main);
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.currency-toggle:hover {
-    background: var(--glass-hover);
-}
-
-.currency-menu {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    width: 100%;
-    margin-top: 0.5rem;
-    background: var(--glass-bg);
-    border: 1px solid var(--glass-border);
-    border-radius: 0.75rem;
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-    z-index: 50;
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(-10px);
-    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    max-height: 250px;
-    display: flex;
-    flex-direction: column;
-}
-
-.currency-dropdown.open .currency-menu {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0);
-}
-
-.currency-search-container {
-    padding: 0.75rem;
-    border-bottom: 1px solid var(--glass-border);
-}
-
-.currency-search-input {
-    width: 100%;
-    background: var(--glass-hover);
-    border: 1px solid var(--glass-border);
-    color: var(--text-main);
-    padding: 0.5rem;
-    border-radius: 0.5rem;
-    font-size: 0.875rem;
-    outline: none;
-}
-.currency-search-input:focus {
-    border-color: var(--accent-primary);
-}
-
-.currency-list {
-    overflow-y: auto;
-    flex: 1;
-    padding: 0.5rem;
-    scrollbar-width: thin;
-}
-.currency-list::-webkit-scrollbar {
-    width: 4px;
-}
-.currency-list::-webkit-scrollbar-thumb {
-    background: var(--glass-border);
-    border-radius: 4px;
-}
-
-.currency-option {
-    padding: 0.5rem 0.75rem;
-    border-radius: 0.5rem;
-    color: var(--text-main);
-    cursor: pointer;
-    font-size: 0.875rem;
-    font-weight: 600;
-    transition: background 0.2s;
-    display: flex;
-    justify-content: space-between;
-}
-.currency-option:hover {
-    background: var(--glass-hover);
-    color: var(--accent-primary);
-}
-.currency-option.selected {
-    background: rgba(var(--accent-primary-rgb), 0.1);
-    color: var(--accent-primary);
-}
 
 /* User Identity Avatar Area */
 .identity-avatar-container {
@@ -257,32 +153,57 @@
 
 /* Category Manager Polish */
 .cat-manager-wrapper {
-    background: linear-gradient(145deg, rgba(var(--glass-bg-rgb), 0.8), rgba(var(--glass-bg-rgb), 0.3));
-    border: 1px solid rgba(245, 158, 11, 0.2); /* amber tint */
-    box-shadow: inset 0 1px 1px rgba(255,255,255,0.05), 0 10px 30px rgba(0,0,0,0.1);
+    background: linear-gradient(145deg, rgba(var(--glass-bg-rgb), 0.6), rgba(var(--glass-bg-rgb), 0.2));
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.05);
+    backdrop-filter: blur(20px);
 }
 
 .cat-item-card {
     transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-    background: rgba(0,0,0,0.15);
-    border: 1px solid transparent;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 0.75rem;
+    padding: 0.75rem 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+[data-theme="dark"] .cat-item-card {
+    background: rgba(0,0,0,0.2);
+    border-color: rgba(255,255,255,0.02);
 }
 
 .cat-item-card:hover {
-    background: rgba(245, 158, 11, 0.08);
-    border-color: rgba(245, 158, 11, 0.2);
-    transform: translateX(4px);
+    background: rgba(var(--accent-primary-rgb), 0.1);
+    border-color: rgba(var(--accent-primary-rgb), 0.3);
+    transform: translateX(4px) scale(1.01);
+    box-shadow: 0 4px 15px rgba(var(--accent-primary-rgb), 0.1);
 }
 
 .cat-item-card button {
-    opacity: 0.6;
-    transition: opacity 0.2s, transform 0.2s;
+    opacity: 0.5;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
+
 .cat-item-card:hover button {
     opacity: 1;
 }
+
 .cat-item-card button:hover {
-    transform: scale(1.15) rotate(5deg);
+    background: #ef4444;
+    color: white;
+    transform: scale(1.1) rotate(5deg);
+    box-shadow: 0 0 15px rgba(239, 68, 68, 0.4);
 }
 
 /* Modern Select Styling for Category Manager */

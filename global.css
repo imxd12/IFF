@@ -923,20 +923,22 @@ body.reduce-motion .liquid-bg-container {
     position: absolute;
     top: 100%;
     left: 0;
-    width: 100%;
+    min-width: 100%;
+    width: max-content;
+    max-width: min(400px, 90vw);
     margin-top: 0.75rem;
-    background: linear-gradient(145deg, rgba(var(--glass-bg-rgb), 0.8), rgba(var(--glass-bg-rgb), 0.4));
+    background: linear-gradient(145deg, rgba(var(--glass-bg-rgb), 0.95), rgba(var(--glass-bg-rgb), 0.8));
     border: 1px solid rgba(var(--text-main-rgb), 0.1);
     border-radius: 1rem;
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255,255,255,0.05);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255,255,255,0.05);
     z-index: 9999;
     opacity: 0;
     visibility: hidden;
     transform: translateY(-15px) scale(0.98);
     transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-    max-height: 280px;
+    max-height: 50vh;
     display: flex;
     flex-direction: column;
 }
@@ -984,18 +986,19 @@ body.reduce-motion .liquid-bg-container {
 }
 
 .custom-option {
-    padding: 0.75rem 1rem;
+    padding: 0.875rem 1.25rem;
     border-radius: 0.75rem;
     color: var(--text-main);
     cursor: pointer;
-    font-size: 0.875rem;
+    font-size: 0.9rem;
     font-weight: 600;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     display: flex;
     justify-content: space-between;
     align-items: center;
     border: 1px solid transparent;
-    margin-bottom: 2px;
+    margin-bottom: 4px;
+    word-break: break-word;
 }
 .custom-option:last-child {
     margin-bottom: 0;
@@ -1010,4 +1013,158 @@ body.reduce-motion .liquid-bg-container {
     background: var(--accent-primary);
     color: white;
     box-shadow: 0 4px 15px rgba(var(--accent-primary-rgb), 0.3);
+}
+
+/* ========================================================================
+   CUSTOM DATE PICKER CALENDAR UI
+======================================================================== */
+.custom-date {
+    cursor: pointer;
+    caret-color: transparent;
+}
+
+.calendar-popup {
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    left: 0;
+    width: 280px;
+    background: linear-gradient(145deg, rgba(var(--glass-bg-rgb), 0.9), rgba(var(--glass-bg-rgb), 0.7));
+    border: 1px solid rgba(var(--text-main-rgb), 0.1);
+    border-radius: 1rem;
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255,255,255,0.05);
+    z-index: 9999;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-15px) scale(0.95);
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    padding: 1rem;
+    color: var(--text-main);
+}
+
+.calendar-wrapper.open .calendar-popup {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0) scale(1);
+}
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.calendar-header button {
+    background: rgba(var(--text-main-rgb), 0.05);
+    border-radius: 0.5rem;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.2s;
+}
+
+.calendar-header button:hover {
+    background: rgba(var(--accent-primary-rgb), 0.2);
+    color: var(--accent-primary);
+}
+
+.calendar-month-year {
+    font-weight: 700;
+    font-size: 1rem;
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0.25rem;
+    text-align: center;
+}
+
+.calendar-weekday {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+}
+
+.calendar-day {
+    aspect-ratio: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 0.5rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 1px solid transparent;
+}
+
+.calendar-day:hover:not(.empty) {
+    background: rgba(var(--accent-primary-rgb), 0.15);
+    color: var(--accent-primary);
+    transform: scale(1.1);
+}
+
+.calendar-day.empty {
+    cursor: default;
+}
+
+.calendar-day.today {
+    color: var(--accent-primary);
+    border-color: rgba(var(--accent-primary-rgb), 0.5);
+}
+
+.calendar-day.selected {
+    background: var(--accent-primary);
+    color: white;
+    box-shadow: 0 4px 10px rgba(var(--accent-primary-rgb), 0.4);
+    transform: scale(1.05);
+    border-color: transparent;
+}
+
+.calendar-month-year {
+    cursor: pointer;
+    padding: 0.25rem 0.75rem;
+    border-radius: 0.5rem;
+    transition: all 0.2s;
+}
+
+.calendar-month-year:hover {
+    background: rgba(var(--text-main-rgb), 0.1);
+}
+
+.calendar-mode-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+    padding-top: 0.5rem;
+}
+
+.calendar-mode-item {
+    padding: 0.75rem 0.25rem;
+    border-radius: 0.5rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 1px solid transparent;
+}
+
+.calendar-mode-item:hover {
+    background: rgba(var(--accent-primary-rgb), 0.15);
+    color: var(--accent-primary);
+    transform: scale(1.05);
+}
+
+.calendar-mode-item.selected {
+    background: var(--accent-primary);
+    color: white;
+    box-shadow: 0 4px 10px rgba(var(--accent-primary-rgb), 0.4);
 }

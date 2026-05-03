@@ -42,10 +42,13 @@
   };
 
   // ----------------------------------------------------
-  // 1b. PRIVACY MODE INIT
+  // 1b. PRIVACY MODE & REDUCE MOTION INIT
   // ----------------------------------------------------
   if (localStorage.getItem('fin_privacy_mode') === 'true') {
       document.body.classList.add('privacy-mode');
+  }
+  if (localStorage.getItem('fin_reduce_motion') === 'true') {
+      document.body.classList.add('reduce-motion');
   }
 
   // ----------------------------------------------------
@@ -307,6 +310,11 @@
           }
         );
       });
+      
+      // If reduce motion is enabled, force GSAP to complete instantly
+      if (localStorage.getItem('fin_reduce_motion') === 'true') {
+          gsap.globalTimeline.timeScale(1000);
+      }
     }
   };
 

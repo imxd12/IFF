@@ -235,7 +235,70 @@
   // 5. BOTTOM NAVIGATION DOCK LOGIC
   // ----------------------------------------------------
   window.initDockIndicator = function() {
-    // Removed for minimalistic navbar design
+    const dock = document.querySelector('.bottom-dock');
+    if (!dock) return;
+
+    // Create the sliding indicator pill
+    let indicator = dock.querySelector('.dock-indicator');
+    if (!indicator) {
+        indicator = document.createElement('div');
+        indicator.className = 'dock-indicator';
+        // Remove transition temporarily for instant snap on load
+        indicator.style.transition = 'none';
+        dock.insertBefore(indicator, dock.firstChild);
+    }
+
+    const items = dock.querySelectorAll('.dock-item');
+    let activeItem = dock.querySelector('.dock-item.active');
+    
+    // Fallback if none active
+    if (!activeItem && items.length > 0) {
+        activeItem = items[0];
+        activeItem.classList.add('active');
+    }
+
+    const updateIndicator = (item) => {
+        if (!item) return;
+        const dockRect = dock.getBoundingClientRect();
+        const itemRect = item.getBoundingClientRect();
+        
+        // Calculate relative position within the dock
+        const leftPos = itemRect.left - dockRect.left;
+        
+        indicator.style.width = `${itemRect.width}px`;
+        indicator.style.transform = `translateY(-50%) translateX(${leftPos}px)`;
+        indicator.style.left = '0'; // using transform for smoother GPU accelerated animation
+    };
+
+    // Initial position calculation
+    setTimeout(() => {
+        if(activeItem) updateIndicator(activeItem);
+        // Re-enable smooth transitions after initial positioning
+        setTimeout(() => {
+            indicator.style.transition = 'all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)';
+        }, 50);
+    }, 150); // slight delay to allow fonts and flexbox to render properly
+
+    // On window resize, re-calculate
+    window.addEventListener('resize', () => {
+        const currentActive = dock.querySelector('.dock-item.active');
+        if(currentActive) updateIndicator(currentActive);
+    });
+
+    // Add click listeners to items for a smooth transition before page navigates
+    items.forEach(item => {
+        item.addEventListener('click', (e) => {
+            if (!item.classList.contains('active')) {
+                const currentActive = dock.querySelector('.dock-item.active');
+                if (currentActive) currentActive.classList.remove('active');
+                
+                item.classList.add('active');
+                updateIndicator(item);
+                
+                if (window.playUISound) window.playUISound('tap');
+            }
+        });
+    });
   };
 
   // ----------------------------------------------------

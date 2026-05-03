@@ -993,6 +993,22 @@
               document.querySelectorAll('.custom-dropdown.open').forEach(d => d.classList.remove('open'));
               
               if (!wasOpen) {
+                  // Smart positioning logic
+                  const rect = toggle.getBoundingClientRect();
+                  const spaceBelow = window.innerHeight - rect.bottom;
+                  const menuHeight = 250; // Estimated max height of menu
+                  if (spaceBelow < menuHeight && rect.top > menuHeight) {
+                      menu.style.top = 'auto';
+                      menu.style.bottom = '100%';
+                      menu.style.marginTop = '0';
+                      menu.style.marginBottom = '0.75rem';
+                  } else {
+                      menu.style.bottom = 'auto';
+                      menu.style.top = '100%';
+                      menu.style.marginBottom = '0';
+                      menu.style.marginTop = '0.75rem';
+                  }
+
                   wrapper.classList.add('open');
                   if (hasSearch && searchInput) {
                       searchInput.value = '';

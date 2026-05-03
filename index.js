@@ -183,123 +183,38 @@
             '🏜️', '🏙️', '🚶', '🏃', '🌇', '🌆', '🌙', '🌟', '🌠', '🛌', '😴', '💤'
         ];
         const currentEmoji = emojiArray[hour];
-
-        let greeting = "";
-        if (hour >= 0 && hour < 3) greeting = "Late night";
-        else if (hour >= 3 && hour < 6) greeting = "Early morning";
-        else if (hour >= 6 && hour < 10) greeting = "Morning";
-        else if (hour >= 10 && hour < 12) greeting = "Late morning";
-        else if (hour >= 12 && hour < 15) greeting = "Afternoon";
-        else if (hour >= 15 && hour < 18) greeting = "Late Afternoon";
-        else if (hour >= 18 && hour < 21) greeting = "Evening";
-        else greeting = "Night";
-
         let randEmoji = ['✨', '💫', '🌟', '🔥', '🥂'][Math.floor(Math.random() * 5)];
-        let finalGreeting = `${greeting} ${currentEmoji}<br><span class="text-gradient">${state.username}</span> ${randEmoji}`;
 
-        if (date.getDay() === 5) {
-            finalGreeting = `Jummah Mubarak 🕌<br><span class="text-gradient">${state.username}</span> - Good ${greeting} ${currentEmoji}`;
+        if (window.MoneyFlowVoiceEngine) {
+            const langCode = localStorage.getItem('fin_language') || 'en';
+            const username = localStorage.getItem('fin_userName') || state.username || 'User';
+            const useNameStr = localStorage.getItem('fin_useName');
+            const useName = useNameStr !== 'false';
+            
+            const timeKey = window.MoneyFlowVoiceEngine.getTimeKey(hour);
+            const langData = window.MoneyFlowVoiceEngine.greetings['en']; // ALWAYS ENGLISH FOR VISUAL TEXT
+            const timeGreeting = langData[timeKey] || langData.morning;
+            
+            let finalGreeting = `${timeGreeting} ${currentEmoji}<br><span class="text-gradient">${useName ? username : ''}</span> ${randEmoji}`;
+            
+            if (date.getDay() === 5) { // Show Jummah Mubarak for everyone on Friday visually
+                finalGreeting = `Jummah Mubarak 🕌<br><span class="text-gradient">${useName ? username : ''}</span> - Good ${timeKey} ${currentEmoji}`;
+            }
+            welcomeEl.innerHTML = finalGreeting;
+        } else {
+            let greeting = "Good day";
+            let finalGreeting = `${greeting} ${currentEmoji}<br><span class="text-gradient">${state.username}</span> ${randEmoji}`;
+            welcomeEl.innerHTML = finalGreeting;
         }
-
-        welcomeEl.innerHTML = finalGreeting;
     }
 
     // ----------------------------------------------------
     // PROFESSIONAL VOICE GREETING (Web Speech API)
     // ----------------------------------------------------
-    function speakAssistantGreeting() {
-        if (localStorage.getItem("voiceGreeting") === "off") return;
-        // Use sessionStorage instead of localStorage so it plays once per app session (each time app is opened)
-        if (sessionStorage.getItem("app_session_started") === "true") return;
-
-        let hasSpoken = false;
-
-        const hour = new Date().getHours();
-        const date = new Date();
-
-        let timeGreeting = "Good day";
-
-        if (hour >= 0 && hour < 3) {
-            timeGreeting = "Late night";
-        } else if (hour >= 3 && hour < 6) {
-            timeGreeting = "Early morning";
-        } else if (hour >= 6 && hour < 9) {
-            timeGreeting = "Morning";
-        } else if (hour >= 9 && hour < 12) {
-            timeGreeting = "Late morning";
-        } else if (hour >= 12 && hour < 15) {
-            timeGreeting = "Afternoon";
-        } else if (hour >= 15 && hour < 18) {
-            timeGreeting = "Late afternoon";
-        } else if (hour >= 18 && hour < 21) {
-            timeGreeting = "Evening";
-        } else if (hour >= 21 && hour < 24) {
-            timeGreeting = "Early Night";
-        } else {
-            timeGreeting = "Good Night";
+    function speakAssistantGreeting(forcePlay = false) {
+        if (window.MoneyFlowVoiceEngine) {
+            window.MoneyFlowVoiceEngine.speak(forcePlay);
         }
-
-        const dob = localStorage.getItem('userDOB');
-        const dobDate = dob ? new Date(dob) : null;
-        const isBirthday = dobDate && dobDate.getMonth() === date.getMonth() && dobDate.getDate() === date.getDate();
-        let bdayWish = isBirthday ? " Happy birthday!" : "";
-
-        // AI Financial Pulse
-        const currentMonth = new Date().toISOString().slice(0, 7);
-        const monthlyExpense = state.spendlyData
-            .filter(t => t.date && t.date.startsWith(currentMonth) && t.type === 'expense')
-            .reduce((sum, t) => sum + Number(t.amount || 0), 0);
-            
-        let pulseMsg = "";
-        if(monthlyExpense > 0) {
-            pulseMsg = ` You have spent ${monthlyExpense} rupees this month.`;
-        }
-
-        let message = `Asalamwalikum, ${state.username}. ${timeGreeting}.${bdayWish}${pulseMsg} Welcome to money flow.`;
-        if (date.getDay() === 5) {
-            message = `Asalamwalikum, Jummah Mubarak, ${state.username}. ${timeGreeting}.${bdayWish}${pulseMsg} Welcome to money flow.`;
-        }
-
-        const runSpeech = () => {
-            if (hasSpoken) return;
-
-            const speech = new SpeechSynthesisUtterance(message);
-            speech.lang = "en-US";
-            speech.rate = 0.95;
-            speech.pitch = 1;
-
-            speech.onstart = () => {
-                hasSpoken = true;
-                sessionStorage.setItem("app_session_started", "true");
-                document.removeEventListener('click', runSpeech);
-                document.removeEventListener('touchstart', runSpeech);
-            };
-
-            const loadVoiceAndSpeak = () => {
-                const voices = speechSynthesis.getVoices();
-                const savedURI = localStorage.getItem('fin_voiceURI');
-                let preferred = null;
-                if (savedURI) preferred = voices.find(v => v.voiceURI === savedURI);
-                if (!preferred) preferred = voices.find(v => v.name.includes("Google US English") || v.name.includes("Samantha")) || voices[0];
-                if (preferred) speech.voice = preferred;
-
-                speechSynthesis.cancel();
-                speechSynthesis.speak(speech);
-            };
-
-            if (speechSynthesis.getVoices().length === 0) {
-                speechSynthesis.addEventListener('voiceschanged', loadVoiceAndSpeak, { once: true });
-            } else {
-                loadVoiceAndSpeak();
-            }
-        };
-
-        // Try playing immediately (Allowed on installed PWAs / Desktop)
-        runSpeech();
-
-        // Bind unconditionally to body touch/click (Fallback for Strict Browsers)
-        document.addEventListener('click', runSpeech);
-        document.addEventListener('touchstart', runSpeech);
     }
 
     // ----------------------------------------------------

@@ -48,7 +48,7 @@
         const savedURI = localStorage.getItem('fin_voiceURI');
 
         // Show all voices, prioritize native ones
-        let displayVoices = voices.filter(v => v.lang.includes('en') || v.localService);
+        let displayVoices = voices;
         if(displayVoices.length === 0) displayVoices = voices.slice(0, 50);
         
         if (displayVoices.length === 0) {
@@ -65,24 +65,7 @@
         });
     };
 
-    // Voice Toggle Logic
-    const toggleVoiceBtn = document.getElementById('toggleVoiceBtn');
-    if (toggleVoiceBtn) {
-        const isVoiceOff = localStorage.getItem("voiceGreeting") === "off";
-        toggleVoiceBtn.textContent = isVoiceOff ? "Off" : "On";
-        toggleVoiceBtn.className = isVoiceOff ? 
-            'px-4 py-2 rounded-xl text-sm font-bold bg-glass-bg border border-glass-border transition' :
-            'px-4 py-2 rounded-xl text-sm font-bold bg-amber-500 text-white transition shadow-md';
-            
-        toggleVoiceBtn.addEventListener('click', () => {
-            const currentIsOff = localStorage.getItem("voiceGreeting") === "off";
-            localStorage.setItem("voiceGreeting", currentIsOff ? "on" : "off");
-            toggleVoiceBtn.textContent = currentIsOff ? "On" : "Off";
-            toggleVoiceBtn.className = currentIsOff ? 
-                'px-4 py-2 rounded-xl text-sm font-bold bg-amber-500 text-white transition shadow-md' :
-                'px-4 py-2 rounded-xl text-sm font-bold bg-glass-bg border border-glass-border transition';
-        });
-    }
+
 
     // Theme Toggle Logic (Button update)
     const toggleAppThemeBtn = document.getElementById('toggleAppThemeBtn');
@@ -116,16 +99,50 @@
         if(select) {
             select.addEventListener('change', (e) => {
                 localStorage.setItem('fin_voiceURI', e.target.value);
-                
-                // Test the voice
-                const msg = new SpeechSynthesisUtterance("Voice configured.");
-                const voice = speechSynthesis.getVoices().find(v => v.voiceURI === e.target.value);
-                if(voice) msg.voice = voice;
-                speechSynthesis.speak(msg);
-                
+                if(window.MoneyFlowVoiceEngine) window.MoneyFlowVoiceEngine.speak(true);
                 showSnackbar('Assistant Voice Updated!');
             });
         }
+    }
+
+    const languageSelect = document.getElementById('languageSelect');
+    if (languageSelect) {
+        languageSelect.value = localStorage.getItem('fin_language') || 'en';
+        languageSelect.addEventListener('change', (e) => {
+            const langCode = e.target.value;
+            localStorage.setItem('fin_language', langCode);
+            
+            // Auto-select a voice for the new language if possible
+            if (window.speechSynthesis && window.MoneyFlowVoiceEngine) {
+                const preferred = window.MoneyFlowVoiceEngine.getVoiceForLang(langCode);
+                if (preferred) {
+                    localStorage.setItem('fin_voiceURI', preferred.voiceURI);
+                    const vSelect = document.getElementById('voiceSelect');
+                    if (vSelect) vSelect.value = preferred.voiceURI;
+                }
+            }
+            if(window.MoneyFlowVoiceEngine) window.MoneyFlowVoiceEngine.speak(true);
+            if (window.showSnackbar) window.showSnackbar('Greeting Language Updated!');
+        });
+    }
+
+    const toggleVoiceBtn = document.getElementById('toggleVoiceBtn');
+    if (toggleVoiceBtn) {
+        const voiceState = localStorage.getItem('voiceGreeting') || 'on';
+        toggleVoiceBtn.textContent = voiceState === 'on' ? 'On' : 'Off';
+        toggleVoiceBtn.className = voiceState === 'on' ? 
+            'px-4 py-2 rounded-xl text-sm font-bold bg-emerald-500 text-white transition shadow-md' :
+            'px-4 py-2 rounded-xl text-sm font-bold bg-glass-bg border border-glass-border transition';
+            
+        toggleVoiceBtn.addEventListener('click', () => {
+            const current = localStorage.getItem('voiceGreeting') || 'on';
+            const next = current === 'on' ? 'off' : 'on';
+            localStorage.setItem('voiceGreeting', next);
+            toggleVoiceBtn.textContent = next === 'on' ? 'On' : 'Off';
+            toggleVoiceBtn.className = next === 'on' ? 
+                'px-4 py-2 rounded-xl text-sm font-bold bg-emerald-500 text-white transition shadow-md' :
+                'px-4 py-2 rounded-xl text-sm font-bold bg-glass-bg border border-glass-border transition';
+        });
     }
 
     // ----------------------------------------------------
@@ -209,10 +226,94 @@
     const locationInput = document.getElementById('locationInput');
     const initialsDisplay = document.getElementById('avatarInitials');
     
+    // New identity UI elements
+    const avatarInput = document.getElementById('avatarFileInput');
+    const avatarImg = document.getElementById('avatarImage');
+    const avatarTrigger = document.getElementById('avatarUploadTrigger');
+    const useNameToggleBtn = document.getElementById('toggleUseNameBtn');
+    const nameLangInput = document.getElementById('nameLanguageInput');
+    
     if(nameInput) {
         const savedName = localStorage.getItem('fin_userName') || '';
         nameInput.value = savedName;
         if (savedName) initialsDisplay.textContent = savedName.charAt(0).toUpperCase();
+        
+        // Load image
+        const savedImg = localStorage.getItem('fin_profileImg');
+        if (savedImg && avatarImg) {
+            avatarImg.src = savedImg;
+            avatarImg.classList.remove('hidden');
+            initialsDisplay.classList.add('hidden');
+        }
+        
+        // Avatar upload trigger
+        if (avatarTrigger && avatarInput) {
+            avatarTrigger.addEventListener('click', () => avatarInput.click());
+            avatarInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if(file) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        const img = new Image();
+                        img.onload = () => {
+                            const canvas = document.createElement('canvas');
+                            const MAX_WIDTH = 200;
+                            const MAX_HEIGHT = 200;
+                            let width = img.width;
+                            let height = img.height;
+                            
+                            if (width > height) {
+                              if (width > MAX_WIDTH) {
+                                height *= MAX_WIDTH / width;
+                                width = MAX_WIDTH;
+                              }
+                            } else {
+                              if (height > MAX_HEIGHT) {
+                                width *= MAX_HEIGHT / height;
+                                height = MAX_HEIGHT;
+                              }
+                            }
+                            canvas.width = width;
+                            canvas.height = height;
+                            const ctx = canvas.getContext('2d');
+                            ctx.drawImage(img, 0, 0, width, height);
+                            const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+                            
+                            if (avatarImg) {
+                                avatarImg.src = dataUrl;
+                                avatarImg.classList.remove('hidden');
+                                initialsDisplay.classList.add('hidden');
+                            }
+                            localStorage.setItem('fin_profileImg', dataUrl);
+                        };
+                        img.src = e.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+        
+        if(useNameToggleBtn) {
+            const useNameState = localStorage.getItem('fin_useName') !== 'false';
+            useNameToggleBtn.textContent = useNameState ? 'On' : 'Off';
+            useNameToggleBtn.className = useNameState ? 
+                'px-4 py-1.5 rounded-xl text-xs font-bold bg-emerald-500 text-white transition shadow' :
+                'px-4 py-1.5 rounded-xl text-xs font-bold bg-glass-bg border border-glass-border transition shadow-inner';
+                
+            useNameToggleBtn.addEventListener('click', () => {
+                const current = localStorage.getItem('fin_useName') !== 'false';
+                const next = !current;
+                localStorage.setItem('fin_useName', next ? 'true' : 'false');
+                useNameToggleBtn.textContent = next ? 'On' : 'Off';
+                useNameToggleBtn.className = next ? 
+                    'px-4 py-1.5 rounded-xl text-xs font-bold bg-emerald-500 text-white transition shadow' :
+                    'px-4 py-1.5 rounded-xl text-xs font-bold bg-glass-bg border border-glass-border transition shadow-inner';
+            });
+        }
+        
+        if (nameLangInput) {
+            nameLangInput.value = localStorage.getItem('fin_nameLanguage') || '';
+        }
         
         if(dobInput) dobInput.value = localStorage.getItem('userDOB') || '';
         if(genderInput) genderInput.value = localStorage.getItem('userGender') || '';
@@ -225,6 +326,14 @@
             localStorage.setItem('fin_userName', newName);
             initialsDisplay.textContent = newName.charAt(0).toUpperCase();
             
+            if (nameLangInput) {
+                if (nameLangInput.value) {
+                    localStorage.setItem('fin_nameLanguage', nameLangInput.value);
+                } else {
+                    localStorage.removeItem('fin_nameLanguage');
+                }
+            }
+            
             if(dobInput) localStorage.setItem('userDOB', dobInput.value);
             if(genderInput) localStorage.setItem('userGender', genderInput.value);
             if(bloodInput) localStorage.setItem('userBlood', bloodInput.value);
@@ -232,6 +341,7 @@
             if(locationInput) localStorage.setItem('userLocation', locationInput.value.trim());
             
             window.showSnackbar('Profile saved successfully! ✨');
+            if(window.MoneyFlowVoiceEngine) window.MoneyFlowVoiceEngine.speak(true);
         };
     }
 
@@ -280,7 +390,7 @@
             currencies.forEach(c => {
                 if (c.code.toLowerCase().includes(filter.toLowerCase()) || c.name.toLowerCase().includes(filter.toLowerCase())) {
                     const opt = document.createElement('div');
-                    opt.className = 'currency-option';
+                    opt.className = 'custom-option';
                     if (c.sym === currentCur) opt.classList.add('selected');
                     opt.innerHTML = `<span>${c.sym} ${c.code}</span> <span class="text-xs opacity-70">${c.name}</span>`;
                     opt.addEventListener('click', () => {
@@ -447,18 +557,37 @@
             mainCategorySelect.addEventListener('change', renderAdvancedCategories);
         }
 
+        const catSwitcherPill = document.getElementById('catTypeSwitcherPill');
+        const catSwitcherNeon = document.getElementById('catTypeSwitcherNeon');
+
         catTypeExpenseBtn.addEventListener('click', () => {
             currentCatType = 'expense';
-            catTypeExpenseBtn.className = 'flex-1 py-2 rounded-lg text-sm font-bold bg-amber-500/20 text-amber-500 transition-all';
-            catTypeIncomeBtn.className = 'flex-1 py-2 rounded-lg text-sm font-bold text-muted transition-all';
+            if (catSwitcherPill) {
+                catSwitcherPill.style.transform = 'translateX(0%)';
+                catSwitcherPill.style.boxShadow = '0 0 15px rgba(239, 68, 68, 0.3)';
+            }
+            if (catSwitcherNeon) {
+                catSwitcherNeon.className = 'absolute bottom-0 left-1/2 -translate-x-1/2 w-[60%] h-[3px] rounded-t-full bg-gradient-to-r from-rose-400 to-red-500 shadow-[0_0_12px_rgba(239,68,68,1)] transition-colors duration-500';
+            }
+            catTypeExpenseBtn.className = 'relative flex-1 py-3 text-xs sm:text-sm font-black tracking-widest uppercase rounded-[1.75rem] text-white transition-colors duration-300 z-10 active:scale-95';
+            catTypeIncomeBtn.className = 'relative flex-1 py-3 text-xs sm:text-sm font-black tracking-widest uppercase rounded-[1.75rem] text-muted hover:text-white transition-colors duration-300 z-10 active:scale-95';
+            
             renderAdvancedCategories();
             if(window.playUISound) window.playUISound('tap');
         });
 
         catTypeIncomeBtn.addEventListener('click', () => {
             currentCatType = 'income';
-            catTypeIncomeBtn.className = 'flex-1 py-2 rounded-lg text-sm font-bold bg-amber-500/20 text-amber-500 transition-all';
-            catTypeExpenseBtn.className = 'flex-1 py-2 rounded-lg text-sm font-bold text-muted transition-all';
+            if (catSwitcherPill) {
+                catSwitcherPill.style.transform = 'translateX(100%)';
+                catSwitcherPill.style.boxShadow = '0 0 15px rgba(16, 185, 129, 0.3)';
+            }
+            if (catSwitcherNeon) {
+                catSwitcherNeon.className = 'absolute bottom-0 left-1/2 -translate-x-1/2 w-[60%] h-[3px] rounded-t-full bg-gradient-to-r from-emerald-400 to-teal-400 shadow-[0_0_12px_rgba(16,185,129,1)] transition-colors duration-500';
+            }
+            catTypeIncomeBtn.className = 'relative flex-1 py-3 text-xs sm:text-sm font-black tracking-widest uppercase rounded-[1.75rem] text-white transition-colors duration-300 z-10 active:scale-95';
+            catTypeExpenseBtn.className = 'relative flex-1 py-3 text-xs sm:text-sm font-black tracking-widest uppercase rounded-[1.75rem] text-muted hover:text-white transition-colors duration-300 z-10 active:scale-95';
+            
             renderAdvancedCategories();
             if(window.playUISound) window.playUISound('tap');
         });

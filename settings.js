@@ -653,12 +653,18 @@
     // DATA EXPORT / IMPORT / SIMULATION
     // ----------------------------------------------------
     window.exportDataJSON = function() {
-        const payload = {
-            fin_spendly: loadData('fin_spendly') || [],
-            fin_pocketcal: loadData('fin_pocketcal') || [],
-            fin_userName: localStorage.getItem('fin_userName') || '',
-            fin_theme: localStorage.getItem('fin_theme') || 'light'
-        };
+        const payload = {};
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (key && key.startsWith('fin_')) {
+                // Parse if it's JSON to keep the export clean, otherwise store as string
+                try {
+                    payload[key] = JSON.parse(localStorage.getItem(key));
+                } catch(e) {
+                    payload[key] = localStorage.getItem(key);
+                }
+            }
+        }
         
         const str = JSON.stringify(payload, null, 2);
         const blob = new Blob([str], { type: 'application/json' });
@@ -711,12 +717,16 @@
         reader.onload = function(e) {
             try {
                 const data = JSON.parse(e.target.result);
-                if(data.fin_spendly) saveData('fin_spendly', data.fin_spendly);
-                if(data.fin_pocketcal) saveData('fin_pocketcal', data.fin_pocketcal);
-                if(data.fin_userName) localStorage.setItem('fin_userName', data.fin_userName);
-                if(data.fin_theme) localStorage.setItem('fin_theme', data.fin_theme);
+                let importedCount = 0;
+                Object.keys(data).forEach(key => {
+                    if (key.startsWith('fin_')) {
+                        const val = typeof data[key] === 'object' ? JSON.stringify(data[key]) : data[key];
+                        localStorage.setItem(key, val);
+                        importedCount++;
+                    }
+                });
                 
-                showSnackbar('Data Imported! Reloading...');
+                showSnackbar(`Data Imported! (${importedCount} records) Reloading...`);
                 setTimeout(() => location.reload(), 1500);
             } catch (err) {
                 console.error(err);

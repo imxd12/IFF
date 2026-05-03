@@ -118,18 +118,39 @@
                             class="px-4 py-2 rounded-xl text-sm font-bold transition shadow-md bg-glass-bg border border-glass-border">Loading...</button>
                     </div>
 
-                    <div
-                        class="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-glass-bg border border-glass-border p-4 rounded-xl gap-4">
-                        <div class="flex-1 w-full">
-                            <div class="flex justify-between items-center w-full">
-                                <div>
-                                    <h3 class="font-bold text-base sm:text-lg">MoneyFlow Greeting Voice</h3>
-                                    <p class="text-xs sm:text-sm text-muted">Select high-quality synthesis voice.</p>
-                                </div>
-                                <button id="toggleVoiceBtn"
-                                    class="px-4 py-2 rounded-xl text-sm font-bold bg-amber-500 text-white transition shadow-md">On</button>
+                    <div class="flex flex-col bg-glass-bg border border-glass-border p-4 rounded-xl mt-4 gap-4">
+                        <div class="flex justify-between items-center w-full">
+                            <div>
+                                <h3 class="font-bold text-base sm:text-lg text-emerald-400"><i data-lucide="mic" class="inline w-5 h-5 mr-1"></i>MoneyFlow Greeting Voice</h3>
+                                <p class="text-xs sm:text-sm text-muted">Unified voice and language engine.</p>
                             </div>
-                            <select id="voiceSelect" class="glass-input mt-3 font-semibold w-full"></select>
+                            <button id="toggleVoiceBtn" class="px-4 py-2 rounded-xl text-sm font-bold bg-emerald-500 text-white transition shadow-md">On</button>
+                        </div>
+                        
+                        <div class="w-full">
+                            <label class="block text-xs font-bold text-muted mb-1">App Greeting Language</label>
+                            <select id="languageSelect" class="glass-input font-semibold w-full custom-select" data-search="true">
+                                <option value="en">English</option>
+                                <option value="hi">Hindi (हिन्दी)</option>
+                                <option value="ur">Urdu (اردو)</option>
+                                <option value="mr">Marathi (मराठी)</option>
+                                <option value="gu">Gujarati (ગુજરાતી)</option>
+                                <option value="pa">Punjabi (ਪੰਜਾਬੀ)</option>
+                                <option value="ta">Tamil (தமிழ்)</option>
+                                <option value="te">Telugu (తెలుగు)</option>
+                                <option value="kn">Kannada (ಕನ್ನಡ)</option>
+                                <option value="bn">Bengali (বাংলা)</option>
+                                <option value="ml">Malayalam (മലയാളം)</option>
+                                <option value="ja">Japanese (日本語)</option>
+                                <option value="es">Spanish (Español)</option>
+                                <option value="fr">French (Français)</option>
+                                <option value="de">German (Deutsch)</option>
+                            </select>
+                        </div>
+
+                        <div class="w-full">
+                            <label class="block text-xs font-bold text-muted mb-1">Synthesis Voice Model</label>
+                            <select id="voiceSelect" class="glass-input font-semibold w-full custom-select"></select>
                         </div>
                     </div>
 
@@ -180,12 +201,17 @@
                         onclick="window.saveIdentity()">Save</button>
                 </div>
 
-                <div class="identity-avatar-container">
+                <div class="identity-avatar-container cursor-pointer relative group" id="avatarUploadTrigger">
                     <span id="avatarInitials">U</span>
+                    <img id="avatarImage" src="" alt="" class="hidden w-full h-full object-cover rounded-[2rem]" />
+                    <div class="absolute inset-0 bg-black/50 rounded-[2rem] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                        <i data-lucide="camera" class="text-white w-8 h-8"></i>
+                    </div>
+                    <input type="file" id="avatarFileInput" accept="image/*" class="hidden" />
                 </div>
 
                 <div
-                    class="bg-glass-bg border border-glass-border p-5 rounded-xl grid grid-cols-1 sm:grid-cols-2 gap-4 relative z-10">
+                    class="bg-glass-bg border border-glass-border p-5 rounded-xl grid grid-cols-1 sm:grid-cols-2 gap-4 relative z-10 mb-4">
                     <div>
                         <label class="block text-xs font-bold text-muted mb-1">Full Name</label>
                         <input type="text" id="usernameInput" class="glass-input" placeholder="Your name">
@@ -196,7 +222,7 @@
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-muted mb-1">Gender</label>
-                        <select id="genderInput" class="glass-input">
+                        <select id="genderInput" class="glass-input custom-select">
                             <option value="">Select</option>
                             <option value="Male">Male</option>
                             <option value="Female">Female</option>
@@ -204,9 +230,29 @@
                             <option value="Other">Other</option>
                         </select>
                     </div>
+                    <div class="flex items-center justify-between col-span-1 sm:col-span-2 pt-2 border-t border-glass-border">
+                        <div>
+                            <p class="font-bold text-sm">Use My Name in Greeting</p>
+                            <p class="text-xs text-muted">Assistant will welcome you by name.</p>
+                        </div>
+                        <button id="toggleUseNameBtn" class="px-4 py-1.5 rounded-xl text-xs font-bold bg-emerald-500 text-white transition shadow">On</button>
+                    </div>
+                    <div class="col-span-1 sm:col-span-2">
+                        <label class="block text-xs font-bold text-muted mb-1">Name Pronunciation Language</label>
+                        <select id="nameLanguageInput" class="glass-input w-full custom-select">
+                            <option value="">Same as App Language</option>
+                            <option value="en">English Accent</option>
+                            <option value="hi">Hindi Accent</option>
+                            <option value="ur">Urdu Accent</option>
+                            <option value="mr">Marathi Accent</option>
+                            <option value="ja">Japanese Accent</option>
+                            <option value="fr">French Accent</option>
+                            <option value="es">Spanish Accent</option>
+                        </select>
+                    </div>
                     <div>
                         <label class="block text-xs font-bold text-muted mb-1">Blood Group</label>
-                        <select id="bloodInput" class="glass-input">
+                        <select id="bloodInput" class="glass-input custom-select">
                             <option value="">Select</option>
                             <option value="A+">A+</option>
                             <option value="A-">A-</option>
@@ -244,17 +290,17 @@
                         <h3 class="font-bold text-base sm:text-lg">Base Currency</h3>
                         <p class="text-xs sm:text-sm text-muted mb-2">Select your primary ledger format.</p>
 
-                        <div class="currency-dropdown" id="currencyDropdown">
-                            <div class="currency-toggle" id="currencyToggleBtn">
+                        <div class="custom-dropdown" id="currencyDropdown">
+                            <div class="custom-toggle" id="currencyToggleBtn">
                                 <span id="selectedCurrencyDisplay">₹ INR (Indian Rupee)</span>
                                 <i data-lucide="chevron-down" class="w-4 h-4"></i>
                             </div>
-                            <div class="currency-menu">
-                                <div class="currency-search-container">
-                                    <input type="text" id="currencySearch" class="currency-search-input"
+                            <div class="custom-menu">
+                                <div class="custom-search-container">
+                                    <input type="text" id="currencySearch" class="custom-search-input"
                                         placeholder="Search currency (e.g. USD)...">
                                 </div>
-                                <div class="currency-list" id="currencyList">
+                                <div class="custom-list" id="currencyList">
                                     <!-- Populated by JS -->
                                 </div>
                             </div>
@@ -267,7 +313,7 @@
                             <h3 class="font-bold text-base sm:text-lg">Date Format</h3>
                             <p class="text-xs sm:text-sm text-muted">For receipts and logs</p>
                         </div>
-                        <select id="dateFormatInput" class="glass-input w-auto text-sm">
+                        <select id="dateFormatInput" class="glass-input w-auto text-sm custom-select">
                             <option value="DD/MM/YYYY">DD/MM/YYYY</option>
                             <option value="MM/DD/YYYY">MM/DD/YYYY</option>
                             <option value="YYYY-MM-DD">YYYY-MM-DD</option>
@@ -304,16 +350,19 @@
                         <p class="text-sm text-muted mb-5 relative z-10">Manage your precise financial subcategories.
                         </p>
 
-                        <div class="flex gap-2 mb-5 bg-black/20 p-1.5 rounded-xl border border-white/5 relative z-10">
-                            <button id="catTypeExpense"
-                                class="flex-1 py-2 rounded-lg text-sm font-bold bg-amber-500/20 text-amber-500 transition-all shadow-sm">Expense</button>
-                            <button id="catTypeIncome"
-                                class="flex-1 py-2 rounded-lg text-sm font-bold text-muted transition-all">Income</button>
+                        <div class="relative flex bg-black/40 backdrop-blur-2xl p-1.5 rounded-[2rem] border border-white/10 shadow-[inset_0_2px_10px_rgba(0,0,0,0.5),0_10px_30px_rgba(0,0,0,0.2)] w-full max-w-sm mx-auto z-20 overflow-hidden mb-6">
+                            <!-- Glowing Underline Sliding Pill -->
+                            <div id="catTypeSwitcherPill" class="absolute top-1.5 bottom-1.5 left-1.5 w-[calc(50%-6px)] bg-white/10 rounded-[1.75rem] border border-white/20 shadow-[0_0_15px_rgba(239,68,68,0.3)] transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] overflow-hidden">
+                                <div id="catTypeSwitcherNeon" class="absolute bottom-0 left-1/2 -translate-x-1/2 w-[60%] h-[3px] rounded-t-full bg-gradient-to-r from-rose-400 to-red-500 shadow-[0_0_12px_rgba(239,68,68,1)] transition-colors duration-500"></div>
+                                <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-white/5 to-transparent"></div>
+                            </div>
+                            <button id="catTypeExpense" class="relative flex-1 py-3 text-xs sm:text-sm font-black tracking-widest uppercase rounded-[1.75rem] text-white transition-colors duration-300 z-10 active:scale-95">Expense</button>
+                            <button id="catTypeIncome" class="relative flex-1 py-3 text-xs sm:text-sm font-black tracking-widest uppercase rounded-[1.75rem] text-muted hover:text-white transition-colors duration-300 z-10 active:scale-95">Income</button>
                         </div>
 
                         <div id="mainCategorySelectContainer" class="mb-5 relative z-10">
                             <select id="mainCategorySelect"
-                                class="glass-input !py-3 !px-4 text-sm font-bold text-amber-500 shadow-sm"></select>
+                                class="glass-input !py-3 !px-4 text-sm font-bold text-amber-500 shadow-sm custom-select"></select>
                         </div>
 
                         <div class="flex gap-3 mb-5 relative z-10">

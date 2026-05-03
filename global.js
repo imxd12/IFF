@@ -800,6 +800,7 @@
     initSplashScreen();
     initBirthdayCheck();
     window.setupCustomDropdowns();
+    window.setupCustomDatePickers();
     
     // Defer skill popups slightly to ensure DOM is ready
     setTimeout(initSkillPopup, 100);
@@ -1037,6 +1038,197 @@
           });
           
           observer.observe(select, { childList: true, attributes: true, attributeFilter: ['disabled'] });
+      });
+  };
+
+  // ----------------------------------------------------
+  // CUSTOM UI CALENDAR DATE PICKER ENGINE
+  // ----------------------------------------------------
+  window.setupCustomDatePickers = function() {
+      const dateInputs = document.querySelectorAll('input.custom-date');
+      
+      const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+      const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+      dateInputs.forEach(input => {
+          if (input.dataset.customCalendarInitialized) return;
+          input.dataset.customCalendarInitialized = "true";
+          
+          input.readOnly = true;
+
+          const wrapper = document.createElement('div');
+          wrapper.className = 'relative inline-block w-full calendar-wrapper';
+          
+          input.parentNode.insertBefore(wrapper, input);
+          wrapper.appendChild(input);
+          
+          const popup = document.createElement('div');
+          popup.className = 'calendar-popup';
+          
+          let currentDate = input.value ? new Date(input.value) : new Date();
+          if(isNaN(currentDate.getTime())) currentDate = new Date();
+          
+          let currentMonth = currentDate.getMonth();
+          let currentYear = currentDate.getFullYear();
+          let selectedDateStr = input.value;
+          let calendarMode = 'days';
+          let yearPageStart = currentYear - (currentYear % 15);
+
+          const renderCalendar = () => {
+              popup.innerHTML = '';
+              
+              const header = document.createElement('div');
+              header.className = 'calendar-header';
+              
+              const prevBtn = document.createElement('button');
+              prevBtn.innerHTML = '<i data-lucide="chevron-left"></i>';
+              
+              const nextBtn = document.createElement('button');
+              nextBtn.innerHTML = '<i data-lucide="chevron-right"></i>';
+              
+              const titleSpan = document.createElement('span');
+              titleSpan.className = 'calendar-month-year';
+              
+              if (calendarMode === 'days') {
+                  titleSpan.textContent = `${monthNames[currentMonth]} ${currentYear}`;
+                  titleSpan.onclick = (e) => { e.stopPropagation(); calendarMode = 'months'; renderCalendar(); };
+                  prevBtn.onclick = (e) => { e.stopPropagation(); currentMonth--; if(currentMonth < 0) { currentMonth = 11; currentYear--; } renderCalendar(); };
+                  nextBtn.onclick = (e) => { e.stopPropagation(); currentMonth++; if(currentMonth > 11) { currentMonth = 0; currentYear++; } renderCalendar(); };
+              } else if (calendarMode === 'months') {
+                  titleSpan.textContent = `${currentYear}`;
+                  titleSpan.onclick = (e) => { e.stopPropagation(); calendarMode = 'years'; yearPageStart = currentYear - (currentYear % 15); renderCalendar(); };
+                  prevBtn.onclick = (e) => { e.stopPropagation(); currentYear--; renderCalendar(); };
+                  nextBtn.onclick = (e) => { e.stopPropagation(); currentYear++; renderCalendar(); };
+              } else if (calendarMode === 'years') {
+                  titleSpan.textContent = `${yearPageStart} - ${yearPageStart + 14}`;
+                  titleSpan.onclick = (e) => { e.stopPropagation(); calendarMode = 'days'; renderCalendar(); };
+                  prevBtn.onclick = (e) => { e.stopPropagation(); yearPageStart -= 15; renderCalendar(); };
+                  nextBtn.onclick = (e) => { e.stopPropagation(); yearPageStart += 15; renderCalendar(); };
+              }
+              
+              header.appendChild(prevBtn);
+              header.appendChild(titleSpan);
+              header.appendChild(nextBtn);
+              popup.appendChild(header);
+              
+              if (calendarMode === 'days') {
+                  const grid = document.createElement('div');
+                  grid.className = 'calendar-grid';
+                  
+                  days.forEach(d => {
+                      const wd = document.createElement('div');
+                      wd.className = 'calendar-weekday';
+                      wd.textContent = d;
+                      grid.appendChild(wd);
+                  });
+                  
+                  const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+                  const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+                  
+                  for (let i = 0; i < firstDay; i++) {
+                      const empty = document.createElement('div');
+                      empty.className = 'calendar-day empty';
+                      grid.appendChild(empty);
+                  }
+                  
+                  const todayStr = new Date().toISOString().split('T')[0];
+                  
+                  for (let i = 1; i <= daysInMonth; i++) {
+                      const dayEl = document.createElement('div');
+                      dayEl.className = 'calendar-day';
+                      dayEl.textContent = i;
+                      
+                      const dStr = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
+                      
+                      if (dStr === todayStr) dayEl.classList.add('today');
+                      if (dStr === selectedDateStr) dayEl.classList.add('selected');
+                      
+                      dayEl.onclick = (e) => {
+                          e.stopPropagation();
+                          selectedDateStr = dStr;
+                          input.value = dStr;
+                          input.dispatchEvent(new Event('change', { bubbles: true }));
+                          wrapper.classList.remove('open');
+                          renderCalendar();
+                          if(window.playUISound) window.playUISound('tap');
+                      };
+                      grid.appendChild(dayEl);
+                  }
+                  popup.appendChild(grid);
+              } 
+              else if (calendarMode === 'months') {
+                  const grid = document.createElement('div');
+                  grid.className = 'calendar-mode-grid';
+                  monthNames.forEach((m, index) => {
+                      const mEl = document.createElement('div');
+                      mEl.className = 'calendar-mode-item';
+                      mEl.textContent = m.substring(0, 3);
+                      if (index === currentMonth) mEl.classList.add('selected');
+                      mEl.onclick = (e) => {
+                          e.stopPropagation();
+                          currentMonth = index;
+                          calendarMode = 'days';
+                          renderCalendar();
+                          if(window.playUISound) window.playUISound('tap');
+                      };
+                      grid.appendChild(mEl);
+                  });
+                  popup.appendChild(grid);
+              }
+              else if (calendarMode === 'years') {
+                  const grid = document.createElement('div');
+                  grid.className = 'calendar-mode-grid';
+                  for (let i = 0; i < 15; i++) {
+                      const y = yearPageStart + i;
+                      const yEl = document.createElement('div');
+                      yEl.className = 'calendar-mode-item';
+                      yEl.textContent = y;
+                      if (y === currentYear) yEl.classList.add('selected');
+                      yEl.onclick = (e) => {
+                          e.stopPropagation();
+                          currentYear = y;
+                          calendarMode = 'months';
+                          renderCalendar();
+                          if(window.playUISound) window.playUISound('tap');
+                      };
+                      grid.appendChild(yEl);
+                  }
+                  popup.appendChild(grid);
+              }
+              
+              if (window.lucide) window.lucide.createIcons({ root: popup });
+          };
+          
+          wrapper.appendChild(popup);
+          
+          input.addEventListener('click', (e) => {
+              e.stopPropagation();
+              // close others
+              document.querySelectorAll('.calendar-wrapper.open').forEach(w => {
+                  if (w !== wrapper) w.classList.remove('open');
+              });
+              wrapper.classList.toggle('open');
+              if (wrapper.classList.contains('open')) {
+                  if (input.value) {
+                      const d = new Date(input.value);
+                      if(!isNaN(d.getTime())) {
+                          currentMonth = d.getMonth();
+                          currentYear = d.getFullYear();
+                          selectedDateStr = input.value;
+                      }
+                  }
+                  renderCalendar();
+                  if(window.playUISound) window.playUISound('tap');
+              }
+          });
+          
+          popup.addEventListener('click', e => e.stopPropagation());
+          
+          document.addEventListener('click', (e) => {
+              if (!wrapper.contains(e.target)) {
+                  wrapper.classList.remove('open');
+              }
+          });
       });
   };
 

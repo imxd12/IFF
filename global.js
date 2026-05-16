@@ -337,6 +337,7 @@
     // 2. Setup GSAP ScrollTrigger physics
     if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
       gsap.registerPlugin(ScrollTrigger);
+      gsap.config({ force3D: true }); // Enable hardware acceleration globally for extreme smoothness
 
       // Find all elements with data-speed attribute for floating parallax
       const parallaxLocs = document.querySelectorAll("[data-speed]");
@@ -1310,5 +1311,160 @@
           });
       });
   };
+
+  // ----------------------------------------------------
+  // SMART HEADER, FLASHLIGHT, & ASSISTANT LOGIC
+  // ----------------------------------------------------
+  window.initSmartHeader = function () {
+      const header = document.getElementById('mainHeader');
+      if(!header) return;
+      
+      window.addEventListener('scroll', () => {
+          requestAnimationFrame(() => {
+              if(window.scrollY > 50) {
+                  header.classList.add('header-compressed');
+              } else {
+                  header.classList.remove('header-compressed');
+              }
+          });
+      });
+  };
+
+  window.initAnimeAssistant = function () {
+      const assistantBtn = document.getElementById('animeAssistantBtn');
+      if (!assistantBtn) return;
+      
+      const messages = [
+          "You're doing great with your finances today! 🌟",
+          "Remember: A penny saved is a penny earned! 💰",
+          "Let's review those budgets later! 📊",
+          "I'm here if you need anything! 🤖",
+          "Stay hydrated and stay wealthy! 💧",
+          "All systems operational! ✨"
+      ];
+      
+      assistantBtn.addEventListener('click', () => {
+          const msg = messages[Math.floor(Math.random() * messages.length)];
+          if(window.showSnackbar) window.showSnackbar(msg, 'success');
+          if(window.playUISound) window.playUISound('success');
+          
+          assistantBtn.style.transform = 'scale(1.2) translateY(-10px) rotate(15deg)';
+          setTimeout(() => {
+              assistantBtn.style.transform = '';
+          }, 300);
+
+          const eyes = document.querySelectorAll('.bot-eye');
+          eyes.forEach(e => e.style.animationDuration = '0.2s');
+          setTimeout(() => {
+              eyes.forEach(e => e.style.animationDuration = '4s');
+          }, 2000);
+      });
+  };
+
+  window.applyGlobalPreferences = function () {
+      const efficiencyMode = localStorage.getItem('fin_efficiency_mode') === 'true'; // default false
+      
+      const assistantOn = localStorage.getItem('fin_anime_assistant') !== 'false';
+      const assistantBtns = document.querySelectorAll('.anime-assistant-btn, #animeAssistantBtn');
+      assistantBtns.forEach(btn => {
+          if(assistantOn) btn.style.display = 'flex';
+          else btn.style.display = 'none';
+      });
+
+      if (efficiencyMode) {
+          document.body.classList.add('reduce-motion');
+          const blobs = document.querySelectorAll('.liquid-blob');
+          blobs.forEach(b => b.style.animation = 'none');
+          assistantBtns.forEach(btn => btn.style.animation = 'none');
+      } else {
+          if (localStorage.getItem('fin_reduce_motion') !== 'true') {
+              document.body.classList.remove('reduce-motion');
+          }
+          const blobs = document.querySelectorAll('.liquid-blob');
+          blobs.forEach(b => b.style.animation = '');
+          assistantBtns.forEach(btn => btn.style.animation = '');
+      }
+
+      if (efficiencyMode) {
+          const bgContainers = document.querySelectorAll('.liquid-bg-container');
+          bgContainers.forEach(b => b.style.display = 'none');
+      } else {
+          const bgContainers = document.querySelectorAll('.liquid-bg-container');
+          bgContainers.forEach(b => b.style.display = '');
+      }
+      
+      const headerAnim = localStorage.getItem('fin_header_anim') !== 'false';
+      const header = document.getElementById('mainHeader');
+      if (header) {
+          if (!headerAnim) {
+              header.classList.remove('transition-all', 'duration-500');
+          } else {
+              header.classList.add('transition-all', 'duration-500');
+          }
+      }
+
+      if (typeof gsap !== 'undefined' && gsap.globalTimeline) {
+          if (lowPerf || batterySaver || localStorage.getItem('fin_reduce_motion') === 'true') {
+              gsap.globalTimeline.timeScale(1000);
+          } else {
+              gsap.globalTimeline.timeScale(1);
+          }
+      }
+  };
+
+  window.initPageTransitions = function() {
+      let overlay = document.getElementById('pageTransitionOverlay');
+      if (!overlay) {
+          overlay = document.createElement('div');
+          overlay.id = 'pageTransitionOverlay';
+          overlay.className = 'page-transition-overlay';
+          overlay.innerHTML = '<div class="page-transition-spinner"></div>';
+          document.body.appendChild(overlay);
+      }
+
+      document.body.classList.add('fade-in-ready');
+
+      document.body.addEventListener('click', (e) => {
+          const target = e.target.closest('a');
+          if (!target) return;
+          
+          const href = target.getAttribute('href');
+          
+          if (href && !href.startsWith('#') && !href.startsWith('http') && !target.hasAttribute('download') && target.target !== '_blank') {
+              e.preventDefault();
+              
+              if(window.playUISound) window.playUISound('whoosh');
+              
+              overlay.classList.add('active');
+              
+              setTimeout(() => {
+                  window.location.href = href;
+              }, 400); 
+          }
+      });
+  };
+
+  window.initNetworkStatus = function() {
+      const updateNetworkStatus = () => {
+          if (navigator.onLine) {
+              if (window.showSnackbar) window.showSnackbar('Connection Restored. You are online.', 'success');
+              document.documentElement.classList.remove('is-offline');
+          } else {
+              if (window.showSnackbar) window.showSnackbar('You are offline. MoneyFlow is working locally.', 'warning');
+              document.documentElement.classList.add('is-offline');
+          }
+      };
+
+      window.addEventListener('online', updateNetworkStatus);
+      window.addEventListener('offline', updateNetworkStatus);
+  };
+
+  window.addEventListener('DOMContentLoaded', () => {
+      window.applyGlobalPreferences();
+      window.initSmartHeader();
+      window.initAnimeAssistant();
+      window.initPageTransitions();
+      window.initNetworkStatus();
+  });
 
 })();

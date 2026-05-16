@@ -275,31 +275,41 @@
         const input = document.getElementById('pcSmartEntryInput').value.toLowerCase();
         if(!input) return;
         
-        const amountMatch = input.match(/\d+/);
+        const amountMatch = input.match(/\d+(\.\d{1,2})?/);
         if(!amountMatch) {
             showSnackbar('Could not find an amount. Try "Got 200 today"');
             return;
         }
         const amount = Number(amountMatch[0]);
-        const todayStr = new Date().toISOString().split('T')[0];
+
+        // Smart Date Parsing
+        let dateStr = new Date().toISOString().split('T')[0];
+        if (input.includes('yesterday')) {
+            let d = new Date(); d.setDate(d.getDate() - 1);
+            dateStr = d.toISOString().split('T')[0];
+        } else if (input.match(/(\d+) days ago/)) {
+            let days = Number(input.match(/(\d+) days ago/)[1]);
+            let d = new Date(); d.setDate(d.getDate() - days);
+            dateStr = d.toISOString().split('T')[0];
+        }
         
         const newEntry = {
             id: Date.now().toString(),
-            date: todayStr,
+            date: dateStr,
             amount: amount,
             category: '💵 Pocket Money',
             notes: input,
             source: 'pocketcal'
         };
 
-        if(checkForPcAnomaly(amount, todayStr)) {
+        if(checkForPcAnomaly(amount, dateStr)) {
             window.pendingPcAnomalyEntry = newEntry;
             document.getElementById('pcAnomalyModal').classList.add('active');
             return;
         }
 
-        let existing = data.find(d => d.date === todayStr);
-        data = data.filter(d => d.date !== todayStr);
+        let existing = data.find(d => d.date === dateStr);
+        data = data.filter(d => d.date !== dateStr);
         data.push(newEntry);
         saveData('fin_pocketcal', data);
 
@@ -307,7 +317,7 @@
 
         document.getElementById('pcSmartEntryInput').value = '';
         renderCalendar();
-        showSnackbar(`Smart logged ₹${amount} for today! ⚡`);
+        showSnackbar(`Smart logged ₹${amount} for ${dateStr}! ⚡`);
     };
 
     window.generatePcAIReport = function() {

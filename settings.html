@@ -34,8 +34,8 @@
     </div>
 
     <!-- Fixed Header -->
-    <header class="global-header glass-panel">
-        <div class="brand flex items-center gap-3">
+    <header class="global-header glass-panel transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]" id="mainHeader">
+        <div class="brand flex items-center gap-3 relative z-10">
             <a href="javascript:history.back()"
                 class="glass-button w-10 h-10 rounded-full flex items-center justify-center hover:-translate-x-1">
                 <i data-lucide="arrow-left" class="w-5 h-5"></i>
@@ -46,9 +46,28 @@
             </div>
             <span class="brand-text">Settings</span>
         </div>
-        <div class="header-controls">
-            <button class="theme-toggle-btn glass-button" id="themeToggleBtn"><i data-lucide="sun"></i></button>
+        <div class="header-controls relative z-10">
+            <!-- Inky Theme Toggle -->
+            <button class="theme-toggle-btn glass-button" id="themeToggleBtn">
+                <i data-lucide="sun"></i>
+            </button>
+
+            <!-- Anime Assistant -->
+            <button id="animeAssistantBtn" class="anime-assistant-btn relative group" title="Assistant">
+                <div class="anime-bot">
+                    <div class="bot-head">
+                        <div class="bot-eye left"></div>
+                        <div class="bot-eye right"></div>
+                        <div class="bot-blush left"></div>
+                        <div class="bot-blush right"></div>
+                    </div>
+                </div>
+                <div class="bot-glow"></div>
+            </button>
         </div>
+
+        <!-- Flashlight Beam Container -->
+        <div class="flashlight-beam pointer-events-none" id="flashlightBeam"></div>
     </header>
 
     <main class="main-content flex flex-col items-center">
@@ -109,22 +128,22 @@
 
                 <div class="space-y-4 relative z-10">
                     <div
-                        class="flex justify-between items-center bg-glass-bg border border-glass-border p-4 rounded-xl">
+                        class="flex justify-between items-center bg-glass-bg border border-glass-border p-4 rounded-xl ag-card-reveal hover:border-blue-500/30 transition-all hover:-translate-y-1 hover:shadow-lg hover:shadow-blue-500/10" data-speed="0.1">
                         <div>
                             <h3 class="font-bold text-base sm:text-lg">App Theme</h3>
                             <p class="text-xs sm:text-sm text-muted">Currently active theme.</p>
                         </div>
                         <button id="toggleAppThemeBtn"
-                            class="px-4 py-2 rounded-xl text-sm font-bold transition shadow-md bg-glass-bg border border-glass-border">Loading...</button>
+                            class="px-4 py-2 rounded-xl text-sm font-bold transition shadow-md bg-glass-bg border border-glass-border hover:bg-white/10 active:scale-95">Loading...</button>
                     </div>
 
-                    <div class="flex flex-col bg-glass-bg border border-glass-border p-4 rounded-xl mt-4 gap-4">
+                    <div class="flex flex-col bg-glass-bg border border-glass-border p-4 rounded-xl mt-4 gap-4 ag-card-reveal hover:border-emerald-500/30 transition-all hover:-translate-y-1 hover:shadow-lg hover:shadow-emerald-500/10" data-speed="0.15">
                         <div class="flex justify-between items-center w-full">
                             <div>
                                 <h3 class="font-bold text-base sm:text-lg text-emerald-400"><i data-lucide="mic" class="inline w-5 h-5 mr-1"></i>MoneyFlow Greeting Voice</h3>
                                 <p class="text-xs sm:text-sm text-muted">Unified voice and language engine.</p>
                             </div>
-                            <button id="toggleVoiceBtn" class="px-4 py-2 rounded-xl text-sm font-bold bg-emerald-500 text-white transition shadow-md">On</button>
+                            <button id="toggleVoiceBtn" class="px-4 py-2 rounded-xl text-sm font-bold bg-emerald-500 text-white transition shadow-md hover:bg-emerald-400 active:scale-95">On</button>
                         </div>
                         
                         <div class="w-full">
@@ -154,36 +173,51 @@
                         </div>
                     </div>
 
-                    <div class="bg-glass-bg border border-glass-border p-4 rounded-xl space-y-4">
-                        <div class="flex justify-between items-center">
-                            <div>
-                                <h3 class="font-bold text-base sm:text-lg">MoneyFlow Haptics</h3>
-                                <p class="text-xs sm:text-sm text-muted">Vibration intensity</p>
+                    <div class="bg-glass-bg border border-glass-border p-4 rounded-xl flex flex-col gap-6 ag-card-reveal hover:border-amber-500/30 transition-all hover:-translate-y-1 hover:shadow-lg hover:shadow-amber-500/10" data-speed="0.2">
+                        <h3 class="font-bold text-base sm:text-lg text-amber-500 border-b border-white/10 pb-2 mb-2"><i data-lucide="volume-2" class="inline w-5 h-5 mr-1"></i>Haptics & Acoustics</h3>
+                        
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <h3 class="font-bold text-sm sm:text-base">MoneyFlow Haptics</h3>
+                                    <p class="text-xs text-muted">Vibration intensity</p>
+                                </div>
+                                <span id="hapticBadge" class="intensity-badge">50%</span>
                             </div>
-                            <span id="hapticBadge" class="intensity-badge">50%</span>
+                            <input type="range" id="hapticSlider" class="premium-slider" min="0" max="100" value="50">
                         </div>
-                        <input type="range" id="hapticSlider" class="premium-slider" min="0" max="100" value="50">
+
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <h3 class="font-bold text-sm sm:text-base">UI Sounds</h3>
+                                    <p class="text-xs text-muted">Acoustic feedback volume</p>
+                                </div>
+                                <span id="soundBadge" class="intensity-badge">50%</span>
+                            </div>
+                            <input type="range" id="soundSlider" class="premium-slider" min="0" max="100" value="50">
+                        </div>
                     </div>
 
-                    <div class="bg-glass-bg border border-glass-border p-4 rounded-xl space-y-4">
-                        <div class="flex justify-between items-center">
+                    <!-- New Appearance & Behaviors Section -->
+                    <div class="bg-glass-bg border border-glass-border p-4 rounded-xl mt-4 flex flex-col gap-4 ag-card-reveal hover:border-purple-500/30 transition-all hover:-translate-y-1 hover:shadow-lg hover:shadow-purple-500/10" data-speed="0.25">
+                        <h3 class="font-bold text-base sm:text-lg text-purple-400 border-b border-white/10 pb-2 mb-2"><i data-lucide="sparkles" class="inline w-5 h-5 mr-1"></i>Appearance & Behaviors</h3>
+                        
+                        <div class="flex justify-between items-center w-full">
                             <div>
-                                <h3 class="font-bold text-base sm:text-lg">UI Sounds</h3>
-                                <p class="text-xs sm:text-sm text-muted">Acoustic feedback volume</p>
+                                <h3 class="font-bold text-sm sm:text-base">Anime Assistant</h3>
+                                <p class="text-xs text-muted">Cute companion visibility</p>
                             </div>
-                            <span id="soundBadge" class="intensity-badge">50%</span>
+                            <button id="toggleAnimeAssistantBtn" class="px-4 py-2 rounded-xl text-sm font-bold bg-blue-500 text-white transition shadow-md hover:bg-blue-400 active:scale-95">On</button>
                         </div>
-                        <input type="range" id="soundSlider" class="premium-slider" min="0" max="100" value="50">
-                    </div>
 
-                    <div
-                        class="flex justify-between items-center bg-glass-bg border border-glass-border p-4 rounded-xl">
-                        <div>
-                            <h3 class="font-bold text-base sm:text-lg">Reduce Motion</h3>
-                            <p class="text-xs sm:text-sm text-muted">Disable heavy animations</p>
+                        <div class="flex justify-between items-center w-full">
+                            <div>
+                                <h3 class="font-bold text-sm sm:text-base">Efficiency Mode</h3>
+                                <p class="text-xs text-muted">Optimize performance & battery by reducing animations and backgrounds</p>
+                            </div>
+                            <button id="toggleEfficiencyBtn" class="px-4 py-2 rounded-xl text-sm font-bold transition bg-glass-bg border border-glass-border hover:bg-white/10 active:scale-95">Off</button>
                         </div>
-                        <button id="toggleMotionBtn"
-                            class="px-4 py-2 rounded-xl text-sm font-bold transition bg-glass-bg border border-glass-border">Off</button>
                     </div>
                 </div>
             </section>
@@ -196,9 +230,12 @@
                 <div class="flex justify-between items-center mb-6">
                     <h2 class="text-xl font-bold flex items-center gap-2"><i data-lucide="user-circle"
                             class="text-emerald-500"></i> Personal Identity</h2>
-                    <button
-                        class="px-4 py-2 rounded-xl text-sm font-bold bg-emerald-500 text-white shadow-md hover:shadow-lg transition active:scale-95"
-                        onclick="window.saveIdentity()">Save</button>
+                    <div class="flex gap-2">
+                        <a href="profile.html" class="px-4 py-2 rounded-xl text-sm font-bold bg-gradient-to-r from-purple-500/20 to-indigo-500/20 border-purple-500/30 text-purple-300 hover:bg-purple-500/30 hover:text-white transition active:scale-95 flex items-center gap-2"><i data-lucide="code-2" class="w-4 h-4"></i> Creator Identity</a>
+                        <button
+                            class="px-4 py-2 rounded-xl text-sm font-bold bg-emerald-500 text-white shadow-md hover:shadow-lg transition active:scale-95"
+                            onclick="window.saveIdentity()">Save</button>
+                    </div>
                 </div>
 
                 <div class="identity-avatar-container cursor-pointer relative group" id="avatarUploadTrigger">
@@ -459,24 +496,28 @@
     </main>
 
     <!-- Bottom Navigation Dock -->
-    <nav class="bottom-dock glass-dock">
-        <a href="index.html" class="dock-item">
-            <i data-lucide="home"></i>
-            <span>Home</span>
-        </a>
-        <a href="spendly.html" class="dock-item">
-            <i data-lucide="pie-chart"></i>
-            <span>Spendly</span>
-        </a>
-        <a href="pocketcal.html" class="dock-item">
-            <i data-lucide="calendar"></i>
-            <span>PocketCal</span>
-        </a>
-        <a href="settings.html" class="dock-item active">
-            <i data-lucide="settings"></i>
-            <span>Settings</span>
-        </a>
-    </nav>
+    <div class="bottom-dock-container">
+        <nav class="bottom-dock-split">
+            <a href="index.html" class="dock-item">
+                <i data-lucide="home"></i>
+                <span>Home</span>
+            </a>
+            <a href="spendly.html" class="dock-item">
+                <i data-lucide="pie-chart"></i>
+                <span>Spendly</span>
+            </a>
+            <a href="pocketcal.html" class="dock-item">
+                <i data-lucide="calendar"></i>
+                <span>Pocket</span>
+            </a>
+        </nav>
+        <nav class="bottom-dock-split">
+            <a href="settings.html" class="dock-item active">
+                <i data-lucide="settings"></i>
+                <span>Settings</span>
+            </a>
+        </nav>
+    </div>
 
     <!-- CDNs -->
     <script src="https://unpkg.com/@studio-freight/lenis@1.0.39/dist/lenis.min.js"></script>

@@ -38,8 +38,8 @@
     </div>
 
     <!-- Global Header -->
-    <header class="global-header glass-panel">
-        <div class="brand flex items-center gap-3">
+    <header class="global-header glass-panel transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]" id="mainHeader">
+        <div class="brand flex items-center gap-3 relative z-10">
             <a href="javascript:history.back()"
                 class="glass-button w-10 h-10 rounded-full flex items-center justify-center hover:-translate-x-1">
                 <i data-lucide="arrow-left" class="w-5 h-5"></i>
@@ -50,12 +50,28 @@
             </div>
             <span class="brand-text">PocketCal</span>
         </div>
-        <div class="header-controls">
-
+        <div class="header-controls relative z-10">
+            <!-- Inky Theme Toggle -->
             <button class="theme-toggle-btn glass-button" id="themeToggleBtn">
                 <i data-lucide="sun"></i>
             </button>
+
+            <!-- Anime Assistant -->
+            <button id="animeAssistantBtn" class="anime-assistant-btn relative group" title="Assistant">
+                <div class="anime-bot">
+                    <div class="bot-head">
+                        <div class="bot-eye left"></div>
+                        <div class="bot-eye right"></div>
+                        <div class="bot-blush left"></div>
+                        <div class="bot-blush right"></div>
+                    </div>
+                </div>
+                <div class="bot-glow"></div>
+            </button>
         </div>
+
+        <!-- Flashlight Beam Container -->
+        <div class="flashlight-beam pointer-events-none" id="flashlightBeam"></div>
     </header>
 
     <main class="main-content">
@@ -76,21 +92,25 @@
 
         <!-- Top Stats Summary -->
         <section class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8" data-speed="0.1">
-            <div class="glass-panel p-5">
-                <div class="text-sm font-semibold text-muted mb-1">Total Pocket</div>
-                <h2 class="text-2xl font-bold text-emerald-500" id="pcAll">₹0</h2>
+            <div class="summary-card glass-panel p-5 flex flex-col justify-between h-32">
+                <div class="summary-card-glow emerald"></div>
+                <div class="text-xs font-bold text-muted uppercase tracking-widest mb-1 flex justify-between items-center">Total Pocket <i data-lucide="database" class="w-4 h-4 text-emerald-500"></i></div>
+                <h2 class="text-2xl font-extrabold tracking-tighter text-emerald-500" id="pcAll">₹0</h2>
             </div>
-            <div class="glass-panel p-5">
-                <div class="text-sm font-semibold text-muted mb-1">This Month</div>
-                <h2 class="text-2xl font-bold text-blue-500" id="pcMonth">₹0</h2>
+            <div class="summary-card glass-panel p-5 flex flex-col justify-between h-32">
+                <div class="summary-card-glow info"></div>
+                <div class="text-xs font-bold text-muted uppercase tracking-widest mb-1 flex justify-between items-center">This Month <i data-lucide="calendar" class="w-4 h-4 text-blue-500"></i></div>
+                <h2 class="text-2xl font-extrabold tracking-tighter text-blue-500" id="pcMonth">₹0</h2>
             </div>
-            <div class="glass-panel p-5">
-                <div class="text-sm font-semibold text-muted mb-1">Best Day</div>
-                <h2 class="text-2xl font-bold text-amber-500" id="pcHigh">₹0</h2>
+            <div class="summary-card glass-panel p-5 flex flex-col justify-between h-32">
+                <div class="summary-card-glow amber"></div>
+                <div class="text-xs font-bold text-muted uppercase tracking-widest mb-1 flex justify-between items-center">Best Day <i data-lucide="award" class="w-4 h-4 text-amber-500"></i></div>
+                <h2 class="text-2xl font-extrabold tracking-tighter text-amber-500" id="pcHigh">₹0</h2>
             </div>
-            <div class="glass-panel p-5">
-                <div class="text-sm font-semibold text-muted mb-1">Average</div>
-                <h2 class="text-2xl font-bold text-indigo-500" id="pcAvg">₹0</h2>
+            <div class="summary-card glass-panel p-5 flex flex-col justify-between h-32">
+                <div class="summary-card-glow purple"></div>
+                <div class="text-xs font-bold text-muted uppercase tracking-widest mb-1 flex justify-between items-center">Average <i data-lucide="activity" class="w-4 h-4 text-purple-500"></i></div>
+                <h2 class="text-2xl font-extrabold tracking-tighter text-purple-500" id="pcAvg">₹0</h2>
             </div>
         </section>
 
@@ -227,31 +247,35 @@
     <!-- Quick Add Shortcut -->
     <div class="fixed bottom-24 right-6 flex flex-col gap-4 z-50">
         <button onclick="openTodayEntry()"
-            class="w-14 h-14 bg-blue-500 rounded-full flex items-center justify-center text-white shadow-[0_8px_30px_rgb(59,130,246,0.4)] hover:scale-110 transition-transform cursor-pointer"
+            class="fab-quick-add fab-income"
             title="Quick Income">
-            <i data-lucide="plus" class="w-6 h-6"></i>
+            <i data-lucide="plus" class="w-7 h-7"></i>
         </button>
     </div>
 
     <!-- Bottom Dock -->
-    <nav class="bottom-dock glass-dock">
-        <a href="index.html" class="dock-item">
-            <i data-lucide="home"></i>
-            <span>Home</span>
-        </a>
-        <a href="spendly.html" class="dock-item">
-            <i data-lucide="pie-chart"></i>
-            <span>Spendly</span>
-        </a>
-        <a href="pocketcal.html" class="dock-item active">
-            <i data-lucide="calendar"></i>
-            <span>PocketCal</span>
-        </a>
-        <a href="settings.html" class="dock-item">
-            <i data-lucide="settings"></i>
-            <span>Settings</span>
-        </a>
-    </nav>
+    <div class="bottom-dock-container">
+        <nav class="bottom-dock-split">
+            <a href="index.html" class="dock-item">
+                <i data-lucide="home"></i>
+                <span>Home</span>
+            </a>
+            <a href="spendly.html" class="dock-item">
+                <i data-lucide="pie-chart"></i>
+                <span>Spendly</span>
+            </a>
+            <a href="pocketcal.html" class="dock-item active">
+                <i data-lucide="calendar"></i>
+                <span>Pocket</span>
+            </a>
+        </nav>
+        <nav class="bottom-dock-split">
+            <a href="settings.html" class="dock-item">
+                <i data-lucide="settings"></i>
+                <span>Settings</span>
+            </a>
+        </nav>
+    </div>
 
     <!-- Entry Modal -->
     <div class="modal-overlay" id="entryModal">
@@ -321,31 +345,58 @@
     <!-- PDF Modal -->
     <div class="modal-overlay" id="pdfModal">
         <div class="modal-content-glass max-w-sm w-full relative p-8 border border-white/10 shadow-[0_0_40px_rgba(16,185,129,0.15)] rounded-[2rem]">
+            <div class="absolute inset-0 bg-gradient-to-br from-emerald-500/10 to-transparent pointer-events-none rounded-[2rem]"></div>
             <button type="button" class="absolute top-5 right-5 text-muted hover:text-red-500 transition-colors z-50 bg-white/5 border border-white/10 p-2.5 rounded-full backdrop-blur-md cursor-pointer hover:bg-white/10 active:scale-90" onclick="closeModal('#pdfModal')">
                 <i data-lucide="x" class="w-5 h-5"></i>
             </button>
-            <div class="w-16 h-16 rounded-full bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center mx-auto mb-4 text-emerald-400">
+            <div class="w-16 h-16 rounded-full bg-gradient-to-tr from-emerald-500/20 to-cyan-500/20 border border-emerald-500/30 flex items-center justify-center mx-auto mb-4 text-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.2)]">
                 <i data-lucide="file-down" class="w-8 h-8"></i>
             </div>
-            <h2 class="text-2xl font-extrabold mb-8 text-center text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400">Export Report</h2>
-            <div class="flex flex-col gap-3">
+            <h2 class="text-2xl font-extrabold mb-8 text-center text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400 relative z-10">Export Report</h2>
+            <div class="flex flex-col gap-3 relative z-10">
                 <button
-                    class="glass-button p-4 rounded-xl font-bold hover:bg-emerald-500/10 hover:border-emerald-500/40 hover:text-emerald-400 transition-all text-left flex justify-between items-center group border border-white/5"
+                    class="group relative overflow-hidden p-4 rounded-2xl bg-white/5 border border-white/10 hover:bg-emerald-500/15 hover:border-emerald-400 transition-all duration-300 shadow-md hover:shadow-[0_0_20px_rgba(16,185,129,0.25)] flex items-center justify-between active:scale-95"
                     onclick="exportPDF('month')">
-                    <span class="flex items-center gap-3"><i data-lucide="calendar-days" class="w-5 h-5 text-muted group-hover:text-emerald-400"></i> Current Month</span>
-                    <i data-lucide="chevron-right" class="w-4 h-4 opacity-50"></i>
+                    <div class="flex items-center gap-4">
+                        <div class="w-10 h-10 rounded-full bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20 group-hover:scale-110 transition-transform">
+                            <i data-lucide="calendar-days" class="w-5 h-5 text-emerald-400"></i>
+                        </div>
+                        <div class="text-left flex flex-col">
+                            <strong class="font-extrabold text-sm tracking-wide text-white">Current Month</strong>
+                            <span class="text-[10px] text-muted">30-Day Summary</span>
+                        </div>
+                    </div>
+                    <i data-lucide="download" class="w-5 h-5 text-emerald-400 opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0"></i>
                 </button>
+                
                 <button
-                    class="glass-button p-4 rounded-xl font-bold hover:bg-emerald-500/10 hover:border-emerald-500/40 hover:text-emerald-400 transition-all text-left flex justify-between items-center group border border-white/5"
+                    class="group relative overflow-hidden p-4 rounded-2xl bg-white/5 border border-white/10 hover:bg-emerald-500/15 hover:border-emerald-400 transition-all duration-300 shadow-md hover:shadow-[0_0_20px_rgba(16,185,129,0.25)] flex items-center justify-between active:scale-95"
                     onclick="exportPDF('year')">
-                    <span class="flex items-center gap-3"><i data-lucide="calendar" class="w-5 h-5 text-muted group-hover:text-emerald-400"></i> This Year</span>
-                    <i data-lucide="chevron-right" class="w-4 h-4 opacity-50"></i>
+                    <div class="flex items-center gap-4">
+                        <div class="w-10 h-10 rounded-full bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20 group-hover:scale-110 transition-transform">
+                            <i data-lucide="calendar" class="w-5 h-5 text-emerald-400"></i>
+                        </div>
+                        <div class="text-left flex flex-col">
+                            <strong class="font-extrabold text-sm tracking-wide text-white">This Year</strong>
+                            <span class="text-[10px] text-muted">Year to Date Overview</span>
+                        </div>
+                    </div>
+                    <i data-lucide="download" class="w-5 h-5 text-emerald-400 opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0"></i>
                 </button>
+                
                 <button
-                    class="glass-button p-4 rounded-xl font-bold hover:bg-emerald-500/10 hover:border-emerald-500/40 hover:text-emerald-400 transition-all text-left flex justify-between items-center group border border-white/5"
+                    class="group relative overflow-hidden p-4 rounded-2xl bg-white/5 border border-white/10 hover:bg-emerald-500/15 hover:border-emerald-400 transition-all duration-300 shadow-md hover:shadow-[0_0_20px_rgba(16,185,129,0.25)] flex items-center justify-between active:scale-95"
                     onclick="exportPDF('all')">
-                    <span class="flex items-center gap-3"><i data-lucide="database" class="w-5 h-5 text-muted group-hover:text-emerald-400"></i> All Time History</span>
-                    <i data-lucide="chevron-right" class="w-4 h-4 opacity-50"></i>
+                    <div class="flex items-center gap-4">
+                        <div class="w-10 h-10 rounded-full bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20 group-hover:scale-110 transition-transform">
+                            <i data-lucide="database" class="w-5 h-5 text-emerald-400"></i>
+                        </div>
+                        <div class="text-left flex flex-col">
+                            <strong class="font-extrabold text-sm tracking-wide text-white">All Time History</strong>
+                            <span class="text-[10px] text-muted">Complete Ledger Dump</span>
+                        </div>
+                    </div>
+                    <i data-lucide="download" class="w-5 h-5 text-emerald-400 opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0"></i>
                 </button>
             </div>
         </div>

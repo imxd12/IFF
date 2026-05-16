@@ -1359,6 +1359,297 @@
         });
     }
 
+    // ----------------------------------------------------
+    // AI SMART FEATURES (SPENDLY)
+    // ----------------------------------------------------
+    window.processSmartEntry = function() {
+        const input = document.getElementById('smartEntryInput').value.toLowerCase();
+        if(!input) return;
+        
+        // 1. Extract Amount
+        const amountMatch = input.match(/\d+(\.\d{1,2})?/);
+        if(!amountMatch) {
+            showSnackbar('AI needs an amount. Try "Spent 250 on food"', 'error');
+            return;
+        }
+        const amount = Number(amountMatch[0]);
+
+        // 2. Extract Date (yesterday, today, days ago)
+        let dateStr = new Date().toISOString().split('T')[0];
+        if (input.includes('yesterday')) {
+            let d = new Date(); d.setDate(d.getDate() - 1);
+            dateStr = d.toISOString().split('T')[0];
+        } else if (input.match(/(\d+) days ago/)) {
+            let days = Number(input.match(/(\d+) days ago/)[1]);
+            let d = new Date(); d.setDate(d.getDate() - days);
+            dateStr = d.toISOString().split('T')[0];
+        }
+        
+        // 3. Determine Type
+        let type = 'expense';
+        if (input.includes('got ') || input.includes('received') || input.includes('earned') || input.includes('income') || input.includes('salary') || input.includes('pocket money')) {
+            type = 'income';
+        }
+
+        // 4. Fuzzy Match Category (Extremely Smart)
+        let category = type === 'expense' ? 'Other' : 'Other';
+        let sub = '';
+
+        const aiSynonyms = {
+            'auto': { cat: 'Travel', sub: '🛺 Auto/Rickshaw' },
+            'rickshaw': { cat: 'Travel', sub: '🛺 Auto/Rickshaw' },
+            'best': { cat: 'Travel', sub: '🚍 BEST/City Bus' },
+            'bus': { cat: 'Travel', sub: '🚍 BEST/City Bus' },
+            'metro': { cat: 'Travel', sub: '🚇 Metro' },
+            'train': { cat: 'Travel', sub: '🚆 Local Train' },
+            'local': { cat: 'Travel', sub: '🚆 Local Train' },
+            'petrol': { cat: 'Travel', sub: '🛵 Bike Petrol' },
+            'bike': { cat: 'Travel', sub: '🛵 Bike Petrol' },
+            'fuel': { cat: 'Travel', sub: '⛽ Fuel/Diesel' },
+            'taxi': { cat: 'Travel', sub: '🚗 Taxi/Cab' },
+            'cab': { cat: 'Travel', sub: '🚗 Taxi/Cab' },
+            'ola': { cat: 'Travel', sub: '🚗 Taxi/Cab' },
+            'uber': { cat: 'Travel', sub: '🚗 Taxi/Cab' },
+            'milk': { cat: 'Food', sub: '🥛 Milk/Doodh' },
+            'doodh': { cat: 'Food', sub: '🥛 Milk/Doodh' },
+            'ration': { cat: 'Food', sub: '🌾 Ration/Kirana' },
+            'grocery': { cat: 'Food', sub: '🌾 Ration/Kirana' },
+            'veg': { cat: 'Food', sub: '🥬 Vegetables/Mandi' },
+            'fruits': { cat: 'Food', sub: '🍎 Fruits' },
+            'bread': { cat: 'Food', sub: '🍞 Bakery/Bread' },
+            'chicken': { cat: 'Food', sub: '🍗 Non-Veg/Meat' },
+            'meat': { cat: 'Food', sub: '🍗 Non-Veg/Meat' },
+            'tea': { cat: 'Food', sub: '☕ Tea/Chai' },
+            'chai': { cat: 'Food', sub: '☕ Tea/Chai' },
+            'street food': { cat: 'Food', sub: '🥙 Street Food' },
+            'vadapav': { cat: 'Food', sub: '🥙 Street Food' },
+            'burger': { cat: 'Food', sub: '🍔 Outside Junk' },
+            'pizza': { cat: 'Food', sub: '🍔 Outside Junk' },
+            'electricity': { cat: 'Bills', sub: '💡 Electricity Bill' },
+            'recharge': { cat: 'Bills', sub: '📱 Mobile Recharge' },
+            'wifi': { cat: 'Bills', sub: '🌐 WiFi/Broadband' },
+            'medicine': { cat: 'Health', sub: '💊 Medicines/Pharmacy' },
+            'pharmacy': { cat: 'Health', sub: '💊 Medicines/Pharmacy' },
+            'doctor': { cat: 'Health', sub: '🩺 Doctor Visit/Clinic' },
+            'xerox': { cat: 'Education', sub: '🖨️ Printout/Xerox' },
+            'print': { cat: 'Education', sub: '🖨️ Printout/Xerox' },
+            'movie': { cat: 'Entertainment', sub: '🎬 Movies/Theater' },
+            'netflix': { cat: 'Entertainment', sub: '🎥 OTT (Netflix/Prime)' },
+            'haircut': { cat: 'Other', sub: '💇 Haircut/Barber' }
+        };
+
+        if (type === 'expense') {
+            // Check Synonyms First (Most Accurate)
+            for (const [key, val] of Object.entries(aiSynonyms)) {
+                if (new RegExp('\\b' + key + '\\b').test(input)) {
+                    category = val.cat;
+                    sub = val.sub;
+                    break;
+                }
+            }
+
+            // Fallback: Intelligent Score-Based Matching for Future/Custom Categories
+            if (!sub) {
+                let bestMatchScore = 0;
+                let bestCat = 'Other';
+                let bestSub = '';
+
+                const expCategories = Object.keys(fullCategoryMap.expenseMap);
+                for(let cat of expCategories) {
+                    let catName = cat.toLowerCase();
+                    let catBaseScore = new RegExp('\\b' + catName + '\\b').test(input) ? 2 : 0;
+
+                    fullCategoryMap.expenseMap[cat].forEach(s => {
+                        let score = catBaseScore;
+                        let plainSub = s.replace(/^(\p{Emoji_Presentation}|\p{Extended_Pictographic})+\s*/u, '').toLowerCase().trim();
+                        
+                        // 1. Direct Exact Match (Highest Score)
+                        if (input.includes(plainSub)) {
+                            score += 10;
+                        } else {
+                            // 2. Tokenized Match
+                            let words = plainSub.split(/[\s\/&()]+/).filter(w => w.length > 2);
+                            let matchedWords = 0;
+                            
+                            for (let w of words) {
+                                // Remove trailing 's' for basic plural matching (e.g. "apples" -> "apple")
+                                let singular = w.endsWith('s') ? w.slice(0, -1) : w;
+                                if (new RegExp('\\b' + w + '\\b').test(input) || new RegExp('\\b' + singular + '\\b').test(input)) {
+                                    matchedWords++;
+                                }
+                            }
+                            score += (matchedWords * 3);
+                        }
+
+                        if (score > bestMatchScore) {
+                            bestMatchScore = score;
+                            bestCat = cat;
+                            bestSub = s;
+                        }
+                    });
+                }
+
+                if (bestMatchScore > 0) {
+                    category = bestCat;
+                    sub = bestSub;
+                }
+            }
+            
+            // Default sub if category matched but sub didn't
+            if (category !== 'Other' && !sub && fullCategoryMap.expenseMap[category].length > 0) {
+                sub = fullCategoryMap.expenseMap[category][0]; // Pick first
+                if (fullCategoryMap.expenseMap[category].includes('All')) sub = 'All';
+            }
+        } else {
+            const aiIncomeSynonyms = {
+                'pocket money': '💵 Pocket Money',
+                'allowance': '💵 Pocket Money',
+                'kharchi': '💵 Pocket Money',
+                'salary': '💼 Salary',
+                'paycheck': '💼 Salary',
+                'wage': '💼 Salary',
+                'job': '💼 Salary',
+                'gift': '🎁 Gift/Eidi',
+                'eidi': '🎁 Gift/Eidi',
+                'shagun': '🎁 Gift/Eidi',
+                'bonus': '🎁 Gift/Eidi',
+                'loan': '🤝 Loan Given Back',
+                'borrowed': '🤝 Loan Given Back',
+                'lent': '🤝 Loan Given Back',
+                'refund': '💸 Cashback/Discount',
+                'cashback': '💸 Cashback/Discount',
+                'discount': '💸 Cashback/Discount',
+                'investment': '📈 Investment Returns',
+                'dividend': '📈 Investment Returns',
+                'interest': '📈 Investment Returns',
+                'stock': '📈 Investment Returns',
+                'crypto': '📈 Investment Returns',
+                'freelance': '👨‍💻 Freelance/Side Hustle',
+                'side hustle': '👨‍💻 Freelance/Side Hustle',
+                'gig': '👨‍💻 Freelance/Side Hustle',
+                'fiverr': '👨‍💻 Freelance/Side Hustle',
+                'upwork': '👨‍💻 Freelance/Side Hustle',
+                'commission': '👨‍💻 Freelance/Side Hustle'
+            };
+
+            let matchedViaSynonym = false;
+            for (const [key, val] of Object.entries(aiIncomeSynonyms)) {
+                if (new RegExp('\\b' + key + '\\b').test(input)) {
+                    category = val;
+                    matchedViaSynonym = true;
+                    break;
+                }
+            }
+
+            if (!matchedViaSynonym) {
+                let bestScore = 0;
+                for(let inc of fullCategoryMap.incomeList) {
+                    let plainInc = inc.replace(/^(\p{Emoji_Presentation}|\p{Extended_Pictographic})+\s*/u, '').toLowerCase().trim();
+                    let score = 0;
+                    
+                    if(input.includes(plainInc)) {
+                        score += 10;
+                    } else {
+                        let words = plainInc.split(/[\s\/&()]+/).filter(w => w.length > 2);
+                        for (let w of words) {
+                            let singular = w.endsWith('s') ? w.slice(0, -1) : w;
+                            if (new RegExp('\\b' + w + '\\b').test(input) || new RegExp('\\b' + singular + '\\b').test(input)) {
+                                score += 3;
+                            }
+                        }
+                    }
+                    
+                    if (score > bestScore) {
+                        bestScore = score;
+                        category = inc;
+                    }
+                }
+            }
+        }
+
+        const newEntry = {
+            id: Date.now(),
+            type: type,
+            date: dateStr,
+            amount: amount,
+            category: category,
+            sub: sub,
+            notes: `Auto-logged: ${input}`
+        };
+
+        if(typeof checkForAnomaly === 'function' && checkForAnomaly(newEntry)) {
+            window.pendingAnomalyEntry = newEntry;
+            document.getElementById('anomalyModal').classList.add('active');
+            return;
+        }
+
+        data.push(newEntry);
+        saveData('fin_spendly', data);
+        
+        if (type === 'income' && typeof syncIncomeToPocketCal === 'function') {
+            syncIncomeToPocketCal(newEntry);
+        }
+
+        document.getElementById('smartEntryInput').value = '';
+        updateUI();
+        if(typeof showTransactionPopup === 'function') showTransactionPopup(type);
+    };
+
+    window.generateAIHealthReport = function() {
+        const container = document.getElementById('aiHealthReportContainer');
+        const textEl = document.getElementById('aiHealthReportText');
+        if(!container || !textEl) return;
+        
+        container.classList.remove('hidden');
+        textEl.innerHTML = '<i class="lucide lucide-loader animate-spin w-5 h-5 inline-block mr-2"></i> Analyzing your financial footprint...';
+        if(window.lucide) lucide.createIcons();
+        
+        setTimeout(() => {
+            const currentM = new Date().toISOString().split('T')[0].slice(0, 7);
+            let monthInc = 0; let monthExp = 0;
+            let topCat = {name: '', amount: 0};
+            let catMap = {};
+            
+            data.forEach(d => {
+                if (d.date.startsWith(currentM)) {
+                    if (d.type === 'income') monthInc += Number(d.amount);
+                    else {
+                        monthExp += Number(d.amount);
+                        catMap[d.category] = (catMap[d.category] || 0) + Number(d.amount);
+                    }
+                }
+            });
+
+            Object.entries(catMap).forEach(([k, v]) => {
+                if(v > topCat.amount) topCat = {name: k, amount: v};
+            });
+
+            let savingsRate = monthInc > 0 ? ((monthInc - monthExp) / monthInc * 100) : 0;
+            let message = "";
+
+            if(monthInc === 0 && monthExp === 0) {
+                message = "Not enough data for this month. Try logging some transactions first.";
+            } else {
+                message = `<strong>AI Diagnosis:</strong><br><br>`;
+                
+                if(savingsRate < 0) {
+                    message += `🚨 <strong>Critical:</strong> You are operating at a <strong>${Math.abs(savingsRate).toFixed(1)}% deficit</strong>. You've spent ₹${Math.abs(monthInc - monthExp)} more than you earned.<br>`;
+                } else if(savingsRate < 20) {
+                    message += `⚠️ <strong>Warning:</strong> Your savings rate is <strong>${savingsRate.toFixed(1)}%</strong>, which is below the recommended 20%. Consider reducing discretionary spending.<br>`;
+                } else {
+                    message += `✅ <strong>Excellent:</strong> You have a strong savings rate of <strong>${savingsRate.toFixed(1)}%</strong>. Keep up the great financial discipline!<br>`;
+                }
+
+                if(topCat.amount > 0) {
+                    let catPercent = (topCat.amount / monthExp) * 100;
+                    message += `<br>🔍 <strong>Deep Dive:</strong> Your highest expense category is <strong>${topCat.name}</strong>, taking up ${catPercent.toFixed(1)}% of your monthly spending. If you need to cut back, this is the prime target.`;
+                }
+            }
+
+            textEl.innerHTML = message;
+        }, 1500);
+    };
+
     window.addEventListener('DOMContentLoaded', () => {
         updateUI();
         // Redraw charts on theme change

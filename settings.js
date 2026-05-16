@@ -200,18 +200,46 @@
         });
     }
 
-    const toggleMotionBtn = document.getElementById('toggleMotionBtn');
-    if (toggleMotionBtn) {
-        const isReduced = localStorage.getItem('fin_reduce_motion') === 'true';
-        toggleMotionBtn.textContent = isReduced ? 'On' : 'Off';
-        toggleMotionBtn.className = isReduced ? 
-            'px-4 py-2 rounded-xl text-sm font-bold bg-blue-500 text-white transition shadow-md' :
-            'px-4 py-2 rounded-xl text-sm font-bold bg-glass-bg border border-glass-border transition';
+    // Removed toggleMotionBtn block as it's merged into Low Performance Mode
+
+    // ----------------------------------------------------
+    // APPEARANCE & BEHAVIORS
+    // ----------------------------------------------------
+    const createToggle = (btnId, storageKey, defaultVal = 'true', activeClass = 'bg-blue-500 text-white', inactiveClass = 'bg-glass-bg border border-glass-border') => {
+        const btn = document.getElementById(btnId);
+        if (!btn) return;
+        
+        const isEnabled = (localStorage.getItem(storageKey) || defaultVal) === 'true';
+        btn.textContent = isEnabled ? 'On' : 'Off';
+        btn.className = `px-4 py-2 rounded-xl text-sm font-bold transition shadow-md ${isEnabled ? activeClass : inactiveClass}`;
+        
+        btn.addEventListener('click', () => {
+            const current = (localStorage.getItem(storageKey) || defaultVal) === 'true';
+            const next = current ? 'false' : 'true';
+            localStorage.setItem(storageKey, next);
             
-        toggleMotionBtn.addEventListener('click', () => {
-            const current = localStorage.getItem('fin_reduce_motion') === 'true';
-            localStorage.setItem('fin_reduce_motion', current ? 'false' : 'true');
-            window.location.reload();
+            btn.textContent = next === 'true' ? 'On' : 'Off';
+            btn.className = `px-4 py-2 rounded-xl text-sm font-bold transition shadow-md ${next === 'true' ? activeClass : inactiveClass}`;
+            if(window.applyGlobalPreferences) window.applyGlobalPreferences();
+        });
+    };
+
+    createToggle('toggleAnimeAssistantBtn', 'fin_anime_assistant', 'true');
+    const btnEfficiency = document.getElementById('toggleEfficiencyBtn');
+    if(btnEfficiency) {
+        const isEfficiency = localStorage.getItem('fin_efficiency_mode') === 'true';
+        btnEfficiency.textContent = isEfficiency ? 'On' : 'Off';
+        btnEfficiency.className = `px-4 py-2 rounded-xl text-sm font-bold transition shadow-md ${isEfficiency ? 'bg-emerald-500 text-white' : 'bg-glass-bg border border-glass-border'}`;
+        
+        btnEfficiency.addEventListener('click', () => {
+            const current = localStorage.getItem('fin_efficiency_mode') === 'true';
+            const next = current ? 'false' : 'true';
+            localStorage.setItem('fin_efficiency_mode', next);
+            localStorage.setItem('fin_reduce_motion', next); // Sync reduce motion
+            
+            btnEfficiency.textContent = next === 'true' ? 'On' : 'Off';
+            btnEfficiency.className = `px-4 py-2 rounded-xl text-sm font-bold transition shadow-md ${next === 'true' ? 'bg-emerald-500 text-white' : 'bg-glass-bg border border-glass-border'}`;
+            if(window.applyGlobalPreferences) window.applyGlobalPreferences();
         });
     }
 

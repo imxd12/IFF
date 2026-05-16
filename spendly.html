@@ -40,8 +40,8 @@
     </div>
 
     <!-- Global Header -->
-    <header class="global-header glass-panel">
-        <div class="brand flex items-center gap-3">
+    <header class="global-header glass-panel transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]" id="mainHeader">
+        <div class="brand flex items-center gap-3 relative z-10">
             <a href="javascript:history.back()"
                 class="glass-button w-10 h-10 rounded-full flex items-center justify-center hover:-translate-x-1">
                 <i data-lucide="arrow-left" class="w-5 h-5"></i>
@@ -52,12 +52,28 @@
             </div>
             <span class="brand-text">Spendly</span>
         </div>
-        <div class="header-controls">
-
+        <div class="header-controls relative z-10">
+            <!-- Inky Theme Toggle -->
             <button class="theme-toggle-btn glass-button" id="themeToggleBtn">
                 <i data-lucide="sun"></i>
             </button>
+
+            <!-- Anime Assistant -->
+            <button id="animeAssistantBtn" class="anime-assistant-btn relative group" title="Assistant">
+                <div class="anime-bot">
+                    <div class="bot-head">
+                        <div class="bot-eye left"></div>
+                        <div class="bot-eye right"></div>
+                        <div class="bot-blush left"></div>
+                        <div class="bot-blush right"></div>
+                    </div>
+                </div>
+                <div class="bot-glow"></div>
+            </button>
         </div>
+
+        <!-- Flashlight Beam Container -->
+        <div class="flashlight-beam pointer-events-none" id="flashlightBeam"></div>
     </header>
 
     <main class="main-content">
@@ -92,17 +108,20 @@
 
         <!-- Summary Cards -->
         <section class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10" data-speed="0.1">
-            <div class="glass-panel p-6 flex flex-col justify-between h-36">
-                <div class="text-muted font-medium mb-2">Total Income</div>
-                <h2 class="text-3xl font-bold text-emerald-500" id="totalIncome">₹0</h2>
+            <div class="summary-card glass-panel p-6 flex flex-col justify-between h-36">
+                <div class="summary-card-glow emerald"></div>
+                <div class="text-muted font-medium uppercase text-xs tracking-widest flex justify-between items-center mb-2">Total Income <i data-lucide="arrow-down-left" class="text-emerald-500 w-4 h-4"></i></div>
+                <h2 class="text-3xl font-extrabold tracking-tighter text-emerald-500" id="totalIncome">₹0</h2>
             </div>
-            <div class="glass-panel p-6 flex flex-col justify-between h-36">
-                <div class="text-muted font-medium mb-2">Total Expense</div>
-                <h2 class="text-3xl font-bold text-red-500" id="totalExpense">₹0</h2>
+            <div class="summary-card glass-panel p-6 flex flex-col justify-between h-36">
+                <div class="summary-card-glow danger"></div>
+                <div class="text-muted font-medium uppercase text-xs tracking-widest flex justify-between items-center mb-2">Total Expense <i data-lucide="arrow-up-right" class="text-red-500 w-4 h-4"></i></div>
+                <h2 class="text-3xl font-extrabold tracking-tighter text-red-500" id="totalExpense">₹0</h2>
             </div>
-            <div class="glass-panel p-6 flex flex-col justify-between h-36 border-emerald-500/30">
-                <div class="text-muted font-medium mb-2">Net Balance</div>
-                <h2 class="text-3xl font-extrabold text-blue-500" id="balance">₹0</h2>
+            <div class="summary-card glass-panel p-6 flex flex-col justify-between h-36 border-emerald-500/30">
+                <div class="summary-card-glow info"></div>
+                <div class="text-muted font-medium uppercase text-xs tracking-widest flex justify-between items-center mb-2">Net Balance <i data-lucide="scale" class="text-blue-500 w-4 h-4"></i></div>
+                <h2 class="text-3xl font-extrabold tracking-tighter text-blue-500" id="balance">₹0</h2>
             </div>
         </section>
 
@@ -334,31 +353,35 @@
     <div class="fixed bottom-24 right-6 flex flex-col gap-4 z-50">
         <button
             onclick="switchType('expense'); window.scrollTo({top:0, behavior:'smooth'}); setTimeout(()=>document.getElementById('expenseAmount').focus(), 300);"
-            class="w-14 h-14 bg-red-500 rounded-full flex items-center justify-center text-white shadow-[0_8px_30px_rgb(239,68,68,0.4)] hover:scale-110 transition-transform cursor-pointer"
+            class="fab-quick-add fab-expense"
             title="Quick Expense">
-            <i data-lucide="minus" class="w-6 h-6"></i>
+            <i data-lucide="minus" class="w-7 h-7"></i>
         </button>
     </div>
 
     <!-- Bottom Navigation Dock -->
-    <nav class="bottom-dock glass-dock">
-        <a href="index.html" class="dock-item">
-            <i data-lucide="home"></i>
-            <span>Home</span>
-        </a>
-        <a href="spendly.html" class="dock-item active">
-            <i data-lucide="pie-chart"></i>
-            <span>Spendly</span>
-        </a>
-        <a href="pocketcal.html" class="dock-item">
-            <i data-lucide="calendar"></i>
-            <span>PocketCal</span>
-        </a>
-        <a href="settings.html" class="dock-item">
-            <i data-lucide="settings"></i>
-            <span>Settings</span>
-        </a>
-    </nav>
+    <div class="bottom-dock-container">
+        <nav class="bottom-dock-split">
+            <a href="index.html" class="dock-item">
+                <i data-lucide="home"></i>
+                <span>Home</span>
+            </a>
+            <a href="spendly.html" class="dock-item active">
+                <i data-lucide="pie-chart"></i>
+                <span>Spendly</span>
+            </a>
+            <a href="pocketcal.html" class="dock-item">
+                <i data-lucide="calendar"></i>
+                <span>Pocket</span>
+            </a>
+        </nav>
+        <nav class="bottom-dock-split">
+            <a href="settings.html" class="dock-item">
+                <i data-lucide="settings"></i>
+                <span>Settings</span>
+            </a>
+        </nav>
+    </div>
 
     <!-- PDF Modal -->
     <div class="modal-overlay" id="pdfModal">
@@ -371,51 +394,49 @@
                 <i data-lucide="file-text" class="w-7 h-7 text-emerald-400"></i> Export Engine
             </h2>
 
-            <div class="space-y-3 mb-8 relative z-10">
-                <label
-                    class="flex items-center gap-4 p-4 glass-panel cursor-pointer hover:bg-emerald-500/10 hover:border-emerald-500/30 transition-all rounded-xl border border-glass-border group">
-                    <input type="radio" name="pdfRange" value="today" checked
-                        class="form-radio text-emerald-500 focus:ring-emerald-500 cursor-pointer w-5 h-5 bg-black border-white/30">
-                    <span class="flex flex-col">
-                        <strong class="font-bold text-lg group-hover:text-emerald-400 transition-colors">📅 Today</strong>
-                        <small class="text-muted text-xs">All transactions from today</small>
-                    </span>
+            <div class="grid grid-cols-2 gap-3 mb-6 relative z-10">
+                <label class="relative block cursor-pointer group">
+                    <input type="radio" name="pdfRange" value="today" class="peer sr-only" checked>
+                    <div class="h-full p-4 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md transition-all duration-300 peer-checked:bg-emerald-500/15 peer-checked:border-emerald-400 peer-checked:shadow-[0_0_15px_rgba(16,185,129,0.2)] hover:bg-white/10 flex flex-col items-center text-center gap-1">
+                        <i data-lucide="sun" class="w-6 h-6 text-emerald-400 mb-1 group-hover:scale-110 transition-transform"></i>
+                        <strong class="font-extrabold text-sm tracking-wide text-white">Today</strong>
+                        <span class="text-[10px] text-muted leading-tight">Daily</span>
+                    </div>
                 </label>
-                <label
-                    class="flex items-center gap-4 p-4 glass-panel cursor-pointer hover:bg-emerald-500/10 hover:border-emerald-500/30 transition-all rounded-xl border border-glass-border group">
-                    <input type="radio" name="pdfRange" value="week"
-                        class="form-radio text-emerald-500 focus:ring-emerald-500 cursor-pointer w-5 h-5 bg-black border-white/30">
-                    <span class="flex flex-col">
-                        <strong class="font-bold text-lg group-hover:text-emerald-400 transition-colors">📆 This Week</strong>
-                        <small class="text-muted text-xs">Last 7 days</small>
-                    </span>
+                
+                <label class="relative block cursor-pointer group">
+                    <input type="radio" name="pdfRange" value="week" class="peer sr-only">
+                    <div class="h-full p-4 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md transition-all duration-300 peer-checked:bg-emerald-500/15 peer-checked:border-emerald-400 peer-checked:shadow-[0_0_15px_rgba(16,185,129,0.2)] hover:bg-white/10 flex flex-col items-center text-center gap-1">
+                        <i data-lucide="calendar-days" class="w-6 h-6 text-emerald-400 mb-1 group-hover:scale-110 transition-transform"></i>
+                        <strong class="font-extrabold text-sm tracking-wide text-white">This Week</strong>
+                        <span class="text-[10px] text-muted leading-tight">Last 7 Days</span>
+                    </div>
                 </label>
-                <label
-                    class="flex items-center gap-4 p-4 glass-panel cursor-pointer hover:bg-emerald-500/10 hover:border-emerald-500/30 transition-all rounded-xl border border-glass-border group">
-                    <input type="radio" name="pdfRange" value="month"
-                        class="form-radio text-emerald-500 focus:ring-emerald-500 cursor-pointer w-5 h-5 bg-black border-white/30">
-                    <span class="flex flex-col">
-                        <strong class="font-bold text-lg group-hover:text-emerald-400 transition-colors">📊 This Month</strong>
-                        <small class="text-muted text-xs">Current month transactions</small>
-                    </span>
+
+                <label class="relative block cursor-pointer group">
+                    <input type="radio" name="pdfRange" value="month" class="peer sr-only">
+                    <div class="h-full p-4 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md transition-all duration-300 peer-checked:bg-emerald-500/15 peer-checked:border-emerald-400 peer-checked:shadow-[0_0_15px_rgba(16,185,129,0.2)] hover:bg-white/10 flex flex-col items-center text-center gap-1">
+                        <i data-lucide="bar-chart-2" class="w-6 h-6 text-emerald-400 mb-1 group-hover:scale-110 transition-transform"></i>
+                        <strong class="font-extrabold text-sm tracking-wide text-white">This Month</strong>
+                        <span class="text-[10px] text-muted leading-tight">30 Days</span>
+                    </div>
                 </label>
-                <label
-                    class="flex items-center gap-4 p-4 glass-panel cursor-pointer hover:bg-emerald-500/10 hover:border-emerald-500/30 transition-all rounded-xl border border-glass-border group">
-                    <input type="radio" name="pdfRange" value="year"
-                        class="form-radio text-emerald-500 focus:ring-emerald-500 cursor-pointer w-5 h-5 bg-black border-white/30">
-                    <span class="flex flex-col">
-                        <strong class="font-bold text-lg group-hover:text-emerald-400 transition-colors">📈 This Year</strong>
-                        <small class="text-muted text-xs">Year to date</small>
-                    </span>
+
+                <label class="relative block cursor-pointer group">
+                    <input type="radio" name="pdfRange" value="year" class="peer sr-only">
+                    <div class="h-full p-4 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md transition-all duration-300 peer-checked:bg-emerald-500/15 peer-checked:border-emerald-400 peer-checked:shadow-[0_0_15px_rgba(16,185,129,0.2)] hover:bg-white/10 flex flex-col items-center text-center gap-1">
+                        <i data-lucide="trending-up" class="w-6 h-6 text-emerald-400 mb-1 group-hover:scale-110 transition-transform"></i>
+                        <strong class="font-extrabold text-sm tracking-wide text-white">This Year</strong>
+                        <span class="text-[10px] text-muted leading-tight">YTD</span>
+                    </div>
                 </label>
-                <label
-                    class="flex items-center gap-4 p-4 glass-panel cursor-pointer hover:bg-emerald-500/10 hover:border-emerald-500/30 transition-all rounded-xl border border-glass-border group">
-                    <input type="radio" name="pdfRange" value="custom"
-                        class="form-radio text-emerald-500 focus:ring-emerald-500 cursor-pointer w-5 h-5 bg-black border-white/30">
-                    <span class="flex flex-col">
-                        <strong class="font-bold text-lg group-hover:text-emerald-400 transition-colors">🔧 Custom Range</strong>
-                        <small class="text-muted text-xs">Select specific dates</small>
-                    </span>
+
+                <label class="relative block cursor-pointer group col-span-2">
+                    <input type="radio" name="pdfRange" value="custom" class="peer sr-only">
+                    <div class="h-full p-4 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md transition-all duration-300 peer-checked:bg-emerald-500/15 peer-checked:border-emerald-400 peer-checked:shadow-[0_0_15px_rgba(16,185,129,0.2)] hover:bg-white/10 flex flex-row items-center justify-center gap-3">
+                        <i data-lucide="sliders-horizontal" class="w-5 h-5 text-emerald-400 group-hover:scale-110 transition-transform"></i>
+                        <strong class="font-extrabold text-sm tracking-wide text-white">Custom Range</strong>
+                    </div>
                 </label>
             </div>
 

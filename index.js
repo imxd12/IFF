@@ -51,10 +51,17 @@
             .reduce((sum, p) => sum + Number(p.amount || 0), 0);
 
         // Smart Insight calculation
-        let percent = 0;
-        if (monthlyIncome > 0) {
-            percent = Math.round((monthlyExpense / monthlyIncome) * 100);
+        let historicalIncome = monthlyIncome;
+        if (monthlyIncome <= 0) {
+            // Calculate 3-month average income as fallback
+            const pastInc = state.spendlyData.filter(t => t.type === 'income').reduce((sum, t) => sum + Number(t.amount || 0), 0);
+            const monthsSet = new Set(state.spendlyData.map(t => t.date.slice(0, 7)));
+            const numMonths = Math.max(monthsSet.size, 1);
+            historicalIncome = pastInc / numMonths;
         }
+
+        let percent = 0;
+        let budget = historicalIncome > 0 ? historicalIncome : 100;
 
         // Apply to DOM
         animateValueUpdate('todayExpense', todayExpense);
@@ -62,15 +69,33 @@
         animateValueUpdate('monthPocket', monthPocket);
         animateValueUpdate('totalBalance', totalBalance);
 
-        // AI Spend Predictor Logic
+        // Advanced AI Spend Predictor Logic
         const currentMonthTotalDays = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate();
         const currentDay = new Date().getDate();
         
         let runRate = 0;
         let predictedSpend = 0;
-        if(currentDay > 0) {
+        if (currentDay > 0) {
+            // Base run-rate
             runRate = monthlyExpense / currentDay;
-            predictedSpend = runRate * currentMonthTotalDays;
+            
+            // AI Weighted Prediction based on recency (last 7 days have higher weight)
+            const last7Days = new Date();
+            last7Days.setDate(currentDay - 7);
+            const recentExpense = state.spendlyData
+                .filter(t => t.type === 'expense' && new Date(t.date) >= last7Days && t.date.startsWith(currentMonth))
+                .reduce((sum, t) => sum + Number(t.amount || 0), 0);
+            
+            const recentDays = Math.min(currentDay, 7);
+            const recentRunRate = recentDays > 0 ? recentExpense / recentDays : runRate;
+            
+            // Blended Prediction: 60% recent trend + 40% overall month trend
+            const smartRunRate = (recentRunRate * 0.6) + (runRate * 0.4);
+            predictedSpend = smartRunRate * currentMonthTotalDays;
+        }
+
+        if (budget > 0) {
+            percent = Math.round((monthlyExpense / budget) * 100);
         }
 
         const aiPredictedSpendEl = document.getElementById('aiPredictedSpend');
@@ -81,8 +106,8 @@
         if(aiRunRateEl) aiRunRateEl.textContent = `₹${runRate.toFixed(0)} / day`;
         
         if(aiPredictorBarEl) {
-            let budget = monthlyIncome > 0 ? monthlyIncome : (predictedSpend > 0 ? predictedSpend * 1.2 : 100); 
-            let barWidth = Math.min((predictedSpend / budget) * 100, 100);
+            let barBudget = budget > 0 ? budget : (predictedSpend > 0 ? predictedSpend * 1.2 : 100); 
+            let barWidth = Math.min((predictedSpend / barBudget) * 100, 100);
             aiPredictorBarEl.style.width = `${barWidth}%`;
             
             if(barWidth > 90) aiPredictorBarEl.className = "h-full transition-all duration-1000 ease-out bg-rose-500";
@@ -90,7 +115,7 @@
             else aiPredictorBarEl.className = "h-full transition-all duration-1000 ease-out bg-emerald-500";
         }
 
-        generateInsight(percent);
+        generateInsight(percent, predictedSpend, budget, monthlyIncome);
     }
 
     function animateValueUpdate(elementId, value) {
@@ -104,16 +129,26 @@
         el.classList.add('flash-update');
     }
 
-    function generateInsight(percent) {
+    function generateInsight(percent, predictedSpend, budget, actualIncome) {
         const insightEl = document.getElementById('financeInsightMsg');
         if (!insightEl) return;
 
         let message = '';
-        if (percent >= 90) message = `⚠️ Liquid warning: You spent ${percent}% of your income this month.`;
-        else if (percent >= 70) message = `💡 Flow steady: You used ${percent}% of your income. Consider saving more.`;
-        else if (percent >= 50) message = `👍 Balanced flow (${percent}%). Good financial control.`;
-        else if (percent >= 30) message = `💎 Crystal clear! Only ${percent}% of income spent. Savings looking strong.`;
-        else message = `🚀 Excellent discipline! Spending only ${percent}% of income.`;
+        if (budget <= 0 && actualIncome <= 0) {
+            message = "🧠 AI needs income data to generate smart insights. Log your income!";
+        } else if (predictedSpend > budget) {
+            message = `🚨 Critical: AI predicts you will overspend by ₹${(predictedSpend - budget).toFixed(0)}. Time to slow down!`;
+        } else if (percent >= 90) {
+            message = `⚠️ Liquid warning: You've spent ${percent}% of your budget. Very tight budget ahead.`;
+        } else if (percent >= 70) {
+            message = `💡 Flow steady: You used ${percent}% of your budget. Consider limiting non-essential spending.`;
+        } else if (percent >= 50) {
+            message = `👍 Balanced flow. AI predicts you'll save ₹${(budget - predictedSpend).toFixed(0)} this month.`;
+        } else if (percent >= 30) {
+            message = `💎 Crystal clear! Your spending is optimal. AI projects strong savings.`;
+        } else {
+            message = `🚀 Excellent discipline! You are well below your budget ceiling.`;
+        }
 
         insightEl.textContent = message;
     }
@@ -291,260 +326,6 @@
     }
 
     // ----------------------------------------------------
-    // NEURAL BEATS - LONG PRESS MUSIC MODAL LOGIC
-    // ----------------------------------------------------
-    function initMusicModalLogic() {
-        const musicBtn = document.getElementById('musicIconBtn');
-        const modal = document.getElementById('musicPlayerModal');
-        if (!musicBtn || !modal) return;
-
-        let pressTimer = null;
-        let isLongPress = false;
-
-        let playlist = [];
-        let currentTrackIndex = 0;
-        
-        let audioCtx, analyser, dataArray, canvasCtx;
-        let isVisualizerInit = false;
-
-        const formatTime = (time) => {
-            if(isNaN(time)) return "0:00";
-            const min = Math.floor(time / 60);
-            const sec = Math.floor(time % 60);
-            return `${min}:${sec < 10 ? '0' : ''}${sec}`;
-        };
-
-        const player = document.getElementById('globalMusicPlayer');
-        const playPauseBtn = document.getElementById('musicModalPlayPause');
-        const playIcon = document.getElementById('musicModalPlayIcon');
-        const modalTrackName = document.getElementById('modalTrackName');
-        const currentTimeEl = document.getElementById('musicModalCurrentTime');
-        const durationEl = document.getElementById('musicModalDuration');
-        const seekSlider = document.getElementById('musicModalSeek');
-        const volSlider = document.getElementById('musicModalVolume');
-        const fileInput = document.getElementById('localAudioFile');
-        const loadBtn = document.getElementById('loadDeviceAudioBtn');
-        const visualizerBox = document.getElementById('musicVisualizerBox');
-        const canvas = document.getElementById('audioVisualizerCanvas');
-
-        // Init Volume
-        const savedVol = localStorage.getItem('fin_musicVolume');
-        if(savedVol !== null && volSlider) {
-            player.volume = parseFloat(savedVol);
-            volSlider.value = parseFloat(savedVol) * 100;
-            volSlider.style.setProperty('--val', `${volSlider.value}%`);
-        } else if (volSlider) {
-            volSlider.value = player.volume * 100;
-            volSlider.style.setProperty('--val', `${volSlider.value}%`);
-        }
-
-        const initVisualizer = () => {
-            if(isVisualizerInit || !canvas) return;
-            try {
-                const AudioContext = window.AudioContext || window.webkitAudioContext;
-                audioCtx = new AudioContext();
-                const source = audioCtx.createMediaElementSource(player);
-                analyser = audioCtx.createAnalyser();
-                analyser.fftSize = 64; 
-                source.connect(analyser);
-                analyser.connect(audioCtx.destination);
-                
-                canvasCtx = canvas.getContext('2d');
-                const bufferLength = analyser.frequencyBinCount;
-                dataArray = new Uint8Array(bufferLength);
-                isVisualizerInit = true;
-                drawVisualizer();
-            } catch(e) {
-                console.log("Audio API init error (maybe CORS):", e);
-            }
-        };
-
-        const drawVisualizer = () => {
-            requestAnimationFrame(drawVisualizer);
-            if(!isVisualizerInit || !canvas || player.paused) return;
-            
-            canvas.width = canvas.offsetWidth;
-            canvas.height = canvas.offsetHeight;
-            
-            analyser.getByteFrequencyData(dataArray);
-            
-            canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            const barWidth = (canvas.width / dataArray.length) * 1.5;
-            let barHeight;
-            let x = 0;
-            
-            for(let i = 0; i < dataArray.length; i++) {
-                barHeight = dataArray[i] / 2.5; 
-                
-                const gradient = canvasCtx.createLinearGradient(0, canvas.height, 0, 0);
-                gradient.addColorStop(0, '#10b981'); // Emerald
-                gradient.addColorStop(1, '#06b6d4'); // Cyan
-                
-                canvasCtx.fillStyle = gradient;
-                canvasCtx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
-                x += barWidth + 1;
-            }
-        };
-
-        const startPress = (e) => {
-            if (e.button && e.button !== 0) return;
-            isLongPress = false;
-            musicBtn.style.transform = 'scale(0.9)';
-            
-            pressTimer = setTimeout(() => {
-                isLongPress = true;
-                if (navigator.vibrate) navigator.vibrate([50, 50, 50]);
-                modal.classList.add('active');
-                updateModalUIState();
-            }, 3000); 
-        };
-
-        const cancelPress = () => {
-            clearTimeout(pressTimer);
-            musicBtn.style.transform = 'scale(1)';
-        };
-
-        const executeClick = (e) => {
-            cancelPress();
-            if(!isLongPress) {
-                if(window.toggleGlobalMusic) window.toggleGlobalMusic();
-                updateModalUIState();
-            }
-        };
-
-        musicBtn.addEventListener('pointerdown', startPress);
-        musicBtn.addEventListener('pointerup', executeClick);
-        musicBtn.addEventListener('pointerleave', cancelPress);
-
-        document.getElementById('closeMusicModalBtn').addEventListener('click', () => {
-            modal.classList.remove('active');
-        });
-
-        modal.addEventListener('click', (e) => {
-            if(e.target === modal) modal.classList.remove('active');
-        });
-
-        const updateModalUIState = () => {
-             if (player.paused) {
-                 playIcon.setAttribute('data-lucide', 'play');
-                 if(visualizerBox) visualizerBox.classList.remove('animate-vinyl');
-             } else {
-                 playIcon.setAttribute('data-lucide', 'pause');
-                 if(visualizerBox) visualizerBox.classList.add('animate-vinyl');
-                 if(audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
-             }
-             if(window.lucide) lucide.createIcons();
-        };
-
-        const playTrack = (index) => {
-            if(playlist.length === 0) return;
-            if(index >= playlist.length) index = 0;
-            if(index < 0) index = playlist.length - 1;
-            
-            currentTrackIndex = index;
-            const track = playlist[currentTrackIndex];
-            
-            player.src = track.url;
-            modalTrackName.textContent = track.name;
-            player.play().then(() => {
-                initVisualizer();
-                updateModalUIState();
-                const headerIcon = document.getElementById("musicStatusIcon");
-                if(headerIcon) headerIcon.setAttribute('data-lucide', 'pause');
-                if(window.lucide) lucide.createIcons();
-            }).catch(e => console.log('Autoplay prevented', e));
-        };
-
-        playPauseBtn.addEventListener('click', () => {
-            if(window.toggleGlobalMusic) {
-                window.toggleGlobalMusic();
-            } else {
-                if(player.paused) player.play(); else player.pause();
-            }
-            initVisualizer();
-            updateModalUIState();
-        });
-
-        document.getElementById('musicModalNext').addEventListener('click', () => {
-            if(playlist.length > 0) {
-                playTrack(currentTrackIndex + 1);
-            } else {
-                player.currentTime += 15;
-            }
-        });
-        document.getElementById('musicModalPrev').addEventListener('click', () => {
-            if(playlist.length > 0) {
-                playTrack(currentTrackIndex - 1);
-            } else {
-                player.currentTime = Math.max(0, player.currentTime - 15);
-            }
-        });
-
-        player.addEventListener('timeupdate', () => {
-            if(!modal.classList.contains('active')) return;
-            currentTimeEl.textContent = formatTime(player.currentTime);
-            if(player.duration) {
-                durationEl.textContent = formatTime(player.duration);
-                const progress = (player.currentTime / player.duration) * 100;
-                seekSlider.value = progress;
-                seekSlider.style.setProperty('--val', `${progress}%`);
-            }
-        });
-        
-        player.addEventListener('loadedmetadata', () => {
-            durationEl.textContent = formatTime(player.duration);
-        });
-
-        player.addEventListener('ended', () => {
-            if(playlist.length > 0) {
-                playTrack(currentTrackIndex + 1);
-            }
-        });
-
-        seekSlider.addEventListener('input', (e) => {
-            const val = e.target.value;
-            e.target.style.setProperty('--val', `${val}%`);
-            const seekTime = (val / 100) * player.duration;
-            player.currentTime = seekTime;
-        });
-
-        if(volSlider) {
-            volSlider.addEventListener('input', (e) => {
-                const val = e.target.value;
-                e.target.style.setProperty('--val', `${val}%`);
-                const vol = val / 100;
-                player.volume = vol;
-                localStorage.setItem('fin_musicVolume', vol);
-            });
-        }
-
-        loadBtn.addEventListener('click', () => {
-            fileInput.click();
-        });
-
-        fileInput.addEventListener('change', (e) => {
-            const files = Array.from(e.target.files);
-            if (files.length > 0) {
-                const wasEmpty = playlist.length === 0;
-                
-                files.forEach(file => {
-                    playlist.push({
-                        name: file.name.replace(/\.[^/.]+$/, ""),
-                        url: URL.createObjectURL(file)
-                    });
-                });
-                
-                showSnackbar(`Loaded ${files.length} audio track(s) ✨`);
-                
-                if(wasEmpty) {
-                    playTrack(0);
-                }
-            }
-        });
-    }
-
-    // ----------------------------------------------------
     // BOOTSTRAP
     // ----------------------------------------------------
     window.addEventListener('DOMContentLoaded', () => {
@@ -552,7 +333,6 @@
         updateTextGreeting();
         updateDashboard();
         initPWA();
-        initMusicModalLogic();
 
         // Voice greeting after a tiny timeout to ensure it feels natural
         setTimeout(speakAssistantGreeting, 1200);

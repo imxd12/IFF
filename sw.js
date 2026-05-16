@@ -13,16 +13,19 @@ const CORE_ASSETS = [
   './spendly.html',
   './nexus.html',
   './pocketcal.html',
+  './settings.html',
   './global.css',
   './index.css',
   './spendly.css',
   './nexus.css',
   './pocketcal.css',
+  './settings.css',
   './global.js',
   './index.js',
   './spendly.js',
   './nexus.js',
   './pocketcal.js',
+  './settings.js',
   './icon-192.png',
   './icon-512.png',
   './manifest.json'
@@ -85,51 +88,48 @@ self.addEventListener('fetch', (event) => {
     return;
   }
   
+  // Network First for HTML to ensure latest app shell is loaded when online
+  if (request.headers.get('accept').includes('text/html')) {
+    event.respondWith(
+      fetch(request)
+        .then((networkResponse) => {
+          if (networkResponse && networkResponse.status === 200) {
+            const responseToCache = networkResponse.clone();
+            caches.open(CACHE_NAME).then((cache) => {
+              cache.put(request, responseToCache);
+            });
+          }
+          return networkResponse;
+        })
+        .catch(() => {
+          console.log('[SW] Offline, serving cached HTML');
+          return caches.match(request).then((cachedResponse) => {
+             if (cachedResponse) return cachedResponse;
+             // Fallback to index if specific page not cached
+             return caches.match('./index.html');
+          });
+        })
+    );
+    return;
+  }
+
+  // Stale-While-Revalidate (Cache First, then fetch to update cache) for assets
   event.respondWith(
     caches.match(request)
       .then((cachedResponse) => {
-        if (cachedResponse) {
-          console.log('[SW] Serving from cache:', request.url);
-          
-          // Update cache in background (stale-while-revalidate)
-          fetch(request)
-            .then((networkResponse) => {
-              if (networkResponse && networkResponse.status === 200) {
-                caches.open(CACHE_NAME).then((cache) => {
-                  cache.put(request, networkResponse);
-                });
-              }
-            })
-            .catch(() => {
-              // Network failed, continue using cached version
+        const fetchPromise = fetch(request).then((networkResponse) => {
+          if (networkResponse && networkResponse.status === 200) {
+            caches.open(CACHE_NAME).then((cache) => {
+              cache.put(request, networkResponse.clone());
             });
-          
-          return cachedResponse;
-        }
+          }
+          return networkResponse;
+        }).catch((err) => {
+          console.log('[SW] Network fetch failed for asset:', err);
+        });
         
-        // Not in cache, fetch from network
-        console.log('[SW] Fetching from network:', request.url);
-        return fetch(request)
-          .then((networkResponse) => {
-            // Cache successful responses
-            if (networkResponse && networkResponse.status === 200) {
-              const responseToCache = networkResponse.clone();
-              caches.open(CACHE_NAME).then((cache) => {
-                cache.put(request, responseToCache);
-              });
-            }
-            return networkResponse;
-          })
-          .catch((error) => {
-            console.error('[SW] Fetch failed:', error);
-            
-            // Return offline page for HTML requests
-            if (request.headers.get('accept').includes('text/html')) {
-              return caches.match('./index.html');
-            }
-            
-            throw error;
-          });
+        // Return cached immediately if available, else wait for network
+        return cachedResponse || fetchPromise;
       })
   );
 });

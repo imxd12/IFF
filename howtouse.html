@@ -32,8 +32,8 @@
         <div class="liquid-blob"></div>
     </div>
 
-    <header class="global-header glass-panel">
-        <div class="brand flex items-center gap-3">
+    <header class="global-header glass-panel transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]" id="mainHeader">
+        <div class="brand flex items-center gap-3 relative z-10">
             <a href="javascript:history.back()"
                 class="glass-button w-10 h-10 rounded-full flex items-center justify-center hover:-translate-x-1">
                 <i data-lucide="arrow-left" class="w-5 h-5"></i>
@@ -44,10 +44,26 @@
             </div>
             <span class="brand-text">How to Use</span>
         </div>
-        <div class="header-controls">
-
+        <div class="header-controls relative z-10">
+            <!-- Inky Theme Toggle -->
             <button class="theme-toggle-btn glass-button" id="themeToggleBtn"><i data-lucide="sun"></i></button>
+
+            <!-- Anime Assistant -->
+            <button id="animeAssistantBtn" class="anime-assistant-btn relative group" title="Assistant">
+                <div class="anime-bot">
+                    <div class="bot-head">
+                        <div class="bot-eye left"></div>
+                        <div class="bot-eye right"></div>
+                        <div class="bot-blush left"></div>
+                        <div class="bot-blush right"></div>
+                    </div>
+                </div>
+                <div class="bot-glow"></div>
+            </button>
         </div>
+
+        <!-- Flashlight Beam Container -->
+        <div class="flashlight-beam pointer-events-none" id="flashlightBeam"></div>
     </header>
 
     <main class="main-content">

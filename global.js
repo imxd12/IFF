@@ -1334,19 +1334,28 @@
       const assistantBtn = document.getElementById('animeAssistantBtn');
       if (!assistantBtn) return;
       
-      const messages = [
-          "You're doing great with your finances today! 🌟",
-          "Remember: A penny saved is a penny earned! 💰",
-          "Let's review those budgets later! 📊",
-          "I'm here if you need anything! 🤖",
-          "Stay hydrated and stay wealthy! 💧",
-          "All systems operational! ✨"
-      ];
-      
       assistantBtn.addEventListener('click', () => {
+          const username = localStorage.getItem('fin_userName') || 'Friend';
+          const weatherText = document.querySelector('#weatherBadge span:last-child')?.innerText || 'Nice weather';
+          let timeGreeting = "Day";
+          if (window.MoneyFlowVoiceEngine) {
+              timeGreeting = window.MoneyFlowVoiceEngine.getTimeKey(new Date().getHours());
+          }
+          
+          const messages = [
+              `You're doing great with your finances today, ${username}! 🌟`,
+              `Remember: A penny saved is a penny earned! 💰`,
+              `Let's review those budgets later! 📊`,
+              `I'm here if you need anything, ${username}! 🤖`,
+              `Stay hydrated and stay wealthy! 💧`,
+              `All systems operational! ✨`,
+              `Good ${timeGreeting}! Ready to track some expenses? 🚀`,
+              `The weather feels like ${weatherText}! Stay cozy! ⛅`
+          ];
+
           const msg = messages[Math.floor(Math.random() * messages.length)];
-          if(window.showSnackbar) window.showSnackbar(msg, 'success');
-          if(window.playUISound) window.playUISound('success');
+          
+          if(window.playUISound) window.playUISound('on');
           
           assistantBtn.style.transform = 'scale(1.2) translateY(-10px) rotate(15deg)';
           setTimeout(() => {
@@ -1354,10 +1363,44 @@
           }, 300);
 
           const eyes = document.querySelectorAll('.bot-eye');
-          eyes.forEach(e => e.style.animationDuration = '0.2s');
+          eyes.forEach(e => e.style.animationDuration = '0.1s');
           setTimeout(() => {
               eyes.forEach(e => e.style.animationDuration = '4s');
-          }, 2000);
+          }, 1500);
+
+          let popup = document.getElementById('animeAssistantPopup');
+          if (popup) popup.remove();
+
+          popup = document.createElement('div');
+          popup.id = 'animeAssistantPopup';
+          popup.className = 'fixed left-1/2 -translate-x-1/2 bottom-[85px] z-[1000] w-max max-w-[90vw] px-5 py-3 rounded-[20px] shadow-[0_10px_40px_rgba(6,182,212,0.3)] border border-cyan-400/30 flex items-center gap-4 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] transform translate-y-10 opacity-0 pointer-events-none bg-black/60 backdrop-blur-xl';
+          
+          popup.innerHTML = `
+            <div class="w-10 h-10 rounded-full bg-cyan-500/20 border border-cyan-500/50 flex items-center justify-center flex-shrink-0 relative">
+               <i data-lucide="bot" class="w-5 h-5 text-cyan-400 relative z-10"></i>
+               <div class="absolute inset-0 rounded-full animate-ping bg-cyan-400/20"></div>
+            </div>
+            <div>
+               <p class="text-[10px] font-extrabold text-cyan-400/70 uppercase tracking-widest mb-0.5">M-Bot Assistant</p>
+               <p class="text-sm font-bold text-white leading-tight">${msg}</p>
+            </div>
+          `;
+          
+          document.body.appendChild(popup);
+          if (window.lucide) window.lucide.createIcons();
+
+          requestAnimationFrame(() => {
+              popup.style.transform = 'translate(-50%, 0) scale(1)';
+              popup.style.opacity = '1';
+          });
+
+          setTimeout(() => {
+              if(popup.parentElement) {
+                  popup.style.transform = 'translate(-50%, 10px) scale(0.95)';
+                  popup.style.opacity = '0';
+                  setTimeout(() => popup.remove(), 500);
+              }
+          }, 4000);
       });
   };
 

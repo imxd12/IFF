@@ -257,72 +257,104 @@
     // ----------------------------------------------------
     let deferredPrompt;
     function initPWA() {
+        const promptEl = document.getElementById('installPrompt');
+        const overlayEl = document.getElementById('pwaOverlay');
+        
+        // Hide by default initially
+        if (promptEl) promptEl.style.display = 'none';
+        if (overlayEl) overlayEl.style.display = 'none';
+
         if (window.matchMedia('(display-mode: standalone)').matches) {
             localStorage.setItem("appInstalled", "true");
             return; // Already installed, do not show
         }
 
         const isInstalled = localStorage.getItem("appInstalled") === "true";
-        const promptEl = document.getElementById('installPrompt');
-        
-        if (isInstalled && promptEl) {
-            promptEl.style.display = 'none';
+        if (isInstalled || localStorage.getItem('installDismissed') === 'true') {
             return;
         }
 
-        if (promptEl && localStorage.getItem('installDismissed') !== 'true') {
-            promptEl.style.display = 'flex';
-            promptEl.style.opacity = '0';
-            setTimeout(() => {
-                promptEl.style.transition = 'opacity 0.5s ease';
-                promptEl.style.opacity = '1';
-            }, 100);
-        }
+        const showPrompt = () => {
+            if (promptEl) {
+                promptEl.style.display = 'flex';
+                if (overlayEl) overlayEl.style.display = 'block';
+                
+                // Trigger CSS transition
+                setTimeout(() => {
+                    promptEl.style.transform = 'translateY(0)';
+                    promptEl.style.opacity = '1';
+                    if (overlayEl) {
+                        overlayEl.style.opacity = '1';
+                        overlayEl.style.pointerEvents = 'auto';
+                    }
+                }, 100);
+            }
+        };
+
+        const hidePrompt = () => {
+            if (promptEl) {
+                promptEl.style.transform = 'translateY(100%)';
+                promptEl.style.opacity = '0';
+                if (overlayEl) {
+                    overlayEl.style.opacity = '0';
+                    overlayEl.style.pointerEvents = 'none';
+                }
+                setTimeout(() => {
+                    promptEl.style.display = 'none';
+                    if (overlayEl) overlayEl.style.display = 'none';
+                }, 700);
+            }
+        };
 
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
+            showPrompt();
         });
 
         const installBtn = document.getElementById('installBtn');
         const installBtnText = document.getElementById('installBtnText');
         const dismissBtn = document.getElementById('dismissBtn');
 
-        installBtn?.addEventListener('click', async () => {
-            if (!deferredPrompt) {
-                showSnackbar('Install prompt not available right now. You can install from browser menu.');
-                return;
-            }
-            deferredPrompt.prompt();
-            const { outcome } = await deferredPrompt.userChoice;
-            if (outcome === 'accepted') {
-                localStorage.setItem("appInstalled", "true");
-                showSnackbar('MoneyFlow installed successfully! ✨');
-                
-                // Show "Installed ✓"
-                if (installBtnText) installBtnText.textContent = 'Installed ✓';
-                installBtn.classList.remove('hover:bg-emerald-500/20', 'hover:border-emerald-500/50', 'hover:text-emerald-400');
-                installBtn.classList.add('bg-emerald-500/20', 'text-emerald-400', 'border-emerald-500/50', 'cursor-not-allowed');
-                installBtn.disabled = true;
-                
-                // Hide after a short delay
-                setTimeout(() => {
-                   if(promptEl) {
-                       promptEl.style.opacity = '0';
-                       setTimeout(() => promptEl.style.display = 'none', 500);
-                   }
-                }, 3000);
-            }
-            deferredPrompt = null;
-        });
+        if (installBtn) {
+            installBtn.addEventListener('click', async (e) => {
+                e.preventDefault();
+                if (!deferredPrompt) {
+                    if (/iphone|ipad|ipod/.test(window.navigator.userAgent.toLowerCase())) {
+                        showSnackbar('Tap Share icon then "Add to Home Screen" to install.', 'info');
+                    } else {
+                        showSnackbar('Install prompt not available right now. You can install from browser menu.', 'warning');
+                    }
+                    return;
+                }
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') {
+                    localStorage.setItem("appInstalled", "true");
+                    showSnackbar('MoneyFlow installed successfully! ✨');
+                    
+                    if (installBtnText) installBtnText.textContent = 'Installed ✓';
+                    installBtn.className = 'bg-white/10 text-emerald-400 px-8 py-3.5 rounded-2xl text-sm font-extrabold cursor-not-allowed flex items-center justify-center gap-2';
+                    installBtn.disabled = true;
+                    
+                    setTimeout(hidePrompt, 2000);
+                }
+                deferredPrompt = null;
+            });
+        }
 
-        dismissBtn?.addEventListener('click', () => {
-            if(promptEl) {
-                promptEl.style.opacity = '0';
-                setTimeout(() => promptEl.style.display = 'none', 500);
-            }
-            localStorage.setItem('installDismissed', 'true');
-        });
+        if (dismissBtn) {
+            dismissBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                hidePrompt();
+                localStorage.setItem('installDismissed', 'true');
+            });
+        }
+        
+        // Handle iOS fallback
+        if (/iphone|ipad|ipod/.test(window.navigator.userAgent.toLowerCase())) {
+            showPrompt();
+        }
     }
 
     // ----------------------------------------------------

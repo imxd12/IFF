@@ -792,9 +792,16 @@
                     'There is no going back. Delete everything?', 
                     'Yes, Delete', 
                     () => {
-                        localStorage.removeItem('fin_spendly');
-                        localStorage.removeItem('fin_pocketcal');
+                        const keysToRemove = [];
+                        for (let i = 0; i < localStorage.length; i++) {
+                            const key = localStorage.key(i);
+                            if (key && (key.startsWith('fin_') || key.startsWith('user'))) {
+                                keysToRemove.push(key);
+                            }
+                        }
+                        keysToRemove.forEach(k => localStorage.removeItem(k));
                         window.showSnackbar('Data wiped. Fresh start.', 'warning');
+                        setTimeout(() => location.reload(), 1500);
                     }
                 );
             }

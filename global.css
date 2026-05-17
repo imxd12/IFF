@@ -416,59 +416,66 @@ body {
 /* Premium Bottom Nav Dock */
 .bottom-dock-container {
   position: fixed;
-  bottom: clamp(15px, 3vh, 24px);
+  bottom: clamp(12px, 2vh, 20px);
   left: 50%;
   transform: translateX(-50%);
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
+  gap: 8px;
   z-index: 1000;
   width: max-content;
-  max-width: 95vw;
+  max-width: 90vw;
 }
 
 .bottom-dock-split {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 0 8px;
-  height: clamp(65px, 8vh, 76px);
-  border-radius: 40px;
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(30px);
-  -webkit-backdrop-filter: blur(30px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  padding: 0 6px;
+  height: clamp(56px, 7vh, 64px);
+  border-radius: 32px;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
 }
 
 [data-theme="dark"] .bottom-dock-split {
-  background: rgba(0, 0, 0, 0.3);
-  border-color: rgba(255, 255, 255, 0.05);
+  background: rgba(0, 0, 0, 0.4);
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.bottom-dock-split:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.25);
 }
 
 .dock-indicator {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  height: clamp(48px, 6vh, 58px);
-  background: linear-gradient(135deg, rgba(var(--accent-primary-rgb), 0.15), rgba(var(--accent-info-rgb), 0.05));
-  border: 1px solid rgba(var(--accent-primary-rgb), 0.2);
-  border-radius: 30px;
+  height: clamp(44px, 5.5vh, 52px);
+  background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(168, 85, 247, 0.1));
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 26px;
   z-index: 0;
-  transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-  box-shadow: inset 0 0 15px rgba(var(--accent-primary-rgb), 0.1);
+  transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
 .dock-item {
-  height: clamp(48px, 6vh, 56px);
-  padding: 0 16px;
+  height: clamp(44px, 5.5vh, 52px);
+  padding: 0 14px;
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--text-muted);
   text-decoration: none;
-  border-radius: 30px;
+  border-radius: 26px;
   transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
   position: relative;
   z-index: 1;
@@ -476,17 +483,17 @@ body {
 
 .dock-item:hover {
   color: var(--text-main);
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.08);
+  transform: scale(1.05);
 }
 
 .dock-item.active {
   color: var(--accent-primary);
-  padding: 0 20px;
-  background: rgba(6, 182, 212, 0.1);
+  padding: 0 18px;
 }
 
 .dock-item i {
-  font-size: 1.3rem;
+  font-size: 1.15rem;
   transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
   display: flex;
   align-items: center;
@@ -494,30 +501,30 @@ body {
 }
 
 .dock-item.active i {
-  transform: scale(1.15) translateY(-1px);
-  filter: drop-shadow(0 4px 8px rgba(6, 182, 212, 0.5));
+  transform: scale(1.1) translateY(-1px);
+  filter: drop-shadow(0 2px 6px rgba(6, 182, 212, 0.4));
 }
 
 .dock-item span {
-  font-size: 0.85rem;
-  font-weight: 800;
+  font-size: 0.75rem;
+  font-weight: 700;
   white-space: nowrap;
   opacity: 0;
   width: 0;
   margin-left: 0;
-  transform: translateX(-10px);
+  transform: translateX(-5px) scale(0.9);
   transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
   display: inline-block;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.3px;
   overflow: hidden;
 }
 
 .dock-item.active span {
   opacity: 1;
   width: auto;
-  max-width: 120px;
-  margin-left: 8px; /* Safe space when active */
-  transform: translateX(0);
+  max-width: 100px;
+  margin-left: 6px;
+  transform: translateX(0) scale(1);
 }
 
 /* ========================================================================

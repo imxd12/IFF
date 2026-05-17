@@ -911,8 +911,8 @@
       if (window.lucide) lucide.createIcons();
       
       const close = () => { overlay.classList.remove('active'); setTimeout(()=>overlay.remove(), 300); };
-      document.getElementById('btnCancelModal').onclick = close;
-      document.getElementById('btnConfirmModal').onclick = () => {
+      overlay.querySelector('#btnCancelModal').onclick = close;
+      overlay.querySelector('#btnConfirmModal').onclick = () => {
           close();
           onConfirm();
       };
@@ -940,8 +940,8 @@
       input.focus();
       
       const close = () => { overlay.classList.remove('active'); setTimeout(()=>overlay.remove(), 300); };
-      document.getElementById('btnCancelPrompt').onclick = close;
-      document.getElementById('btnConfirmPrompt').onclick = () => {
+      overlay.querySelector('#btnCancelPrompt').onclick = close;
+      overlay.querySelector('#btnConfirmPrompt').onclick = () => {
           const val = input.value;
           close();
           onConfirm(val);

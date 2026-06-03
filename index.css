@@ -6,33 +6,7 @@
 /* Most UI styling is handled via Tailwind & global CSS */
 /* We just need custom animations for greetings and install prompts here */
 
-@keyframes pulse-glow {
-    0% {
-        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4);
-    }
-    70% {
-        box-shadow: 0 0 0 15px rgba(16, 185, 129, 0);
-    }
-    100% {
-        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
-    }
-}
 
-#installPrompt.show {
-    display: block !important;
-    animation: slideUpFade 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-}
-
-@keyframes slideUpFade {
-    from {
-        opacity: 0;
-        transform: translateY(30px) scale(0.95);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
-}
 
 /* Floating animation for values when updated */
 @keyframes flashValue {
@@ -45,11 +19,3 @@
     animation: flashValue 0.6s ease;
 }
 
-@keyframes slowSpin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-.animate-vinyl {
-  animation: slowSpin 4s linear infinite;
-}

@@ -752,95 +752,8 @@
           return preferred;
       },
       speak(forcePlay = false) {
-          if (localStorage.getItem("voiceGreeting") === "off") return;
-          if (!forcePlay && sessionStorage.getItem("app_session_started") === "true") return;
-          
-          let hasSpoken = false;
-          const hour = new Date().getHours();
-          const timeKey = this.getTimeKey(hour);
-          const langCode = localStorage.getItem('fin_language') || 'en';
-          const username = localStorage.getItem('fin_userName') || 'User';
-          const nameLang = localStorage.getItem('fin_nameLanguage') || langCode;
-          const useNameStr = localStorage.getItem('fin_useName');
-          const useName = useNameStr !== 'false';
-          
-          const langData = this.greetings[langCode] || this.greetings['en'];
-          const timeGreeting = langData[timeKey] || langData.morning;
-
-          const runSpeech = () => {
-              if (hasSpoken) return;
-              hasSpoken = true;
-              
-              if (!forcePlay) sessionStorage.setItem("app_session_started", "true");
-              document.removeEventListener('click', runSpeech);
-              document.removeEventListener('touchstart', runSpeech);
-
-              speechSynthesis.cancel();
-
-              try {
-                  const AudioContext = window.AudioContext || window.webkitAudioContext;
-                  const ctx = new AudioContext();
-                  const osc = ctx.createOscillator();
-                  const gain = ctx.createGain();
-                  osc.connect(gain);
-                  gain.connect(ctx.destination);
-                  osc.type = 'sine';
-                  osc.frequency.setValueAtTime(800, ctx.currentTime);
-                  osc.frequency.exponentialRampToValueAtTime(1200, ctx.currentTime + 0.1);
-                  gain.gain.setValueAtTime(0, ctx.currentTime);
-                  gain.gain.linearRampToValueAtTime(0.05, ctx.currentTime + 0.05);
-                  gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
-                  osc.start(ctx.currentTime);
-                  osc.stop(ctx.currentTime + 0.5);
-              } catch(e) {}
-
-              setTimeout(() => {
-                  if (useName && nameLang !== langCode && username.trim() !== '') {
-                      const parts = langData.welcome.split('{username}');
-                      if (parts.length === 2) {
-                          const part1Text = parts[0].replace('{timeGreeting}', timeGreeting);
-                          const part2Text = parts[1];
-                          
-                          const u1 = new SpeechSynthesisUtterance(part1Text);
-                          u1.voice = this.getVoiceForLang(langCode, localStorage.getItem('fin_voiceURI'));
-                          u1.rate = 0.85;
-                          
-                          const u2 = new SpeechSynthesisUtterance(username);
-                          u2.voice = this.getVoiceForLang(nameLang);
-                          u2.rate = 0.85;
-                          
-                          const u3 = new SpeechSynthesisUtterance(part2Text);
-                          u3.voice = this.getVoiceForLang(langCode, localStorage.getItem('fin_voiceURI'));
-                          u3.rate = 0.85;
-                          
-                          speechSynthesis.speak(u1);
-                          speechSynthesis.speak(u2);
-                          speechSynthesis.speak(u3);
-                      } else {
-                          const msg = this.getGreeting(langCode, timeKey, username, useName);
-                          const u = new SpeechSynthesisUtterance(msg);
-                          u.voice = this.getVoiceForLang(langCode, localStorage.getItem('fin_voiceURI'));
-                          u.rate = 0.85;
-                          speechSynthesis.speak(u);
-                      }
-                  } else {
-                      const msg = this.getGreeting(langCode, timeKey, username, useName);
-                      const u = new SpeechSynthesisUtterance(msg);
-                      u.voice = this.getVoiceForLang(langCode, localStorage.getItem('fin_voiceURI'));
-                      u.rate = 0.85;
-                      speechSynthesis.speak(u);
-                  }
-              }, 400);
-          };
-
-          if (speechSynthesis.getVoices().length === 0) {
-              speechSynthesis.addEventListener('voiceschanged', runSpeech, { once: true });
-          } else {
-              runSpeech();
-          }
-
-          document.addEventListener('click', runSpeech);
-          document.addEventListener('touchstart', runSpeech);
+          // Voice system disabled per user request. Anime assistant now only uses text.
+          return;
       }
   };
 
@@ -1342,18 +1255,69 @@
               timeGreeting = window.MoneyFlowVoiceEngine.getTimeKey(new Date().getHours());
           }
           
-          const messages = [
-              `You're doing great with your finances today, ${username}! 🌟`,
+          // --- SMART AI ASSISTANT LOGIC ---
+          let dynamicMessages = [
+              `Good ${timeGreeting}, ${username}! All systems operational! ✨`,
+              `The weather feels like ${weatherText}! Stay cozy! ⛅`,
+              `Stay hydrated and stay wealthy, ${username}! 💧`,
+              `Ready to track some expenses? 🚀`,
               `Remember: A penny saved is a penny earned! 💰`,
+              `You're doing great with your finances today, ${username}! 🌟`,
               `Let's review those budgets later! 📊`,
               `I'm here if you need anything, ${username}! 🤖`,
-              `Stay hydrated and stay wealthy! 💧`,
-              `All systems operational! ✨`,
-              `Good ${timeGreeting}! Ready to track some expenses? 🚀`,
-              `The weather feels like ${weatherText}! Stay cozy! ⛅`
+              `A little progress each day adds up to big results! 📈`,
+              `Did you know? Tracking expenses is the first step to wealth! 💡`,
+              `Feeling good? Let's make today a productive day! ⚡`,
+              `Don't let small leaks sink your financial ship! 🚢`
           ];
+          
+          try {
+              const spendData = JSON.parse(localStorage.getItem('fin_spendly') || '[]');
+              const currentMonth = new Date().toISOString().slice(0, 7);
+              const today = new Date().toISOString().split('T')[0];
+              
+              const monthlyExpense = spendData.filter(t => t.type === 'expense' && t.date && t.date.startsWith(currentMonth)).reduce((sum, t) => sum + Number(t.amount || 0), 0);
+              const todayExpense = spendData.filter(t => t.type === 'expense' && t.date === today).reduce((sum, t) => sum + Number(t.amount || 0), 0);
+              
+              if (todayExpense > 0) {
+                  dynamicMessages.push(`You've spent ₹${todayExpense.toLocaleString('en-IN')} today. Keep an eye on it! 🧐`);
+              } else {
+                  dynamicMessages.push(`No expenses logged today yet. Great job saving, ${username}! 💎`);
+              }
+              
+              if (monthlyExpense > 0) {
+                  dynamicMessages.push(`Your total spending this month is ₹${monthlyExpense.toLocaleString('en-IN')}. 📊`);
+                  
+                  // Top category logic
+                  const categorySpends = {};
+                  spendData.filter(t => t.type === 'expense' && t.date && t.date.startsWith(currentMonth)).forEach(t => {
+                      const cat = t.category || 'General';
+                      categorySpends[cat] = (categorySpends[cat] || 0) + Number(t.amount || 0);
+                  });
+                  const topCat = Object.entries(categorySpends).sort((a, b) => b[1] - a[1])[0];
+                  if(topCat) {
+                      dynamicMessages.push(`A quick heads-up: You're spending the most on ${topCat[0]} this month. 🍔`);
+                  }
+              }
+              
+              const pocketData = JSON.parse(localStorage.getItem('fin_pocketcal') || '[]');
+              const monthPocket = pocketData.filter(p => p.date && p.date.startsWith(currentMonth)).reduce((sum, p) => sum + Number(p.amount || 0), 0);
+              
+              if (monthPocket > 0 && monthlyExpense > 0) {
+                  const percent = Math.round((monthlyExpense / monthPocket) * 100);
+                  if (percent > 85) {
+                      dynamicMessages.push(`🚨 Careful! You've used ${percent}% of your PocketCal budget!`);
+                  } else if (percent < 50) {
+                      dynamicMessages.push(`You've only used ${percent}% of your budget so far. Excellent pacing! 🚀`);
+                  }
+              } else if (monthPocket === 0) {
+                  dynamicMessages.push(`Don't forget to set a budget in PocketCal for better insights! 💡`);
+              }
+          } catch(e) {
+              console.error("AI Assistant Data Error", e);
+          }
 
-          const msg = messages[Math.floor(Math.random() * messages.length)];
+          const msg = dynamicMessages[Math.floor(Math.random() * dynamicMessages.length)];
           
           if(window.playUISound) window.playUISound('on');
           
@@ -1400,7 +1364,7 @@
                   popup.style.opacity = '0';
                   setTimeout(() => popup.remove(), 500);
               }
-          }, 4000);
+          }, 5000);
       });
   };
 
@@ -1467,6 +1431,21 @@
 
       document.body.classList.add('fade-in-ready');
 
+      // PRELOAD LOGIC: Preload HTML when hovering over a link to make fetch instant
+      document.body.addEventListener('mouseover', (e) => {
+          const target = e.target.closest('a');
+          if (target && target.href && target.href.startsWith(window.location.origin)) {
+              const href = target.getAttribute('href');
+              if (href && !href.startsWith('#') && !href.startsWith('http')) {
+                  if (!window.preloadedLinks) window.preloadedLinks = new Set();
+                  if (!window.preloadedLinks.has(href)) {
+                      window.preloadedLinks.add(href);
+                      fetch(href, { priority: 'low' }).catch(()=>{});
+                  }
+              }
+          }
+      });
+
       document.body.addEventListener('click', (e) => {
           const target = e.target.closest('a');
           if (!target) return;
@@ -1480,9 +1459,10 @@
               
               overlay.classList.add('active');
               
+              // REDUCED DELAY from 400ms to 150ms for snappy, instant feel
               setTimeout(() => {
                   window.location.href = href;
-              }, 400); 
+              }, 150); 
           }
       });
   };

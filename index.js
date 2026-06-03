@@ -61,7 +61,17 @@
         }
 
         let percent = 0;
-        let budget = historicalIncome > 0 ? historicalIncome : 100;
+        let budget = monthPocket > 0 ? monthPocket : (historicalIncome > 0 ? historicalIncome : 0);
+
+        // Calculate category with highest spend this month
+        const categorySpends = {};
+        state.spendlyData.filter(t => t.type === 'expense' && t.date && t.date.startsWith(currentMonth)).forEach(t => {
+            const cat = t.category || 'General';
+            categorySpends[cat] = (categorySpends[cat] || 0) + Number(t.amount || 0);
+        });
+        const topCategory = Object.keys(categorySpends).length > 0 
+            ? Object.entries(categorySpends).sort((a, b) => b[1] - a[1])[0] 
+            : null;
 
         // Apply to DOM
         animateValueUpdate('todayExpense', todayExpense);
@@ -75,8 +85,9 @@
         
         let runRate = 0;
         let predictedSpend = 0;
+        let daysLeft = currentMonthTotalDays - currentDay + 1;
+
         if (currentDay > 0) {
-            // Base run-rate
             runRate = monthlyExpense / currentDay;
             
             // AI Weighted Prediction based on recency (last 7 days have higher weight)
@@ -89,9 +100,11 @@
             const recentDays = Math.min(currentDay, 7);
             const recentRunRate = recentDays > 0 ? recentExpense / recentDays : runRate;
             
-            // Blended Prediction: 60% recent trend + 40% overall month trend
-            const smartRunRate = (recentRunRate * 0.6) + (runRate * 0.4);
-            predictedSpend = smartRunRate * currentMonthTotalDays;
+            // Blended Prediction: 70% recent trend + 30% overall month trend
+            const smartRunRate = (recentRunRate * 0.7) + (runRate * 0.3);
+            
+            // Projected spend = what we've already spent + (smart run rate * remaining days)
+            predictedSpend = monthlyExpense + (smartRunRate * Math.max(daysLeft, 0));
         }
 
         if (budget > 0) {
@@ -115,7 +128,36 @@
             else aiPredictorBarEl.className = "h-full transition-all duration-1000 ease-out bg-emerald-500";
         }
 
-        generateInsight(percent, predictedSpend, budget, monthlyIncome);
+        // Recent Transactions UI Logic
+        const recentListEl = document.getElementById('recentTransactionsList');
+        if (recentListEl) {
+            const sortedData = [...state.spendlyData].sort((a, b) => new Date(b.date) - new Date(a.date) || b.id - a.id);
+            const latest = sortedData.slice(0, 4);
+            
+            if (latest.length > 0) {
+                recentListEl.innerHTML = latest.map((t, idx) => `
+                    <div class="flex items-center justify-between p-4 ${idx !== latest.length - 1 ? 'border-b border-white/5' : ''} hover:bg-white/5 transition-colors rounded-2xl group cursor-pointer" onclick="window.location.href='spendly.html'">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-full flex items-center justify-center ${t.type === 'expense' ? 'bg-rose-500/10 text-rose-500' : 'bg-emerald-500/10 text-emerald-500'} group-hover:scale-110 transition-transform">
+                                <i data-lucide="${t.type === 'expense' ? 'arrow-down-right' : 'arrow-up-right'}" class="w-6 h-6"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-white/90 capitalize">${t.category || t.type}</h4>
+                                <p class="text-xs text-muted">${new Date(t.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</p>
+                            </div>
+                        </div>
+                        <span class="font-extrabold text-lg ${t.type === 'expense' ? 'text-white' : 'text-emerald-400'}">
+                            ${t.type === 'expense' ? '-' : '+'}₹${Number(t.amount || 0).toLocaleString('en-IN')}
+                        </span>
+                    </div>
+                `).join('');
+                if (window.lucide) window.lucide.createIcons();
+            } else {
+                recentListEl.innerHTML = '<div class="p-8 text-center text-muted text-sm font-medium">No recent transactions. Log some in Spendly!</div>';
+            }
+        }
+
+        generateInsight(percent, predictedSpend, budget, monthlyIncome, topCategory, daysLeft);
     }
 
     function animateValueUpdate(elementId, value) {
@@ -129,28 +171,32 @@
         el.classList.add('flash-update');
     }
 
-    function generateInsight(percent, predictedSpend, budget, actualIncome) {
+    function generateInsight(percent, predictedSpend, budget, actualIncome, topCategory, daysLeft) {
         const insightEl = document.getElementById('financeInsightMsg');
         if (!insightEl) return;
 
         let message = '';
-        if (budget <= 0 && actualIncome <= 0) {
-            message = "🧠 AI needs income data to generate smart insights. Log your income!";
+        const topCatStr = topCategory ? `<br><span class="text-sm text-emerald-400 mt-2 block"><i data-lucide="alert-circle" class="w-4 h-4 inline mb-1"></i> Highest spend on <b class="capitalize">${topCategory[0]}</b> (₹${topCategory[1].toLocaleString('en-IN')})</span>` : '';
+
+        if (budget <= 0) {
+            message = `🧠 AI requires budget data. Log income or set a PocketCal budget!`;
         } else if (predictedSpend > budget) {
-            message = `🚨 Critical: AI predicts you will overspend by ₹${(predictedSpend - budget).toFixed(0)}. Time to slow down!`;
+            const excess = predictedSpend - budget;
+            message = `<span class="text-rose-400 font-bold">🚨 Overspend Risk</span><br>AI predicts you'll exceed budget by ₹${excess.toLocaleString('en-IN')}. Slow down with ${daysLeft} days left!${topCatStr}`;
         } else if (percent >= 90) {
-            message = `⚠️ Liquid warning: You've spent ${percent}% of your budget. Very tight budget ahead.`;
+            message = `<span class="text-amber-400 font-bold">⚠️ Warning</span><br>You've used ${percent}% of budget. Very tight margin ahead!${topCatStr}`;
         } else if (percent >= 70) {
-            message = `💡 Flow steady: You used ${percent}% of your budget. Consider limiting non-essential spending.`;
+            message = `<span class="text-yellow-400 font-bold">💡 Steady</span><br>You've used ${percent}% of budget. Consider limiting non-essential expenses.${topCatStr}`;
         } else if (percent >= 50) {
-            message = `👍 Balanced flow. AI predicts you'll save ₹${(budget - predictedSpend).toFixed(0)} this month.`;
-        } else if (percent >= 30) {
-            message = `💎 Crystal clear! Your spending is optimal. AI projects strong savings.`;
+            const saving = budget - predictedSpend;
+            message = `<span class="text-emerald-400 font-bold">👍 Balanced</span><br>Flow is steady. AI projects you'll save ₹${saving.toLocaleString('en-IN')} this month.${topCatStr}`;
         } else {
-            message = `🚀 Excellent discipline! You are well below your budget ceiling.`;
+            const saving = budget - predictedSpend;
+            message = `<span class="text-blue-400 font-bold">💎 Optimal</span><br>Excellent discipline! Projected monthly savings: ₹${saving.toLocaleString('en-IN')}.${topCatStr}`;
         }
 
-        insightEl.textContent = message;
+        insightEl.innerHTML = message;
+        if (window.lucide) window.lucide.createIcons();
     }
 
     // ----------------------------------------------------

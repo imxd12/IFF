@@ -88,32 +88,9 @@ self.addEventListener('fetch', (event) => {
     return;
   }
   
-  // Network First for HTML to ensure latest app shell is loaded when online
-  if (request.headers.get('accept').includes('text/html')) {
-    event.respondWith(
-      fetch(request)
-        .then((networkResponse) => {
-          if (networkResponse && networkResponse.status === 200) {
-            const responseToCache = networkResponse.clone();
-            caches.open(CACHE_NAME).then((cache) => {
-              cache.put(request, responseToCache);
-            });
-          }
-          return networkResponse;
-        })
-        .catch(() => {
-          console.log('[SW] Offline, serving cached HTML');
-          return caches.match(request).then((cachedResponse) => {
-             if (cachedResponse) return cachedResponse;
-             // Fallback to index if specific page not cached
-             return caches.match('./index.html');
-          });
-        })
-    );
-    return;
-  }
-
-  // Stale-While-Revalidate (Cache First, then fetch to update cache) for assets
+  // Fast Stale-While-Revalidate Strategy for EVERYTHING
+  // Ensures ultra-fast, smooth page opens instantly from Cache, 
+  // while silently updating the cache in the background for next time.
   event.respondWith(
     caches.match(request)
       .then((cachedResponse) => {
@@ -126,6 +103,10 @@ self.addEventListener('fetch', (event) => {
           return networkResponse;
         }).catch((err) => {
           console.log('[SW] Network fetch failed for asset:', err);
+          // If HTML request fails, fallback to index.html
+          if (request.headers.get('accept').includes('text/html')) {
+             return caches.match('./index.html');
+          }
         });
         
         // Return cached immediately if available, else wait for network

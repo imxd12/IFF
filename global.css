@@ -278,25 +278,85 @@ body {
 /* Fixed Global Header Dock Style */
 .global-header {
   position: fixed;
-  top: clamp(-10px, 1vh, -10px);
-  margin-top: clamp(5px, 2vh, 15px);
+  top: 0;
+  margin-top: 16px;
   left: 50%;
   transform: translateX(-50%);
-  width: calc(100% - clamp(20px, 4vw, 40px));
-  max-width: 500px;
-  height: clamp(56px, 8vh, 64px);
-  border-radius: 35px;
+  width: calc(100% - clamp(16px, 3vw, 32px));
+  max-width: 900px;
+  height: 56px;
+  border-radius: 28px;
   z-index: 1000;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 clamp(12px, 3vw, 24px);
+  padding: 0 20px;
   border: 1px solid var(--glass-border);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+              height 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+              max-width 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+              margin-top 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+              border-radius 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+              background 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+              padding 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform, height, max-width, margin-top;
+}
+
+.global-header::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: linear-gradient(135deg, rgba(6, 182, 212, 0.35), rgba(168, 85, 247, 0.35), rgba(16, 185, 129, 0.35));
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+
+.global-header:hover::before {
+  opacity: 1;
+}
+
+.global-header .brand a.glass-button {
+  width: 36px !important;
+  height: 36px !important;
+  border-radius: 50%;
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.global-header .brand a.glass-button i {
+  width: 18px !important;
+  height: 18px !important;
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.global-header .theme-toggle-btn,
+.global-header .anime-assistant-btn {
+  width: 36px;
+  height: 36px;
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.global-header .theme-toggle-btn i {
+  width: 18px !important;
+  height: 18px !important;
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.global-header .brand-logo-wave {
+  width: 28px;
+  height: 28px;
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.global-header .brand-text {
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .global-header.glass-panel:hover {
-  transform: translateX(-50%);
+  transform: translateX(-50%) scale(1.01);
 }
 
 /* PWA Install Prompt Animation */
@@ -333,8 +393,8 @@ body {
 
 /* Water Wave Logo Effect */
 .brand-logo-wave {
-  width: 32px;
-  height: 32px;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
   background: var(--accent-primary);
   position: relative;
@@ -386,8 +446,8 @@ body {
 
 /* Inky Theme Toggle Button */
 .theme-toggle-btn {
-  width: 40px;
-  height: 40px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   display: flex;
   justify-content: center;
@@ -395,7 +455,10 @@ body {
   cursor: pointer;
   z-index: 9999;
   animation: breathing-glow 3s infinite ease-in-out;
-  /* Ensure it stays above clip-path layer during click */
+}
+.theme-toggle-btn i {
+  width: 16px !important;
+  height: 16px !important;
 }
 
 @keyframes breathing-glow {
@@ -416,7 +479,7 @@ body {
 /* Premium Bottom Nav Dock */
 .bottom-dock-container {
   position: fixed;
-  bottom: clamp(12px, 2vh, 20px);
+  bottom: 12px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
@@ -432,9 +495,9 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 0 6px;
-  height: clamp(56px, 7vh, 64px);
-  border-radius: 32px;
+  padding: 0 4px;
+  height: 46px;
+  border-radius: 23px;
   background: rgba(255, 255, 255, 0.08);
   backdrop-filter: blur(25px);
   -webkit-backdrop-filter: blur(25px);
@@ -458,24 +521,24 @@ body {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  height: clamp(44px, 5.5vh, 52px);
+  height: 36px;
   background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(168, 85, 247, 0.1));
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 26px;
+  border-radius: 18px;
   z-index: 0;
   transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
 .dock-item {
-  height: clamp(44px, 5.5vh, 52px);
-  padding: 0 14px;
+  height: 36px;
+  padding: 0 10px;
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--text-muted);
   text-decoration: none;
-  border-radius: 26px;
+  border-radius: 18px;
   transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
   position: relative;
   z-index: 1;
@@ -489,11 +552,11 @@ body {
 
 .dock-item.active {
   color: var(--accent-primary);
-  padding: 0 18px;
+  padding: 0 12px;
 }
 
 .dock-item i {
-  font-size: 1.15rem;
+  font-size: 0.95rem;
   transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
   display: flex;
   align-items: center;
@@ -506,7 +569,7 @@ body {
 }
 
 .dock-item span {
-  font-size: 0.75rem;
+  font-size: 0.65rem;
   font-weight: 700;
   white-space: nowrap;
   opacity: 0;
@@ -523,7 +586,7 @@ body {
   opacity: 1;
   width: auto;
   max-width: 100px;
-  margin-left: 6px;
+  margin-left: 4px;
   transform: translateX(0) scale(1);
 }
 
@@ -642,10 +705,9 @@ html.lenis {
 
 @media (min-width: 1024px) {
   .global-header {
-    height: 80px;
-    padding: 0 40px;
+    height: 64px;
+    padding: 0 24px;
   }
-
 }
 
 /* ========================================================================
@@ -685,9 +747,11 @@ html.lenis {
   position: relative;
   overflow: hidden;
   border-radius: 1.5rem;
-  background: linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%);
-  border: 1px solid rgba(255,255,255,0.1);
-  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  background: linear-gradient(145deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.005) 100%);
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
   z-index: 1;
   display: flex;
@@ -700,15 +764,46 @@ html.lenis {
 }
 
 [data-theme="dark"] .quick-action-card {
-  background: linear-gradient(145deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.2) 100%);
-  border-color: rgba(255,255,255,0.05);
+  background: linear-gradient(145deg, rgba(15,23,42,0.4) 0%, rgba(15,23,42,0.1) 100%);
+  border-color: rgba(255,255,255,0.04);
+}
+
+.quick-action-card span {
+  color: var(--text-muted);
+  transition: color 0.3s ease;
+}
+
+.quick-action-card:hover span {
+  color: var(--text-main);
+}
+
+/* Individual Card Color Themes */
+.qa-spendly {
+  --qa-color: #0d9488;
+  --qa-glow: rgba(13, 148, 136, 0.15);
+}
+.qa-pocket {
+  --qa-color: #8b5cf6;
+  --qa-glow: rgba(139, 92, 246, 0.15);
+}
+.qa-feedback {
+  --qa-color: #3b82f6;
+  --qa-glow: rgba(59, 130, 246, 0.15);
+}
+.qa-guide {
+  --qa-color: #f43f5e;
+  --qa-glow: rgba(244, 63, 94, 0.15);
+}
+.qa-profile {
+  --qa-color: #f59e0b;
+  --qa-glow: rgba(245, 158, 11, 0.15);
 }
 
 .quick-action-card::after {
   content: '';
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at 50% 0%, rgba(16, 185, 129, 0.15), transparent 70%);
+  background: radial-gradient(circle at 50% 0%, var(--qa-glow), transparent 70%);
   opacity: 0;
   transition: opacity 0.4s;
   z-index: -1;
@@ -716,9 +811,9 @@ html.lenis {
 }
 
 .quick-action-card:hover {
-  transform: translateY(-8px) scale(1.03);
-  box-shadow: 0 20px 40px rgba(16,185,129,0.2), inset 0 1px 0 rgba(255,255,255,0.2);
-  border-color: rgba(16, 185, 129, 0.4);
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 12px 30px var(--qa-glow);
+  border-color: var(--qa-color);
 }
 
 .quick-action-card:hover::after {
@@ -726,21 +821,24 @@ html.lenis {
 }
 
 .quick-action-icon-wrap {
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  background: rgba(16, 185, 129, 0.1);
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: var(--qa-color);
   display: flex;
   justify-content: center;
   align-items: center;
   transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-  border: 1px solid rgba(16, 185, 129, 0.2);
 }
 
 .quick-action-card:hover .quick-action-icon-wrap {
-  background: rgba(16, 185, 129, 0.2);
-  transform: scale(1.15) rotate(5deg);
-  box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+  background: var(--qa-glow);
+  border-color: var(--qa-color);
+  transform: scale(1.1) rotate(5deg);
+  color: #fff;
+  box-shadow: 0 0 15px var(--qa-color);
 }
 
 .fab-quick-add {
@@ -1473,19 +1571,51 @@ body.reduce-motion .liquid-bg-container {
 }
 
 /* ----------------------------------------------------
-   HEADER COMPRESSED STATE
+   HEADER COMPRESSED & HIDDEN STATES
 ---------------------------------------------------- */
 .global-header.header-compressed {
-  transform: translateY(-5px) translateX(-50%) scale(0.95);
+  height: 46px;
+  max-width: 460px;
+  margin-top: 8px;
+  border-radius: 23px;
+  padding: 0 12px;
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
-  background: rgba(255, 255, 255, 0.4);
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 1);
+  background: rgba(255, 255, 255, 0.55);
+  border-color: rgba(255, 255, 255, 0.25);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.3);
 }
 
 [data-theme="dark"] .global-header.header-compressed {
-  background: rgba(10, 10, 10, 0.3);
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  background: rgba(10, 10, 10, 0.55);
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.global-header.header-compressed .brand a.glass-button,
+.global-header.header-compressed .theme-toggle-btn,
+.global-header.header-compressed .anime-assistant-btn {
+  width: 30px !important;
+  height: 30px !important;
+}
+
+.global-header.header-compressed .brand a.glass-button i,
+.global-header.header-compressed .theme-toggle-btn i {
+  width: 14px !important;
+  height: 14px !important;
+}
+
+.global-header.header-compressed .brand-logo-wave {
+  width: 22px;
+  height: 22px;
+}
+
+.global-header.header-compressed .brand-text {
+  font-size: 0.95rem;
+}
+
+.global-header.header-hidden {
+  transform: translateY(-130%) translateX(-50%) !important;
 }
 
 /* ----------------------------------------------------
@@ -1521,8 +1651,8 @@ body.reduce-motion .liquid-bg-container {
    ANIME ASSISTANT
 ---------------------------------------------------- */
 .anime-assistant-btn {
-  width: 40px;
-  height: 40px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -1542,10 +1672,10 @@ body.reduce-motion .liquid-bg-container {
 }
 
 .anime-bot {
-  width: 24px;
-  height: 24px;
+  width: 18px;
+  height: 18px;
   background: linear-gradient(135deg, var(--accent-primary), var(--accent-info));
-  border-radius: 12px 12px 8px 8px;
+  border-radius: 9px 9px 6px 6px;
   position: relative;
   display: flex;
   justify-content: center;
@@ -1560,29 +1690,29 @@ body.reduce-motion .liquid-bg-container {
 }
 
 .bot-eye {
-  width: 4px;
-  height: 6px;
+  width: 3px;
+  height: 4.5px;
   background: white;
   border-radius: 50%;
   position: absolute;
-  top: 8px;
+  top: 6px;
   animation: blink 4s infinite;
 }
 
-.bot-eye.left { left: 5px; }
-.bot-eye.right { right: 5px; }
+.bot-eye.left { left: 4px; }
+.bot-eye.right { right: 4px; }
 
 .bot-blush {
-  width: 4px;
-  height: 2px;
+  width: 3px;
+  height: 1.5px;
   background: rgba(255, 105, 180, 0.6);
   border-radius: 50%;
   position: absolute;
-  top: 15px;
+  top: 11px;
   filter: blur(1px);
 }
-.bot-blush.left { left: 3px; }
-.bot-blush.right { right: 3px; }
+.bot-blush.left { left: 2px; }
+.bot-blush.right { right: 2px; }
 
 @keyframes float-bot {
   0%, 100% { transform: translateY(0); }

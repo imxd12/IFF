@@ -7,34 +7,108 @@
     'use strict';
 
     // ----------------------------------------------------
-    // TAB NAVIGATION
+    // iOS STYLE SUBPAGE OVERLAYS & HISTORY NAVIGATION
     // ----------------------------------------------------
-    const tabBtns = document.querySelectorAll('.tab-btn');
-    const tabPanes = document.querySelectorAll('.tab-pane');
-    const tabSwitcherPill = document.getElementById('tabSwitcherPill');
-
-    tabBtns.forEach((btn, idx) => {
-        btn.addEventListener('click', () => {
-            const targetId = btn.getAttribute('data-tab');
-            
-            tabBtns.forEach(b => {
-                b.classList.remove('text-white');
-                b.classList.add('text-muted');
-            });
-            tabPanes.forEach(p => p.classList.remove('active'));
-            
-            btn.classList.add('text-white');
-            btn.classList.remove('text-muted');
-            document.getElementById(targetId).classList.add('active');
-            
-            // Move pill (assuming 4 tabs = 100% / 4 = 25% each, so translateX of 0, 100%, 200%, 300% of the pill's own width works)
-            if (tabSwitcherPill) {
-                tabSwitcherPill.style.transform = `translateX(${idx * 100}%)`;
-            }
-            
+    window.openSubpage = function(selector) {
+        const el = document.querySelector(selector);
+        if (el) {
+            el.classList.add('active');
             if (window.playUISound) window.playUISound('whoosh');
+            if (window.lucide) window.lucide.createIcons();
+            history.pushState({ subpage: selector }, '');
+            document.body.classList.add('subpage-active');
+        }
+    };
+
+    window.closeSubpage = function(selector) {
+        const el = document.querySelector(selector);
+        if (el && el.classList.contains('active')) {
+            el.classList.remove('active');
+            if (window.playUISound) window.playUISound('whoosh');
+            // If the current history state corresponds to this subpage, go back
+            if (history.state && history.state.subpage === selector) {
+                history.back();
+            }
+            // Check if any subpages remain active
+            setTimeout(() => {
+                const activeOverlays = document.querySelectorAll('.subpage-overlay.active');
+                if (activeOverlays.length === 0) {
+                    document.body.classList.remove('subpage-active');
+                }
+            }, 50);
+        }
+    };
+
+    window.addEventListener('popstate', (e) => {
+        // Close active overlays on back navigation
+        document.querySelectorAll('.subpage-overlay.active').forEach(overlay => {
+            overlay.classList.remove('active');
         });
+        // Remove active class from body if no subpages are active
+        setTimeout(() => {
+            const activeOverlays = document.querySelectorAll('.subpage-overlay.active');
+            if (activeOverlays.length === 0) {
+                document.body.classList.remove('subpage-active');
+            }
+        }, 50);
     });
+
+    // ----------------------------------------------------
+    // DYNAMIC STATUS PREVIEWS SYNC
+    // ----------------------------------------------------
+    window.updateSettingsPreviews = function() {
+        // 1. Profile Name, Bio, and Avatar
+        const nameInput = document.getElementById('usernameInput');
+        const bioInput = document.getElementById('bioInput');
+        const mainProfileName = document.getElementById('mainProfileName');
+        const mainProfileBio = document.getElementById('mainProfileBio');
+        const mainAvatarInitials = document.getElementById('mainAvatarInitials');
+        const mainAvatarImg = document.getElementById('mainAvatarImage');
+        
+        if (nameInput && mainProfileName) {
+            const savedName = localStorage.getItem('fin_userName') || 'User';
+            mainProfileName.textContent = savedName;
+            if (mainAvatarInitials) mainAvatarInitials.textContent = savedName.charAt(0).toUpperCase();
+        }
+        if (bioInput && mainProfileBio) {
+            const savedBio = localStorage.getItem('userBio') || '';
+            mainProfileBio.textContent = savedBio ? savedBio : 'Manage profile bio and information cards';
+        }
+        
+        const savedImg = localStorage.getItem('fin_profileImg');
+        if (savedImg && mainAvatarImg && mainAvatarInitials) {
+            mainAvatarImg.src = savedImg;
+            mainAvatarImg.classList.remove('hidden');
+            mainAvatarInitials.classList.add('hidden');
+        } else if (mainAvatarImg && mainAvatarInitials) {
+            mainAvatarImg.classList.add('hidden');
+            mainAvatarInitials.classList.remove('hidden');
+        }
+        
+        // 2. Theme preview text
+        const currentThemeDisplay = document.getElementById('currentThemeDisplay');
+        if (currentThemeDisplay) {
+            const currentTheme = localStorage.getItem('fin_theme') || 'light';
+            currentThemeDisplay.textContent = currentTheme === 'dark' ? 'Obsidian Black' : 'Ceramic White';
+        }
+        
+        // 3. Voice status preview text
+        const mainVoiceStatus = document.getElementById('mainVoiceStatus');
+        if (mainVoiceStatus) {
+            const voiceState = localStorage.getItem('voiceGreeting') || 'on';
+            const lang = localStorage.getItem('fin_language') || 'en';
+            mainVoiceStatus.textContent = `Voice: ${voiceState === 'on' ? 'On' : 'Off'} (${lang.toUpperCase()})`;
+        }
+        
+        // 4. Ledger status preview text
+        const mainLedgerStatus = document.getElementById('mainLedgerStatus');
+        if (mainLedgerStatus) {
+            const code = localStorage.getItem('fin_currency_code') || 'INR';
+            const sym = localStorage.getItem('fin_currency') || '₹';
+            const fmt = localStorage.getItem('fin_date_format') || 'DD/MM/YYYY';
+            mainLedgerStatus.textContent = `${sym} ${code}, Format: ${fmt}`;
+        }
+    };
 
     // ----------------------------------------------------
     // VOICE AI DROPDOWN
@@ -86,6 +160,7 @@
                     toggleAppThemeBtn.className = newTheme === 'dark' ? 
                         'px-4 py-2 rounded-xl text-sm font-bold bg-slate-800 text-white transition shadow-md border-slate-700' :
                         'px-4 py-2 rounded-xl text-sm font-bold bg-white text-slate-800 transition shadow-md border-slate-200';
+                    if (window.updateSettingsPreviews) window.updateSettingsPreviews();
                 }, 500);
             }
         });
@@ -123,6 +198,7 @@
             }
             if(window.MoneyFlowVoiceEngine) window.MoneyFlowVoiceEngine.speak(true);
             if (window.showSnackbar) window.showSnackbar('Greeting Language Updated!');
+            if (window.updateSettingsPreviews) window.updateSettingsPreviews();
         });
     }
 
@@ -142,6 +218,7 @@
             toggleVoiceBtn.className = next === 'on' ? 
                 'px-4 py-2 rounded-xl text-sm font-bold bg-emerald-500 text-white transition shadow-md' :
                 'px-4 py-2 rounded-xl text-sm font-bold bg-glass-bg border border-glass-border transition';
+            if (window.updateSettingsPreviews) window.updateSettingsPreviews();
         });
     }
 
@@ -313,6 +390,7 @@
                                 initialsDisplay.classList.add('hidden');
                             }
                             localStorage.setItem('fin_profileImg', dataUrl);
+                            if (window.updateSettingsPreviews) window.updateSettingsPreviews();
                         };
                         img.src = e.target.result;
                     };
@@ -336,6 +414,7 @@
                 useNameToggleBtn.className = next ? 
                     'px-4 py-1.5 rounded-xl text-xs font-bold bg-emerald-500 text-white transition shadow' :
                     'px-4 py-1.5 rounded-xl text-xs font-bold bg-glass-bg border border-glass-border transition shadow-inner';
+                if (window.updateSettingsPreviews) window.updateSettingsPreviews();
             });
         }
         
@@ -352,7 +431,7 @@
         window.saveIdentity = function() {
             const newName = nameInput.value.trim() || 'User';
             localStorage.setItem('fin_userName', newName);
-            initialsDisplay.textContent = newName.charAt(0).toUpperCase();
+            if (initialsDisplay) initialsDisplay.textContent = newName.charAt(0).toUpperCase();
             
             if (nameLangInput) {
                 if (nameLangInput.value) {
@@ -369,6 +448,7 @@
             if(locationInput) localStorage.setItem('userLocation', locationInput.value.trim());
             
             window.showSnackbar('Profile saved successfully! ✨');
+            if (window.updateSettingsPreviews) window.updateSettingsPreviews();
             if(window.MoneyFlowVoiceEngine) window.MoneyFlowVoiceEngine.speak(true);
         };
     }
@@ -430,6 +510,7 @@
                         currencyDropdown.classList.remove('open');
                         window.showSnackbar(`Currency updated to ${c.code}`);
                         renderList(currencySearch.value);
+                        if (window.updateSettingsPreviews) window.updateSettingsPreviews();
                     });
                     currencyList.appendChild(opt);
                 }
@@ -463,6 +544,7 @@
         dateFormatInput.value = localStorage.getItem('fin_date_format') || 'DD/MM/YYYY';
         dateFormatInput.addEventListener('change', (e) => {
             localStorage.setItem('fin_date_format', e.target.value);
+            if (window.updateSettingsPreviews) window.updateSettingsPreviews();
         });
     }
 
@@ -483,6 +565,7 @@
                 'px-4 py-2 rounded-xl text-sm font-bold bg-glass-bg border border-glass-border transition';
             
             document.body.classList.toggle('privacy-mode', !current);
+            if (window.updateSettingsPreviews) window.updateSettingsPreviews();
         });
     }
 
@@ -501,6 +584,7 @@
             toggleBudgetBtn.className = !current ? 
                 'px-4 py-2 rounded-xl text-sm font-bold bg-amber-500 text-white transition shadow-md' :
                 'px-4 py-2 rounded-xl text-sm font-bold bg-glass-bg border border-glass-border transition';
+            if (window.updateSettingsPreviews) window.updateSettingsPreviews();
         });
     }
 
@@ -808,5 +892,13 @@
         );
     };
 
-})();
+    // Run initial update on load
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.updateSettingsPreviews) window.updateSettingsPreviews();
+        });
+    } else {
+        if (window.updateSettingsPreviews) window.updateSettingsPreviews();
+    }
 
+})();

@@ -173,7 +173,7 @@
     <!-- Analytics Bento Grid -->
     <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
       <!-- Card 1 -->
-      <div class="summary-card glass-panel p-6 ag-card-reveal flex flex-col justify-between h-40" data-speed="0.15">
+      <div class="summary-card glass-panel p-6 ag-card-reveal flex flex-col justify-between h-40 cursor-pointer hover:border-red-500/30" onclick="window.location.href='spendly.html'" data-speed="0.15">
         <div class="summary-card-glow danger"></div>
         <div class="flex justify-between items-center mb-4">
           <span class="text-muted font-medium uppercase text-xs tracking-widest">Today's Expense</span>
@@ -183,7 +183,7 @@
       </div>
 
       <!-- Card 2 -->
-      <div class="summary-card glass-panel p-6 ag-card-reveal flex flex-col justify-between h-40" data-speed="0.2">
+      <div class="summary-card glass-panel p-6 ag-card-reveal flex flex-col justify-between h-40 cursor-pointer hover:border-emerald-500/30" onclick="window.location.href='spendly.html'" data-speed="0.2">
         <div class="summary-card-glow emerald"></div>
         <div class="flex justify-between items-center mb-4">
           <span class="text-muted font-medium uppercase text-xs tracking-widest">All-Time Balance</span>
@@ -193,7 +193,7 @@
       </div>
 
       <!-- Card 3 -->
-      <div class="summary-card glass-panel p-6 ag-card-reveal flex flex-col justify-between h-40" data-speed="0.25">
+      <div class="summary-card glass-panel p-6 ag-card-reveal flex flex-col justify-between h-40 cursor-pointer hover:border-blue-500/30" onclick="window.location.href='spendly.html'" data-speed="0.25">
         <div class="summary-card-glow info"></div>
         <div class="flex justify-between items-center mb-4">
           <span class="text-muted font-medium uppercase text-xs tracking-widest">Monthly Expense</span>
@@ -203,11 +203,11 @@
       </div>
 
       <!-- Card 4 -->
-      <div class="summary-card glass-panel p-6 ag-card-reveal flex flex-col justify-between h-40" data-speed="0.3">
-        <div class="summary-card-glow emerald"></div>
+      <div class="summary-card glass-panel p-6 ag-card-reveal flex flex-col justify-between h-40 cursor-pointer hover:border-purple-500/30" onclick="window.location.href='pocketcal.html'" data-speed="0.3">
+        <div class="summary-card-glow purple"></div>
         <div class="flex justify-between items-center mb-4">
-          <span class="text-muted font-medium uppercase text-xs tracking-widest">This Month Pocket</span>
-          <i data-lucide="wallet" class="text-emerald-500 w-5 h-5"></i>
+          <span class="text-muted font-medium uppercase text-xs tracking-widest">Dad Allowance Received</span>
+          <i data-lucide="wallet" class="text-purple-500 w-5 h-5"></i>
         </div>
         <h2 class="text-3xl font-extrabold tracking-tighter" id="monthPocket">₹0</h2>
       </div>
@@ -256,13 +256,57 @@
             <span class="text-sm font-bold text-rose-400" id="aiRunRate">₹0 / day</span>
           </div>
         </div>
-        <div class="w-full bg-black/20 h-2 mt-5 rounded-full overflow-hidden relative z-10 border border-white/5">
+        <div class="w-full bg-white/20 h-2 mt-5 rounded-full overflow-hidden relative z-10 border border-white/5">
           <div
             class="h-full bg-gradient-to-r from-emerald-500 via-amber-500 to-rose-500 transition-all duration-1000 ease-out"
             id="aiPredictorBar" style="width: 0%"></div>
         </div>
       </div>
 
+    </section>
+
+    <!-- Allowance Forecast & Requests Widget -->
+    <section class="mb-16 grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Card 1: Runout Predictor -->
+        <div class="glass-panel p-8 ag-card-reveal relative overflow-hidden h-full flex flex-col justify-between cursor-pointer hover:border-blue-500/30" onclick="window.location.href='pocketcal.html'" data-speed="0.16">
+            <div class="absolute -right-6 -bottom-6 opacity-10"><i data-lucide="calendar-days" class="w-32 h-32 text-blue-500"></i></div>
+            <div>
+                <div class="flex items-center gap-4 mb-3">
+                    <div class="p-3 bg-blue-500/10 rounded-2xl border border-blue-500/20">
+                        <i data-lucide="trending-up" class="text-blue-500 w-6 h-6"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold">Dad's Allowance Forecast</h3>
+                </div>
+                <p class="text-sm text-slate-300 leading-relaxed mb-4">Your current pocket money is predicted to run out in:</p>
+            </div>
+            <div class="flex justify-between items-end">
+                <div>
+                    <h2 id="homeForecastDays" class="text-4xl font-extrabold text-blue-400">--</h2>
+                    <span class="text-xs text-muted font-bold uppercase tracking-wide">Days remaining</span>
+                </div>
+                <div class="text-right">
+                    <span id="homeForecastBadge" class="px-3 py-1 rounded-full text-[10px] font-bold uppercase border bg-blue-500/20 text-blue-400 border-blue-500/30">Calculating...</span>
+                    <p id="homeForecastDate" class="text-xs text-muted mt-2 font-medium">Next request needed: --</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 2: Pending Requests Quick View -->
+        <div class="glass-panel p-8 ag-card-reveal relative overflow-hidden h-full flex flex-col justify-between cursor-pointer hover:border-purple-500/30" onclick="window.location.href='pocketcal.html'" data-speed="0.18">
+            <div class="absolute -right-6 -bottom-6 opacity-10"><i data-lucide="send" class="w-32 h-32 text-purple-500"></i></div>
+            <div>
+                <div class="flex items-center gap-4 mb-3">
+                    <div class="p-3 bg-purple-500/10 rounded-2xl border border-purple-500/20">
+                        <i data-lucide="help-circle" class="text-purple-500 w-6 h-6"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold">Ask Dad Requests</h3>
+                </div>
+                <p class="text-sm text-slate-300 leading-relaxed mb-4">You have <span id="homePendingReqCount" class="font-bold text-purple-400">0</span> pending requests waiting for approval.</p>
+            </div>
+            <div id="homePendingReqPreview" class="text-xs text-muted italic">
+                No active requests. Tap to view tracker dashboard.
+            </div>
+        </div>
     </section>
 
     <!-- Recent Transactions -->
@@ -322,33 +366,33 @@
     <section class="mb-20">
       <h3 class="text-xl font-bold mb-6 ml-2" data-speed="0.05">Quick Actions</h3>
       <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
-        <a href="spendly.html" class="quick-action-card group" data-speed="0.2">
+        <a href="spendly.html" class="quick-action-card qa-spendly group" data-speed="0.2">
           <div class="quick-action-icon-wrap">
-            <i data-lucide="receipt" class="w-7 h-7 text-emerald-500"></i>
+            <i data-lucide="receipt" class="w-7 h-7"></i>
           </div>
           <span class="font-bold text-sm tracking-wide">Spendly</span>
         </a>
-        <a href="pocketcal.html" class="quick-action-card group" data-speed="0.3">
+        <a href="pocketcal.html" class="quick-action-card qa-pocket group" data-speed="0.3">
           <div class="quick-action-icon-wrap">
-            <i data-lucide="calendar-days" class="w-7 h-7 text-emerald-500"></i>
+            <i data-lucide="calendar-days" class="w-7 h-7"></i>
           </div>
           <span class="font-bold text-sm tracking-wide">PocketCal</span>
         </a>
-        <a href="feedback.html" class="quick-action-card group" data-speed="0.4">
+        <a href="feedback.html" class="quick-action-card qa-feedback group" data-speed="0.4">
           <div class="quick-action-icon-wrap">
-            <i data-lucide="message-square" class="w-7 h-7 text-emerald-500"></i>
+            <i data-lucide="message-square" class="w-7 h-7"></i>
           </div>
           <span class="font-bold text-sm tracking-wide">Feedback</span>
         </a>
-        <a href="howtouse.html" class="quick-action-card group" data-speed="0.5">
+        <a href="howtouse.html" class="quick-action-card qa-guide group" data-speed="0.5">
           <div class="quick-action-icon-wrap">
-            <i data-lucide="book-open" class="w-7 h-7 text-emerald-500"></i>
+            <i data-lucide="book-open" class="w-7 h-7"></i>
           </div>
           <span class="font-bold text-sm tracking-wide">Guide</span>
         </a>
-        <a href="profile.html" class="quick-action-card group" data-speed="0.6">
+        <a href="profile.html" class="quick-action-card qa-profile group" data-speed="0.6">
           <div class="quick-action-icon-wrap">
-            <i data-lucide="user" class="w-7 h-7 text-emerald-500"></i>
+            <i data-lucide="user" class="w-7 h-7"></i>
           </div>
           <span class="font-bold text-sm tracking-wide">Profile</span>
         </a>
@@ -364,11 +408,11 @@
         <span>Home</span>
       </a>
       <a href="spendly.html" class="dock-item">
-        <i data-lucide="pie-chart"></i>
+        <i data-lucide="receipt"></i>
         <span>Spendly</span>
       </a>
       <a href="pocketcal.html" class="dock-item">
-        <i data-lucide="calendar"></i>
+        <i data-lucide="calendar-days"></i>
         <span>Pocket</span>
       </a>
     </nav>

@@ -71,173 +71,186 @@
     </header>
 
     <main class="main-content flex flex-col items-center">
-
-        <div class="w-full max-w-3xl space-y-6 pb-20">
-
-
-            <!-- Premium Tab Navigation -->
-            <div
-                class="relative flex justify-between items-center bg-black/40 backdrop-blur-2xl p-2 rounded-[2rem] border border-white/10 shadow-[inset_0_2px_10px_rgba(0,0,0,0.5),0_10px_30px_rgba(0,0,0,0.2)] w-full max-w-2xl mx-auto mb-10 z-20">
-                <!-- Glowing Underline Sliding Pill -->
-                <div id="tabSwitcherPill"
-                    class="absolute top-2 bottom-2 left-2 w-[calc(25%-4px)] bg-white/10 rounded-[1.75rem] border border-white/20 shadow-[0_0_15px_rgba(255,255,255,0.1)] transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] backdrop-blur-md overflow-hidden">
-                    <!-- Bottom Neon Line -->
-                    <div
-                        class="absolute bottom-0 left-1/2 -translate-x-1/2 w-[60%] h-[3px] rounded-t-full bg-gradient-to-r from-cyan-400 to-blue-500 shadow-[0_0_12px_rgba(6,182,212,1)]">
-                    </div>
-                    <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-white/5 to-transparent"></div>
+        <!-- Main Settings One-Page Scroll List -->
+        <div class="settings-main-scroll max-w-2xl w-full mx-auto px-4 pb-28">
+            
+            <!-- iCloud-style Profile Card -->
+            <div class="icloud-profile-card" onclick="window.openSubpage('#subpage-identity')">
+                <div class="icloud-avatar-wrap">
+                    <span id="mainAvatarInitials">U</span>
+                    <img id="mainAvatarImage" src="" alt="" class="hidden w-full h-full object-cover rounded-[1.25rem]">
                 </div>
-
-                <button
-                    class="tab-btn group relative flex-1 py-3 sm:py-4 flex flex-col items-center justify-center gap-1.5 transition-all duration-300 z-10 text-white rounded-[1.75rem]"
-                    data-tab="tab-general" data-index="0">
-                    <i data-lucide="sliders"
-                        class="w-5 h-5 sm:w-6 sm:h-6 transition-transform duration-300 group-active:scale-90"></i>
-                    <span class="text-[9px] sm:text-xs font-black tracking-widest uppercase">General</span>
-                </button>
-                <button
-                    class="tab-btn group relative flex-1 py-3 sm:py-4 flex flex-col items-center justify-center gap-1.5 transition-all duration-300 z-10 text-muted hover:text-white rounded-[1.75rem]"
-                    data-tab="tab-identity" data-index="1">
-                    <i data-lucide="user"
-                        class="w-5 h-5 sm:w-6 sm:h-6 transition-transform duration-300 group-active:scale-90"></i>
-                    <span class="text-[9px] sm:text-xs font-black tracking-widest uppercase">Identity</span>
-                </button>
-                <button
-                    class="tab-btn group relative flex-1 py-3 sm:py-4 flex flex-col items-center justify-center gap-1.5 transition-all duration-300 z-10 text-muted hover:text-white rounded-[1.75rem]"
-                    data-tab="tab-finance" data-index="2">
-                    <i data-lucide="wallet"
-                        class="w-5 h-5 sm:w-6 sm:h-6 transition-transform duration-300 group-active:scale-90"></i>
-                    <span class="text-[9px] sm:text-xs font-black tracking-widest uppercase">Finance</span>
-                </button>
-                <button
-                    class="tab-btn group relative flex-1 py-3 sm:py-4 flex flex-col items-center justify-center gap-1.5 transition-all duration-300 z-10 text-muted hover:text-white rounded-[1.75rem]"
-                    data-tab="tab-data" data-index="3">
-                    <i data-lucide="database"
-                        class="w-5 h-5 sm:w-6 sm:h-6 transition-transform duration-300 group-active:scale-90"></i>
-                    <span class="text-[9px] sm:text-xs font-black tracking-widest uppercase">Data</span>
-                </button>
+                <div class="icloud-info">
+                    <h3 id="mainProfileName" class="font-bold text-lg text-white leading-tight">User Name</h3>
+                    <p id="mainProfileBio" class="text-xs text-muted leading-snug line-clamp-1">Manage profile bio and information cards</p>
+                </div>
+                <i data-lucide="chevron-right" class="text-muted w-5 h-5 ml-auto"></i>
             </div>
 
-            <!-- TAB 1: GENERAL -->
-            <section id="tab-general" class="tab-pane active glass-panel p-6 sm:p-8 relative overflow-hidden mt-2">
-                <div
-                    class="absolute -top-10 -right-10 w-32 h-32 bg-blue-500/10 rounded-full blur-2xl pointer-events-none">
-                </div>
-                <h2 class="text-xl font-bold mb-6 flex items-center gap-2"><i data-lucide="settings"
-                        class="text-blue-500"></i> General Preferences</h2>
-
-                <div class="space-y-4 relative z-10">
-                    <div
-                        class="flex justify-between items-center bg-glass-bg border border-glass-border p-4 rounded-xl ag-card-reveal hover:border-blue-500/30 transition-all hover:-translate-y-1 hover:shadow-lg hover:shadow-blue-500/10" data-speed="0.1">
-                        <div>
-                            <h3 class="font-bold text-base sm:text-lg">App Theme</h3>
-                            <p class="text-xs sm:text-sm text-muted">Currently active theme.</p>
+            <!-- Group 1: General Preferences -->
+            <div class="settings-group-title">General Preferences</div>
+            <div class="settings-group">
+                <!-- Theme Row -->
+                <div class="settings-row" id="row-theme">
+                    <div class="settings-row-left">
+                        <div class="settings-icon-wrap icon-bg-purple">
+                            <i data-lucide="palette"></i>
                         </div>
-                        <button id="toggleAppThemeBtn"
-                            class="px-4 py-2 rounded-xl text-sm font-bold transition shadow-md bg-glass-bg border border-glass-border hover:bg-white/10 active:scale-95">Loading...</button>
-                    </div>
-
-                    <div class="flex flex-col bg-glass-bg border border-glass-border p-4 rounded-xl mt-4 gap-4 ag-card-reveal hover:border-emerald-500/30 transition-all hover:-translate-y-1 hover:shadow-lg hover:shadow-emerald-500/10" data-speed="0.15">
-                        <div class="flex justify-between items-center w-full">
-                            <div>
-                                <h3 class="font-bold text-base sm:text-lg text-emerald-400"><i data-lucide="mic" class="inline w-5 h-5 mr-1"></i>MoneyFlow Greeting Voice</h3>
-                                <p class="text-xs sm:text-sm text-muted">Unified voice and language engine.</p>
-                            </div>
-                            <button id="toggleVoiceBtn" class="px-4 py-2 rounded-xl text-sm font-bold bg-emerald-500 text-white transition shadow-md hover:bg-emerald-400 active:scale-95">On</button>
-                        </div>
-                        
-                        <div class="w-full">
-                            <label class="block text-xs font-bold text-muted mb-1">App Greeting Language</label>
-                            <select id="languageSelect" class="glass-input font-semibold w-full custom-select" data-search="true">
-                                <option value="en">English</option>
-                                <option value="hi">Hindi (हिन्दी)</option>
-                                <option value="ur">Urdu (اردو)</option>
-                                <option value="mr">Marathi (मराठी)</option>
-                                <option value="gu">Gujarati (ગુજરાતી)</option>
-                                <option value="pa">Punjabi (ਪੰਜਾਬੀ)</option>
-                                <option value="ta">Tamil (தமிழ்)</option>
-                                <option value="te">Telugu (తెలుగు)</option>
-                                <option value="kn">Kannada (ಕನ್ನಡ)</option>
-                                <option value="bn">Bengali (বাংলা)</option>
-                                <option value="ml">Malayalam (മലയാളം)</option>
-                                <option value="ja">Japanese (日本語)</option>
-                                <option value="es">Spanish (Español)</option>
-                                <option value="fr">French (Français)</option>
-                                <option value="de">German (Deutsch)</option>
-                            </select>
-                        </div>
-
-                        <div class="w-full">
-                            <label class="block text-xs font-bold text-muted mb-1">Synthesis Voice Model</label>
-                            <select id="voiceSelect" class="glass-input font-semibold w-full custom-select"></select>
+                        <div class="settings-row-left-info">
+                            <span class="settings-title">App Theme</span>
+                            <span class="settings-desc" id="currentThemeDisplay">Light Mode</span>
                         </div>
                     </div>
-
-                    <div class="bg-glass-bg border border-glass-border p-4 rounded-xl flex flex-col gap-6 ag-card-reveal hover:border-amber-500/30 transition-all hover:-translate-y-1 hover:shadow-lg hover:shadow-amber-500/10" data-speed="0.2">
-                        <h3 class="font-bold text-base sm:text-lg text-amber-500 border-b border-white/10 pb-2 mb-2"><i data-lucide="volume-2" class="inline w-5 h-5 mr-1"></i>Haptics & Acoustics</h3>
-                        
-                        <div class="space-y-4">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <h3 class="font-bold text-sm sm:text-base">MoneyFlow Haptics</h3>
-                                    <p class="text-xs text-muted">Vibration intensity</p>
-                                </div>
-                                <span id="hapticBadge" class="intensity-badge">50%</span>
-                            </div>
-                            <input type="range" id="hapticSlider" class="premium-slider" min="0" max="100" value="50">
-                        </div>
-
-                        <div class="space-y-4">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <h3 class="font-bold text-sm sm:text-base">UI Sounds</h3>
-                                    <p class="text-xs text-muted">Acoustic feedback volume</p>
-                                </div>
-                                <span id="soundBadge" class="intensity-badge">50%</span>
-                            </div>
-                            <input type="range" id="soundSlider" class="premium-slider" min="0" max="100" value="50">
-                        </div>
-                    </div>
-
-                    <!-- New Appearance & Behaviors Section -->
-                    <div class="bg-glass-bg border border-glass-border p-4 rounded-xl mt-4 flex flex-col gap-4 ag-card-reveal hover:border-purple-500/30 transition-all hover:-translate-y-1 hover:shadow-lg hover:shadow-purple-500/10" data-speed="0.25">
-                        <h3 class="font-bold text-base sm:text-lg text-purple-400 border-b border-white/10 pb-2 mb-2"><i data-lucide="sparkles" class="inline w-5 h-5 mr-1"></i>Appearance & Behaviors</h3>
-                        
-                        <div class="flex justify-between items-center w-full">
-                            <div>
-                                <h3 class="font-bold text-sm sm:text-base">Anime Assistant</h3>
-                                <p class="text-xs text-muted">Cute companion visibility</p>
-                            </div>
-                            <button id="toggleAnimeAssistantBtn" class="px-4 py-2 rounded-xl text-sm font-bold bg-blue-500 text-white transition shadow-md hover:bg-blue-400 active:scale-95">On</button>
-                        </div>
-
-                        <div class="flex justify-between items-center w-full">
-                            <div>
-                                <h3 class="font-bold text-sm sm:text-base">Efficiency Mode</h3>
-                                <p class="text-xs text-muted">Optimize performance & battery by reducing animations and backgrounds</p>
-                            </div>
-                            <button id="toggleEfficiencyBtn" class="px-4 py-2 rounded-xl text-sm font-bold transition bg-glass-bg border border-glass-border hover:bg-white/10 active:scale-95">Off</button>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- TAB 2: IDENTITY -->
-            <section id="tab-identity" class="tab-pane glass-panel p-6 sm:p-8 relative">
-                <div
-                    class="absolute -bottom-10 -left-10 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none">
-                </div>
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-xl font-bold flex items-center gap-2"><i data-lucide="user-circle"
-                            class="text-emerald-500"></i> Personal Identity</h2>
-                    <div class="flex gap-2">
-                        <a href="profile.html" class="px-4 py-2 rounded-xl text-sm font-bold bg-gradient-to-r from-purple-500/20 to-indigo-500/20 border-purple-500/30 text-purple-300 hover:bg-purple-500/30 hover:text-white transition active:scale-95 flex items-center gap-2"><i data-lucide="code-2" class="w-4 h-4"></i> Creator Identity</a>
-                        <button
-                            class="px-4 py-2 rounded-xl text-sm font-bold bg-emerald-500 text-white shadow-md hover:shadow-lg transition active:scale-95"
-                            onclick="window.saveIdentity()">Save</button>
-                    </div>
+                    <button id="toggleAppThemeBtn" class="px-3 py-1.5 rounded-xl text-xs font-bold transition shadow-md bg-glass-bg border border-glass-border hover:bg-white/10">White</button>
                 </div>
 
+                <!-- Voice Assistant Subpage Row -->
+                <div class="settings-row clickable" onclick="window.openSubpage('#subpage-voice')">
+                    <div class="settings-row-left">
+                        <div class="settings-icon-wrap icon-bg-emerald">
+                            <i data-lucide="mic"></i>
+                        </div>
+                        <div class="settings-row-left-info">
+                            <span class="settings-title">Voice Assistant</span>
+                            <span class="settings-desc" id="mainVoiceStatus">On (English)</span>
+                        </div>
+                    </div>
+                    <i data-lucide="chevron-right" class="text-muted w-5 h-5"></i>
+                </div>
+
+                <!-- Sounds & Haptics Subpage Row -->
+                <div class="settings-row clickable" onclick="window.openSubpage('#subpage-sounds')">
+                    <div class="settings-row-left">
+                        <div class="settings-icon-wrap icon-bg-amber">
+                            <i data-lucide="vibrate"></i>
+                        </div>
+                        <div class="settings-row-left-info">
+                            <span class="settings-title">Sounds & Haptics</span>
+                            <span class="settings-desc">Volume, tactile vibration levels</span>
+                        </div>
+                    </div>
+                    <i data-lucide="chevron-right" class="text-muted w-5 h-5"></i>
+                </div>
+
+                <!-- Behaviors & Assist Subpage Row -->
+                <div class="settings-row clickable" onclick="window.openSubpage('#subpage-behaviors')">
+                    <div class="settings-row-left">
+                        <div class="settings-icon-wrap icon-bg-indigo">
+                            <i data-lucide="sparkles"></i>
+                        </div>
+                        <div class="settings-row-left-info">
+                            <span class="settings-title">Behaviors & Assist</span>
+                            <span class="settings-desc">Anime companion, performance modes</span>
+                        </div>
+                    </div>
+                    <i data-lucide="chevron-right" class="text-muted w-5 h-5"></i>
+                </div>
+            </div>
+
+            <!-- Group 2: Financial Settings -->
+            <div class="settings-group-title">Financial Settings</div>
+            <div class="settings-group">
+                <!-- Ledger Preferences Row -->
+                <div class="settings-row clickable" onclick="window.openSubpage('#subpage-ledger')">
+                    <div class="settings-row-left">
+                        <div class="settings-icon-wrap icon-bg-cyan">
+                            <i data-lucide="coins"></i>
+                        </div>
+                        <div class="settings-row-left-info">
+                            <span class="settings-title">Ledger Preferences</span>
+                            <span class="settings-desc" id="mainLedgerStatus">₹ INR, DD/MM/YYYY</span>
+                        </div>
+                    </div>
+                    <i data-lucide="chevron-right" class="text-muted w-5 h-5"></i>
+                </div>
+
+                <!-- Subcategory Manager Row -->
+                <div class="settings-row clickable" onclick="window.openSubpage('#subpage-categories')">
+                    <div class="settings-row-left">
+                        <div class="settings-icon-wrap icon-bg-orange">
+                            <i data-lucide="tags"></i>
+                        </div>
+                        <div class="settings-row-left-info">
+                            <span class="settings-title">Subcategory Manager</span>
+                            <span class="settings-desc">Edit transaction categories</span>
+                        </div>
+                    </div>
+                    <i data-lucide="chevron-right" class="text-muted w-5 h-5"></i>
+                </div>
+            </div>
+
+            <!-- Group 3: Data & Maintenance -->
+            <div class="settings-group-title">Data & Maintenance</div>
+            <div class="settings-group">
+                <!-- Backups Row -->
+                <div class="settings-row clickable" onclick="window.openSubpage('#subpage-backups')">
+                    <div class="settings-row-left">
+                        <div class="settings-icon-wrap icon-bg-blue">
+                            <i data-lucide="database"></i>
+                        </div>
+                        <div class="settings-row-left-info">
+                            <span class="settings-title">Cloud & Local Backups</span>
+                            <span class="settings-desc">Data import/export, cloud backups</span>
+                        </div>
+                    </div>
+                    <i data-lucide="chevron-right" class="text-muted w-5 h-5"></i>
+                </div>
+
+                <!-- Danger Zone Row -->
+                <div class="settings-row clickable" onclick="window.openSubpage('#subpage-danger')">
+                    <div class="settings-row-left">
+                        <div class="settings-icon-wrap icon-bg-rose">
+                            <i data-lucide="skull"></i>
+                        </div>
+                        <div class="settings-row-left-info">
+                            <span class="settings-title text-red-400 font-bold">Danger Zone</span>
+                            <span class="settings-desc text-red-500/60">Factory resets, data wipes</span>
+                        </div>
+                    </div>
+                    <i data-lucide="chevron-right" class="text-muted w-5 h-5"></i>
+                </div>
+            </div>
+
+            <!-- Group 4: Support & Legal Grid -->
+            <div class="settings-group-title">Support & Legal</div>
+            <div class="settings-group p-4">
+                <div class="grid grid-cols-2 gap-3">
+                    <a href="howtouse.html" class="glass-button p-3 rounded-lg text-xs font-bold text-center flex items-center justify-center gap-2">
+                        <i data-lucide="help-circle" class="w-4 h-4 text-purple-500"></i> Help
+                    </a>
+                    <a href="feedback.html" class="glass-button p-3 rounded-lg text-xs font-bold text-center flex items-center justify-center gap-2">
+                        <i data-lucide="message-square" class="w-4 h-4 text-blue-500"></i> Feedback
+                    </a>
+                    <a href="privacy-policy.html" class="glass-button p-3 rounded-lg text-xs font-bold text-center flex items-center justify-center gap-2">
+                        <i data-lucide="shield" class="w-4 h-4 text-emerald-500"></i> Privacy
+                    </a>
+                    <a href="terms-conditions.html" class="glass-button p-3 rounded-lg text-xs font-bold text-center flex items-center justify-center gap-2">
+                        <i data-lucide="file-text" class="w-4 h-4 text-amber-500"></i> Terms
+                    </a>
+                </div>
+                <div class="mt-5 text-center text-[10px] text-muted font-bold tracking-widest uppercase">
+                    MoneyFlow v2.0.1 Premium
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- ========================================================================
+       SLIDE-IN SUBPAGE OVERLAYS
+       ======================================================================== -->
+
+    <!-- SUBPAGE 1: PERSONAL IDENTITY -->
+    <div class="subpage-overlay" id="subpage-identity">
+        <div class="subpage-header">
+            <button class="subpage-back-btn" onclick="window.closeSubpage('#subpage-identity')">
+                <i data-lucide="chevron-left" class="inline w-5 h-5 mr-0.5"></i> Settings
+            </button>
+            <h2 class="subpage-title">Personal Identity</h2>
+            <button class="subpage-save-btn" onclick="window.saveIdentity(); window.closeSubpage('#subpage-identity');">Save</button>
+        </div>
+        <div class="subpage-content">
+            <!-- Avatar Upload Row -->
+            <div class="settings-group flex flex-col items-center p-6 text-center">
                 <div class="identity-avatar-container cursor-pointer relative group" id="avatarUploadTrigger">
                     <span id="avatarInitials">U</span>
                     <img id="avatarImage" src="" alt="" class="hidden w-full h-full object-cover rounded-[2rem]" />
@@ -246,19 +259,54 @@
                     </div>
                     <input type="file" id="avatarFileInput" accept="image/*" class="hidden" />
                 </div>
+                <p class="text-xs text-muted">Tap to upload a profile picture</p>
+                <div class="flex gap-2 justify-center mt-4 w-full">
+                    <a href="profile.html" class="flex-1 px-4 py-2 rounded-xl text-xs font-bold bg-gradient-to-r from-purple-500/20 to-indigo-500/20 border border-purple-500/30 text-purple-300 hover:bg-purple-500/30 hover:text-white transition active:scale-95 flex items-center justify-center gap-1">
+                        <i data-lucide="code-2" class="w-4 h-4"></i> Creator Profile
+                    </a>
+                </div>
+            </div>
 
-                <div
-                    class="bg-glass-bg border border-glass-border p-5 rounded-xl grid grid-cols-1 sm:grid-cols-2 gap-4 relative z-10 mb-4">
-                    <div>
-                        <label class="block text-xs font-bold text-muted mb-1">Full Name</label>
-                        <input type="text" id="usernameInput" class="glass-input" placeholder="Your name">
+            <!-- Profile Details Inputs -->
+            <div class="settings-group-title">Personal Details</div>
+            <div class="settings-group">
+                <div class="settings-row flex-col sm:flex-row gap-3 items-stretch sm:items-center">
+                    <div class="settings-row-left">
+                        <div class="settings-icon-wrap icon-bg-blue">
+                            <i data-lucide="user"></i>
+                        </div>
+                        <div class="settings-row-left-info">
+                            <span class="settings-title">Full Name</span>
+                            <span class="settings-desc">Display name on greeting card.</span>
+                        </div>
                     </div>
-                    <div>
-                        <label class="block text-xs font-bold text-muted mb-1">Date of Birth</label>
-                        <input type="text" id="dobInput" class="glass-input custom-date" readonly>
+                    <input type="text" id="usernameInput" class="glass-input w-full sm:w-64" placeholder="Your name">
+                </div>
+
+                <div class="settings-row flex-col sm:flex-row gap-3 items-stretch sm:items-center">
+                    <div class="settings-row-left">
+                        <div class="settings-icon-wrap icon-bg-purple">
+                            <i data-lucide="calendar"></i>
+                        </div>
+                        <div class="settings-row-left-info">
+                            <span class="settings-title">Date of Birth</span>
+                            <span class="settings-desc">Used for birthday animations.</span>
+                        </div>
                     </div>
-                    <div>
-                        <label class="block text-xs font-bold text-muted mb-1">Gender</label>
+                    <input type="text" id="dobInput" class="glass-input w-full sm:w-64 custom-date" readonly>
+                </div>
+
+                <div class="settings-row flex-col sm:flex-row gap-3 items-stretch sm:items-center">
+                    <div class="settings-row-left">
+                        <div class="settings-icon-wrap icon-bg-emerald">
+                            <i data-lucide="venus-mars"></i>
+                        </div>
+                        <div class="settings-row-left-info">
+                            <span class="settings-title">Gender</span>
+                            <span class="settings-desc">For profile details.</span>
+                        </div>
+                    </div>
+                    <div class="w-full sm:w-48">
                         <select id="genderInput" class="glass-input custom-select">
                             <option value="">Select</option>
                             <option value="Male">Male</option>
@@ -267,28 +315,19 @@
                             <option value="Other">Other</option>
                         </select>
                     </div>
-                    <div class="flex items-center justify-between col-span-1 sm:col-span-2 pt-2 border-t border-glass-border">
-                        <div>
-                            <p class="font-bold text-sm">Use My Name in Greeting</p>
-                            <p class="text-xs text-muted">Assistant will welcome you by name.</p>
+                </div>
+
+                <div class="settings-row flex-col sm:flex-row gap-3 items-stretch sm:items-center">
+                    <div class="settings-row-left">
+                        <div class="settings-icon-wrap icon-bg-red">
+                            <i data-lucide="heart"></i>
                         </div>
-                        <button id="toggleUseNameBtn" class="px-4 py-1.5 rounded-xl text-xs font-bold bg-emerald-500 text-white transition shadow">On</button>
+                        <div class="settings-row-left-info">
+                            <span class="settings-title">Blood Group</span>
+                            <span class="settings-desc">For biological reference.</span>
+                        </div>
                     </div>
-                    <div class="col-span-1 sm:col-span-2">
-                        <label class="block text-xs font-bold text-muted mb-1">Name Pronunciation Language</label>
-                        <select id="nameLanguageInput" class="glass-input w-full custom-select">
-                            <option value="">Same as App Language</option>
-                            <option value="en">English Accent</option>
-                            <option value="hi">Hindi Accent</option>
-                            <option value="ur">Urdu Accent</option>
-                            <option value="mr">Marathi Accent</option>
-                            <option value="ja">Japanese Accent</option>
-                            <option value="fr">French Accent</option>
-                            <option value="es">Spanish Accent</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-muted mb-1">Blood Group</label>
+                    <div class="w-full sm:w-48">
                         <select id="bloodInput" class="glass-input custom-select">
                             <option value="">Select</option>
                             <option value="A+">A+</option>
@@ -301,32 +340,252 @@
                             <option value="AB-">AB-</option>
                         </select>
                     </div>
-                    <div>
-                        <label class="block text-xs font-bold text-muted mb-1">Location</label>
-                        <input type="text" id="locationInput" class="glass-input" placeholder="City, Country">
+                </div>
+
+                <div class="settings-row flex-col sm:flex-row gap-3 items-stretch sm:items-center">
+                    <div class="settings-row-left">
+                        <div class="settings-icon-wrap icon-bg-cyan">
+                            <i data-lucide="map-pin"></i>
+                        </div>
+                        <div class="settings-row-left-info">
+                            <span class="settings-title">Location</span>
+                            <span class="settings-desc">City, Country location tags.</span>
+                        </div>
                     </div>
-                    <div class="sm:col-span-2">
-                        <label class="block text-xs font-bold text-muted mb-1">Short Bio</label>
-                        <textarea id="bioInput" class="glass-input" rows="2"
-                            placeholder="Tell us about yourself..."></textarea>
+                    <input type="text" id="locationInput" class="glass-input w-full sm:w-64" placeholder="City, Country">
+                </div>
+            </div>
+
+            <!-- Greetings Options -->
+            <div class="settings-group-title">Greetings & Speech</div>
+            <div class="settings-group">
+                <div class="settings-row">
+                    <div class="settings-row-left">
+                        <div class="settings-icon-wrap icon-bg-amber">
+                            <i data-lucide="volume-1"></i>
+                        </div>
+                        <div class="settings-row-left-info">
+                            <span class="settings-title">Speak My Name</span>
+                            <span class="settings-desc">Welcomes you by name in greetings.</span>
+                        </div>
+                    </div>
+                    <button id="toggleUseNameBtn" class="bg-emerald-500 text-white">On</button>
+                </div>
+
+                <div class="settings-row flex-col sm:flex-row gap-3 items-stretch sm:items-center">
+                    <div class="settings-row-left">
+                        <div class="settings-icon-wrap icon-bg-indigo">
+                            <i data-lucide="speech"></i>
+                        </div>
+                        <div class="settings-row-left-info">
+                            <span class="settings-title">Pronunciation Accent</span>
+                            <span class="settings-desc">Accent used when reading your name.</span>
+                        </div>
+                    </div>
+                    <div class="w-full sm:w-64">
+                        <select id="nameLanguageInput" class="glass-input custom-select">
+                            <option value="">Same as App Language</option>
+                            <option value="en">English Accent</option>
+                            <option value="hi">Hindi Accent</option>
+                            <option value="ur">Urdu Accent</option>
+                            <option value="mr">Marathi Accent</option>
+                            <option value="ja">Japanese Accent</option>
+                            <option value="fr">French Accent</option>
+                            <option value="es">Spanish Accent</option>
+                        </select>
                     </div>
                 </div>
-            </section>
+            </div>
 
-            <!-- TAB 3: FINANCE -->
-            <section id="tab-finance" class="tab-pane glass-panel p-6 sm:p-8 relative">
-                <div
-                    class="absolute top-1/2 right-0 w-32 h-32 bg-amber-500/10 rounded-full blur-2xl pointer-events-none">
+            <!-- Bio Inputs -->
+            <div class="settings-group-title">Biography</div>
+            <div class="settings-group p-4">
+                <textarea id="bioInput" class="glass-input w-full" rows="3" placeholder="Tell us about yourself..."></textarea>
+            </div>
+        </div>
+    </div>
+
+    <!-- SUBPAGE 2: VOICE ASSISTANT -->
+    <div class="subpage-overlay" id="subpage-voice">
+        <div class="subpage-header">
+            <button class="subpage-back-btn" onclick="window.closeSubpage('#subpage-voice')">
+                <i data-lucide="chevron-left" class="inline w-5 h-5 mr-0.5"></i> Settings
+            </button>
+            <h2 class="subpage-title">Voice Assistant</h2>
+            <div style="width: 40px;"></div>
+        </div>
+        <div class="subpage-content">
+            <div class="settings-group">
+                <div class="settings-row">
+                    <div class="settings-row-left">
+                        <div class="settings-icon-wrap icon-bg-emerald">
+                            <i data-lucide="mic"></i>
+                        </div>
+                        <div class="settings-row-left-info">
+                            <span class="settings-title">Greeting Voice</span>
+                            <span class="settings-desc">Enable voice announcements.</span>
+                        </div>
+                    </div>
+                    <button id="toggleVoiceBtn" class="bg-emerald-500 text-white">On</button>
                 </div>
-                <h2 class="text-xl font-bold mb-6 flex items-center gap-2"><i data-lucide="wallet"
-                        class="text-amber-500"></i> Finance Preferences</h2>
+                
+                <div class="settings-row flex-col sm:flex-row gap-3 items-stretch sm:items-center">
+                    <div class="settings-row-left">
+                        <div class="settings-icon-wrap icon-bg-cyan">
+                            <i data-lucide="languages"></i>
+                        </div>
+                        <div class="settings-row-left-info">
+                            <span class="settings-title">Greeting Language</span>
+                            <span class="settings-desc">Select greeting voice language.</span>
+                        </div>
+                    </div>
+                    <div class="w-full sm:w-48">
+                        <select id="languageSelect" class="glass-input font-semibold w-full custom-select">
+                            <option value="en">English</option>
+                            <option value="hi">Hindi (हिन्दी)</option>
+                            <option value="ur">Urdu (اردو)</option>
+                            <option value="mr">Marathi (मराठी)</option>
+                            <option value="gu">Gujarati (ગુજરાતી)</option>
+                            <option value="pa">Punjabi (ਪੰਜਾਬੀ)</option>
+                            <option value="ta">Tamil (தமிழ்)</option>
+                            <option value="te">Telugu (తెలుగు)</option>
+                            <option value="kn">Kannada (ಕನ್ನಡ)</option>
+                            <option value="bn">Bengali (বাংলা)</option>
+                            <option value="ml">Malayalam (മലയാളം)</option>
+                            <option value="ja">Japanese (日本語)</option>
+                            <option value="es">Spanish (Español)</option>
+                            <option value="fr">French (Français)</option>
+                            <option value="de">German (Deutsch)</option>
+                        </select>
+                    </div>
+                </div>
 
-                <div class="space-y-4 relative z-10">
-                    <div
-                        class="flex flex-col bg-glass-bg border border-glass-border p-4 rounded-xl gap-2 relative z-50">
-                        <h3 class="font-bold text-base sm:text-lg">Base Currency</h3>
-                        <p class="text-xs sm:text-sm text-muted mb-2">Select your primary ledger format.</p>
+                <div class="settings-row flex-col sm:flex-row gap-3 items-stretch sm:items-center">
+                    <div class="settings-row-left">
+                        <div class="settings-icon-wrap icon-bg-blue">
+                            <i data-lucide="speech"></i>
+                        </div>
+                        <div class="settings-row-left-info">
+                            <span class="settings-title">Synthesis Voice Model</span>
+                            <span class="settings-desc">Choose TTS speaker accent.</span>
+                        </div>
+                    </div>
+                    <div class="w-full sm:w-64">
+                        <select id="voiceSelect" class="glass-input font-semibold w-full custom-select"></select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
+    <!-- SUBPAGE 3: SOUNDS & HAPTICS -->
+    <div class="subpage-overlay" id="subpage-sounds">
+        <div class="subpage-header">
+            <button class="subpage-back-btn" onclick="window.closeSubpage('#subpage-sounds')">
+                <i data-lucide="chevron-left" class="inline w-5 h-5 mr-0.5"></i> Settings
+            </button>
+            <h2 class="subpage-title">Sounds & Haptics</h2>
+            <div style="width: 40px;"></div>
+        </div>
+        <div class="subpage-content">
+            <div class="settings-group">
+                <div class="settings-row flex-col items-stretch gap-4">
+                    <div class="flex justify-between items-center">
+                        <div class="settings-row-left">
+                            <div class="settings-icon-wrap icon-bg-amber">
+                                <i data-lucide="vibrate"></i>
+                            </div>
+                            <div class="settings-row-left-info">
+                                <span class="settings-title">Vibration Haptics</span>
+                                <span class="settings-desc">Physical feedback intensity.</span>
+                            </div>
+                        </div>
+                        <span id="hapticBadge" class="intensity-badge">50%</span>
+                    </div>
+                    <input type="range" id="hapticSlider" class="premium-slider" min="0" max="100" value="50">
+                </div>
+
+                <div class="settings-row flex-col items-stretch gap-4">
+                    <div class="flex justify-between items-center">
+                        <div class="settings-row-left">
+                            <div class="settings-icon-wrap icon-bg-rose">
+                                <i data-lucide="volume-2"></i>
+                            </div>
+                            <div class="settings-row-left-info">
+                                <span class="settings-title">UI Sounds</span>
+                                <span class="settings-desc">Interface volume level.</span>
+                            </div>
+                        </div>
+                        <span id="soundBadge" class="intensity-badge">50%</span>
+                    </div>
+                    <input type="range" id="soundSlider" class="premium-slider" min="0" max="100" value="50">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SUBPAGE 4: BEHAVIORS & ASSIST -->
+    <div class="subpage-overlay" id="subpage-behaviors">
+        <div class="subpage-header">
+            <button class="subpage-back-btn" onclick="window.closeSubpage('#subpage-behaviors')">
+                <i data-lucide="chevron-left" class="inline w-5 h-5 mr-0.5"></i> Settings
+            </button>
+            <h2 class="subpage-title">Behaviors & Assist</h2>
+            <div style="width: 40px;"></div>
+        </div>
+        <div class="subpage-content">
+            <div class="settings-group">
+                <div class="settings-row">
+                    <div class="settings-row-left">
+                        <div class="settings-icon-wrap icon-bg-indigo">
+                            <i data-lucide="sparkles"></i>
+                        </div>
+                        <div class="settings-row-left-info">
+                            <span class="settings-title">Anime Assistant</span>
+                            <span class="settings-desc">Display animated companion.</span>
+                        </div>
+                    </div>
+                    <button id="toggleAnimeAssistantBtn" class="bg-blue-500 text-white">On</button>
+                </div>
+
+                <div class="settings-row">
+                    <div class="settings-row-left">
+                        <div class="settings-icon-wrap icon-bg-orange">
+                            <i data-lucide="zap-off"></i>
+                        </div>
+                        <div class="settings-row-left-info">
+                            <span class="settings-title">Efficiency Mode</span>
+                            <span class="settings-desc">Optimize animations & graphics.</span>
+                        </div>
+                    </div>
+                    <button id="toggleEfficiencyBtn" class="bg-glass-bg border border-glass-border">Off</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SUBPAGE 5: LEDGER PREFERENCES -->
+    <div class="subpage-overlay" id="subpage-ledger">
+        <div class="subpage-header">
+            <button class="subpage-back-btn" onclick="window.closeSubpage('#subpage-ledger')">
+                <i data-lucide="chevron-left" class="inline w-5 h-5 mr-0.5"></i> Settings
+            </button>
+            <h2 class="subpage-title">Ledger Preferences</h2>
+            <div style="width: 40px;"></div>
+        </div>
+        <div class="subpage-content">
+            <div class="settings-group">
+                <div class="settings-row flex-col sm:flex-row gap-3 items-stretch sm:items-center relative z-50">
+                    <div class="settings-row-left">
+                        <div class="settings-icon-wrap icon-bg-emerald">
+                            <i data-lucide="coins"></i>
+                        </div>
+                        <div class="settings-row-left-info">
+                            <span class="settings-title">Base Currency</span>
+                            <span class="settings-desc">Primary ledger transaction format.</span>
+                        </div>
+                    </div>
+                    <div class="w-full sm:w-64">
                         <div class="custom-dropdown" id="currencyDropdown">
                             <div class="custom-toggle" id="currencyToggleBtn">
                                 <span id="selectedCurrencyDisplay">₹ INR (Indian Rupee)</span>
@@ -334,8 +593,7 @@
                             </div>
                             <div class="custom-menu">
                                 <div class="custom-search-container">
-                                    <input type="text" id="currencySearch" class="custom-search-input"
-                                        placeholder="Search currency (e.g. USD)...">
+                                    <input type="text" id="currencySearch" class="custom-search-input" placeholder="Search currency (e.g. USD)...">
                                 </div>
                                 <div class="custom-list" id="currencyList">
                                     <!-- Populated by JS -->
@@ -343,157 +601,177 @@
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    <div
-                        class="flex justify-between items-center bg-glass-bg border border-glass-border p-4 rounded-xl">
-                        <div>
-                            <h3 class="font-bold text-base sm:text-lg">Date Format</h3>
-                            <p class="text-xs sm:text-sm text-muted">For receipts and logs</p>
+                <div class="settings-row flex-col sm:flex-row gap-3 items-stretch sm:items-center">
+                    <div class="settings-row-left">
+                        <div class="settings-icon-wrap icon-bg-blue">
+                            <i data-lucide="calendar-range"></i>
                         </div>
-                        <select id="dateFormatInput" class="glass-input w-auto text-sm custom-select">
+                        <div class="settings-row-left-info">
+                            <span class="settings-title">Date Format</span>
+                            <span class="settings-desc">Log and receipt dates representation.</span>
+                        </div>
+                    </div>
+                    <div class="w-full sm:w-48">
+                        <select id="dateFormatInput" class="glass-input custom-select">
                             <option value="DD/MM/YYYY">DD/MM/YYYY</option>
                             <option value="MM/DD/YYYY">MM/DD/YYYY</option>
                             <option value="YYYY-MM-DD">YYYY-MM-DD</option>
                         </select>
                     </div>
-
-                    <div
-                        class="flex justify-between items-center bg-glass-bg border border-glass-border p-4 rounded-xl">
-                        <div>
-                            <h3 class="font-bold text-base sm:text-lg">Privacy Mode</h3>
-                            <p class="text-xs sm:text-sm text-muted">Blur balances by default</p>
-                        </div>
-                        <button id="togglePrivacyBtn"
-                            class="px-4 py-2 rounded-xl text-sm font-bold transition bg-glass-bg border border-glass-border">Off</button>
-                    </div>
-
-                    <div
-                        class="flex justify-between items-center bg-glass-bg border border-glass-border p-4 rounded-xl">
-                        <div>
-                            <h3 class="font-bold text-base sm:text-lg">Budget Alerts</h3>
-                            <p class="text-xs sm:text-sm text-muted">Warn when near limits</p>
-                        </div>
-                        <button id="toggleBudgetBtn"
-                            class="px-4 py-2 rounded-xl text-sm font-bold bg-amber-500 text-white transition shadow-md">On</button>
-                    </div>
-
-                    <!-- CATEGORY MANAGER -->
-                    <div class="mt-10 cat-manager-wrapper p-5 rounded-2xl relative z-10">
-                        <div
-                            class="absolute -top-10 -right-10 w-40 h-40 bg-amber-500/10 rounded-full blur-3xl pointer-events-none">
-                        </div>
-                        <h3 class="font-bold text-lg mb-1 flex items-center gap-2"><i data-lucide="tags"
-                                class="text-amber-500 w-5 h-5"></i> Category Manager</h3>
-                        <p class="text-sm text-muted mb-5 relative z-10">Manage your precise financial subcategories.
-                        </p>
-
-                        <div class="relative flex bg-black/40 backdrop-blur-2xl p-1.5 rounded-[2rem] border border-white/10 shadow-[inset_0_2px_10px_rgba(0,0,0,0.5),0_10px_30px_rgba(0,0,0,0.2)] w-full max-w-sm mx-auto z-20 overflow-hidden mb-6">
-                            <!-- Glowing Underline Sliding Pill -->
-                            <div id="catTypeSwitcherPill" class="absolute top-1.5 bottom-1.5 left-1.5 w-[calc(50%-6px)] bg-white/10 rounded-[1.75rem] border border-white/20 shadow-[0_0_15px_rgba(239,68,68,0.3)] transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] overflow-hidden">
-                                <div id="catTypeSwitcherNeon" class="absolute bottom-0 left-1/2 -translate-x-1/2 w-[60%] h-[3px] rounded-t-full bg-gradient-to-r from-rose-400 to-red-500 shadow-[0_0_12px_rgba(239,68,68,1)] transition-colors duration-500"></div>
-                                <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-white/5 to-transparent"></div>
-                            </div>
-                            <button id="catTypeExpense" class="relative flex-1 py-3 text-xs sm:text-sm font-black tracking-widest uppercase rounded-[1.75rem] text-white transition-colors duration-300 z-10 active:scale-95">Expense</button>
-                            <button id="catTypeIncome" class="relative flex-1 py-3 text-xs sm:text-sm font-black tracking-widest uppercase rounded-[1.75rem] text-muted hover:text-white transition-colors duration-300 z-10 active:scale-95">Income</button>
-                        </div>
-
-                        <div id="mainCategorySelectContainer" class="mb-5 relative z-50">
-                            <select id="mainCategorySelect"
-                                class="glass-input !py-3 !px-4 text-sm font-bold text-amber-500 shadow-sm custom-select"></select>
-                        </div>
-
-                        <div class="flex gap-3 mb-5 relative z-10">
-                            <input type="text" id="newCategoryInput" class="glass-input flex-1 !py-3 shadow-sm"
-                                placeholder="e.g. 🛵 Travel - Rapido">
-                            <button id="addCategoryBtn"
-                                class="bg-gradient-to-r from-amber-500 to-orange-400 text-white px-5 py-3 rounded-xl text-sm font-bold shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all flex items-center justify-center"><i
-                                    data-lucide="plus" class="w-5 h-5"></i></button>
-                        </div>
-
-                        <div id="customCategoryList" class="space-y-3 max-h-[220px] overflow-y-auto pr-2 relative z-10">
-                            <!-- Populated by JS -->
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- TAB 4: DATA -->
-            <section id="tab-data" class="tab-pane glass-panel p-6 sm:p-8 relative">
-                <div
-                    class="absolute -top-10 -left-10 w-32 h-32 bg-purple-500/10 rounded-full blur-2xl pointer-events-none">
-                </div>
-                <h2 class="text-xl font-bold mb-6 flex items-center gap-2"><i data-lucide="database"
-                        class="text-purple-500"></i> Data & Legal</h2>
-
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6 relative z-10">
-                    <div class="bg-glass-bg border border-glass-border p-5 rounded-xl text-center">
-                        <i data-lucide="download-cloud" class="w-8 h-8 text-emerald-500 mx-auto mb-3"></i>
-                        <h3 class="font-bold mb-2">Export Data</h3>
-                        <p class="text-xs text-muted mb-4">Download backup of ledgers.</p>
-                        <div class="flex gap-2">
-                            <button onclick="window.exportDataJSON()"
-                                class="flex-1 glass-button py-2 rounded-lg font-bold text-emerald-500 text-xs">.JSON</button>
-                            <button onclick="window.exportDataCSV()"
-                                class="flex-1 glass-button py-2 rounded-lg font-bold text-emerald-500 text-xs">.CSV</button>
-                        </div>
-                    </div>
-
-                    <div class="bg-glass-bg border border-glass-border p-5 rounded-xl text-center">
-                        <i data-lucide="upload-cloud" class="w-8 h-8 text-blue-500 mx-auto mb-3"></i>
-                        <h3 class="font-bold mb-2">Import JSON</h3>
-                        <p class="text-xs text-muted mb-4">Overwrite current ledgers.</p>
-                        <input type="file" id="importFile" accept=".json" class="hidden"
-                            onchange="window.importDataJSON(this)">
-                        <button onclick="document.getElementById('importFile').click()"
-                            class="w-full glass-button py-2 rounded-lg font-bold text-blue-500">Import</button>
-                    </div>
                 </div>
 
-                <div
-                    class="bg-glass-bg border border-glass-border p-4 rounded-xl mb-6 flex justify-between items-center relative z-10">
-                    <div>
-                        <h3 class="font-bold text-base">Auto-Backup (Simulated)</h3>
-                        <p class="text-xs text-muted" id="lastBackupText">Last: Never</p>
+                <div class="settings-row">
+                    <div class="settings-row-left">
+                        <div class="settings-icon-wrap icon-bg-cyan">
+                            <i data-lucide="eye-off"></i>
+                        </div>
+                        <div class="settings-row-left-info">
+                            <span class="settings-title">Privacy Mode</span>
+                            <span class="settings-desc">Blur ledger balances by default.</span>
+                        </div>
                     </div>
-                    <button onclick="window.runSimulatedBackup()" class="glass-button p-2 rounded-lg text-purple-500"><i
-                            data-lucide="refresh-cw" class="w-5 h-5"></i></button>
+                    <button id="togglePrivacyBtn" class="bg-glass-bg border border-glass-border">Off</button>
                 </div>
 
-                <div
-                    class="flex justify-between items-center bg-red-500/5 border border-red-500/20 p-4 rounded-xl mb-6 relative z-10">
-                    <div>
-                        <h3 class="font-bold text-base sm:text-lg text-red-500">Nuclear Wipe</h3>
-                        <p class="text-xs sm:text-sm text-muted">Irrevocable data destruction.</p>
+                <div class="settings-row">
+                    <div class="settings-row-left">
+                        <div class="settings-icon-wrap icon-bg-amber">
+                            <i data-lucide="alert-triangle"></i>
+                        </div>
+                        <div class="settings-row-left-info">
+                            <span class="settings-title">Budget Alerts</span>
+                            <span class="settings-desc">Trigger flags when nearing limit caps.</span>
+                        </div>
                     </div>
-                    <button
-                        class="px-4 py-2 rounded-xl text-sm font-bold bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white border border-red-500/30 transition active:scale-95"
-                        onclick="window.wipeData()">Reset</button>
+                    <button id="toggleBudgetBtn" class="bg-amber-500 text-white">On</button>
                 </div>
-
-                <div class="border-t border-glass-border pt-6 relative z-10">
-                    <h3 class="font-bold mb-4 text-sm text-muted uppercase tracking-wider">Support & Legal</h3>
-                    <div class="grid grid-cols-2 gap-3">
-                        <a href="howtouse.html"
-                            class="glass-button p-3 rounded-lg text-xs font-bold text-center flex items-center justify-center gap-2"><i
-                                data-lucide="help-circle" class="w-4 h-4 text-purple-500"></i> Help</a>
-                        <a href="feedback.html"
-                            class="glass-button p-3 rounded-lg text-xs font-bold text-center flex items-center justify-center gap-2"><i
-                                data-lucide="message-square" class="w-4 h-4 text-blue-500"></i> Feedback</a>
-                        <a href="privacy-policy.html"
-                            class="glass-button p-3 rounded-lg text-xs font-bold text-center flex items-center justify-center gap-2"><i
-                                data-lucide="shield" class="w-4 h-4 text-emerald-500"></i> Privacy</a>
-                        <a href="terms-conditions.html"
-                            class="glass-button p-3 rounded-lg text-xs font-bold text-center flex items-center justify-center gap-2"><i
-                                data-lucide="file-text" class="w-4 h-4 text-amber-500"></i> Terms</a>
-                    </div>
-                    <div class="mt-6 text-center text-xs text-muted">
-                        <p>MoneyFlow v2.0.1 Premium</p>
-                    </div>
-                </div>
-            </section>
-
+            </div>
         </div>
-    </main>
+    </div>
+
+    <!-- SUBPAGE 6: SUBCATEGORY MANAGER -->
+    <div class="subpage-overlay" id="subpage-categories">
+        <div class="subpage-header">
+            <button class="subpage-back-btn" onclick="window.closeSubpage('#subpage-categories')">
+                <i data-lucide="chevron-left" class="inline w-5 h-5 mr-0.5"></i> Settings
+            </button>
+            <h2 class="subpage-title">Subcategories</h2>
+            <div style="width: 40px;"></div>
+        </div>
+        <div class="subpage-content">
+            <div class="settings-group p-5">
+                <p class="text-xs text-muted mb-4">Manage specific tracking tags dynamically synced into Spendly and PocketCal dropdown fields.</p>
+                
+                <div class="relative flex bg-black/40 backdrop-blur-2xl p-1.5 rounded-[2rem] border border-white/10 shadow-[inset_0_2px_10px_rgba(0,0,0,0.5),0_10px_30px_rgba(0,0,0,0.2)] w-full max-w-sm mx-auto z-20 overflow-hidden mb-6">
+                    <!-- Glowing Underline Sliding Pill -->
+                    <div id="catTypeSwitcherPill" class="absolute top-1.5 bottom-1.5 left-1.5 w-[calc(50%-6px)] bg-white/10 rounded-[1.75rem] border border-white/20 shadow-[0_0_15px_rgba(239,68,68,0.3)] transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] overflow-hidden">
+                        <div id="catTypeSwitcherNeon" class="absolute bottom-0 left-1/2 -translate-x-1/2 w-[60%] h-[3px] rounded-t-full bg-gradient-to-r from-rose-400 to-red-500 shadow-[0_0_12px_rgba(239,68,68,1)] transition-colors duration-500"></div>
+                        <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-white/5 to-transparent"></div>
+                    </div>
+                    <button id="catTypeExpense" class="relative flex-1 py-3 text-xs sm:text-sm font-black tracking-widest uppercase rounded-[1.75rem] text-white transition-colors duration-300 z-10 active:scale-95">Expense</button>
+                    <button id="catTypeIncome" class="relative flex-1 py-3 text-xs sm:text-sm font-black tracking-widest uppercase rounded-[1.75rem] text-muted hover:text-white transition-colors duration-300 z-10 active:scale-95">Income</button>
+                </div>
+
+                <div id="mainCategorySelectContainer" class="mb-4 relative z-50">
+                    <label class="block text-xs font-bold text-muted mb-1">Parent Category</label>
+                    <select id="mainCategorySelect" class="glass-input !py-3 !px-4 text-sm font-bold text-amber-500 shadow-sm custom-select"></select>
+                </div>
+
+                <div class="flex gap-3 mb-5 relative z-10">
+                    <input type="text" id="newCategoryInput" class="glass-input flex-1 !py-3 shadow-sm" placeholder="e.g. 🛵 Travel - Rapido">
+                    <button id="addCategoryBtn" class="bg-gradient-to-r from-amber-500 to-orange-400 text-white px-5 py-3 rounded-xl text-sm font-bold shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all flex items-center justify-center">
+                        <i data-lucide="plus" class="w-5 h-5"></i>
+                    </button>
+                </div>
+
+                <div id="customCategoryList" class="space-y-2 max-h-[200px] overflow-y-auto pr-2 relative z-10">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SUBPAGE 7: CLOUD & LOCAL BACKUPS -->
+    <div class="subpage-overlay" id="subpage-backups">
+        <div class="subpage-header">
+            <button class="subpage-back-btn" onclick="window.closeSubpage('#subpage-backups')">
+                <i data-lucide="chevron-left" class="inline w-5 h-5 mr-0.5"></i> Settings
+            </button>
+            <h2 class="subpage-title">Data Backups</h2>
+            <div style="width: 40px;"></div>
+        </div>
+        <div class="subpage-content">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                <div class="settings-group p-5 text-center flex flex-col justify-between items-center h-48">
+                    <div class="settings-icon-wrap icon-bg-emerald w-10 h-10 mb-2">
+                        <i data-lucide="download-cloud"></i>
+                    </div>
+                    <h3 class="font-bold text-sm">Export Data</h3>
+                    <p class="text-xs text-muted leading-tight">Backup ledger databases locally.</p>
+                    <div class="flex gap-2 w-full mt-2">
+                        <button onclick="window.exportDataJSON()" class="flex-1 glass-button py-2 rounded-lg font-bold text-emerald-500 text-xs">.JSON</button>
+                        <button onclick="window.exportDataCSV()" class="flex-1 glass-button py-2 rounded-lg font-bold text-emerald-500 text-xs">.CSV</button>
+                    </div>
+                </div>
+
+                <div class="settings-group p-5 text-center flex flex-col justify-between items-center h-48">
+                    <div class="settings-icon-wrap icon-bg-blue w-10 h-10 mb-2">
+                        <i data-lucide="upload-cloud"></i>
+                    </div>
+                    <h3 class="font-bold text-sm">Import Data</h3>
+                    <p class="text-xs text-muted leading-tight">Import ledger data and override local storage.</p>
+                    <input type="file" id="importFile" accept=".json" class="hidden" onchange="window.importDataJSON(this)">
+                    <button onclick="document.getElementById('importFile').click()" class="w-full glass-button py-2 rounded-lg font-bold text-blue-500 text-xs mt-2">Choose File</button>
+                </div>
+            </div>
+
+            <div class="settings-group">
+                <div class="settings-row">
+                    <div class="settings-row-left">
+                        <div class="settings-icon-wrap icon-bg-purple">
+                            <i data-lucide="refresh-cw"></i>
+                        </div>
+                        <div class="settings-row-left-info">
+                            <span class="settings-title">Cloud Auto-Backup</span>
+                            <span class="settings-desc" id="lastBackupText">Last: Never</span>
+                        </div>
+                    </div>
+                    <button onclick="window.runSimulatedBackup()" class="glass-button p-2 rounded-lg text-purple-500 hover:bg-purple-500/10 active:scale-90 transition-all">
+                        <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SUBPAGE 8: DANGER ZONE -->
+    <div class="subpage-overlay" id="subpage-danger">
+        <div class="subpage-header">
+            <button class="subpage-back-btn" onclick="window.closeSubpage('#subpage-danger')">
+                <i data-lucide="chevron-left" class="inline w-5 h-5 mr-0.5"></i> Settings
+            </button>
+            <h2 class="subpage-title">Danger Zone</h2>
+            <div style="width: 40px;"></div>
+        </div>
+        <div class="subpage-content">
+            <div class="settings-group border-red-500/20 bg-red-500/5">
+                <div class="settings-row">
+                    <div class="settings-row-left">
+                        <div class="settings-icon-wrap icon-bg-rose">
+                            <i data-lucide="skull"></i>
+                        </div>
+                        <div class="settings-row-left-info">
+                            <span class="settings-title text-red-500 font-bold">Nuclear Reset</span>
+                            <span class="settings-desc">Wipes all databases and settings.</span>
+                        </div>
+                    </div>
+                    <button class="px-4 py-2 rounded-xl text-xs font-bold bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white border border-red-500/30 transition active:scale-95" onclick="window.wipeData()">Reset</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Bottom Navigation Dock -->
     <div class="bottom-dock-container">
@@ -503,11 +781,11 @@
                 <span>Home</span>
             </a>
             <a href="spendly.html" class="dock-item">
-                <i data-lucide="pie-chart"></i>
+                <i data-lucide="receipt"></i>
                 <span>Spendly</span>
             </a>
             <a href="pocketcal.html" class="dock-item">
-                <i data-lucide="calendar"></i>
+                <i data-lucide="calendar-days"></i>
                 <span>Pocket</span>
             </a>
         </nav>

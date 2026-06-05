@@ -158,6 +158,7 @@
         }
 
         generateInsight(percent, predictedSpend, budget, monthlyIncome, topCategory, daysLeft);
+        updateHomeForecastAndRequests();
     }
 
     function animateValueUpdate(elementId, value) {
@@ -197,6 +198,89 @@
 
         insightEl.innerHTML = message;
         if (window.lucide) window.lucide.createIcons();
+    }
+
+    function updateHomeForecastAndRequests() {
+        const pocketData = state.pocketData || [];
+        const spendlyData = state.spendlyData || [];
+        const requestsData = loadData('fin_pocketcal_requests') || [];
+        
+        const currentMonthStr = new Date().toISOString().slice(0, 7);
+        const curMonthAllowance = pocketData.filter(d => d.date && d.date.startsWith(currentMonthStr))
+                                            .reduce((sum, d) => sum + Number(d.amount || 0), 0);
+        
+        const curMonthExpenses = spendlyData.filter(d => d.type === 'expense' && d.date && d.date.startsWith(currentMonthStr))
+                                           .reduce((sum, d) => sum + Number(d.amount || 0), 0);
+        
+        const today = new Date();
+        const daysPassed = today.getDate();
+        
+        const burnRate = curMonthExpenses / (daysPassed || 1);
+        const remaining = curMonthAllowance - curMonthExpenses;
+        
+        const daysEl = document.getElementById('homeForecastDays');
+        const badgeEl = document.getElementById('homeForecastBadge');
+        const dateEl = document.getElementById('homeForecastDate');
+        
+        let daysRemaining = Infinity;
+        if (burnRate > 0) {
+            daysRemaining = remaining / burnRate;
+        }
+        
+        if (daysEl) {
+            if (remaining <= 0) {
+                daysEl.textContent = '0';
+                daysEl.className = 'text-4xl font-extrabold text-red-500';
+            } else if (daysRemaining === Infinity) {
+                daysEl.textContent = '∞';
+                daysEl.className = 'text-4xl font-extrabold text-emerald-400';
+            } else {
+                daysEl.textContent = Math.max(0, Math.floor(daysRemaining));
+                daysEl.className = daysRemaining < 5 ? 'text-4xl font-extrabold text-amber-500' : 'text-4xl font-extrabold text-blue-400';
+            }
+        }
+        
+        if (badgeEl && dateEl) {
+            if (remaining <= 0) {
+                badgeEl.textContent = 'RUN OUT 🚨';
+                badgeEl.className = 'px-3 py-1 rounded-full text-[10px] font-bold uppercase bg-red-500/20 text-red-400 border border-red-500/30';
+                dateEl.textContent = 'Ask Dad Today!';
+            } else if (burnRate === 0) {
+                badgeEl.textContent = 'STABLE 🛡️';
+                badgeEl.className = 'px-3 py-1 rounded-full text-[10px] font-bold uppercase bg-emerald-500/20 text-emerald-400 border border-emerald-500/30';
+                dateEl.textContent = 'No expenses logged';
+            } else {
+                const predictAsk = new Date();
+                predictAsk.setDate(today.getDate() + Math.max(0, Math.floor(daysRemaining)));
+                const opt = { day: '2-digit', month: 'short', year: 'numeric' };
+                dateEl.textContent = `Next request needed: ${predictAsk.toLocaleDateString('en-IN', opt)}`;
+                
+                if (daysRemaining < 5) {
+                    badgeEl.textContent = 'WARN ⚠️';
+                    badgeEl.className = 'px-3 py-1 rounded-full text-[10px] font-bold uppercase bg-amber-500/20 text-amber-400 border border-amber-500/30';
+                } else {
+                    badgeEl.textContent = 'GOOD ✅';
+                    badgeEl.className = 'px-3 py-1 rounded-full text-[10px] font-bold uppercase bg-emerald-500/20 text-emerald-400 border border-emerald-500/30';
+                }
+            }
+        }
+        
+        // Update requests widget
+        const pendingRequests = requestsData.filter(r => r.status === 'Pending');
+        const countEl = document.getElementById('homePendingReqCount');
+        const previewEl = document.getElementById('homePendingReqPreview');
+        
+        if (countEl) countEl.textContent = pendingRequests.length;
+        if (previewEl) {
+            if (pendingRequests.length > 0) {
+                const latest = pendingRequests.sort((a,b) => new Date(b.date) - new Date(a.date))[0];
+                previewEl.innerHTML = `<span class="text-white font-bold">Latest:</span> ₹${latest.amount.toLocaleString('en-IN')} for ${latest.notes} (Ask ${latest.source})`;
+                previewEl.className = 'text-xs text-slate-300';
+            } else {
+                previewEl.textContent = 'No active requests. Tap to open tracker.';
+                previewEl.className = 'text-xs text-muted italic';
+            }
+        }
     }
 
     // ----------------------------------------------------

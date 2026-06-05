@@ -82,7 +82,7 @@
                     <i data-lucide="zap"></i>
                 </div>
                 <div>
-                    <h4 class="font-bold text-blue-500" id="pcStreakTitle">Saving Streak!</h4>
+                    <h4 class="font-bold text-blue-500" id="pcStreakTitle">Allowance Streak!</h4>
                     <p class="text-sm text-muted" id="pcStreakDesc">You're doing great!</p>
                 </div>
             </div>
@@ -99,7 +99,7 @@
             </div>
             <div class="summary-card glass-panel p-5 flex flex-col justify-between h-32">
                 <div class="summary-card-glow info"></div>
-                <div class="text-xs font-bold text-muted uppercase tracking-widest mb-1 flex justify-between items-center">This Month <i data-lucide="calendar" class="w-4 h-4 text-blue-500"></i></div>
+                <div class="text-xs font-bold text-muted uppercase tracking-widest mb-1 flex justify-between items-center">This Month <i data-lucide="calendar-days" class="w-4 h-4 text-blue-500"></i></div>
                 <h2 class="text-2xl font-extrabold tracking-tighter text-blue-500" id="pcMonth">₹0</h2>
             </div>
             <div class="summary-card glass-panel p-5 flex flex-col justify-between h-32">
@@ -114,7 +114,47 @@
             </div>
         </section>
 
-
+        <!-- Dad Payout Forecast Widget -->
+        <section id="pcForecastSection" class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 ag-card-reveal" data-speed="0.11">
+            <div class="md:col-span-2 glass-panel p-5 relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6">
+                <div class="absolute -right-10 -bottom-10 opacity-10"><i data-lucide="wallet" class="w-40 h-40 text-blue-400"></i></div>
+                <div class="flex-1">
+                    <h3 class="text-lg font-bold mb-2 flex items-center gap-2 text-blue-400">
+                        <i data-lucide="trending-up" class="w-5 h-5"></i> Dad's Allowance Runout Forecast
+                    </h3>
+                    <p class="text-sm text-slate-300 leading-relaxed mb-3">
+                        Based on your active month spending rate of <span id="pcForecastBurnRate" class="font-bold text-white">₹0/day</span>, your remaining funds of <span id="pcForecastRemaining" class="font-bold text-emerald-400">₹0</span> will last for approximately:
+                    </p>
+                    <div class="flex items-baseline gap-2">
+                        <span id="pcForecastDays" class="text-4xl font-extrabold text-blue-400 tracking-tight">--</span>
+                        <span class="text-sm text-muted font-bold uppercase tracking-wider">days remaining</span>
+                    </div>
+                </div>
+                <div class="w-full md:w-auto flex flex-col items-center justify-center p-4 bg-white/5 border border-white/10 rounded-2xl min-w-[200px]">
+                    <div id="pcForecastAlertBadge" class="px-3 py-1 rounded-full text-xs font-bold uppercase mb-2 bg-blue-500/20 text-blue-400 border border-blue-500/30">Calculating...</div>
+                    <div class="text-xs text-muted mb-1">Predicted Next Ask Date:</div>
+                    <div id="pcForecastAskDate" class="text-lg font-black text-white">-- --, ----</div>
+                </div>
+            </div>
+            <!-- Quick allowance goal/limit visualizer -->
+            <div class="glass-panel p-5 flex flex-col justify-between relative overflow-hidden">
+                <div class="absolute -right-8 -bottom-8 opacity-10"><i data-lucide="gauge" class="w-24 h-24 text-amber-400"></i></div>
+                <div>
+                     <div class="flex justify-between items-center mb-2">
+                         <h4 class="text-xs font-bold text-muted uppercase tracking-widest">Monthly Limit Status</h4>
+                         <button onclick="setPcAllowanceLimit()" class="text-xs text-amber-400 hover:underline"><i data-lucide="edit-3" class="w-3 h-3 inline"></i> Set</button>
+                     </div>
+                     <div class="flex justify-between items-baseline mb-3">
+                         <span id="pcLimitCurrent" class="text-xl font-extrabold text-white">₹0</span>
+                         <span class="text-xs text-muted">of limit <span id="pcLimitTarget" class="font-bold text-amber-500">₹5,000</span></span>
+                     </div>
+                     <div class="w-full bg-white/10 h-2.5 rounded-full overflow-hidden mb-1">
+                         <div id="pcLimitProgress" class="bg-gradient-to-r from-amber-500 to-orange-500 h-full rounded-full transition-all duration-1000" style="width: 0%"></div>
+                     </div>
+                </div>
+                <div id="pcLimitStatusMsg" class="text-[11px] text-muted leading-tight">No limit exceeded yet. Tracking clean.</div>
+            </div>
+        </section>
 
         <!-- Smart Entry Form (AI) -->
         <div class="mb-8 p-5 rounded-2xl bg-gradient-to-r from-emerald-500/10 to-teal-500/10 border border-emerald-500/20 relative overflow-hidden ag-card-reveal" data-speed="0.12">
@@ -173,6 +213,48 @@
             </div>
         </section>
 
+        <!-- Request Tracker Section -->
+        <section class="glass-panel p-6 md:p-8 mb-12 ag-card-reveal" data-speed="0.18">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+                <div>
+                    <h2 class="text-2xl font-extrabold flex items-center gap-3">
+                        <i data-lucide="help-circle" class="text-blue-400 w-7 h-7"></i>
+                        <span>"Ask Dad" Allowance Request Tracker</span>
+                    </h2>
+                    <p class="text-xs text-muted mt-1">Track money requests made to Dad/Mom and approve them into your calendar when received.</p>
+                </div>
+                <button onclick="openRequestModal()" class="glass-button px-4 py-2 rounded-xl font-bold text-sm bg-blue-500/10 text-blue-400 hover:bg-blue-500 hover:text-white transition flex items-center gap-2">
+                    <i data-lucide="plus-circle" class="w-4 h-4"></i> New Request
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Pending Requests -->
+                <div class="glass-panel bg-black/10 border-white/5 p-5">
+                    <h3 class="text-sm font-bold uppercase tracking-wider text-amber-400 mb-4 flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse"></span>
+                        Pending Requests (<span id="pcPendingRequestsCount">0</span>)
+                    </h3>
+                    <div id="pcPendingRequestsList" class="space-y-3 max-h-72 overflow-y-auto custom-scrollbar pr-1">
+                        <div class="text-xs text-muted text-center py-8">No pending requests. Ask away!</div>
+                    </div>
+                </div>
+
+                <!-- Request History -->
+                <div class="glass-panel bg-black/10 border-white/5 p-5">
+                    <h3 class="text-sm font-bold uppercase tracking-wider text-muted mb-4 flex items-center gap-2">
+                        <i data-lucide="history" class="w-4 h-4"></i>
+                        Recent History
+                    </h3>
+                    <div id="pcRequestHistoryList" class="space-y-3 max-h-72 overflow-y-auto custom-scrollbar pr-1">
+                        <div class="text-xs text-muted text-center py-8">No past request history.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Charts Section -->
+
         <!-- Charts Section -->
         <section class="mb-20">
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4" data-speed="0.05">
@@ -220,23 +302,23 @@
                 </div>
 
                 <div class="glass-panel p-6 ag-card-reveal" data-speed="0.4">
-                    <h4 class="text-md font-bold mb-4">Cumulative Monthly Savings</h4>
+                    <h4 class="text-md font-bold mb-4">Cumulative Monthly Allowance</h4>
                     <div class="relative w-full h-64">
                         <canvas id="cumulativeChart"></canvas>
                     </div>
                 </div>
 
                 <div class="glass-panel p-6 ag-card-reveal flex flex-col items-center" data-speed="0.45">
-                    <h4 class="text-md font-bold mb-4 w-full text-left">Consistency Ring</h4>
+                    <h4 class="text-md font-bold mb-4 w-full text-left">Allowance Source Share</h4>
                     <div class="relative w-full max-w-xs aspect-square flex items-center justify-center">
-                        <canvas id="consistencyChart"></canvas>
+                        <canvas id="sourceChart"></canvas>
                     </div>
                 </div>
 
                 <div class="glass-panel p-6 ag-card-reveal" data-speed="0.5">
-                    <h4 class="text-md font-bold mb-4">7-Day Moving Average</h4>
+                    <h4 class="text-md font-bold mb-4">Allowance vs Spendly Spending</h4>
                     <div class="relative w-full h-64">
-                        <canvas id="movingAvgChart"></canvas>
+                        <canvas id="allowanceVsSpendChart"></canvas>
                     </div>
                 </div>
             </div>
@@ -261,11 +343,11 @@
                 <span>Home</span>
             </a>
             <a href="spendly.html" class="dock-item">
-                <i data-lucide="pie-chart"></i>
+                <i data-lucide="receipt"></i>
                 <span>Spendly</span>
             </a>
             <a href="pocketcal.html" class="dock-item active">
-                <i data-lucide="calendar"></i>
+                <i data-lucide="calendar-days"></i>
                 <span>Pocket</span>
             </a>
         </nav>
@@ -305,6 +387,10 @@
                         <label class="block text-xs font-bold text-muted mb-1 uppercase tracking-wider">Source</label>
                         <select id="pcCategory" class="glass-input bg-black/20 text-muted custom-select">
                             <option value="💵 Pocket Money">💵 Pocket Money</option>
+                            <option value="👨 Taken from Dad">👨 Taken from Dad</option>
+                            <option value="👩 Taken from Mom">👩 Taken from Mom</option>
+                            <option value="🎁 Gift / Cash Gift">🎁 Gift / Cash Gift</option>
+                            <option value="➕ Other Allowance">➕ Other Allowance</option>
                         </select>
                     </div>
                     <div>
@@ -342,62 +428,57 @@
         </div>
     </div>
 
-    <!-- PDF Modal -->
+    <!-- PDF Modal (Renamed visually to Data & Reports) -->
     <div class="modal-overlay" id="pdfModal">
-        <div class="modal-content-glass max-w-sm w-full relative p-8 border border-white/10 shadow-[0_0_40px_rgba(16,185,129,0.15)] rounded-[2rem]">
+        <div class="modal-content-glass max-w-sm w-full relative p-6 md:p-8 border border-white/10 shadow-[0_0_40px_rgba(16,185,129,0.15)] rounded-[2rem] max-h-[90vh] overflow-y-auto custom-scrollbar">
             <div class="absolute inset-0 bg-gradient-to-br from-emerald-500/10 to-transparent pointer-events-none rounded-[2rem]"></div>
             <button type="button" class="absolute top-5 right-5 text-muted hover:text-red-500 transition-colors z-50 bg-white/5 border border-white/10 p-2.5 rounded-full backdrop-blur-md cursor-pointer hover:bg-white/10 active:scale-90" onclick="closeModal('#pdfModal')">
                 <i data-lucide="x" class="w-5 h-5"></i>
             </button>
-            <div class="w-16 h-16 rounded-full bg-gradient-to-tr from-emerald-500/20 to-cyan-500/20 border border-emerald-500/30 flex items-center justify-center mx-auto mb-4 text-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.2)]">
-                <i data-lucide="file-down" class="w-8 h-8"></i>
+            <div class="w-12 h-12 rounded-full bg-gradient-to-tr from-emerald-500/20 to-cyan-500/20 border border-emerald-500/30 flex items-center justify-center mx-auto mb-3 text-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.2)]">
+                <i data-lucide="file-down" class="w-6 h-6"></i>
             </div>
-            <h2 class="text-2xl font-extrabold mb-8 text-center text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400 relative z-10">Export Report</h2>
-            <div class="flex flex-col gap-3 relative z-10">
-                <button
-                    class="group relative overflow-hidden p-4 rounded-2xl bg-white/5 border border-white/10 hover:bg-emerald-500/15 hover:border-emerald-400 transition-all duration-300 shadow-md hover:shadow-[0_0_20px_rgba(16,185,129,0.25)] flex items-center justify-between active:scale-95"
-                    onclick="exportPDF('month')">
-                    <div class="flex items-center gap-4">
-                        <div class="w-10 h-10 rounded-full bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20 group-hover:scale-110 transition-transform">
-                            <i data-lucide="calendar-days" class="w-5 h-5 text-emerald-400"></i>
-                        </div>
-                        <div class="text-left flex flex-col">
-                            <strong class="font-extrabold text-sm tracking-wide text-white">Current Month</strong>
-                            <span class="text-[10px] text-muted">30-Day Summary</span>
-                        </div>
+            <h2 class="text-xl font-extrabold mb-4 text-center text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400 relative z-10">Reports & Porting</h2>
+            
+            <div class="space-y-6 relative z-10">
+                <!-- Export Section -->
+                <div>
+                    <h3 class="text-xs font-bold text-muted uppercase tracking-wider mb-2">Export PDF Passbook</h3>
+                    <div class="flex flex-col gap-2">
+                        <button class="w-full p-3 rounded-xl bg-white/5 border border-white/10 hover:bg-emerald-500/15 hover:border-emerald-400/40 text-left flex items-center justify-between text-xs transition" onclick="exportPDF('month')">
+                            <span>Current Month Ledger</span>
+                            <i data-lucide="download" class="w-4 h-4 text-emerald-400"></i>
+                        </button>
+                        <button class="w-full p-3 rounded-xl bg-white/5 border border-white/10 hover:bg-emerald-500/15 hover:border-emerald-400/40 text-left flex items-center justify-between text-xs transition" onclick="exportPDF('year')">
+                            <span>This Year Ledger</span>
+                            <i data-lucide="download" class="w-4 h-4 text-emerald-400"></i>
+                        </button>
+                        <button class="w-full p-3 rounded-xl bg-white/5 border border-white/10 hover:bg-emerald-500/15 hover:border-emerald-400/40 text-left flex items-center justify-between text-xs transition" onclick="exportPDF('all')">
+                            <span>All-Time Ledger</span>
+                            <i data-lucide="download" class="w-4 h-4 text-emerald-400"></i>
+                        </button>
                     </div>
-                    <i data-lucide="download" class="w-5 h-5 text-emerald-400 opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0"></i>
-                </button>
-                
-                <button
-                    class="group relative overflow-hidden p-4 rounded-2xl bg-white/5 border border-white/10 hover:bg-emerald-500/15 hover:border-emerald-400 transition-all duration-300 shadow-md hover:shadow-[0_0_20px_rgba(16,185,129,0.25)] flex items-center justify-between active:scale-95"
-                    onclick="exportPDF('year')">
-                    <div class="flex items-center gap-4">
-                        <div class="w-10 h-10 rounded-full bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20 group-hover:scale-110 transition-transform">
-                            <i data-lucide="calendar" class="w-5 h-5 text-emerald-400"></i>
-                        </div>
-                        <div class="text-left flex flex-col">
-                            <strong class="font-extrabold text-sm tracking-wide text-white">This Year</strong>
-                            <span class="text-[10px] text-muted">Year to Date Overview</span>
-                        </div>
+                </div>
+
+                <!-- Backup/Restore Section -->
+                <div class="border-t border-white/10 pt-4">
+                    <h3 class="text-xs font-bold text-muted uppercase tracking-wider mb-2">Data Portability</h3>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="exportPcBackup()" class="p-3 rounded-xl bg-white/5 border border-white/10 hover:bg-blue-500/15 hover:border-blue-400/40 text-center flex flex-col items-center justify-center gap-1 text-[11px] transition">
+                            <i data-lucide="copy" class="w-4 h-4 text-blue-400"></i>
+                            <span>Backup JSON</span>
+                        </button>
+                        <button onclick="document.getElementById('pcImportFileInput').click()" class="p-3 rounded-xl bg-white/5 border border-white/10 hover:bg-purple-500/15 hover:border-purple-400/40 text-center flex flex-col items-center justify-center gap-1 text-[11px] transition">
+                            <i data-lucide="upload-cloud" class="w-4 h-4 text-purple-400"></i>
+                            <span>Restore JSON</span>
+                        </button>
+                        <input type="file" id="pcImportFileInput" class="hidden" accept=".json" onchange="importPcBackup(event)">
                     </div>
-                    <i data-lucide="download" class="w-5 h-5 text-emerald-400 opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0"></i>
-                </button>
-                
-                <button
-                    class="group relative overflow-hidden p-4 rounded-2xl bg-white/5 border border-white/10 hover:bg-emerald-500/15 hover:border-emerald-400 transition-all duration-300 shadow-md hover:shadow-[0_0_20px_rgba(16,185,129,0.25)] flex items-center justify-between active:scale-95"
-                    onclick="exportPDF('all')">
-                    <div class="flex items-center gap-4">
-                        <div class="w-10 h-10 rounded-full bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20 group-hover:scale-110 transition-transform">
-                            <i data-lucide="database" class="w-5 h-5 text-emerald-400"></i>
-                        </div>
-                        <div class="text-left flex flex-col">
-                            <strong class="font-extrabold text-sm tracking-wide text-white">All Time History</strong>
-                            <span class="text-[10px] text-muted">Complete Ledger Dump</span>
-                        </div>
-                    </div>
-                    <i data-lucide="download" class="w-5 h-5 text-emerald-400 opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0"></i>
-                </button>
+                    <button onclick="exportPcCSV()" class="w-full mt-2 p-3 rounded-xl bg-white/5 border border-white/10 hover:bg-amber-500/15 hover:border-amber-400/40 text-left flex items-center justify-between text-xs transition">
+                        <span class="flex items-center gap-2"><i data-lucide="file-spreadsheet" class="w-4 h-4 text-amber-400"></i> Export Allowance CSV</span>
+                        <i data-lucide="download" class="w-4 h-4 text-amber-400"></i>
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -410,6 +491,79 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+
+    <!-- Request Modal -->
+    <div class="modal-overlay" id="requestModal">
+        <div class="modal-content-glass max-w-sm w-full relative p-6 md:p-8 border border-white/10 shadow-[0_0_40px_rgba(59,130,246,0.15)] rounded-[2rem]">
+            <button type="button" class="absolute top-5 right-5 text-muted hover:text-red-500 transition-colors z-50 bg-white/5 border border-white/10 p-2.5 rounded-full backdrop-blur-md cursor-pointer hover:bg-white/10 active:scale-90" onclick="closeRequestModal()">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+            <h2 class="text-2xl font-extrabold mb-6 flex items-center gap-2 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400 relative z-10 mt-2">
+                <i data-lucide="send" class="text-blue-400 w-6 h-6"></i> Ask Dad/Mom
+            </h2>
+
+            <form id="pcRequestForm" class="relative z-10">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-muted mb-1 uppercase tracking-wider">Amount Requested</label>
+                        <input type="number" id="pcReqAmount"
+                            class="glass-input font-black text-3xl py-4 text-center text-blue-400 placeholder-blue-500/20 tracking-tighter bg-black/30 border-white/10"
+                            min="1" placeholder="₹0" required autofocus>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-muted mb-1 uppercase tracking-wider">Ask Whom?</label>
+                        <select id="pcReqSource" class="glass-input bg-black/20 text-muted custom-select">
+                            <option value="Dad">👨 Dad</option>
+                            <option value="Mom">👩 Mom</option>
+                            <option value="Other">🎁 Other / Relatives</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-muted mb-1 uppercase tracking-wider">Purpose / Note</label>
+                        <input type="text" id="pcReqNotes" class="glass-input" placeholder="e.g. Fuel, Book, Outing..." required>
+                    </div>
+                </div>
+
+                <div class="flex justify-between items-center mt-8 gap-4">
+                    <button type="submit"
+                        class="flex-1 h-14 bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-400 hover:to-indigo-400 text-white rounded-2xl shadow-[0_0_20px_rgba(59,130,246,0.3)] font-extrabold text-lg transition-transform active:scale-95 flex justify-center items-center gap-2">
+                        <i data-lucide="check" class="w-5 h-5"></i> Log Request
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Limit Modal -->
+    <div class="modal-overlay" id="limitModal">
+        <div class="modal-content-glass max-w-sm w-full relative p-6 md:p-8 border border-white/10 shadow-[0_0_40px_rgba(245,158,11,0.15)] rounded-[2rem]">
+            <button type="button" class="absolute top-5 right-5 text-muted hover:text-red-500 transition-colors z-50 bg-white/5 border border-white/10 p-2.5 rounded-full backdrop-blur-md cursor-pointer hover:bg-white/10 active:scale-90" onclick="closeLimitModal()">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+            <h2 class="text-2xl font-extrabold mb-6 flex items-center gap-2 text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-400 relative z-10 mt-2">
+                <i data-lucide="sliders" class="text-amber-400 w-6 h-6"></i> Set Monthly Limit
+            </h2>
+            <p class="text-xs text-muted mb-4">Set the maximum pocket money you should take from parents this month.</p>
+
+            <form id="pcLimitForm" class="relative z-10">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-muted mb-1 uppercase tracking-wider">Limit Amount</label>
+                        <input type="number" id="pcLimitInput"
+                            class="glass-input font-black text-3xl py-4 text-center text-amber-400 placeholder-amber-500/20 tracking-tighter bg-black/30 border-white/10"
+                            min="0" placeholder="₹5,000" required>
+                    </div>
+                </div>
+
+                <div class="flex justify-between items-center mt-8 gap-4">
+                    <button type="submit"
+                        class="flex-1 h-14 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-white rounded-2xl shadow-[0_0_20px_rgba(245,158,11,0.3)] font-extrabold text-lg transition-transform active:scale-95 flex justify-center items-center gap-2">
+                        <i data-lucide="check" class="w-5 h-5"></i> Update Limit
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <script src="global.js"></script>
     <script src="pocketcal.js"></script>

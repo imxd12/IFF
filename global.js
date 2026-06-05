@@ -1232,15 +1232,50 @@
       const header = document.getElementById('mainHeader');
       if(!header) return;
       
+      let lastScrollY = window.scrollY;
+      let isHidden = false;
+      let isCompressed = false;
+      
       window.addEventListener('scroll', () => {
           requestAnimationFrame(() => {
-              if(window.scrollY > 50) {
-                  header.classList.add('header-compressed');
+              const currentScrollY = window.scrollY;
+              
+              // Handle compression state (shrink header when scrolled past threshold)
+              if (currentScrollY > 40) {
+                  if (!isCompressed) {
+                      header.classList.add('header-compressed');
+                      isCompressed = true;
+                  }
               } else {
-                  header.classList.remove('header-compressed');
+                  if (isCompressed) {
+                      header.classList.remove('header-compressed');
+                      isCompressed = false;
+                  }
               }
+              
+              // Handle auto-hide (slide away on scroll down, slide in on scroll up)
+              // Only trigger when scrolled past 100px to avoid jumpiness at top
+              if (currentScrollY > 100) {
+                  if (currentScrollY > lastScrollY && !isHidden) {
+                      // Scrolling down - hide header
+                      header.classList.add('header-hidden');
+                      isHidden = true;
+                  } else if (currentScrollY < lastScrollY && isHidden) {
+                      // Scrolling up - show header (it will show in its compressed state)
+                      header.classList.remove('header-hidden');
+                      isHidden = false;
+                  }
+              } else {
+                  // Near the top of the page - always show header
+                  if (isHidden) {
+                      header.classList.remove('header-hidden');
+                      isHidden = false;
+                  }
+              }
+              
+              lastScrollY = Math.max(0, currentScrollY);
           });
-      });
+      }, { passive: true });
   };
 
   window.initAnimeAssistant = function () {

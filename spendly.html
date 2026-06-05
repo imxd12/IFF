@@ -4,26 +4,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>MoneyFlow - Spendly Analytics</title>
+    <title>MoneyFlow - Settings</title>
 
-    <!-- CSS -->
     <link rel="stylesheet" href="global.css">
-    <link rel="stylesheet" href="spendly.css">
+    <link rel="stylesheet" href="settings.css">
 
-    <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        tailwind.config = {
-            darkMode: ['class', '[data-theme="dark"]']
-        }
+        tailwind.config = { darkMode: ['class', '[data-theme="dark"]'] }
     </script>
 </head>
 
 <body>
 
-    <!-- SVG Gooey Filter -->
-    <svg style="visibility: hidden; position: absolute;" width="0" height="0" xmlns="http://www.w3.org/2000/svg"
-        version="1.1">
+    <svg style="visibility: hidden; position: absolute;" width="0" height="0">
         <defs>
             <filter id="gooey-filter">
                 <feGaussianBlur in="SourceGraphic" stdDeviation="20" result="blur" />
@@ -39,8 +33,9 @@
         <div class="liquid-blob"></div>
     </div>
 
-    <!-- Global Header -->
-    <header class="global-header glass-panel transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]" id="mainHeader">
+    <!-- Fixed Header -->
+    <header class="global-header glass-panel transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]"
+        id="mainHeader">
         <div class="brand flex items-center gap-3 relative z-10">
             <a href="javascript:history.back()"
                 class="glass-button w-10 h-10 rounded-full flex items-center justify-center hover:-translate-x-1">
@@ -50,7 +45,7 @@
                 <div class="wave wave1"></div>
                 <div class="wave wave2"></div>
             </div>
-            <span class="brand-text">Spendly</span>
+            <span class="brand-text">Settings</span>
         </div>
         <div class="header-controls relative z-10">
             <!-- Inky Theme Toggle -->
@@ -76,389 +71,738 @@
         <div class="flashlight-beam pointer-events-none" id="flashlightBeam"></div>
     </header>
 
-    <main class="main-content">
-        <!-- AI Streak Banner -->
-        <div id="streakBanner" class="hidden glass-panel p-4 mb-6 flex items-center justify-between border-emerald-500/30 bg-emerald-500/10">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-500">
-                    <i data-lucide="flame"></i>
+    <main class="main-content flex flex-col items-center">
+        <!-- Main Settings One-Page Scroll List -->
+        <div class="settings-main-scroll max-w-2xl w-full mx-auto px-4 pb-28">
+
+            <!-- iCloud-style Profile Card -->
+            <div class="icloud-profile-card" onclick="window.openSubpage('#subpage-identity')">
+                <div class="icloud-avatar-wrap">
+                    <span id="mainAvatarInitials">U</span>
+                    <img id="mainAvatarImage" src="" alt="" class="hidden w-full h-full object-cover rounded-[1.25rem]">
                 </div>
-                <div>
-                    <h4 class="font-bold text-emerald-500" id="streakTitle">Streak!</h4>
-                    <p class="text-sm text-muted" id="streakDesc">Keep it up.</p>
+                <div class="icloud-info">
+                    <h3 id="mainProfileName" class="font-bold text-lg text-white leading-tight">User Name</h3>
+                    <p id="mainProfileBio" class="text-xs text-muted leading-snug line-clamp-1">Manage profile bio and
+                        information cards</p>
                 </div>
-            </div>
-            <button class="text-muted hover:text-white" onclick="document.getElementById('streakBanner').classList.add('hidden')"><i data-lucide="x" class="w-4 h-4"></i></button>
-        </div>
-
-        <!-- AI Budget Alert -->
-        <div id="budgetAlert" class="hidden glass-panel p-4 mb-6 flex items-center justify-between border-orange-500/30 bg-orange-500/10">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full bg-orange-500/20 flex items-center justify-center text-orange-500">
-                    <i data-lucide="alert-triangle"></i>
-                </div>
-                <div>
-                    <h4 class="font-bold text-orange-500">Spending Alert</h4>
-                    <p class="text-sm text-muted" id="budgetAlertDesc">You are projected to overspend this month.</p>
-                </div>
-            </div>
-            <button class="text-muted hover:text-white" onclick="document.getElementById('budgetAlert').classList.add('hidden')"><i data-lucide="x" class="w-4 h-4"></i></button>
-        </div>
-
-
-        <!-- Summary Cards -->
-        <section class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10" data-speed="0.1">
-            <div class="summary-card glass-panel p-6 flex flex-col justify-between h-36">
-                <div class="summary-card-glow emerald"></div>
-                <div class="text-muted font-medium uppercase text-xs tracking-widest flex justify-between items-center mb-2">Total Income <i data-lucide="arrow-down-left" class="text-emerald-500 w-4 h-4"></i></div>
-                <h2 class="text-3xl font-extrabold tracking-tighter text-emerald-500" id="totalIncome">₹0</h2>
-            </div>
-            <div class="summary-card glass-panel p-6 flex flex-col justify-between h-36">
-                <div class="summary-card-glow danger"></div>
-                <div class="text-muted font-medium uppercase text-xs tracking-widest flex justify-between items-center mb-2">Total Expense <i data-lucide="arrow-up-right" class="text-red-500 w-4 h-4"></i></div>
-                <h2 class="text-3xl font-extrabold tracking-tighter text-red-500" id="totalExpense">₹0</h2>
-            </div>
-            <div class="summary-card glass-panel p-6 flex flex-col justify-between h-36 border-emerald-500/30">
-                <div class="summary-card-glow info"></div>
-                <div class="text-muted font-medium uppercase text-xs tracking-widest flex justify-between items-center mb-2">Net Balance <i data-lucide="scale" class="text-blue-500 w-4 h-4"></i></div>
-                <h2 class="text-3xl font-extrabold tracking-tighter text-blue-500" id="balance">₹0</h2>
-            </div>
-        </section>
-
-        <!-- Transaction Controls -->
-        <section class="mb-10 flex flex-col items-center gap-6" data-speed="0.15">
-            <div
-                class="relative flex bg-black/40 backdrop-blur-2xl p-1.5 rounded-[2rem] border border-white/10 shadow-[inset_0_2px_10px_rgba(0,0,0,0.5),0_10px_30px_rgba(0,0,0,0.2)] w-full max-w-xs mx-auto z-20 overflow-hidden">
-                <!-- Glowing Underline Sliding Pill -->
-                <div id="typeSwitcherPill"
-                    class="absolute top-1.5 bottom-1.5 left-1.5 w-[calc(50%-6px)] bg-white/10 rounded-[1.75rem] border border-white/20 shadow-[0_0_15px_rgba(16,185,129,0.3)] transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] overflow-hidden">
-                    <div id="typeSwitcherNeon" class="absolute bottom-0 left-1/2 -translate-x-1/2 w-[60%] h-[3px] rounded-t-full bg-gradient-to-r from-emerald-400 to-teal-400 shadow-[0_0_12px_rgba(16,185,129,1)] transition-colors duration-500"></div>
-                    <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-white/5 to-transparent"></div>
-                </div>
-
-                <button id="btnIncomeType"
-                    class="relative flex-1 py-3 text-xs sm:text-sm font-black tracking-widest uppercase rounded-[1.75rem] text-white transition-colors duration-300 z-10 active:scale-95"
-                    onclick="switchType('income')">Income</button>
-                <button id="btnExpenseType"
-                    class="relative flex-1 py-3 text-xs sm:text-sm font-black tracking-widest uppercase rounded-[1.75rem] text-muted hover:text-white transition-colors duration-300 z-10 active:scale-95"
-                    onclick="switchType('expense')">Expense</button>
-            </div>
-            <div class="flex flex-wrap gap-4 justify-center w-full max-w-lg mx-auto">
-                <button class="glass-button px-5 py-2 rounded-xl flex items-center gap-2 font-semibold text-sm"
-                    onclick="openPDFModal()">
-                    <i data-lucide="file-text" class="w-4 h-4"></i> Export PDF
-                </button>
-                <button class="glass-button px-5 py-2 rounded-xl flex items-center gap-2 font-semibold text-sm"
-                    onclick="openSplitModal()">
-                    <i data-lucide="calculator" class="w-4 h-4"></i> Bill Splitter
-                </button>
-                <button class="glass-button px-5 py-2 rounded-xl flex items-center gap-2 font-semibold text-sm"
-                    onclick="window.scrollTo({top: document.getElementById('analyticsSection').offsetTop - 100, behavior: 'smooth'})">
-                    <i data-lucide="pie-chart" class="w-4 h-4"></i> Analytics
-                </button>
-                <button class="glass-button px-5 py-2 rounded-xl flex items-center gap-2 font-semibold text-sm bg-gradient-to-r from-blue-500/10 to-indigo-500/10 border-blue-500/20"
-                    onclick="openDataModal()">
-                    <i data-lucide="database" class="w-4 h-4"></i> Data Utilities
-                </button>
-            </div>
-        </section>
-
-        <!-- Input Forms Container -->
-        <section class="glass-panel p-6 md:p-8 mb-12 ag-card-reveal relative overflow-hidden" data-speed="0.2">
-
-            <!-- Smart Entry Form (AI) -->
-            <div class="mb-8 p-5 rounded-2xl bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-blue-500/20 relative overflow-hidden">
-                <div class="absolute top-0 right-0 p-3 opacity-20"><i data-lucide="sparkles" class="w-12 h-12 text-blue-400"></i></div>
-                <h3 class="text-lg font-bold mb-3 flex items-center gap-2 text-blue-400">
-                    <i data-lucide="wand-2" class="w-5 h-5"></i> Smart Entry
-                </h3>
-                <div class="flex gap-3">
-                    <input type="text" id="smartEntryInput" class="glass-input flex-1" placeholder="e.g. 'Spent 250 on rickshaw today' or 'Got 500 pocket money'">
-                    <button id="btnSmartEntry" onclick="processSmartEntry()" class="px-5 py-2 rounded-xl bg-blue-500 text-white font-bold hover:bg-blue-600 transition shadow-lg shadow-blue-500/30">
-                        <i data-lucide="zap" class="w-4 h-4"></i>
-                    </button>
-                </div>
-                <p class="text-xs text-muted mt-2">AI will automatically parse the amount, category, and date.</p>
+                <i data-lucide="chevron-right" class="text-muted w-5 h-5 ml-auto"></i>
             </div>
 
-
-            <!-- Income Form -->
-            <form id="incomeForm" class="transaction-form active block">
-                <h3 class="text-xl font-bold mb-6 flex items-center gap-2"><i data-lucide="arrow-down-to-line"
-                        class="text-emerald-500"></i> Add Income</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <label class="block text-sm font-medium text-muted mb-2">Date</label>
-                        <input type="text" id="incomeDate" class="glass-input custom-date" readonly required>
+            <!-- Group 1: General Preferences -->
+            <div class="settings-group-title">General Preferences</div>
+            <div class="settings-group">
+                <!-- Theme Row -->
+                <div class="settings-row" id="row-theme">
+                    <div class="settings-row-left">
+                        <div class="settings-icon-wrap icon-bg-purple">
+                            <i data-lucide="palette"></i>
+                        </div>
+                        <div class="settings-row-left-info">
+                            <span class="settings-title">App Theme</span>
+                            <span class="settings-desc" id="currentThemeDisplay">Light Mode</span>
+                        </div>
                     </div>
-                    <div>
-                        <label class="block text-sm font-medium text-muted mb-2">Amount (₹)</label>
-                        <input type="number" id="incomeAmount" class="glass-input font-bold text-lg" min="1"
-                            placeholder="0" required>
+                    <button id="toggleAppThemeBtn"
+                        class="px-3 py-1.5 rounded-xl text-xs font-bold transition shadow-md bg-glass-bg border border-glass-border hover:bg-white/10">White</button>
+                </div>
+
+                <!-- Voice Assistant Subpage Row -->
+                <div class="settings-row clickable" onclick="window.openSubpage('#subpage-voice')">
+                    <div class="settings-row-left">
+                        <div class="settings-icon-wrap icon-bg-emerald">
+                            <i data-lucide="mic"></i>
+                        </div>
+                        <div class="settings-row-left-info">
+                            <span class="settings-title">Voice Assistant</span>
+                            <span class="settings-desc" id="mainVoiceStatus">On (English)</span>
+                        </div>
                     </div>
-                    <div>
-                        <label class="block text-sm font-medium text-muted mb-2">Category</label>
-                        <select id="incomeCategory" class="glass-input custom-select" required>
-                            <option value="💵 Pocket Money">💵 Pocket Money</option>
-                            <option value="💼 Salary">💼 Salary</option>
-                            <option value="🎁 Gift/Eidi">🎁 Gift/Eidi</option>
-                            <option value="🤝 Loan Given Back">🤝 Loan Given Back</option>
-                            <option value="💸 Cashback/Discount">💸 Cashback/Discount</option>
-                            <option value="📈 Investment Returns">📈 Investment Returns</option>
-                            <option value="👨‍💻 Freelance/Side Hustle">👨‍💻 Freelance/Side Hustle</option>
+                    <i data-lucide="chevron-right" class="text-muted w-5 h-5"></i>
+                </div>
+
+                <!-- Sounds & Haptics Subpage Row -->
+                <div class="settings-row clickable" onclick="window.openSubpage('#subpage-sounds')">
+                    <div class="settings-row-left">
+                        <div class="settings-icon-wrap icon-bg-amber">
+                            <i data-lucide="vibrate"></i>
+                        </div>
+                        <div class="settings-row-left-info">
+                            <span class="settings-title">Sounds & Haptics</span>
+                            <span class="settings-desc">Volume, tactile vibration levels</span>
+                        </div>
+                    </div>
+                    <i data-lucide="chevron-right" class="text-muted w-5 h-5"></i>
+                </div>
+
+                <!-- Behaviors & Assist Subpage Row -->
+                <div class="settings-row clickable" onclick="window.openSubpage('#subpage-behaviors')">
+                    <div class="settings-row-left">
+                        <div class="settings-icon-wrap icon-bg-indigo">
+                            <i data-lucide="sparkles"></i>
+                        </div>
+                        <div class="settings-row-left-info">
+                            <span class="settings-title">Behaviors & Assist</span>
+                            <span class="settings-desc">Anime companion, performance modes</span>
+                        </div>
+                    </div>
+                    <i data-lucide="chevron-right" class="text-muted w-5 h-5"></i>
+                </div>
+            </div>
+
+            <!-- Group 2: Financial Settings -->
+            <div class="settings-group-title">Financial Settings</div>
+            <div class="settings-group">
+                <!-- Ledger Preferences Row -->
+                <div class="settings-row clickable" onclick="window.openSubpage('#subpage-ledger')">
+                    <div class="settings-row-left">
+                        <div class="settings-icon-wrap icon-bg-cyan">
+                            <i data-lucide="coins"></i>
+                        </div>
+                        <div class="settings-row-left-info">
+                            <span class="settings-title">Ledger Preferences</span>
+                            <span class="settings-desc" id="mainLedgerStatus">₹ INR, DD/MM/YYYY</span>
+                        </div>
+                    </div>
+                    <i data-lucide="chevron-right" class="text-muted w-5 h-5"></i>
+                </div>
+
+                <!-- Subcategory Manager Row -->
+                <div class="settings-row clickable" onclick="window.openSubpage('#subpage-categories')">
+                    <div class="settings-row-left">
+                        <div class="settings-icon-wrap icon-bg-orange">
+                            <i data-lucide="tags"></i>
+                        </div>
+                        <div class="settings-row-left-info">
+                            <span class="settings-title">Subcategory Manager</span>
+                            <span class="settings-desc">Edit transaction categories</span>
+                        </div>
+                    </div>
+                    <i data-lucide="chevron-right" class="text-muted w-5 h-5"></i>
+                </div>
+            </div>
+
+            <!-- Group 3: Data & Maintenance -->
+            <div class="settings-group-title">Data & Maintenance</div>
+            <div class="settings-group">
+                <!-- Backups Row -->
+                <div class="settings-row clickable" onclick="window.openSubpage('#subpage-backups')">
+                    <div class="settings-row-left">
+                        <div class="settings-icon-wrap icon-bg-blue">
+                            <i data-lucide="database"></i>
+                        </div>
+                        <div class="settings-row-left-info">
+                            <span class="settings-title">Cloud & Local Backups</span>
+                            <span class="settings-desc">Data import/export, cloud backups</span>
+                        </div>
+                    </div>
+                    <i data-lucide="chevron-right" class="text-muted w-5 h-5"></i>
+                </div>
+
+                <!-- Danger Zone Row -->
+                <div class="settings-row clickable" onclick="window.openSubpage('#subpage-danger')">
+                    <div class="settings-row-left">
+                        <div class="settings-icon-wrap icon-bg-rose">
+                            <i data-lucide="skull"></i>
+                        </div>
+                        <div class="settings-row-left-info">
+                            <span class="settings-title text-red-400 font-bold">Danger Zone</span>
+                            <span class="settings-desc text-red-500/60">Factory resets, data wipes</span>
+                        </div>
+                    </div>
+                    <i data-lucide="chevron-right" class="text-muted w-5 h-5"></i>
+                </div>
+            </div>
+
+            <!-- Group 4: Support & Legal Grid -->
+            <div class="settings-group-title">Support & Legal</div>
+            <div class="settings-group p-4">
+                <div class="grid grid-cols-2 gap-3">
+                    <a href="howtouse.html"
+                        class="glass-button p-3 rounded-lg text-xs font-bold text-center flex items-center justify-center gap-2">
+                        <i data-lucide="help-circle" class="w-4 h-4 text-purple-500"></i> Help
+                    </a>
+                    <a href="feedback.html"
+                        class="glass-button p-3 rounded-lg text-xs font-bold text-center flex items-center justify-center gap-2">
+                        <i data-lucide="message-square" class="w-4 h-4 text-blue-500"></i> Feedback
+                    </a>
+                    <a href="privacy-policy.html"
+                        class="glass-button p-3 rounded-lg text-xs font-bold text-center flex items-center justify-center gap-2">
+                        <i data-lucide="shield" class="w-4 h-4 text-emerald-500"></i> Privacy
+                    </a>
+                    <a href="terms-conditions.html"
+                        class="glass-button p-3 rounded-lg text-xs font-bold text-center flex items-center justify-center gap-2">
+                        <i data-lucide="file-text" class="w-4 h-4 text-amber-500"></i> Terms
+                    </a>
+                </div>
+                <div class="mt-5 text-center text-[10px] text-muted font-bold tracking-widest uppercase">
+                    MoneyFlow v2.0.1 Premium
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- ========================================================================
+       SLIDE-IN SUBPAGE OVERLAYS
+       ======================================================================== -->
+
+    <!-- SUBPAGE 1: PERSONAL IDENTITY -->
+    <div class="subpage-overlay" id="subpage-identity">
+        <div class="subpage-header">
+            <button class="subpage-back-btn" onclick="window.closeSubpage('#subpage-identity')">
+                <i data-lucide="chevron-left" class="inline w-5 h-5 mr-0.5"></i>
+            </button>
+            <h2 class="subpage-title">Personal Identity</h2>
+            <button class="subpage-save-btn"
+                onclick="window.saveIdentity(); window.closeSubpage('#subpage-identity');">Save</button>
+        </div>
+        <div class="subpage-content">
+            <!-- Avatar Upload Row -->
+            <div class="settings-group flex flex-col items-center p-6 text-center">
+                <div class="identity-avatar-container cursor-pointer relative group" id="avatarUploadTrigger">
+                    <span id="avatarInitials">U</span>
+                    <img id="avatarImage" src="" alt="" class="hidden w-full h-full object-cover rounded-[2rem]" />
+                    <div
+                        class="absolute inset-0 bg-black/50 rounded-[2rem] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                        <i data-lucide="camera" class="text-white w-8 h-8"></i>
+                    </div>
+                    <input type="file" id="avatarFileInput" accept="image/*" class="hidden" />
+                </div>
+                <p class="text-xs text-muted">Tap to upload a profile picture</p>
+                <div class="flex gap-2 justify-center mt-4 w-full">
+                    <a href="profile.html"
+                        class="flex-1 px-4 py-2 rounded-xl text-xs font-bold bg-gradient-to-r from-purple-500/20 to-indigo-500/20 border border-purple-500/30 text-purple-300 hover:bg-purple-500/30 hover:text-white transition active:scale-95 flex items-center justify-center gap-1">
+                        <i data-lucide="code-2" class="w-4 h-4"></i> Creator Profile
+                    </a>
+                </div>
+            </div>
+
+            <!-- Profile Details Inputs -->
+            <div class="settings-group-title">Personal Details</div>
+            <div class="settings-group">
+                <div class="settings-row flex-col sm:flex-row gap-3 items-stretch sm:items-center">
+                    <div class="settings-row-left">
+                        <div class="settings-icon-wrap icon-bg-blue">
+                            <i data-lucide="user"></i>
+                        </div>
+                        <div class="settings-row-left-info">
+                            <span class="settings-title">Full Name</span>
+                            <span class="settings-desc">Display name on greeting card.</span>
+                        </div>
+                    </div>
+                    <input type="text" id="usernameInput" class="glass-input w-full sm:w-64" placeholder="Your name">
+                </div>
+
+                <div class="settings-row flex-col sm:flex-row gap-3 items-stretch sm:items-center">
+                    <div class="settings-row-left">
+                        <div class="settings-icon-wrap icon-bg-purple">
+                            <i data-lucide="calendar"></i>
+                        </div>
+                        <div class="settings-row-left-info">
+                            <span class="settings-title">Date of Birth</span>
+                            <span class="settings-desc">Used for birthday animations.</span>
+                        </div>
+                    </div>
+                    <input type="text" id="dobInput" class="glass-input w-full sm:w-64 custom-date" readonly>
+                </div>
+
+                <div class="settings-row flex-col sm:flex-row gap-3 items-stretch sm:items-center">
+                    <div class="settings-row-left">
+                        <div class="settings-icon-wrap icon-bg-emerald">
+                            <i data-lucide="venus-mars"></i>
+                        </div>
+                        <div class="settings-row-left-info">
+                            <span class="settings-title">Gender</span>
+                            <span class="settings-desc">For profile details.</span>
+                        </div>
+                    </div>
+                    <div class="w-full sm:w-48">
+                        <select id="genderInput" class="glass-input custom-select">
+                            <option value="">Select</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Non-binary">Non-binary</option>
                             <option value="Other">Other</option>
                         </select>
                     </div>
-                    <div>
-                        <label class="block text-sm font-medium text-muted mb-2">Notes</label>
-                        <input type="text" id="incomeNotes" class="glass-input" placeholder="Optional details...">
-                    </div>
                 </div>
-                <div class="mt-8 flex justify-end">
-                    <button type="submit"
-                        class="px-8 py-3 rounded-xl bg-emerald-500 text-white font-bold hover:bg-emerald-600 transition shadow-lg shadow-emerald-500/30">Save
-                        Income</button>
-                </div>
-            </form>
 
-            <!-- Expense Form -->
-            <form id="expenseForm" class="transaction-form hidden">
-                <h3 class="text-xl font-bold mb-6 flex items-center gap-2"><i data-lucide="arrow-up-from-line"
-                        class="text-red-500"></i> Add Expense</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <label class="block text-sm font-medium text-muted mb-2">Date</label>
-                        <input type="text" id="expenseDate" class="glass-input custom-date" readonly required>
+                <div class="settings-row flex-col sm:flex-row gap-3 items-stretch sm:items-center">
+                    <div class="settings-row-left">
+                        <div class="settings-icon-wrap icon-bg-red">
+                            <i data-lucide="heart"></i>
+                        </div>
+                        <div class="settings-row-left-info">
+                            <span class="settings-title">Blood Group</span>
+                            <span class="settings-desc">For biological reference.</span>
+                        </div>
                     </div>
-                    <div>
-                        <label class="block text-sm font-medium text-muted mb-2">Amount (₹)</label>
-                        <input type="number" id="expenseAmount" class="glass-input font-bold text-lg" min="1"
-                            placeholder="0" required>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-muted mb-2">Category</label>
-                        <select id="expenseCategory" class="glass-input custom-select" required></select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-muted mb-2">Sub Category</label>
-                        <select id="expenseSub" class="glass-input custom-select" required></select>
-                    </div>
-                    <div class="md:col-span-2">
-                        <label class="block text-sm font-medium text-muted mb-2">Notes</label>
-                        <input type="text" id="expenseNotes" class="glass-input" placeholder="Optional details...">
+                    <div class="w-full sm:w-48">
+                        <select id="bloodInput" class="glass-input custom-select">
+                            <option value="">Select</option>
+                            <option value="A+">A+</option>
+                            <option value="A-">A-</option>
+                            <option value="B+">B+</option>
+                            <option value="B-">B-</option>
+                            <option value="O+">O+</option>
+                            <option value="O-">O-</option>
+                            <option value="AB+">AB+</option>
+                            <option value="AB-">AB-</option>
+                        </select>
                     </div>
                 </div>
-                <div class="mt-8 flex justify-end">
-                    <button type="submit"
-                        class="px-8 py-3 rounded-xl bg-red-500 text-white font-bold hover:bg-red-600 transition shadow-lg shadow-red-500/30">Save
-                        Expense</button>
-                </div>
-            </form>
-        </section>
 
-        <!-- Transaction List -->
-        <section class="glass-panel p-6 md:p-8 mb-16 ag-card-reveal" data-speed="0.25">
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
-                <h3 class="text-2xl font-bold">Recent Transactions</h3>
-                <div class="flex gap-2 w-full md:w-auto">
-                    <select id="filterMonth" class="glass-input text-sm py-2 custom-select"
-                        onchange="renderList(document.getElementById('searchInput').value)">
-                        <option value="">All Time</option>
-                    </select>
-                    <input type="text" id="searchInput" class="glass-input text-sm py-2" placeholder="Search notes..."
-                        oninput="renderList(this.value)">
+                <div class="settings-row flex-col sm:flex-row gap-3 items-stretch sm:items-center">
+                    <div class="settings-row-left">
+                        <div class="settings-icon-wrap icon-bg-cyan">
+                            <i data-lucide="map-pin"></i>
+                        </div>
+                        <div class="settings-row-left-info">
+                            <span class="settings-title">Location</span>
+                            <span class="settings-desc">City, Country location tags.</span>
+                        </div>
+                    </div>
+                    <input type="text" id="locationInput" class="glass-input w-full sm:w-64"
+                        placeholder="City, Country">
                 </div>
             </div>
 
-            <div id="emptyState" class="py-12 text-center text-muted hidden">
-                <i data-lucide="file-x" class="w-12 h-12 mx-auto mb-3 opacity-50"></i>
-                <p>No transactions found.</p>
-            </div>
-
-            <ul id="listSpend" class="space-y-3">
-                <!-- Rendered by JS -->
-            </ul>
-
-            <div class="mt-6 text-center">
-                <button id="toggleTextBtn" class="text-sm font-semibold text-purple-400 hover:text-purple-300 hover:underline"
-                    onclick="toggleShowAll()">Show All</button>
-            </div>
-        </section>
-
-        <!-- Alerts for Recurring Subscriptions -->
-        <div id="recurringAlertBanner" class="hidden glass-panel p-4 mb-6 flex items-center justify-between border-cyan-500/30 bg-cyan-500/10 relative z-20">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full bg-cyan-500/20 flex items-center justify-center text-cyan-400">
-                    <i data-lucide="bell-ring"></i>
+            <!-- Greetings Options -->
+            <div class="settings-group-title">Greetings & Speech</div>
+            <div class="settings-group">
+                <div class="settings-row">
+                    <div class="settings-row-left">
+                        <div class="settings-icon-wrap icon-bg-amber">
+                            <i data-lucide="volume-1"></i>
+                        </div>
+                        <div class="settings-row-left-info">
+                            <span class="settings-title">Speak My Name</span>
+                            <span class="settings-desc">Welcomes you by name in greetings.</span>
+                        </div>
+                    </div>
+                    <button id="toggleUseNameBtn" class="bg-emerald-500 text-white">On</button>
                 </div>
-                <div>
-                    <h4 class="font-bold text-cyan-400">Subscription Alert</h4>
-                    <p class="text-sm text-muted" id="recurringAlertText">A recurring bill is due today.</p>
+
+                <div class="settings-row flex-col sm:flex-row gap-3 items-stretch sm:items-center">
+                    <div class="settings-row-left">
+                        <div class="settings-icon-wrap icon-bg-indigo">
+                            <i data-lucide="speech"></i>
+                        </div>
+                        <div class="settings-row-left-info">
+                            <span class="settings-title">Pronunciation Accent</span>
+                            <span class="settings-desc">Accent used when reading your name.</span>
+                        </div>
+                    </div>
+                    <div class="w-full sm:w-64">
+                        <select id="nameLanguageInput" class="glass-input custom-select">
+                            <option value="">Same as App Language</option>
+                            <option value="en">English Accent</option>
+                            <option value="hi">Hindi Accent</option>
+                            <option value="ur">Urdu Accent</option>
+                            <option value="mr">Marathi Accent</option>
+                            <option value="ja">Japanese Accent</option>
+                            <option value="fr">French Accent</option>
+                            <option value="es">Spanish Accent</option>
+                        </select>
+                    </div>
                 </div>
             </div>
-            <div class="flex gap-2">
-                <button id="btnLogRecurringAlert" class="px-4 py-2 rounded-xl bg-cyan-500 text-white font-bold text-xs hover:bg-cyan-600 transition shadow-lg shadow-cyan-500/20">Log Now</button>
-                <button class="text-muted hover:text-white p-1" onclick="document.getElementById('recurringAlertBanner').classList.add('hidden')"><i data-lucide="x" class="w-4 h-4"></i></button>
+
+            <!-- Bio Inputs -->
+            <div class="settings-group-title">Biography</div>
+            <div class="settings-group p-4">
+                <textarea id="bioInput" class="glass-input w-full" rows="3"
+                    placeholder="Tell us about yourself..."></textarea>
             </div>
         </div>
+    </div>
 
-        <!-- Budgeting & Repeating Subscriptions Section -->
-        <section class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16 relative z-10">
-            <!-- Category Budgets Manager -->
-            <div class="glass-panel p-6 md:p-8 flex flex-col justify-between ag-card-reveal" data-speed="0.15">
-                <div>
-                    <h3 class="text-2xl font-bold mb-2 flex items-center gap-2">
-                        <i data-lucide="target" class="text-emerald-500"></i> Category Budgets
-                    </h3>
-                    <p class="text-xs text-muted mb-6">Track your spending limits per category. Progress bars update in real-time.</p>
-                    
-                    <div id="categoryBudgetsContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-                        <!-- Loaded dynamically from JS -->
-                    </div>
-                </div>
-
-                <form id="budgetConfigForm" class="p-4 rounded-2xl bg-white/5 border border-white/5 space-y-4">
-                    <h4 class="text-sm font-bold text-slate-300 font-semibold">Set New Budget</h4>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-[10px] font-bold text-muted mb-1 uppercase tracking-wider">Category</label>
-                            <select id="budgetCategory" class="glass-input py-2 custom-select" required></select>
+    <!-- SUBPAGE 2: VOICE ASSISTANT -->
+    <div class="subpage-overlay" id="subpage-voice">
+        <div class="subpage-header">
+            <button class="subpage-back-btn" onclick="window.closeSubpage('#subpage-voice')">
+                <i data-lucide="chevron-left" class="inline w-5 h-5 mr-0.5"></i>
+            </button>
+            <h2 class="subpage-title">Voice Assistant</h2>
+            <div style="width: 40px;"></div>
+        </div>
+        <div class="subpage-content">
+            <div class="settings-group">
+                <div class="settings-row">
+                    <div class="settings-row-left">
+                        <div class="settings-icon-wrap icon-bg-emerald">
+                            <i data-lucide="mic"></i>
                         </div>
-                        <div>
-                            <label class="block text-[10px] font-bold text-muted mb-1 uppercase tracking-wider">Limit Amount (₹)</label>
-                            <input type="number" id="budgetLimit" class="glass-input py-2 font-bold" min="1" placeholder="Amount" required>
+                        <div class="settings-row-left-info">
+                            <span class="settings-title">Greeting Voice</span>
+                            <span class="settings-desc">Enable voice announcements.</span>
                         </div>
                     </div>
-                    <div class="flex justify-end">
-                        <button type="submit" class="px-4 py-2 rounded-xl bg-emerald-500 text-white font-bold text-xs hover:bg-emerald-600 transition shadow-lg shadow-emerald-500/20">Set Limit</button>
-                    </div>
-                </form>
-            </div>
-
-            <!-- Recurring Payments Manager -->
-            <div class="glass-panel p-6 md:p-8 flex flex-col justify-between ag-card-reveal" data-speed="0.2">
-                <div>
-                    <h3 class="text-2xl font-bold mb-2 flex items-center gap-2">
-                        <i data-lucide="calendar" class="text-purple-500"></i> Recurring Subscriptions
-                    </h3>
-                    <p class="text-xs text-muted mb-6">Manage recurring subscriptions. MoneyFlow alerts you on the due date.</p>
-
-                    <div id="recurringContainer" class="space-y-3 mb-6 max-h-72 overflow-y-auto pr-1">
-                        <!-- Loaded dynamically from JS -->
-                    </div>
+                    <button id="toggleVoiceBtn" class="bg-emerald-500 text-white">On</button>
                 </div>
 
-                <form id="recurringConfigForm" class="p-4 rounded-2xl bg-white/5 border border-white/5 space-y-4">
-                    <h4 class="text-sm font-bold text-slate-300 font-semibold">Add Subscription</h4>
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                        <div class="sm:col-span-2">
-                            <label class="block text-[10px] font-bold text-muted mb-1 uppercase tracking-wider">Subscription Name</label>
-                            <input type="text" id="recName" class="glass-input py-2" placeholder="e.g. Netflix Premium" required>
+                <div class="settings-row flex-col sm:flex-row gap-3 items-stretch sm:items-center">
+                    <div class="settings-row-left">
+                        <div class="settings-icon-wrap icon-bg-cyan">
+                            <i data-lucide="languages"></i>
                         </div>
-                        <div>
-                            <label class="block text-[10px] font-bold text-muted mb-1 uppercase tracking-wider">Due Day (1-31)</label>
-                            <input type="number" id="recDay" class="glass-input py-2 font-bold text-center" min="1" max="31" placeholder="15" required>
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-bold text-muted mb-1 uppercase tracking-wider">Category</label>
-                            <select id="recCategory" class="glass-input py-2 custom-select" required></select>
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-bold text-muted mb-1 uppercase tracking-wider">Sub Category</label>
-                            <select id="recSub" class="glass-input py-2 custom-select" required></select>
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-bold text-muted mb-1 uppercase tracking-wider">Amount (₹)</label>
-                            <input type="number" id="recAmount" class="glass-input py-2 font-bold" min="1" placeholder="199" required>
+                        <div class="settings-row-left-info">
+                            <span class="settings-title">Greeting Language</span>
+                            <span class="settings-desc">Select greeting voice language.</span>
                         </div>
                     </div>
-                    <div class="flex justify-end">
-                        <button type="submit" class="px-4 py-2 rounded-xl bg-purple-500 text-white font-bold text-xs hover:bg-purple-600 transition shadow-lg shadow-purple-500/20">Add Bill</button>
-                    </div>
-                </form>
-            </div>
-        </section>
-
-        <!-- Analytics / Charts -->
-        <section id="analyticsSection" class="mb-20">
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4" data-speed="0.1">
-                <h3 class="text-3xl font-extrabold">Financial Analytics</h3>
-                <button onclick="generateAIHealthReport()" class="glass-button px-5 py-2 rounded-xl flex items-center gap-2 font-semibold text-sm bg-gradient-to-r from-purple-500/20 to-pink-500/20 border-purple-500/30 text-purple-400 hover:text-purple-300">
-                    <i data-lucide="bot" class="w-4 h-4"></i> AI Health Report
-                </button>
-            </div>
-            
-            <!-- AI Health Report Result -->
-            <div id="aiHealthReportContainer" class="hidden mb-8 p-6 glass-panel border-purple-500/30 relative overflow-hidden">
-                <div class="absolute -right-4 -top-4 opacity-10"><i data-lucide="brain-circuit" class="w-32 h-32 text-purple-500"></i></div>
-                <h4 class="text-xl font-bold text-purple-400 mb-3 flex items-center gap-2"><i data-lucide="sparkles"></i> Financial Health Insights</h4>
-                <p id="aiHealthReportText" class="text-sm md:text-base leading-relaxed text-slate-300 relative z-10"></p>
-            </div>
-
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-
-                <div class="glass-panel p-6 flex flex-col items-center ag-card-reveal" data-speed="0.2">
-                    <h4 class="text-lg font-bold mb-4 w-full text-left">Income vs Expense</h4>
-                    <div class="relative w-full max-w-sm min-h-[300px] flex items-center justify-center">
-                        <!-- Chart.js logic injects into canvas -->
-                        <canvas id="incomeExpenseChart"></canvas>
+                    <div class="w-full sm:w-48">
+                        <select id="languageSelect" class="glass-input font-semibold w-full custom-select">
+                            <option value="en">English</option>
+                            <option value="hi">Hindi (हिन्दी)</option>
+                            <option value="ur">Urdu (اردو)</option>
+                            <option value="mr">Marathi (मराठी)</option>
+                            <option value="gu">Gujarati (ગુજરાતી)</option>
+                            <option value="pa">Punjabi (ਪੰਜਾਬੀ)</option>
+                            <option value="ta">Tamil (தமிழ்)</option>
+                            <option value="te">Telugu (తెలుగు)</option>
+                            <option value="kn">Kannada (ಕನ್ನಡ)</option>
+                            <option value="bn">Bengali (বাংলা)</option>
+                            <option value="ml">Malayalam (മലയാളം)</option>
+                            <option value="ja">Japanese (日本語)</option>
+                            <option value="es">Spanish (Español)</option>
+                            <option value="fr">French (Français)</option>
+                            <option value="de">German (Deutsch)</option>
+                        </select>
                     </div>
                 </div>
 
-                <div class="glass-panel p-6 flex flex-col items-center ag-card-reveal" data-speed="0.25">
-                    <h4 class="text-lg font-bold mb-4 w-full text-left">Expense Breakdown</h4>
-                    <div class="relative w-full max-w-sm min-h-[300px] flex items-center justify-center">
-                        <canvas id="categoryChart"></canvas>
+                <div class="settings-row flex-col sm:flex-row gap-3 items-stretch sm:items-center">
+                    <div class="settings-row-left">
+                        <div class="settings-icon-wrap icon-bg-blue">
+                            <i data-lucide="speech"></i>
+                        </div>
+                        <div class="settings-row-left-info">
+                            <span class="settings-title">Synthesis Voice Model</span>
+                            <span class="settings-desc">Choose TTS speaker accent.</span>
+                        </div>
                     </div>
-                </div>
-
-                <div class="glass-panel p-6 lg:col-span-2 ag-card-reveal" data-speed="0.3">
-                    <h4 class="text-lg font-bold mb-4">Daily Activity (Current Month)</h4>
-                    <div class="relative w-full h-72">
-                        <canvas id="dailyActivityChart"></canvas>
-                    </div>
-                </div>
-
-                <div class="glass-panel p-6 flex flex-col items-center ag-card-reveal" data-speed="0.35">
-                    <h4 class="text-lg font-bold mb-4 w-full text-left">Spending Spread</h4>
-                    <div class="relative w-full max-w-sm aspect-square flex items-center justify-center">
-                        <canvas id="radarChart"></canvas>
-                    </div>
-                </div>
-
-                <div class="glass-panel p-6 flex flex-col items-center ag-card-reveal" data-speed="0.4">
-                    <h4 class="text-lg font-bold mb-4 w-full text-left">Peak Spending Days</h4>
-                    <div class="relative w-full max-w-sm aspect-square flex items-center justify-center">
-                        <canvas id="weekdayActivityChart"></canvas>
-                    </div>
-                </div>
-
-                <div class="glass-panel p-6 lg:col-span-2 flex flex-col items-center ag-card-reveal" data-speed="0.45">
-                    <h4 class="text-lg font-bold mb-4 w-full text-left">6-Month Trend</h4>
-                    <div class="relative w-full h-72">
-                        <canvas id="trendChart"></canvas>
-                    </div>
-                </div>
-
-                <div class="glass-panel p-6 lg:col-span-2 flex flex-col items-center ag-card-reveal" data-speed="0.5">
-                    <h4 class="text-lg font-bold mb-4 w-full text-left">Monthly Savings Trend</h4>
-                    <div class="relative w-full h-72">
-                        <canvas id="savingsTrendChart"></canvas>
+                    <div class="w-full sm:w-64">
+                        <select id="voiceSelect" class="glass-input font-semibold w-full custom-select"></select>
                     </div>
                 </div>
             </div>
-        </section>
+        </div>
+    </div>
 
-    </main>
+    <!-- SUBPAGE 3: SOUNDS & HAPTICS -->
+    <div class="subpage-overlay" id="subpage-sounds">
+        <div class="subpage-header">
+            <button class="subpage-back-btn" onclick="window.closeSubpage('#subpage-sounds')">
+                <i data-lucide="chevron-left" class="inline w-5 h-5 mr-0.5"></i>
+            </button>
+            <h2 class="subpage-title">Sounds & Haptics</h2>
+            <div style="width: 40px;"></div>
+        </div>
+        <div class="subpage-content">
+            <div class="settings-group">
+                <div class="settings-row flex-col items-stretch gap-4">
+                    <div class="flex justify-between items-center">
+                        <div class="settings-row-left">
+                            <div class="settings-icon-wrap icon-bg-amber">
+                                <i data-lucide="vibrate"></i>
+                            </div>
+                            <div class="settings-row-left-info">
+                                <span class="settings-title">Vibration Haptics</span>
+                                <span class="settings-desc">Physical feedback intensity.</span>
+                            </div>
+                        </div>
+                        <span id="hapticBadge" class="intensity-badge">50%</span>
+                    </div>
+                    <input type="range" id="hapticSlider" class="premium-slider" min="0" max="100" value="50">
+                </div>
 
-    <!-- Quick Add Shortcut -->
-    <div class="fixed bottom-24 right-6 flex flex-col gap-4 z-50">
-        <button
-            onclick="switchType('expense'); window.scrollTo({top:0, behavior:'smooth'}); setTimeout(()=>document.getElementById('expenseAmount').focus(), 300);"
-            class="fab-quick-add fab-expense"
-            title="Quick Expense">
-            <i data-lucide="minus" class="w-7 h-7"></i>
-        </button>
+                <div class="settings-row flex-col items-stretch gap-4">
+                    <div class="flex justify-between items-center">
+                        <div class="settings-row-left">
+                            <div class="settings-icon-wrap icon-bg-rose">
+                                <i data-lucide="volume-2"></i>
+                            </div>
+                            <div class="settings-row-left-info">
+                                <span class="settings-title">UI Sounds</span>
+                                <span class="settings-desc">Interface volume level.</span>
+                            </div>
+                        </div>
+                        <span id="soundBadge" class="intensity-badge">50%</span>
+                    </div>
+                    <input type="range" id="soundSlider" class="premium-slider" min="0" max="100" value="50">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SUBPAGE 4: BEHAVIORS & ASSIST -->
+    <div class="subpage-overlay" id="subpage-behaviors">
+        <div class="subpage-header">
+            <button class="subpage-back-btn" onclick="window.closeSubpage('#subpage-behaviors')">
+                <i data-lucide="chevron-left" class="inline w-5 h-5 mr-0.5"></i>
+            </button>
+            <h2 class="subpage-title">Behaviors & Assist</h2>
+            <div style="width: 40px;"></div>
+        </div>
+        <div class="subpage-content">
+            <div class="settings-group">
+                <div class="settings-row">
+                    <div class="settings-row-left">
+                        <div class="settings-icon-wrap icon-bg-indigo">
+                            <i data-lucide="sparkles"></i>
+                        </div>
+                        <div class="settings-row-left-info">
+                            <span class="settings-title">Anime Assistant</span>
+                            <span class="settings-desc">Display animated companion.</span>
+                        </div>
+                    </div>
+                    <button id="toggleAnimeAssistantBtn" class="bg-blue-500 text-white">On</button>
+                </div>
+
+                <div class="settings-row">
+                    <div class="settings-row-left">
+                        <div class="settings-icon-wrap icon-bg-orange">
+                            <i data-lucide="zap-off"></i>
+                        </div>
+                        <div class="settings-row-left-info">
+                            <span class="settings-title">Efficiency Mode</span>
+                            <span class="settings-desc">Optimize animations & graphics.</span>
+                        </div>
+                    </div>
+                    <button id="toggleEfficiencyBtn" class="bg-glass-bg border border-glass-border">Off</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SUBPAGE 5: LEDGER PREFERENCES -->
+    <div class="subpage-overlay" id="subpage-ledger">
+        <div class="subpage-header">
+            <button class="subpage-back-btn" onclick="window.closeSubpage('#subpage-ledger')">
+                <i data-lucide="chevron-left" class="inline w-5 h-5 mr-0.5"></i>
+            </button>
+            <h2 class="subpage-title">Ledger Preferences</h2>
+            <div style="width: 40px;"></div>
+        </div>
+        <div class="subpage-content">
+            <div class="settings-group">
+                <div class="settings-row flex-col sm:flex-row gap-3 items-stretch sm:items-center relative z-50">
+                    <div class="settings-row-left">
+                        <div class="settings-icon-wrap icon-bg-emerald">
+                            <i data-lucide="coins"></i>
+                        </div>
+                        <div class="settings-row-left-info">
+                            <span class="settings-title">Base Currency</span>
+                            <span class="settings-desc">Primary ledger transaction format.</span>
+                        </div>
+                    </div>
+                    <div class="w-full sm:w-64">
+                        <div class="custom-dropdown" id="currencyDropdown">
+                            <div class="custom-toggle" id="currencyToggleBtn">
+                                <span id="selectedCurrencyDisplay">₹ INR (Indian Rupee)</span>
+                                <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                            </div>
+                            <div class="custom-menu">
+                                <div class="custom-search-container">
+                                    <input type="text" id="currencySearch" class="custom-search-input"
+                                        placeholder="Search currency (e.g. USD)...">
+                                </div>
+                                <div class="custom-list" id="currencyList">
+                                    <!-- Populated by JS -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-row flex-col sm:flex-row gap-3 items-stretch sm:items-center">
+                    <div class="settings-row-left">
+                        <div class="settings-icon-wrap icon-bg-blue">
+                            <i data-lucide="calendar-range"></i>
+                        </div>
+                        <div class="settings-row-left-info">
+                            <span class="settings-title">Date Format</span>
+                            <span class="settings-desc">Log and receipt dates representation.</span>
+                        </div>
+                    </div>
+                    <div class="w-full sm:w-48">
+                        <select id="dateFormatInput" class="glass-input custom-select">
+                            <option value="DD/MM/YYYY">DD/MM/YYYY</option>
+                            <option value="MM/DD/YYYY">MM/DD/YYYY</option>
+                            <option value="YYYY-MM-DD">YYYY-MM-DD</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="settings-row">
+                    <div class="settings-row-left">
+                        <div class="settings-icon-wrap icon-bg-cyan">
+                            <i data-lucide="eye-off"></i>
+                        </div>
+                        <div class="settings-row-left-info">
+                            <span class="settings-title">Privacy Mode</span>
+                            <span class="settings-desc">Blur ledger balances by default.</span>
+                        </div>
+                    </div>
+                    <button id="togglePrivacyBtn" class="bg-glass-bg border border-glass-border">Off</button>
+                </div>
+
+                <div class="settings-row">
+                    <div class="settings-row-left">
+                        <div class="settings-icon-wrap icon-bg-amber">
+                            <i data-lucide="alert-triangle"></i>
+                        </div>
+                        <div class="settings-row-left-info">
+                            <span class="settings-title">Budget Alerts</span>
+                            <span class="settings-desc">Trigger flags when nearing limit caps.</span>
+                        </div>
+                    </div>
+                    <button id="toggleBudgetBtn" class="bg-amber-500 text-white">On</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SUBPAGE 6: SUBCATEGORY MANAGER -->
+    <div class="subpage-overlay" id="subpage-categories">
+        <div class="subpage-header">
+            <button class="subpage-back-btn" onclick="window.closeSubpage('#subpage-categories')">
+                <i data-lucide="chevron-left" class="inline w-5 h-5 mr-0.5"></i>
+            </button>
+            <h2 class="subpage-title">Subcategories</h2>
+            <div style="width: 40px;"></div>
+        </div>
+        <div class="subpage-content">
+            <div class="settings-group p-5">
+                <p class="text-xs text-muted mb-4">Manage specific tracking tags dynamically synced into Spendly and
+                    PocketCal dropdown fields.</p>
+
+                <div
+                    class="relative flex bg-black/40 backdrop-blur-2xl p-1.5 rounded-[2rem] border border-white/10 shadow-[inset_0_2px_10px_rgba(0,0,0,0.5),0_10px_30px_rgba(0,0,0,0.2)] w-full max-w-sm mx-auto z-20 overflow-hidden mb-6">
+                    <!-- Glowing Underline Sliding Pill -->
+                    <div id="catTypeSwitcherPill"
+                        class="absolute top-1.5 bottom-1.5 left-1.5 w-[calc(50%-6px)] bg-white/10 rounded-[1.75rem] border border-white/20 shadow-[0_0_15px_rgba(239,68,68,0.3)] transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] overflow-hidden">
+                        <div id="catTypeSwitcherNeon"
+                            class="absolute bottom-0 left-1/2 -translate-x-1/2 w-[60%] h-[3px] rounded-t-full bg-gradient-to-r from-rose-400 to-red-500 shadow-[0_0_12px_rgba(239,68,68,1)] transition-colors duration-500">
+                        </div>
+                        <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-white/5 to-transparent">
+                        </div>
+                    </div>
+                    <button id="catTypeExpense"
+                        class="relative flex-1 py-3 text-xs sm:text-sm font-black tracking-widest uppercase rounded-[1.75rem] text-white transition-colors duration-300 z-10 active:scale-95">Expense</button>
+                    <button id="catTypeIncome"
+                        class="relative flex-1 py-3 text-xs sm:text-sm font-black tracking-widest uppercase rounded-[1.75rem] text-muted hover:text-white transition-colors duration-300 z-10 active:scale-95">Income</button>
+                </div>
+
+                <div id="mainCategorySelectContainer" class="mb-4 relative z-50">
+                    <label class="block text-xs font-bold text-muted mb-1">Parent Category</label>
+                    <select id="mainCategorySelect"
+                        class="glass-input !py-3 !px-4 text-sm font-bold text-amber-500 shadow-sm custom-select"></select>
+                </div>
+
+                <div class="flex gap-3 mb-5 relative z-10">
+                    <input type="text" id="newCategoryInput" class="glass-input flex-1 !py-3 shadow-sm"
+                        placeholder="e.g. 🛵 Travel - Rapido">
+                    <button id="addCategoryBtn"
+                        class="bg-gradient-to-r from-amber-500 to-orange-400 text-white px-5 py-3 rounded-xl text-sm font-bold shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all flex items-center justify-center">
+                        <i data-lucide="plus" class="w-5 h-5"></i>
+                    </button>
+                </div>
+
+                <div id="customCategoryList" class="space-y-2 max-h-[200px] overflow-y-auto pr-2 relative z-10">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SUBPAGE 7: CLOUD & LOCAL BACKUPS -->
+    <div class="subpage-overlay" id="subpage-backups">
+        <div class="subpage-header">
+            <button class="subpage-back-btn" onclick="window.closeSubpage('#subpage-backups')">
+                <i data-lucide="chevron-left" class="inline w-5 h-5 mr-0.5"></i>
+            </button>
+            <h2 class="subpage-title">Data Backups</h2>
+            <div style="width: 40px;"></div>
+        </div>
+        <div class="subpage-content">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                <div class="settings-group p-5 text-center flex flex-col justify-between items-center h-48">
+                    <div class="settings-icon-wrap icon-bg-emerald w-10 h-10 mb-2">
+                        <i data-lucide="download-cloud"></i>
+                    </div>
+                    <h3 class="font-bold text-sm">Export Data</h3>
+                    <p class="text-xs text-muted leading-tight">Backup ledger databases locally.</p>
+                    <div class="flex gap-2 w-full mt-2">
+                        <button onclick="window.exportDataJSON()"
+                            class="flex-1 glass-button py-2 rounded-lg font-bold text-emerald-500 text-xs">.JSON</button>
+                        <button onclick="window.exportDataCSV()"
+                            class="flex-1 glass-button py-2 rounded-lg font-bold text-emerald-500 text-xs">.CSV</button>
+                    </div>
+                </div>
+
+                <div class="settings-group p-5 text-center flex flex-col justify-between items-center h-48">
+                    <div class="settings-icon-wrap icon-bg-blue w-10 h-10 mb-2">
+                        <i data-lucide="upload-cloud"></i>
+                    </div>
+                    <h3 class="font-bold text-sm">Import Data</h3>
+                    <p class="text-xs text-muted leading-tight">Import ledger data and override local storage.</p>
+                    <input type="file" id="importFile" accept=".json" class="hidden"
+                        onchange="window.importDataJSON(this)">
+                    <button onclick="document.getElementById('importFile').click()"
+                        class="w-full glass-button py-2 rounded-lg font-bold text-blue-500 text-xs mt-2">Choose
+                        File</button>
+                </div>
+            </div>
+
+            <div class="settings-group">
+                <div class="settings-row">
+                    <div class="settings-row-left">
+                        <div class="settings-icon-wrap icon-bg-purple">
+                            <i data-lucide="refresh-cw"></i>
+                        </div>
+                        <div class="settings-row-left-info">
+                            <span class="settings-title">Cloud Auto-Backup</span>
+                            <span class="settings-desc" id="lastBackupText">Last: Never</span>
+                        </div>
+                    </div>
+                    <button onclick="window.runSimulatedBackup()"
+                        class="glass-button p-2 rounded-lg text-purple-500 hover:bg-purple-500/10 active:scale-90 transition-all">
+                        <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SUBPAGE 8: DANGER ZONE -->
+    <div class="subpage-overlay" id="subpage-danger">
+        <div class="subpage-header">
+            <button class="subpage-back-btn" onclick="window.closeSubpage('#subpage-danger')">
+                <i data-lucide="chevron-left" class="inline w-5 h-5 mr-0.5"></i>
+            </button>
+            <h2 class="subpage-title">Danger Zone</h2>
+            <div style="width: 40px;"></div>
+        </div>
+        <div class="subpage-content">
+            <div class="settings-group border-red-500/20 bg-red-500/5">
+                <div class="settings-row">
+                    <div class="settings-row-left">
+                        <div class="settings-icon-wrap icon-bg-rose">
+                            <i data-lucide="skull"></i>
+                        </div>
+                        <div class="settings-row-left-info">
+                            <span class="settings-title text-red-500 font-bold">Nuclear Reset</span>
+                            <span class="settings-desc">Wipes all databases and settings.</span>
+                        </div>
+                    </div>
+                    <button
+                        class="px-4 py-2 rounded-xl text-xs font-bold bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white border border-red-500/30 transition active:scale-95"
+                        onclick="window.wipeData()">Reset</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Bottom Navigation Dock -->
@@ -468,7 +812,7 @@
                 <i data-lucide="home"></i>
                 <span>Home</span>
             </a>
-            <a href="spendly.html" class="dock-item active">
+            <a href="spendly.html" class="dock-item">
                 <i data-lucide="receipt"></i>
                 <span>Spendly</span>
             </a>
@@ -478,283 +822,21 @@
             </a>
         </nav>
         <nav class="bottom-dock-split">
-            <a href="settings.html" class="dock-item">
+            <a href="settings.html" class="dock-item active">
                 <i data-lucide="settings"></i>
                 <span>Settings</span>
             </a>
         </nav>
     </div>
 
-    <!-- PDF Modal -->
-    <div class="modal-overlay" id="pdfModal">
-        <div class="modal-content-glass max-w-md w-full relative p-6 md:p-8 border border-white/10 shadow-[0_0_40px_rgba(16,185,129,0.15)] rounded-[2rem] max-h-[90vh] overflow-y-auto">
-            <div class="absolute inset-0 bg-gradient-to-br from-emerald-500/10 to-transparent pointer-events-none"></div>
-            <button type="button" class="absolute top-5 right-5 text-muted hover:text-red-500 transition-colors z-50 bg-white/5 border border-white/10 p-2.5 rounded-full backdrop-blur-md cursor-pointer hover:bg-white/10 active:scale-90" onclick="closeModal('#pdfModal')">
-                <i data-lucide="x" class="w-5 h-5"></i>
-            </button>
-            <h2 class="text-2xl font-extrabold mb-8 text-center text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400 flex justify-center items-center gap-2">
-                <i data-lucide="file-text" class="w-7 h-7 text-emerald-400"></i> Export Engine
-            </h2>
-
-            <div class="grid grid-cols-2 gap-3 mb-6 relative z-10">
-                <label class="relative block cursor-pointer group">
-                    <input type="radio" name="pdfRange" value="today" class="peer sr-only" checked>
-                    <div class="h-full p-4 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md transition-all duration-300 peer-checked:bg-emerald-500/15 peer-checked:border-emerald-400 peer-checked:shadow-[0_0_15px_rgba(16,185,129,0.2)] hover:bg-white/10 flex flex-col items-center text-center gap-1">
-                        <i data-lucide="sun" class="w-6 h-6 text-emerald-400 mb-1 group-hover:scale-110 transition-transform"></i>
-                        <strong class="font-extrabold text-sm tracking-wide text-white">Today</strong>
-                        <span class="text-[10px] text-muted leading-tight">Daily</span>
-                    </div>
-                </label>
-                
-                <label class="relative block cursor-pointer group">
-                    <input type="radio" name="pdfRange" value="week" class="peer sr-only">
-                    <div class="h-full p-4 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md transition-all duration-300 peer-checked:bg-emerald-500/15 peer-checked:border-emerald-400 peer-checked:shadow-[0_0_15px_rgba(16,185,129,0.2)] hover:bg-white/10 flex flex-col items-center text-center gap-1">
-                        <i data-lucide="calendar-days" class="w-6 h-6 text-emerald-400 mb-1 group-hover:scale-110 transition-transform"></i>
-                        <strong class="font-extrabold text-sm tracking-wide text-white">This Week</strong>
-                        <span class="text-[10px] text-muted leading-tight">Last 7 Days</span>
-                    </div>
-                </label>
-
-                <label class="relative block cursor-pointer group">
-                    <input type="radio" name="pdfRange" value="month" class="peer sr-only">
-                    <div class="h-full p-4 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md transition-all duration-300 peer-checked:bg-emerald-500/15 peer-checked:border-emerald-400 peer-checked:shadow-[0_0_15px_rgba(16,185,129,0.2)] hover:bg-white/10 flex flex-col items-center text-center gap-1">
-                        <i data-lucide="bar-chart-2" class="w-6 h-6 text-emerald-400 mb-1 group-hover:scale-110 transition-transform"></i>
-                        <strong class="font-extrabold text-sm tracking-wide text-white">This Month</strong>
-                        <span class="text-[10px] text-muted leading-tight">30 Days</span>
-                    </div>
-                </label>
-
-                <label class="relative block cursor-pointer group">
-                    <input type="radio" name="pdfRange" value="year" class="peer sr-only">
-                    <div class="h-full p-4 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md transition-all duration-300 peer-checked:bg-emerald-500/15 peer-checked:border-emerald-400 peer-checked:shadow-[0_0_15px_rgba(16,185,129,0.2)] hover:bg-white/10 flex flex-col items-center text-center gap-1">
-                        <i data-lucide="trending-up" class="w-6 h-6 text-emerald-400 mb-1 group-hover:scale-110 transition-transform"></i>
-                        <strong class="font-extrabold text-sm tracking-wide text-white">This Year</strong>
-                        <span class="text-[10px] text-muted leading-tight">YTD</span>
-                    </div>
-                </label>
-
-                <label class="relative block cursor-pointer group col-span-2">
-                    <input type="radio" name="pdfRange" value="custom" class="peer sr-only">
-                    <div class="h-full p-4 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md transition-all duration-300 peer-checked:bg-emerald-500/15 peer-checked:border-emerald-400 peer-checked:shadow-[0_0_15px_rgba(16,185,129,0.2)] hover:bg-white/10 flex flex-row items-center justify-center gap-3">
-                        <i data-lucide="sliders-horizontal" class="w-5 h-5 text-emerald-400 group-hover:scale-110 transition-transform"></i>
-                        <strong class="font-extrabold text-sm tracking-wide text-white">Custom Range</strong>
-                    </div>
-                </label>
-            </div>
-
-            <div id="customDateRange" class="space-y-4 mb-8 p-5 bg-black/30 backdrop-blur-md rounded-2xl border border-white/5 relative z-10"
-                style="display: none;">
-                <div>
-                    <label class="block text-xs font-bold text-muted mb-2 uppercase tracking-wider">Start Date</label>
-                    <input type="text" class="glass-input font-bold py-3 text-center custom-date" id="pdfStartDate" readonly>
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-muted mb-2 uppercase tracking-wider">End Date</label>
-                    <input type="text" class="glass-input font-bold py-3 text-center custom-date" id="pdfEndDate" readonly>
-                </div>
-            </div>
-
-            <button
-                class="w-full h-14 bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-white rounded-2xl font-extrabold text-lg shadow-[0_0_20px_rgba(16,185,129,0.3)] transition-transform active:scale-95 flex justify-center items-center gap-2 relative z-10"
-                onclick="generatePDF()">
-                <i data-lucide="download" class="w-6 h-6"></i> Download Passbook
-            </button>
-        </div>
-    </div>
-
-    <!-- Anomaly Modal -->
-    <div class="modal-overlay" id="anomalyModal">
-        <div class="modal-content-glass max-w-sm w-full relative p-6 md:p-8 border border-white/10 shadow-[0_0_40px_rgba(249,115,22,0.15)] rounded-[2rem]">
-            <div class="absolute inset-0 bg-gradient-to-br from-orange-500/10 to-transparent pointer-events-none"></div>
-            <h2 class="text-2xl font-extrabold mb-4 flex items-center gap-2 text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-amber-400 relative z-10">
-                <i data-lucide="alert-triangle" class="text-orange-400 w-6 h-6"></i> Possible Duplicate
-            </h2>
-            <p class="text-sm text-slate-300 mb-6 relative z-10" id="anomalyMsg">We noticed a similar transaction recently. Are you sure you want to add this?</p>
-            <div class="flex justify-end gap-4 relative z-10">
-                <button type="button" class="px-5 py-2.5 rounded-xl font-semibold text-muted hover:text-white transition-colors" onclick="cancelAnomaly()">Cancel</button>
-                <button type="button" class="px-6 py-2.5 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 text-white rounded-xl font-bold shadow-lg shadow-orange-500/30 transition-transform active:scale-95" onclick="confirmAnomaly()">Save Anyway</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Edit Modal -->
-    <div class="modal-overlay" id="editModal">
-        <div class="modal-content-glass max-w-sm w-full relative p-6 md:p-8 border border-white/10 shadow-[0_0_40px_rgba(59,130,246,0.15)] rounded-[2rem]">
-            <div class="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-transparent pointer-events-none"></div>
-            <button type="button" class="absolute top-5 right-5 text-muted hover:text-red-500 transition-colors z-50 bg-white/5 border border-white/10 p-2.5 rounded-full backdrop-blur-md cursor-pointer hover:bg-white/10 active:scale-90" onclick="closeModal('#editModal')">
-                <i data-lucide="x" class="w-5 h-5"></i>
-            </button>
-            <h2 class="text-2xl font-extrabold mb-6 flex items-center gap-2 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400 relative z-10 mt-2">
-                <i data-lucide="edit-3" class="text-blue-400 w-6 h-6"></i> Modify Record
-            </h2>
-            <form id="editForm" class="relative z-10">
-                <input type="hidden" id="editId">
-                <input type="hidden" id="editType">
-                <div class="space-y-5">
-                    <div>
-                        <label class="block text-xs font-bold text-muted mb-1 uppercase tracking-wider">Date</label>
-                        <input type="text" id="editDate" class="glass-input py-3 custom-date" readonly required>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-muted mb-1 uppercase tracking-wider">Amount</label>
-                        <input type="number" id="editAmount" class="glass-input font-black text-2xl py-4 text-blue-400 placeholder-blue-500/20" required>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-muted mb-1 uppercase tracking-wider">Category</label>
-                        <select id="editCategory" class="glass-input py-3 font-semibold custom-select" required></select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-muted mb-1 uppercase tracking-wider">Sub Category</label>
-                        <select id="editSub" class="glass-input py-3 font-semibold custom-select"></select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-muted mb-1 uppercase tracking-wider">Notes</label>
-                        <input type="text" id="editNotes" class="glass-input py-3">
-                    </div>
-                </div>
-                <div class="flex justify-between items-center mt-8 gap-4">
-                    <button type="button"
-                        class="w-14 h-14 rounded-2xl bg-red-500/10 text-red-500 border border-red-500/30 flex items-center justify-center hover:bg-red-500 hover:text-white transition-all shadow-lg active:scale-90"
-                        onclick="deleteTransaction()" title="Delete">
-                        <i data-lucide="trash-2"></i>
-                    </button>
-                    <button type="submit"
-                        class="flex-1 h-14 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-400 hover:to-cyan-400 text-white rounded-2xl shadow-[0_0_20px_rgba(59,130,246,0.3)] font-extrabold text-lg transition-transform active:scale-95 flex justify-center items-center gap-2">
-                        <i data-lucide="save" class="w-5 h-5"></i> Update
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Bill Splitter Modal -->
-    <div class="modal-overlay" id="splitModal">
-        <div class="modal-content-glass max-w-sm w-full relative p-6 md:p-8 border border-white/10 shadow-[0_0_40px_rgba(6,182,212,0.15)] rounded-[2rem]">
-            <div class="absolute inset-0 bg-gradient-to-br from-cyan-500/10 to-transparent pointer-events-none"></div>
-            <button type="button" class="absolute top-5 right-5 text-muted hover:text-red-500 transition-colors z-50 bg-white/5 border border-white/10 p-2.5 rounded-full backdrop-blur-md cursor-pointer hover:bg-white/10 active:scale-90" onclick="closeModal('#splitModal')">
-                <i data-lucide="x" class="w-5 h-5"></i>
-            </button>
-            <h2 class="text-2xl font-extrabold mb-6 flex items-center gap-2 text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-teal-400 relative z-10 mt-2">
-                <i data-lucide="calculator" class="text-cyan-400 w-6 h-6"></i> Group Bill Splitter
-            </h2>
-            <form id="splitForm" class="relative z-10 space-y-4">
-                <div>
-                    <label class="block text-xs font-bold text-muted mb-1 uppercase tracking-wider">Total Bill Amount (₹)</label>
-                    <input type="number" id="splitAmount" class="glass-input font-black text-2xl py-3 text-cyan-400 placeholder-cyan-500/20" min="1" placeholder="0" oninput="calculateSplit()" required>
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-muted mb-1 uppercase tracking-wider">Split Between (No. of People)</label>
-                    <input type="number" id="splitMembers" class="glass-input font-bold py-2" min="1" value="2" oninput="calculateSplit()" required>
-                </div>
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-bold text-muted mb-1 uppercase tracking-wider">Category</label>
-                        <select id="splitCategory" class="glass-input py-2 custom-select" required></select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-muted mb-1 uppercase tracking-wider">Sub Category</label>
-                        <select id="splitSub" class="glass-input py-2 custom-select" required></select>
-                    </div>
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-muted mb-1 uppercase tracking-wider">Description / Notes</label>
-                    <input type="text" id="splitDescription" class="glass-input py-2" placeholder="e.g. Dinner with gang">
-                </div>
-                <div class="p-3 bg-white/5 rounded-xl text-center text-sm font-medium" id="splitResultText">
-                    Each person owes: <strong class="text-cyan-400 text-lg">₹0.00</strong>
-                </div>
-                <button type="submit" class="w-full h-12 bg-gradient-to-r from-cyan-500 to-teal-500 hover:from-cyan-400 hover:to-teal-300 text-white rounded-xl shadow-lg shadow-cyan-500/20 font-extrabold transition active:scale-95 flex justify-center items-center gap-2">
-                    <i data-lucide="plus-circle" class="w-5 h-5"></i> Log My Share
-                </button>
-            </form>
-        </div>
-    </div>
-
-    <!-- Data Utilities Modal -->
-    <div class="modal-overlay" id="dataModal">
-        <div class="modal-content-glass max-w-sm w-full relative p-6 md:p-8 border border-white/10 shadow-[0_0_40px_rgba(59,130,246,0.15)] rounded-[2rem]">
-            <div class="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-transparent pointer-events-none"></div>
-            <button type="button" class="absolute top-5 right-5 text-muted hover:text-red-500 transition-colors z-50 bg-white/5 border border-white/10 p-2.5 rounded-full backdrop-blur-md cursor-pointer hover:bg-white/10 active:scale-90" onclick="closeModal('#dataModal')">
-                <i data-lucide="x" class="w-5 h-5"></i>
-            </button>
-            <h2 class="text-2xl font-extrabold mb-6 flex items-center gap-2 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400 relative z-10 mt-2">
-                <i data-lucide="database" class="text-blue-400 w-6 h-6"></i> Data Utilities
-            </h2>
-            <div class="space-y-4 relative z-10">
-                <button onclick="backupDataJSON()" class="w-full py-3.5 bg-gradient-to-r from-emerald-500/20 to-teal-500/20 border border-emerald-500/30 text-emerald-400 rounded-xl font-bold flex justify-center items-center gap-2 hover:bg-emerald-500/30 transition shadow-lg active:scale-95">
-                    <i data-lucide="download" class="w-5 h-5"></i> Backup Local Data (JSON)
-                </button>
-                <div class="relative w-full">
-                    <input type="file" id="restoreFile" class="hidden" accept=".json" onchange="restoreDataJSON(event)">
-                    <button onclick="document.getElementById('restoreFile').click()" class="w-full py-3.5 bg-gradient-to-r from-orange-500/20 to-amber-500/20 border border-orange-500/30 text-orange-400 rounded-xl font-bold flex justify-center items-center gap-2 hover:bg-orange-500/30 transition shadow-lg active:scale-95">
-                        <i data-lucide="upload" class="w-5 h-5"></i> Restore Local Data (JSON)
-                    </button>
-                </div>
-                <button onclick="exportToCSV()" class="w-full py-3.5 bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-500/30 text-purple-400 rounded-xl font-bold flex justify-center items-center gap-2 hover:bg-purple-500/30 transition shadow-lg active:scale-95">
-                    <i data-lucide="file-spreadsheet" class="w-5 h-5"></i> Export Ledger to CSV
-                </button>
-        </div>
-    </div>
-
-    <!-- AI Chat Advisor Sidebar -->
-    <div class="ai-chat-sidebar glass-panel" id="aiChatSidebar">
-        <div class="absolute inset-0 bg-gradient-to-br from-cyan-500/10 to-transparent pointer-events-none"></div>
-        <div class="sidebar-header flex justify-between items-center p-5 border-b border-white/10 relative z-10">
-            <div class="flex items-center gap-2">
-                <div class="w-8 h-8 rounded-full bg-cyan-500/20 border border-cyan-500/50 flex items-center justify-center relative">
-                    <i data-lucide="bot" class="w-4 h-4 text-cyan-400"></i>
-                    <div class="absolute inset-0 rounded-full animate-ping bg-cyan-400/20"></div>
-                </div>
-                <div>
-                    <h3 class="font-extrabold text-sm text-slate-200">M-Bot AI Advisor</h3>
-                    <p class="text-[9px] text-emerald-400 font-extrabold uppercase tracking-widest">Active Advisor</p>
-                </div>
-            </div>
-            <button class="text-muted hover:text-red-400 p-2 rounded-full hover:bg-white/5 transition animate-pulse" onclick="toggleAIChat()">
-                <i data-lucide="x" class="w-4 h-4"></i>
-            </button>
-        </div>
-        
-        <!-- Chat history -->
-        <div class="chat-history p-5 space-y-4 overflow-y-auto" id="aiChatHistory">
-            <div class="chat-bubble bot flex gap-3">
-                <div class="w-6 h-6 rounded-full bg-cyan-500/20 flex items-center justify-center flex-shrink-0 text-cyan-400 text-xs"><i data-lucide="bot" class="w-3.5 h-3.5"></i></div>
-                <div class="bubble-content shadow-md border border-white/5 bg-white/5 p-3 rounded-2xl text-xs text-slate-200 leading-relaxed">
-                    Hello! I'm your M-Bot financial advisor. I have analyzed your transaction history. 📊
-                    <br><br>
-                    You can ask me questions like:
-                    <ul class="list-disc pl-4 mt-2 space-y-1 text-muted">
-                        <li>"How much did I spend this month?"</li>
-                        <li>"What is my budget status?"</li>
-                        <li>"Suggest monthly budgets for me"</li>
-                        <li>"Predict my spending for next month"</li>
-                        <li>"Add expense 500 on Food"</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-
-        <!-- Chat Input Form -->
-        <form id="aiChatForm" class="p-4 border-t border-white/10 flex gap-2 relative z-10 bg-black/20">
-            <input type="text" id="aiChatInput" class="glass-input text-xs py-2.5 flex-1" placeholder="Ask M-Bot something...">
-            <button type="submit" class="p-2.5 rounded-xl bg-cyan-500 text-white font-bold hover:bg-cyan-600 transition shadow-lg shadow-cyan-500/30">
-                <i data-lucide="send" class="w-4 h-4"></i>
-            </button>
-        </form>
-    </div>
-
-    <!-- Scripts -->
     <!-- CDNs -->
     <script src="https://unpkg.com/@studio-freight/lenis@1.0.39/dist/lenis.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
 
     <script src="global.js"></script>
-    <script src="spendly.js"></script>
+    <script src="settings.js"></script>
 </body>
 
 </html>

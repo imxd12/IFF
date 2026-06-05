@@ -51,6 +51,9 @@
     const expenseCategoryEl = document.getElementById('expenseCategory');
     const expenseSubEl = document.getElementById('expenseSub');
     const incomeCategoryEl = document.getElementById('incomeCategory');
+    const recCategoryEl = document.getElementById('recCategory');
+    const recSubEl = document.getElementById('recSub');
+    const budgetCategoryEl = document.getElementById('budgetCategory');
 
     // Init Custom Income Categories
     if (incomeCategoryEl && fullCategoryMap.incomeList && fullCategoryMap.incomeList.length > 0) {
@@ -74,6 +77,25 @@
         
         // initial trigger
         expenseCategoryEl.dispatchEvent(new Event('change'));
+    }
+
+    // Init Budgets Dropdowns
+    if (budgetCategoryEl) {
+        budgetCategoryEl.innerHTML = Object.keys(categoryMap)
+            .map((c) => `<option value="${c}">${c}</option>`).join('');
+    }
+
+    // Init Recurring Dropdowns
+    if (recCategoryEl) {
+        recCategoryEl.innerHTML = Object.keys(categoryMap)
+            .map((c) => `<option value="${c}">${c}</option>`).join('');
+        
+        recCategoryEl.addEventListener('change', () => {
+            const cat = recCategoryEl.value;
+            recSubEl.innerHTML = categoryMap[cat].map(s => `<option value="${s}">${s}</option>`).join('');
+        });
+        
+        recCategoryEl.dispatchEvent(new Event('change'));
     }
 
     // Init Dates
@@ -625,6 +647,11 @@
             });
             const dLabels = Array.from({length: daysInMonth}, (_, i) => i + 1);
 
+            const canvasCtx = ctxDaily.getContext('2d');
+            const gradient = canvasCtx.createLinearGradient(0, 0, 0, 300);
+            gradient.addColorStop(0, 'rgba(239, 68, 68, 0.4)');
+            gradient.addColorStop(1, 'rgba(239, 68, 68, 0.0)');
+
             charts.daily = new Chart(ctxDaily, {
                 type: 'line',
                 data: {
@@ -633,9 +660,14 @@
                         label: 'Daily Exps',
                         data: dailyData,
                         borderColor: '#ef4444',
-                        backgroundColor: 'rgba(239, 68, 68, 0.2)',
+                        backgroundColor: gradient,
                         fill: true,
-                        tension: 0.4
+                        tension: 0.4,
+                        pointBackgroundColor: '#ef4444',
+                        pointHoverBackgroundColor: '#ffffff',
+                        pointHoverBorderColor: '#ef4444',
+                        pointHoverBorderWidth: 3,
+                        pointHoverRadius: 6
                     }]
                 },
                 options: {
@@ -1131,142 +1163,358 @@
         renderCharts();
         checkStreaks();
         checkBudgetAlert();
+        renderBudgets();
+        renderRecurring();
+        checkRecurringAlert();
     }
 
     // ----------------------------------------------------
-    // AI SMART FEATURES
+    // DATA UTILITIES: BACKUP, RESTORE & CSV EXPORT
     // ----------------------------------------------------
+    window.openDataModal = function() {
+        document.getElementById('dataModal').classList.add('active');
+    };
 
-    window.processSmartEntry = function() {
-        const input = document.getElementById('smartEntryInput').value.toLowerCase();
-        if(!input) return;
-        
-        // Simple NLP Heuristics
-        // Match numbers
-        const amountMatch = input.match(/\d+/);
-        if(!amountMatch) {
-            showSnackbar('Could not find an amount. Try "Spent 250 on food"');
+    window.backupDataJSON = function() {
+        const backupObj = {
+            fin_spendly: window.loadData('fin_spendly') || [],
+            fin_pocketcal: window.loadData('fin_pocketcal') || [],
+            fin_full_category_map: window.loadData('fin_full_category_map') || null,
+            fin_spendly_budgets: window.loadData('fin_spendly_budgets') || {},
+            fin_spendly_recurring: window.loadData('fin_spendly_recurring') || []
+        };
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backupObj, null, 2));
+        const dlAnchorElem = document.createElement('a');
+        dlAnchorElem.setAttribute("href", dataStr);
+        dlAnchorElem.setAttribute("download", `moneyflow_backup_${new Date().toISOString().split('T')[0]}.json`);
+        dlAnchorElem.click();
+        showSnackbar("Backup file created! 📥");
+    };
+
+    window.restoreDataJSON = function(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const parsed = JSON.parse(e.target.result);
+                window.showConfirmModal(
+                    "Restore Backup?",
+                    "Warning: This will overwrite your current transactions and settings. Do you want to proceed?",
+                    "Restore",
+                    () => {
+                        if (parsed.fin_spendly) window.saveData('fin_spendly', parsed.fin_spendly);
+                        if (parsed.fin_pocketcal) window.saveData('fin_pocketcal', parsed.fin_pocketcal);
+                        if (parsed.fin_full_category_map) window.saveData('fin_full_category_map', parsed.fin_full_category_map);
+                        if (parsed.fin_spendly_budgets) window.saveData('fin_spendly_budgets', parsed.fin_spendly_budgets);
+                        if (parsed.fin_spendly_recurring) window.saveData('fin_spendly_recurring', parsed.fin_spendly_recurring);
+                        
+                        data = window.loadData('fin_spendly') || [];
+                        fullCategoryMap = window.loadData('fin_full_category_map') || fullCategoryMap;
+                        budgets = window.loadData('fin_spendly_budgets') || {};
+                        recurringBills = window.loadData('fin_spendly_recurring') || [];
+                        
+                        updateUI();
+                        showSnackbar("Data successfully restored! 🎉");
+                        setTimeout(() => window.location.reload(), 1000);
+                    }
+                );
+            } catch (err) {
+                showSnackbar("Invalid backup file format.", "error");
+            }
+        };
+        reader.readAsText(file);
+    };
+
+    window.exportToCSV = function() {
+        if (!data || data.length === 0) {
+            showSnackbar("No transactions to export.", "info");
             return;
         }
-        const amount = amountMatch[0];
+        let csvContent = "data:text/csv;charset=utf-8,";
+        csvContent += "ID,Date,Type,Amount,Category,Subcategory,Notes\n";
         
-        let type = 'expense';
-        if(input.includes('got') || input.includes('received') || input.includes('salary') || input.includes('pocket money')) {
-            type = 'income';
+        data.forEach(item => {
+            const cleanNotes = (item.notes || "").replace(/"/g, '""');
+            csvContent += `"${item.id}","${item.date}","${item.type}","${item.amount}","${emojiStrip(item.category)}","${emojiStrip(item.sub)}","${cleanNotes}"\n`;
+        });
+        
+        const encodedUri = encodeURI(csvContent);
+        const dlAnchor = document.createElement('a');
+        dlAnchor.setAttribute("href", encodedUri);
+        dlAnchor.setAttribute("download", `moneyflow_ledger_${new Date().toISOString().split('T')[0]}.csv`);
+        dlAnchor.click();
+        showSnackbar("CSV Ledger exported successfully! 📊");
+    };
+
+    // ----------------------------------------------------
+    // CATEGORY BUDGETS ENGINE
+    // ----------------------------------------------------
+    let budgets = window.loadData('fin_spendly_budgets') || {};
+
+    window.saveCategoryBudget = function(category, amount) {
+        budgets[category] = Number(amount);
+        window.saveData('fin_spendly_budgets', budgets);
+        updateUI();
+        showSnackbar(`Budget set for ${emojiStrip(category)}! 🎯`);
+    };
+
+    window.deleteCategoryBudget = function(category) {
+        delete budgets[category];
+        window.saveData('fin_spendly_budgets', budgets);
+        updateUI();
+        showSnackbar(`Budget removed for ${emojiStrip(category)}.`);
+    };
+
+    function renderBudgets() {
+        const container = document.getElementById('categoryBudgetsContainer');
+        if (!container) return;
+        container.innerHTML = '';
+
+        const currentM = today.slice(0, 7);
+        const monthlySpends = {};
+        data.filter(d => d.type === 'expense' && d.date.startsWith(currentM)).forEach(d => {
+            monthlySpends[d.category] = (monthlySpends[d.category] || 0) + Number(d.amount);
+        });
+
+        const activeBudgets = Object.keys(budgets);
+        if (activeBudgets.length === 0) {
+            container.innerHTML = `
+                <div class="col-span-full p-6 text-center text-muted text-sm glass-panel bg-white/5 border border-white/5 rounded-2xl">
+                    <i data-lucide="target" class="w-8 h-8 mx-auto mb-2 opacity-40"></i>
+                    No category budgets set. Define budgets below to track limits.
+                </div>
+            `;
+            if (window.lucide) lucide.createIcons({ root: container });
+            return;
         }
 
-        let cat = type === 'income' ? 'Other' : 'Other';
-        let sub = 'All';
+        activeBudgets.forEach(cat => {
+            const limit = budgets[cat];
+            const spent = monthlySpends[cat] || 0;
+            const percent = Math.min(100, Math.round((spent / limit) * 100));
+            const progressColor = percent >= 100 ? 'bg-red-500 shadow-[0_0_10px_#ef4444]' : percent >= 85 ? 'bg-orange-500 shadow-[0_0_10px_#f97316]' : 'bg-emerald-500 shadow-[0_0_10px_#10b981]';
+            
+            const card = document.createElement('div');
+            card.className = 'glass-panel p-4 flex flex-col justify-between border-white/5 hover:border-white/10 transition-all';
+            card.innerHTML = `
+                <div class="flex justify-between items-center mb-2">
+                    <span class="font-extrabold text-sm text-slate-200 truncate pr-2">${cat}</span>
+                    <button onclick="deleteCategoryBudget('${cat}')" class="text-xs text-muted hover:text-red-400 p-1 transition-colors"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+                </div>
+                <div class="flex justify-between items-end mb-1">
+                    <span class="text-xs text-muted">Spent: <strong class="text-slate-100">${fmt(spent)}</strong></span>
+                    <span class="text-xs font-bold text-muted">${fmt(limit)} (${percent}%)</span>
+                </div>
+                <div class="w-full bg-black/30 h-2 rounded-full overflow-hidden border border-white/5">
+                    <div class="h-full ${progressColor} transition-all duration-1000" style="width: ${percent}%"></div>
+                </div>
+            `;
+            container.appendChild(card);
+        });
+        if (window.lucide) lucide.createIcons({ root: container });
+    }
 
-        // Smart Categorization Dictionary
-        if(type === 'expense') {
-            const aiDict = {
-                'zomato': ['🍔 Food & Dining', 'Swiggy / Zomato'],
-                'swiggy': ['🍔 Food & Dining', 'Swiggy / Zomato'],
-                'mcdonalds': ['🍔 Food & Dining', 'Fast Food'],
-                'pizza': ['🍔 Food & Dining', 'Fast Food'],
-                'lunch': ['🍔 Food & Dining', 'Dining Out'],
-                'dinner': ['🍔 Food & Dining', 'Dining Out'],
-                'uber': ['🚕 Transportation', 'Uber'],
-                'ola': ['🚕 Transportation', 'Ola'],
-                'auto': ['🚕 Transportation', 'Auto Rickshaw'],
-                'rickshaw': ['🚕 Transportation', 'Auto Rickshaw'],
-                'cab': ['🚕 Transportation', 'Cab'],
-                'train': ['🚕 Transportation', 'Train'],
-                'metro': ['🚕 Transportation', 'Metro'],
-                'best': ['🚕 Transportation', 'BEST Bus'],
-                'bus': ['🚕 Transportation', 'Bus'],
-                'flight': ['🚕 Transportation', 'Flights'],
-                'printout': ['📚 Education', 'Printout'],
-                'xerox': ['📚 Education', 'Xerox'],
-                'book': ['📚 Education', 'Books'],
-                'stationery': ['📚 Education', 'Stationery'],
-                'amazon': ['🛍️ Shopping', 'Amazon'],
-                'flipkart': ['🛍️ Shopping', 'Flipkart'],
-                'shirt': ['🛍️ Shopping', 'Clothing'],
-                'shoes': ['🛍️ Shopping', 'Clothing'],
-                'movie': ['🎬 Entertainment', 'Movies'],
-                'netflix': ['🎬 Entertainment', 'Netflix'],
-                'spotify': ['🎬 Entertainment', 'Spotify'],
-                'hospital': ['💊 Health & Fitness', 'Hospital'],
-                'doctor': ['💊 Health & Fitness', 'Medical'],
-                'pharmacy': ['💊 Health & Fitness', 'Pharmacy'],
-                'medicine': ['💊 Health & Fitness', 'Pharmacy'],
-                'gym': ['💊 Health & Fitness', 'Gym'],
-                'wifi': ['🧾 Bills & Utilities', 'Internet'],
-                'recharge': ['🧾 Bills & Utilities', 'Mobile Recharge'],
-                'electricity': ['🧾 Bills & Utilities', 'Electricity']
-            };
+    // ----------------------------------------------------
+    // RECURRING BILLS ENGINE
+    // ----------------------------------------------------
+    let recurringBills = window.loadData('fin_spendly_recurring') || [];
 
-            for(const [keyword, [mainCat, subCat]] of Object.entries(aiDict)) {
-                // simple boundary matching so "training" doesn't match "train"
-                if(new RegExp(`\\b${keyword}\\b`, 'i').test(input)) {
-                    cat = mainCat;
-                    sub = subCat;
-                    break;
-                }
+    window.addRecurringBill = function(name, amount, category, sub, dayOfMonth) {
+        recurringBills.push({
+            id: Date.now(),
+            name: name,
+            amount: Number(amount),
+            category: category,
+            sub: sub,
+            dayOfMonth: Number(dayOfMonth)
+        });
+        window.saveData('fin_spendly_recurring', recurringBills);
+        updateUI();
+        showSnackbar(`Recurring bill "${name}" added! 📅`);
+    };
+
+    window.deleteRecurringBill = function(id) {
+        recurringBills = recurringBills.filter(b => b.id !== id);
+        window.saveData('fin_spendly_recurring', recurringBills);
+        updateUI();
+        showSnackbar("Recurring bill removed.");
+    };
+
+    window.logRecurringBillNow = function(id) {
+        const bill = recurringBills.find(b => b.id === id);
+        if (!bill) return;
+
+        const entry = {
+            id: Date.now(),
+            type: 'expense',
+            date: today,
+            amount: bill.amount,
+            category: bill.category,
+            sub: bill.sub || 'All',
+            notes: `Auto-logged Recurring: ${bill.name}`
+        };
+
+        data.push(entry);
+        window.saveData('fin_spendly', data);
+        updateUI();
+        showTransactionPopup('expense');
+        showSnackbar(`Logged expense of ${fmt(bill.amount)} for ${bill.name}!`);
+    };
+
+    function renderRecurring() {
+        const container = document.getElementById('recurringContainer');
+        if (!container) return;
+        container.innerHTML = '';
+
+        if (recurringBills.length === 0) {
+            container.innerHTML = `
+                <div class="p-6 text-center text-muted text-sm glass-panel bg-white/5 border border-white/5 rounded-2xl w-full">
+                    <i data-lucide="calendar" class="w-8 h-8 mx-auto mb-2 opacity-40"></i>
+                    No recurring bills set up. Add subscriptions below.
+                </div>
+            `;
+            if (window.lucide) lucide.createIcons({ root: container });
+            return;
+        }
+
+        recurringBills.forEach(bill => {
+            const card = document.createElement('div');
+            card.className = 'glass-panel p-4 flex justify-between items-center border-white/5 hover:border-white/10 transition-all w-full';
+            card.innerHTML = `
+                <div class="truncate pr-2">
+                    <h5 class="font-extrabold text-sm text-slate-200 truncate">${bill.name}</h5>
+                    <p class="text-[11px] text-muted truncate">Amt: <strong class="text-slate-300">${fmt(bill.amount)}</strong> • Day ${bill.dayOfMonth}</p>
+                </div>
+                <div class="flex gap-2 flex-shrink-0">
+                    <button onclick="logRecurringBillNow(${bill.id})" class="px-2.5 py-1.5 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 text-[11px] font-extrabold transition">Log</button>
+                    <button onclick="deleteRecurringBill(${bill.id})" class="text-muted hover:text-red-400 p-1 transition-colors"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+                </div>
+            `;
+            container.appendChild(card);
+        });
+        if (window.lucide) lucide.createIcons({ root: container });
+    }
+
+    function checkRecurringAlert() {
+        const alertBanner = document.getElementById('recurringAlertBanner');
+        if (!alertBanner) return;
+
+        const currentDay = new Date().getDate();
+        const dueToday = recurringBills.filter(b => b.dayOfMonth === currentDay);
+
+        if (dueToday.length > 0) {
+            alertBanner.classList.remove('hidden');
+            const alertText = document.getElementById('recurringAlertText');
+            if (alertText) {
+                alertText.innerHTML = `Today is the due date for subscription: <strong>${dueToday.map(b => b.name).join(', ')}</strong>. Click Log Now to record it.`;
+            }
+            const alertBtn = document.getElementById('btnLogRecurringAlert');
+            if (alertBtn) {
+                alertBtn.onclick = () => {
+                    dueToday.forEach(b => logRecurringBillNow(b.id));
+                    alertBanner.classList.add('hidden');
+                };
             }
         } else {
-            if(input.includes('pocket')) cat = '💵 Pocket Money';
-            if(input.includes('salary')) cat = '💼 Salary';
-            if(input.includes('gift')) cat = '🎁 Gift/Eidi';
+            alertBanner.classList.add('hidden');
+        }
+    }
+
+    // ----------------------------------------------------
+    // GROUP BILL SPLITTER ENGINE
+    // ----------------------------------------------------
+    window.openSplitModal = function() {
+        document.getElementById('splitModal').classList.add('active');
+        const splitCat = document.getElementById('splitCategory');
+        if (splitCat) {
+            splitCat.innerHTML = Object.keys(categoryMap)
+                .map((c) => `<option value="${c}">${c}</option>`).join('');
+            splitCat.dispatchEvent(new Event('change'));
+        }
+    };
+
+    const splitCatEl = document.getElementById('splitCategory');
+    const splitSubEl = document.getElementById('splitSub');
+    if (splitCatEl && splitSubEl) {
+        splitCatEl.addEventListener('change', () => {
+            const cat = splitCatEl.value;
+            splitSubEl.innerHTML = categoryMap[cat].map(s => `<option value="${s}">${s}</option>`).join('');
+        });
+    }
+
+    window.calculateSplit = function() {
+        const amount = Number(document.getElementById('splitAmount').value) || 0;
+        const members = Number(document.getElementById('splitMembers').value) || 1;
+        const share = (amount / members).toFixed(2);
+        
+        const resultText = document.getElementById('splitResultText');
+        if (resultText) {
+            resultText.innerHTML = `Each person owes: <strong class="text-cyan-400 text-lg">₹${Number(share).toLocaleString('en-IN', {minimumFractionDigits:2})}</strong>`;
+        }
+        return Number(share);
+    };
+
+    document.getElementById('splitForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const amount = Number(document.getElementById('splitAmount').value) || 0;
+        const members = Number(document.getElementById('splitMembers').value) || 1;
+        const myShare = (amount / members).toFixed(2);
+
+        if (myShare <= 0) {
+            showSnackbar("Please enter a valid amount and split count.", "error");
+            return;
         }
 
         const entry = {
             id: Date.now(),
-            type: type,
+            type: 'expense',
             date: today,
-            amount: amount,
-            category: cat,
-            sub: sub,
-            notes: input // use the original string as notes
+            amount: myShare,
+            category: document.getElementById('splitCategory').value,
+            sub: document.getElementById('splitSub').value,
+            notes: `Split Bill: ${document.getElementById('splitDescription').value || 'Group Outing'} (My share of ₹${amount} split with ${members} people)`
         };
 
-        if(checkForAnomaly(entry)) {
-            window.pendingAnomalyEntry = entry;
-            document.getElementById('anomalyModal').classList.add('active');
-            return;
+        data.push(entry);
+        window.saveData('fin_spendly', data);
+        
+        document.getElementById('splitForm').reset();
+        closeModal('#splitModal');
+        updateUI();
+        showTransactionPopup('expense');
+        showSnackbar(`Logged split: ₹${myShare} recorded successfully! 💸`);
+    });
+
+    // Form Event Listeners Setup
+    document.addEventListener('DOMContentLoaded', () => {
+        const budgetForm = document.getElementById('budgetConfigForm');
+        if (budgetForm) {
+            budgetForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const cat = document.getElementById('budgetCategory').value;
+                const limit = document.getElementById('budgetLimit').value;
+                saveCategoryBudget(cat, limit);
+                budgetForm.reset();
+            });
         }
 
-        data.push(entry);
-        saveData('fin_spendly', data);
-        
-        if(type === 'income') syncIncomeToPocketCal(entry);
-
-        document.getElementById('smartEntryInput').value = '';
-        updateUI();
-        showTransactionPopup(type);
-    };
-
-    window.generateAIHealthReport = function() {
-        const container = document.getElementById('aiHealthReportContainer');
-        const textEl = document.getElementById('aiHealthReportText');
-        
-        container.classList.remove('hidden');
-        textEl.innerHTML = '<i class="lucide lucide-loader animate-spin w-5 h-5 inline-block mr-2"></i> Analyzing your data...';
-        
-        setTimeout(() => {
-            const currentM = today.slice(0, 7);
-            const monthlyIncome = data.filter(d => d.type === 'income' && d.date.startsWith(currentM)).reduce((s, d) => s + Number(d.amount), 0);
-            const monthlyExpense = data.filter(d => d.type === 'expense' && d.date.startsWith(currentM)).reduce((s, d) => s + Number(d.amount), 0);
-            
-            const savings = monthlyIncome - monthlyExpense;
-            const savingsRate = monthlyIncome > 0 ? (savings / monthlyIncome) * 100 : 0;
-            
-            let message = "";
-            if(monthlyExpense === 0) {
-                message = "You haven't spent anything this month yet. Great start! Keep logging your expenses to get insights.";
-            } else if(savings < 0) {
-                message = `<strong>Warning:</strong> You've spent ₹${Math.abs(savings)} more than your income this month. You need to review your top expenses immediately.`;
-            } else if(savingsRate > 20) {
-                message = `<strong>Awesome job!</strong> You are saving ${savingsRate.toFixed(1)}% of your income this month. Your financial discipline is paying off.`;
-            } else {
-                message = `You're on track, but your savings rate is only ${savingsRate.toFixed(1)}%. Try cutting down on non-essential categories like Entertainment and Outside Food to hit 20%.`;
-            }
-            
-            textEl.innerHTML = message;
-        }, 1200); // Fake delay for "AI processing" effect
-    };
+        const recurringForm = document.getElementById('recurringConfigForm');
+        if (recurringForm) {
+            recurringForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const name = document.getElementById('recName').value;
+                const amount = document.getElementById('recAmount').value;
+                const cat = document.getElementById('recCategory').value;
+                const sub = document.getElementById('recSub').value;
+                const day = document.getElementById('recDay').value;
+                addRecurringBill(name, amount, cat, sub, day);
+                recurringForm.reset();
+                if (recCategoryEl) recCategoryEl.dispatchEvent(new Event('change'));
+            });
+        }
+    });
 
     // ----------------------------------------------------
     // AI SMART AUTO-CATEGORIZATION
@@ -1649,6 +1897,257 @@
             textEl.innerHTML = message;
         }, 1500);
     };
+
+    // ----------------------------------------------------
+    // AI ADVISOR CHAT ENGINE
+    // ----------------------------------------------------
+    window.toggleAIChat = function() {
+        const sidebar = document.getElementById('aiChatSidebar');
+        if (sidebar) {
+            sidebar.classList.toggle('open');
+            if (window.playUISound) window.playUISound('tap');
+        }
+    };
+
+    // Override the Anime Assistant button if on Spendly page
+    const assistantBtn = document.getElementById('animeAssistantBtn');
+    if (assistantBtn) {
+        const newBtn = assistantBtn.cloneNode(true);
+        assistantBtn.parentNode.replaceChild(newBtn, assistantBtn);
+        newBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            toggleAIChat();
+        });
+    }
+
+    const aiChatForm = document.getElementById('aiChatForm');
+    const aiChatInput = document.getElementById('aiChatInput');
+    const aiChatHistory = document.getElementById('aiChatHistory');
+
+    if (aiChatForm && aiChatInput && aiChatHistory) {
+        aiChatForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const prompt = aiChatInput.value.trim();
+            if (!prompt) return;
+
+            appendChatBubble(prompt, 'user');
+            aiChatInput.value = '';
+
+            aiChatHistory.scrollTop = aiChatHistory.scrollHeight;
+
+            setTimeout(() => {
+                const response = processAIQuery(prompt.toLowerCase());
+                appendChatBubble(response, 'bot');
+                aiChatHistory.scrollTop = aiChatHistory.scrollHeight;
+                if (window.playUISound) window.playUISound('on');
+            }, 800);
+        });
+    }
+
+    function appendChatBubble(text, sender) {
+        const bubble = document.createElement('div');
+        bubble.className = `chat-bubble ${sender} flex gap-2 w-full`;
+        
+        let avatar = '';
+        if (sender === 'bot') {
+            avatar = `<div class="w-6 h-6 rounded-full bg-cyan-500/20 flex items-center justify-center flex-shrink-0 text-cyan-400 text-[10px]"><i data-lucide="bot" class="w-3.5 h-3.5"></i></div>`;
+        } else {
+            avatar = `<div class="w-6 h-6 rounded-full bg-indigo-500/20 flex items-center justify-center flex-shrink-0 text-indigo-400 text-[10px]"><i data-lucide="user" class="w-3.5 h-3.5"></i></div>`;
+        }
+
+        bubble.innerHTML = `
+            ${sender === 'bot' ? avatar : ''}
+            <div class="bubble-content shadow-md border border-white/5 rounded-2xl leading-relaxed">
+                ${text}
+            </div>
+            ${sender === 'user' ? avatar : ''}
+        `;
+        aiChatHistory.appendChild(bubble);
+        if (window.lucide) lucide.createIcons({ root: bubble });
+    }
+
+    function processAIQuery(query) {
+        const currentM = today.slice(0, 7);
+        const monthlyIncome = data.filter(d => d.type === 'income' && d.date.startsWith(currentM)).reduce((s, d) => s + Number(d.amount), 0);
+        const monthlyExpense = data.filter(d => d.type === 'expense' && d.date.startsWith(currentM)).reduce((s, d) => s + Number(d.amount), 0);
+        const balance = monthlyIncome - monthlyExpense;
+
+        if (query.startsWith('add') || query.startsWith('log') || query.includes('spent') || query.includes('got') || query.includes('received')) {
+            const amountMatch = query.match(/\d+(\.\d{1,2})?/);
+            if (!amountMatch) {
+                return "I couldn't identify an amount in your input. Try saying: <em>'Spent 500 on Food'</em>.";
+            }
+            const amount = Number(amountMatch[0]);
+            
+            let type = 'expense';
+            if (query.includes('got') || query.includes('received') || query.includes('earned') || query.includes('income') || query.includes('salary') || query.includes('pocket money')) {
+                type = 'income';
+            }
+
+            let category = type === 'expense' ? 'Other' : 'Other';
+            let sub = '';
+
+            const aiSynonyms = {
+                'auto': { cat: 'Travel', sub: '🛺 Auto/Rickshaw' },
+                'rickshaw': { cat: 'Travel', sub: '🛺 Auto/Rickshaw' },
+                'bus': { cat: 'Travel', sub: '🚍 BEST/City Bus' },
+                'metro': { cat: 'Travel', sub: '🚇 Metro' },
+                'train': { cat: 'Travel', sub: '🚆 Local Train' },
+                'petrol': { cat: 'Travel', sub: '🛵 Bike Petrol' },
+                'taxi': { cat: 'Travel', sub: '🚗 Taxi/Cab' },
+                'ola': { cat: 'Travel', sub: '🚗 Taxi/Cab' },
+                'uber': { cat: 'Travel', sub: '🚗 Taxi/Cab' },
+                'milk': { cat: 'Food', sub: '🥛 Milk/Doodh' },
+                'ration': { cat: 'Food', sub: '🌾 Ration/Kirana' },
+                'grocery': { cat: 'Food', sub: '🌾 Ration/Kirana' },
+                'veg': { cat: 'Food', sub: '🥬 Vegetables/Mandi' },
+                'fruits': { cat: 'Food', sub: '🍎 Fruits' },
+                'bread': { cat: 'Food', sub: '🍞 Bakery/Bread' },
+                'chicken': { cat: 'Food', sub: '🍗 Non-Veg/Meat' },
+                'tea': { cat: 'Food', sub: '☕ Tea/Chai' },
+                'chai': { cat: 'Food', sub: '☕ Tea/Chai' },
+                'street food': { cat: 'Food', sub: '🥙 Street Food' },
+                'burger': { cat: 'Food', sub: '🍔 Outside Junk' },
+                'pizza': { cat: 'Food', sub: '🍔 Outside Junk' },
+                'electricity': { cat: 'Bills', sub: '💡 Electricity Bill' },
+                'recharge': { cat: 'Bills', sub: '📱 Mobile Recharge' },
+                'wifi': { cat: 'Bills', sub: '🌐 WiFi/Broadband' },
+                'medicine': { cat: 'Health', sub: '💊 Medicines/Pharmacy' },
+                'doctor': { cat: 'Health', sub: '🩺 Doctor Visit/Clinic' },
+                'movie': { cat: 'Entertainment', sub: '🎬 Movies/Theater' },
+                'netflix': { cat: 'Entertainment', sub: '🎥 OTT (Netflix/Prime)' },
+                'haircut': { cat: 'Other', sub: '💇 Haircut/Barber' }
+            };
+
+            for (const [key, val] of Object.entries(aiSynonyms)) {
+                if (new RegExp('\\b' + key + '\\b').test(query)) {
+                    category = val.cat;
+                    sub = val.sub;
+                    break;
+                }
+            }
+
+            const entry = {
+                id: Date.now(),
+                type: type,
+                date: today,
+                amount: amount,
+                category: category,
+                sub: sub || 'All',
+                notes: `Chat AI logged: ${query}`
+            };
+
+            data.push(entry);
+            window.saveData('fin_spendly', data);
+            if (type === 'income') syncIncomeToPocketCal(entry);
+            updateUI();
+            
+            return `Transaction logged! ✅<br><br>
+                    <strong>Type:</strong> ${type.toUpperCase()}<br>
+                    <strong>Amount:</strong> ${fmt(amount)}<br>
+                    <strong>Category:</strong> ${category}${sub ? ` (${sub})` : ''}<br>
+                    <strong>Notes:</strong> Added via chat query.`;
+        }
+
+        if (query.includes('recommend') || query.includes('suggest') || query.includes('advice')) {
+            const monthlySpends = {};
+            data.filter(d => d.type === 'expense' && d.date.startsWith(currentM)).forEach(d => {
+                monthlySpends[d.category] = (monthlySpends[d.category] || 0) + Number(d.amount);
+            });
+
+            let suggestions = `<strong>AI Smart Budget Recommendation:</strong><br><br>`;
+            const cats = ['Food', 'Travel', 'Shopping', 'Entertainment'];
+            let addedSug = false;
+
+            cats.forEach(cat => {
+                const spent = monthlySpends[cat] || 0;
+                if (spent > 0) {
+                    const suggestedLimit = Math.round(spent * 0.9);
+                    suggestions += `• For <strong>${cat}</strong>: set budget to <strong>${fmt(suggestedLimit)}</strong> (based on current spend of ${fmt(spent)}).<br>`;
+                    addedSug = true;
+                }
+            });
+
+            if (!addedSug) {
+                suggestions += "I suggest starting with a budget limit of <strong>₹3,000 for Food</strong> and <strong>₹1,500 for Travel</strong>. Try logging some transactions first to receive tailored limits!";
+            } else {
+                suggestions += `<br>🎯 <em>Clicking "Set Limit" in the Category Budgets card will lock these settings!</em>`;
+            }
+            return suggestions;
+        }
+
+        if (query.includes('budget') || query.includes('limit')) {
+            const activeBudgets = Object.keys(budgets);
+            if (activeBudgets.length === 0) {
+                return "You haven't set any category budgets yet. Try setting one in the Category Budgets card on your dashboard!";
+            }
+
+            const monthlySpends = {};
+            data.filter(d => d.type === 'expense' && d.date.startsWith(currentM)).forEach(d => {
+                monthlySpends[d.category] = (monthlySpends[d.category] || 0) + Number(d.amount);
+            });
+
+            let status = `<strong>Category Budgets Summary:</strong><br><br>`;
+            activeBudgets.forEach(cat => {
+                const limit = budgets[cat];
+                const spent = monthlySpends[cat] || 0;
+                const p = Math.round((spent / limit) * 100);
+                status += `• <strong>${cat}</strong>: ${fmt(spent)} of ${fmt(limit)} (${p}% used)${p >= 100 ? ' 🚨' : p >= 85 ? ' ⚠️' : ''}<br>`;
+            });
+            return status;
+        }
+
+        if (query.includes('predict') || query.includes('forecast') || query.includes('trend')) {
+            const daysInMonth = new Date(today.slice(0, 4), today.slice(5, 7), 0).getDate();
+            const currentDay = parseInt(today.slice(8, 10), 10);
+            
+            if (currentDay === 0 || monthlyExpense === 0) {
+                return "Not enough transactional history to forecast. Try logging a few transactions first!";
+            }
+
+            const velocity = monthlyExpense / currentDay;
+            const projected = velocity * daysInMonth;
+
+            let diagnosis = `<strong>AI Spend Forecast:</strong><br><br>`;
+            diagnosis += `• Current Velocity: <strong>${fmt(velocity)}/day</strong><br>`;
+            diagnosis += `• Projected Month End Spend: <strong>${fmt(projected)}</strong><br><br>`;
+
+            if (monthlyIncome > 0) {
+                const deficit = projected - monthlyIncome;
+                if (projected > monthlyIncome) {
+                    diagnosis += `⚠️ <strong>Warning:</strong> You are projected to exceed your monthly income by <strong>${fmt(deficit)}</strong>. AI suggests reducing discretionary spending.`;
+                } else {
+                    diagnosis += `✅ <strong>Optimal:</strong> You are safely within your income bounds. Projected monthly savings: <strong>${fmt(monthlyIncome - projected)}</strong>.`;
+                }
+            } else {
+                diagnosis += `💡 Set an income log for the month to calculate deficit metrics!`;
+            }
+            return diagnosis;
+        }
+
+        if (query.includes('spend') || query.includes('expense')) {
+            return `This month, you have spent a total of <strong>${fmt(monthlyExpense)}</strong>.`;
+        }
+
+        if (query.includes('income') || query.includes('earn')) {
+            return `This month, you logged a total income of <strong>${fmt(monthlyIncome)}</strong>.`;
+        }
+
+        if (query.includes('balance') || query.includes('net')) {
+            return `Your net balance for this month is <strong>${fmt(balance)}</strong> (Income: ${fmt(monthlyIncome)}, Expenses: ${fmt(monthlyExpense)}).`;
+        }
+
+        return `I can help you audit your transactions! 
+                <br><br>
+                Try saying:
+                <ul class="list-disc pl-4 mt-2 space-y-1 text-muted">
+                    <li>"How much did I spend this month?"</li>
+                    <li>"Show my budget status"</li>
+                    <li>"Predict my month end spending"</li>
+                    <li>"Add expense 350 for travel"</li>
+                    <li>"Suggest budgets"</li>
+                </ul>`;
+    }
 
     window.addEventListener('DOMContentLoaded', () => {
         updateUI();

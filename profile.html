@@ -38,10 +38,11 @@
     </div>
 
     <!-- Header -->
-    <header class="global-header cyber-glass-header pr-header-fixed z-[100]">
+    <!-- Header -->
+    <header class="global-header cyber-glass-header pr-header-fixed transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] z-[100]" id="mainHeader">
         <div class="brand flex items-center gap-3 relative z-10">
             <a href="javascript:history.back()"
-                class="glass-button magnetic-btn w-10 h-10 rounded-full flex items-center justify-center border border-white/10 cyber-glass-base">
+                class="glass-button magnetic-btn w-10 h-10 rounded-full flex items-center justify-center border border-white/10 cyber-glass-base hover:-translate-x-1">
                 <i data-lucide="chevron-left" class="w-5 h-5"></i>
             </a>
             <div class="brand-logo-wave hidden sm:block">
@@ -52,9 +53,26 @@
                 class="brand-text neon-text-glow font-bold uppercase tracking-widest text-sm theme-text">Profile</span>
         </div>
         <div class="header-controls relative z-10">
+            <!-- Inky Theme Toggle -->
             <button class="theme-toggle-btn glass-button magnetic-btn border border-white/10 cyber-glass-base"
                 id="themeToggleBtn"><i data-lucide="sun"></i></button>
+
+            <!-- Anime Assistant -->
+            <button id="animeAssistantBtn" class="anime-assistant-btn relative group" title="Assistant">
+                <div class="anime-bot">
+                    <div class="bot-head">
+                        <div class="bot-eye left"></div>
+                        <div class="bot-eye right"></div>
+                        <div class="bot-blush left"></div>
+                        <div class="bot-blush right"></div>
+                    </div>
+                </div>
+                <div class="bot-glow"></div>
+            </button>
         </div>
+
+        <!-- Flashlight Beam Container -->
+        <div class="flashlight-beam pointer-events-none" id="flashlightBeam"></div>
     </header>
 
     <main class="pr-main-wrap">
@@ -413,11 +431,11 @@
             <span>Home</span>
         </a>
         <a href="spendly.html" class="dock-item magnetic-btn theme-text">
-            <i data-lucide="pie-chart"></i>
+            <i data-lucide="receipt"></i>
             <span>Spendly</span>
         </a>
         <a href="pocketcal.html" class="dock-item magnetic-btn theme-text">
-            <i data-lucide="calendar"></i>
+            <i data-lucide="calendar-days"></i>
             <span>PocketCal</span>
         </a>
         <a href="settings.html" class="dock-item">

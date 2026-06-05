@@ -7,6 +7,7 @@
     'use strict';
 
     let data = loadData('fin_pocketcal') || [];
+    let requests = loadData('fin_pocketcal_requests') || [];
     let current = new Date();
     current.setDate(1);
     let selectedDate = null;
@@ -59,6 +60,8 @@
         renderCharts();
         if(typeof populatePocketMonthFilter === 'function') populatePocketMonthFilter();
         if(typeof checkPcStreaks === 'function') checkPcStreaks();
+        if(typeof updateForecast === 'function') updateForecast();
+        if(typeof renderRequests === 'function') renderRequests();
     }
 
     // ----------------------------------------------------
@@ -264,8 +267,8 @@
 
         if(loggingStreak >= 3) {
             streakBanner.classList.remove('hidden');
-            document.getElementById('pcStreakTitle').textContent = `🔥 ${loggingStreak}-Day Saving Streak!`;
-            document.getElementById('pcStreakDesc').textContent = "Consistent logging is the key to financial freedom.";
+            document.getElementById('pcStreakTitle').textContent = `🔥 ${loggingStreak}-Day Allowance Streak!`;
+            document.getElementById('pcStreakDesc').textContent = "Consistent tracking makes sure you are always on budget.";
         } else {
             streakBanner.classList.add('hidden');
         }
@@ -336,15 +339,15 @@
             
             let message = "";
             if(curTotal === 0 && prevTotal === 0) {
-                message = "You don't have enough data for a detailed insight yet. Keep tracking!";
+                message = "You don't have enough allowance data for an insight yet. Keep tracking handouts from parents!";
             } else if(curTotal > prevTotal && prevTotal > 0) {
                 const diff = ((curTotal - prevTotal)/prevTotal*100).toFixed(0);
-                message = `<strong>Great progress!</strong> Your pocket savings this month are ₹${curTotal}, which is ${diff}% higher than last month. You're building a strong safety net.`;
+                message = `<strong>Allowance increased!</strong> You took ₹${curTotal} from parents this month, which is ${diff}% higher than last month's ₹${prevTotal}. Spend responsibly!`;
             } else if(curTotal < prevTotal && prevTotal > 0) {
                 const diff = ((prevTotal - curTotal)/prevTotal*100).toFixed(0);
-                message = `Your pocket savings are ₹${curTotal}, which is ${diff}% lower than last month. Consistency is key—try to put a small fixed amount away every day.`;
+                message = `Your allowance took this month is ₹${curTotal}, which is ${diff}% lower than last month's ₹${prevTotal}. Excellent! You're depending less on handouts.`;
             } else {
-                message = `You've saved ₹${curTotal} this month. Regular small savings compound over time!`;
+                message = `You've taken ₹${curTotal} this month in allowance. Try to budget it wisely.`;
             }
             
             textEl.innerHTML = message;
@@ -612,7 +615,7 @@
                 data: {
                     labels: cumLabels,
                     datasets: [{
-                        label: 'Cumulative Savings',
+                        label: 'Cumulative Allowance',
                         data: cumValues,
                         borderColor: '#8b5cf6',
                         backgroundColor: 'rgba(139, 92, 246, 0.2)',
@@ -632,82 +635,87 @@
             });
         }
 
-        const ctxConsistency = document.getElementById('consistencyChart');
-        if (ctxConsistency) {
-            const todayObj = new Date();
-            let daysPassed = daysInMonth;
-            if(year === todayObj.getFullYear() && month === todayObj.getMonth()) {
-                daysPassed = todayObj.getDate();
-            }
+        const ctxSource = document.getElementById('sourceChart');
+        if (ctxSource) {
+            const sourceTotals = { Dad: 0, Mom: 0, Other: 0 };
+            data.forEach(d => {
+                if (d.category) {
+                    if (d.category.includes('Dad')) {
+                        sourceTotals.Dad += Number(d.amount || 0);
+                    } else if (d.category.includes('Mom')) {
+                        sourceTotals.Mom += Number(d.amount || 0);
+                    } else {
+                        sourceTotals.Other += Number(d.amount || 0);
+                    }
+                }
+            });
 
-            let logged = 0;
-            for (let i = 1; i <= daysPassed; i++) {
-                const ds = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
-                if (data.find(d => d.date === ds && Number(d.amount) > 0)) logged++;
-            }
-            let missed = daysPassed - logged;
-
-            charts.consistency = new Chart(ctxConsistency, {
+            charts.sourceShare = new Chart(ctxSource, {
                 type: 'doughnut',
                 data: {
-                    labels: ['Logged', 'Missed'],
+                    labels: ['Dad', 'Mom', 'Other'],
                     datasets: [{
-                        data: [logged, missed],
-                        backgroundColor: ['#10b981', '#334155'],
+                        data: [sourceTotals.Dad, sourceTotals.Mom, sourceTotals.Other],
+                        backgroundColor: ['#3b82f6', '#ec4899', '#8b5cf6'],
                         borderWidth: 0,
                         hoverOffset: 10
                     }]
                 },
                 options: {
                     responsive: true, maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    cutout: '75%',
+                    plugins: { legend: { display: true, position: 'bottom', labels: { color: textColor } } },
+                    cutout: '70%',
                     animation: { delay: 600 }
                 }
             });
         }
 
-        const ctxMovingAvg = document.getElementById('movingAvgChart');
-        if (ctxMovingAvg) {
-            const maLabels = [], maValues = [];
-            const dailyArr = [];
+        const ctxAllowVsSpend = document.getElementById('allowanceVsSpendChart');
+        if (ctxAllowVsSpend) {
+            const months = [], allowanceTotals = [], spendingTotals = [];
+            const spendlyData = loadData('fin_spendly') || [];
             
-            for (let i = 1; i <= daysInMonth; i++) {
-                const ds = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
-                const entry = data.find(d => d.date === ds);
-                dailyArr.push(entry ? Number(entry.amount) : 0);
+            for (let i = 5; i >= 0; i--) {
+                const d = new Date();
+                d.setMonth(d.getMonth() - i);
+                const monthStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+                
+                const mAllowance = data.filter(entry => entry.date && entry.date.startsWith(monthStr))
+                    .reduce((sum, entry) => sum + Number(entry.amount || 0), 0);
+                
+                const mSpend = spendlyData.filter(entry => entry.type === 'expense' && entry.date && entry.date.startsWith(monthStr))
+                    .reduce((sum, entry) => sum + Number(entry.amount || 0), 0);
+                
+                months.push(d.toLocaleString('en-US', { month: 'short' }));
+                allowanceTotals.push(mAllowance);
+                spendingTotals.push(mSpend);
             }
 
-            for (let i = 0; i < daysInMonth; i++) {
-                maLabels.push(i + 1);
-                let sum = 0, count = 0;
-                for(let j=Math.max(0, i-6); j<=i; j++) {
-                    sum += dailyArr[j];
-                    count++;
-                }
-                maValues.push(sum/count);
-            }
-
-            charts.movingAvg = new Chart(ctxMovingAvg, {
-                type: 'line',
+            charts.allowVsSpend = new Chart(ctxAllowVsSpend, {
+                type: 'bar',
                 data: {
-                    labels: maLabels,
-                    datasets: [{
-                        label: '7-Day Moving Avg',
-                        data: maValues,
-                        borderColor: '#0ea5e9',
-                        backgroundColor: 'rgba(14, 165, 233, 0.2)',
-                        fill: true,
-                        tension: 0.4,
-                        pointRadius: 0
-                    }]
+                    labels: months,
+                    datasets: [
+                        {
+                            label: 'Allowance Taken',
+                            data: allowanceTotals,
+                            backgroundColor: '#3b82f6',
+                            borderRadius: 4
+                        },
+                        {
+                            label: 'Spendly Expenses',
+                            data: spendingTotals,
+                            backgroundColor: '#ef4444',
+                            borderRadius: 4
+                        }
+                    ]
                 },
                 options: {
                     responsive: true, maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
+                    plugins: { legend: { display: true, labels: { color: textColor } } },
                     scales: {
                         y: { display: false },
-                        x: { display: true, grid: { display: false }, ticks: { maxTicksLimit: 10 } }
+                        x: { display: true, grid: { display: false } }
                     },
                     animation: { delay: 800 }
                 }
@@ -961,36 +969,383 @@
     };
 
     // ----------------------------------------------------
+    // ALLOWANCE RUNOUT FORECAST
+    // ----------------------------------------------------
+    function updateForecast() {
+        const currentMonthStr = `${current.getFullYear()}-${String(current.getMonth() + 1).padStart(2, '0')}`;
+        const curMonthAllowance = data.filter(d => d.date && d.date.startsWith(currentMonthStr))
+                                      .reduce((sum, d) => sum + Number(d.amount || 0), 0);
+        
+        const spendlyData = loadData('fin_spendly') || [];
+        const curMonthExpenses = spendlyData.filter(d => d.type === 'expense' && d.date && d.date.startsWith(currentMonthStr))
+                                           .reduce((sum, d) => sum + Number(d.amount || 0), 0);
+        
+        const today = new Date();
+        let daysPassed = today.getDate();
+        const isCurrentMonth = (current.getFullYear() === today.getFullYear() && current.getMonth() === today.getMonth());
+        
+        if (!isCurrentMonth) {
+            daysPassed = new Date(current.getFullYear(), current.getMonth() + 1, 0).getDate();
+        }
+        
+        const burnRate = curMonthExpenses / (daysPassed || 1);
+        const remaining = curMonthAllowance - curMonthExpenses;
+        
+        const burnRateEl = document.getElementById('pcForecastBurnRate');
+        const remainingEl = document.getElementById('pcForecastRemaining');
+        const daysEl = document.getElementById('pcForecastDays');
+        const badgeEl = document.getElementById('pcForecastAlertBadge');
+        const askDateEl = document.getElementById('pcForecastAskDate');
+        
+        if (burnRateEl) burnRateEl.textContent = `₹${burnRate.toFixed(0)}/day`;
+        if (remainingEl) {
+            remainingEl.textContent = `₹${remaining.toFixed(0)}`;
+            remainingEl.className = remaining >= 0 ? 'font-bold text-emerald-400' : 'font-bold text-red-500';
+        }
+        
+        let daysRemaining = Infinity;
+        if (burnRate > 0) {
+            daysRemaining = remaining / burnRate;
+        }
+        
+        if (daysEl) {
+            if (remaining <= 0) {
+                daysEl.textContent = '0';
+                daysEl.className = 'text-4xl font-extrabold text-red-500 tracking-tight';
+            } else if (daysRemaining === Infinity) {
+                daysEl.textContent = '∞';
+                daysEl.className = 'text-4xl font-extrabold text-emerald-400 tracking-tight';
+            } else {
+                daysEl.textContent = Math.max(0, Math.floor(daysRemaining));
+                daysEl.className = daysRemaining < 5 ? 'text-4xl font-extrabold text-amber-500 tracking-tight' : 'text-4xl font-extrabold text-blue-400 tracking-tight';
+            }
+        }
+        
+        if (badgeEl && askDateEl) {
+            if (remaining <= 0) {
+                badgeEl.textContent = 'RUN OUT 🚨';
+                badgeEl.className = 'px-3 py-1 rounded-full text-xs font-bold uppercase mb-2 bg-red-500/20 text-red-400 border border-red-500/30';
+                askDateEl.textContent = 'Ask Dad Today!';
+            } else if (burnRate === 0) {
+                badgeEl.textContent = 'STABLE 🛡️';
+                badgeEl.className = 'px-3 py-1 rounded-full text-xs font-bold uppercase mb-2 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30';
+                askDateEl.textContent = 'No expenses logged';
+            } else {
+                const predictAsk = new Date();
+                predictAsk.setDate(today.getDate() + Math.max(0, Math.floor(daysRemaining)));
+                const opt = { day: '2-digit', month: 'short', year: 'numeric' };
+                askDateEl.textContent = predictAsk.toLocaleDateString('en-IN', opt);
+                
+                if (daysRemaining < 5) {
+                    badgeEl.textContent = 'WARN ⚠️';
+                    badgeEl.className = 'px-3 py-1 rounded-full text-xs font-bold uppercase mb-2 bg-amber-500/20 text-amber-400 border border-amber-500/30';
+                } else {
+                    badgeEl.textContent = 'GOOD ✅';
+                    badgeEl.className = 'px-3 py-1 rounded-full text-xs font-bold uppercase mb-2 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30';
+                }
+            }
+        }
+        
+        updateLimitUI(curMonthAllowance);
+    }
+
+    function updateLimitUI(currentAllowance) {
+        const limitVal = Number(localStorage.getItem('fin_pocketcal_limit') || 5000);
+        const limitTargetEl = document.getElementById('pcLimitTarget');
+        const limitCurrentEl = document.getElementById('pcLimitCurrent');
+        const limitProgressEl = document.getElementById('pcLimitProgress');
+        const limitMsgEl = document.getElementById('pcLimitStatusMsg');
+        
+        if (limitTargetEl) limitTargetEl.textContent = `₹${limitVal.toLocaleString('en-IN')}`;
+        if (limitCurrentEl) limitCurrentEl.textContent = `₹${currentAllowance.toLocaleString('en-IN')}`;
+        
+        if (limitProgressEl) {
+            const pct = Math.min(100, (currentAllowance / (limitVal || 1)) * 100);
+            limitProgressEl.style.width = `${pct}%`;
+            if (pct >= 100) {
+                limitProgressEl.className = 'bg-gradient-to-r from-red-500 to-orange-600 h-full rounded-full transition-all duration-1000';
+            } else if (pct >= 80) {
+                limitProgressEl.className = 'bg-gradient-to-r from-amber-500 to-orange-500 h-full rounded-full transition-all duration-1000';
+            } else {
+                limitProgressEl.className = 'bg-gradient-to-r from-emerald-500 to-teal-500 h-full rounded-full transition-all duration-1000';
+            }
+        }
+        
+        if (limitMsgEl) {
+            if (currentAllowance > limitVal) {
+                limitMsgEl.textContent = '🚨 Exceeded monthly limit! Cut back on requests.';
+                limitMsgEl.className = 'text-[11px] text-red-400 font-semibold leading-tight';
+            } else {
+                const diff = limitVal - currentAllowance;
+                limitMsgEl.textContent = `₹${diff.toLocaleString('en-IN')} remaining before limit cap.`;
+                limitMsgEl.className = 'text-[11px] text-muted leading-tight';
+            }
+        }
+    }
+
+    window.setPcAllowanceLimit = function() {
+        const limitVal = localStorage.getItem('fin_pocketcal_limit') || 5000;
+        document.getElementById('pcLimitInput').value = limitVal;
+        document.getElementById('limitModal').classList.add('active');
+    };
+
+    window.closeLimitModal = function() {
+        document.getElementById('limitModal').classList.remove('active');
+    };
+
+    document.getElementById('pcLimitForm')?.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const newLimit = Number(document.getElementById('pcLimitInput').value);
+        localStorage.setItem('fin_pocketcal_limit', newLimit);
+        closeLimitModal();
+        renderCalendar();
+        showSnackbar('Monthly allowance limit updated! ⚙️');
+    });
+
+    // ----------------------------------------------------
+    // ASK DAD REQUEST TRACKER
+    // ----------------------------------------------------
+    window.openRequestModal = function() {
+        document.getElementById('pcReqAmount').value = '';
+        document.getElementById('pcReqNotes').value = '';
+        document.getElementById('pcReqSource').value = 'Dad';
+        document.getElementById('requestModal').classList.add('active');
+    };
+
+    window.closeRequestModal = function() {
+        document.getElementById('requestModal').classList.remove('active');
+    };
+
+    document.getElementById('pcRequestForm')?.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const amt = Number(document.getElementById('pcReqAmount').value);
+        const src = document.getElementById('pcReqSource').value;
+        const notes = document.getElementById('pcReqNotes').value;
+        
+        const newReq = {
+            id: Date.now().toString(),
+            date: new Date().toISOString().split('T')[0],
+            amount: amt,
+            source: src,
+            notes: notes,
+            status: 'Pending'
+        };
+        
+        requests.push(newReq);
+        saveData('fin_pocketcal_requests', requests);
+        renderRequests();
+        closeRequestModal();
+        showSnackbar('Allowance request logged! 💸');
+    });
+
+    window.markRequestReceived = function(id) {
+        const req = requests.find(r => r.id === id);
+        if (!req) return;
+        
+        req.status = 'Received';
+        saveData('fin_pocketcal_requests', requests);
+        
+        const emojiSource = req.source === 'Dad' ? '👨 Taken from Dad' : (req.source === 'Mom' ? '👩 Taken from Mom' : '🎁 Gift / Cash Gift');
+        const newEntry = {
+            id: req.id,
+            date: new Date().toISOString().split('T')[0],
+            amount: req.amount,
+            category: emojiSource,
+            notes: req.notes ? `Request: ${req.notes}` : `Allowance from ${req.source}`,
+            source: 'pocketcal'
+        };
+        
+        data.push(newEntry);
+        saveData('fin_pocketcal', data);
+        
+        syncPocketToSpendly(newEntry, null);
+        
+        renderCalendar();
+        renderRequests();
+        showSnackbar('Allowance received & logged! 💳');
+    };
+
+    window.markRequestRejected = function(id) {
+        const req = requests.find(r => r.id === id);
+        if (!req) return;
+        
+        req.status = 'Rejected';
+        saveData('fin_pocketcal_requests', requests);
+        renderRequests();
+        showSnackbar('Request marked as rejected 🛑');
+    };
+
+    window.deleteRequest = function(id) {
+        window.showConfirmModal(
+            'Delete Request?',
+            'Are you sure you want to delete this request from history?',
+            'Delete',
+            () => {
+                requests = requests.filter(r => r.id !== id);
+                saveData('fin_pocketcal_requests', requests);
+                renderRequests();
+                showSnackbar('Request deleted! 🗑️');
+            }
+        );
+    };
+
+    window.renderRequests = function() {
+        const pendingList = document.getElementById('pcPendingRequestsList');
+        const historyList = document.getElementById('pcRequestHistoryList');
+        const pendingCount = document.getElementById('pcPendingRequestsCount');
+        
+        if (!pendingList || !historyList) return;
+        pendingList.innerHTML = '';
+        historyList.innerHTML = '';
+        
+        const pendings = requests.filter(r => r.status === 'Pending').sort((a,b) => new Date(b.date) - new Date(a.date));
+        const histories = requests.filter(r => r.status !== 'Pending').sort((a,b) => new Date(b.date) - new Date(a.date)).slice(0, 15);
+        
+        if (pendingCount) pendingCount.textContent = pendings.length;
+        
+        if (pendings.length === 0) {
+            pendingList.innerHTML = '<div class="text-xs text-muted text-center py-8">No pending requests. Ask away!</div>';
+        } else {
+            pendings.forEach(r => {
+                const card = document.createElement('div');
+                card.className = 'glass-panel p-4 flex items-center justify-between border-white/5 bg-white/5 relative overflow-hidden group';
+                card.innerHTML = `
+                    <div>
+                        <div class="flex items-center gap-2 mb-1">
+                            <span class="text-xs font-bold px-2 py-0.5 rounded-md bg-amber-500/10 text-amber-400 border border-amber-500/20">Ask ${r.source}</span>
+                            <span class="text-[10px] text-muted">${r.date}</span>
+                        </div>
+                        <h4 class="text-lg font-black text-white">₹${r.amount.toLocaleString('en-IN')}</h4>
+                        <p class="text-xs text-slate-300 mt-1">${r.notes || 'No description'}</p>
+                    </div>
+                    <div class="flex items-center gap-2 relative z-10">
+                        <button onclick="markRequestReceived('${r.id}')" class="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 flex items-center justify-center hover:bg-emerald-500 hover:text-white transition active:scale-90" title="Mark Received">
+                            <i class="lucide lucide-check w-4 h-4"></i>
+                        </button>
+                        <button onclick="markRequestRejected('${r.id}')" class="w-8 h-8 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 flex items-center justify-center hover:bg-red-500 hover:text-white transition active:scale-90" title="Mark Rejected">
+                            <i class="lucide lucide-x w-4 h-4"></i>
+                        </button>
+                    </div>
+                `;
+                pendingList.appendChild(card);
+            });
+        }
+        
+        if (histories.length === 0) {
+            historyList.innerHTML = '<div class="text-xs text-muted text-center py-8">No past request history.</div>';
+        } else {
+            histories.forEach(r => {
+                const isRec = r.status === 'Received';
+                const statusBadge = isRec 
+                    ? `<span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Received</span>`
+                    : `<span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-red-500/10 text-red-400 border border-red-500/20">Rejected</span>`;
+                
+                const card = document.createElement('div');
+                card.className = 'glass-panel p-3 flex items-center justify-between border-white/5 bg-white/5 opacity-70 hover:opacity-100 transition';
+                card.innerHTML = `
+                    <div>
+                        <div class="flex items-center gap-2 mb-1">
+                            <span class="text-[10px] text-muted">${r.date} • ${r.source}</span>
+                            ${statusBadge}
+                        </div>
+                        <h4 class="text-md font-bold text-white">₹${r.amount.toLocaleString('en-IN')}</h4>
+                        <p class="text-xs text-slate-400">${r.notes || ''}</p>
+                    </div>
+                    <button onclick="deleteRequest('${r.id}')" class="w-7 h-7 rounded-lg bg-white/5 border border-white/10 text-muted hover:text-red-500 flex items-center justify-center transition" title="Delete History">
+                        <i class="lucide lucide-trash-2 w-3.5 h-3.5"></i>
+                    </button>
+                `;
+                historyList.appendChild(card);
+            });
+        }
+        if (window.lucide) lucide.createIcons();
+    };
+
+    // ----------------------------------------------------
+    // JSON & CSV PORTING
+    // ----------------------------------------------------
+    window.exportPcBackup = function() {
+        const fullBackup = {
+            pocketcal: loadData('fin_pocketcal') || [],
+            requests: loadData('fin_pocketcal_requests') || [],
+            limit: localStorage.getItem('fin_pocketcal_limit') || '5000'
+        };
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(fullBackup));
+        const dlAnchor = document.createElement('a');
+        dlAnchor.setAttribute("href", dataStr);
+        dlAnchor.setAttribute("download", `MoneyFlow_PocketCal_Backup_${new Date().toISOString().split('T')[0]}.json`);
+        document.body.appendChild(dlAnchor);
+        dlAnchor.click();
+        dlAnchor.remove();
+        showSnackbar('JSON Backup Downloaded! 📁');
+    };
+
+    window.importPcBackup = function(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const parsed = JSON.parse(e.target.result);
+                if (parsed.pocketcal && Array.isArray(parsed.pocketcal)) {
+                    saveData('fin_pocketcal', parsed.pocketcal);
+                    data = parsed.pocketcal;
+                }
+                if (parsed.requests && Array.isArray(parsed.requests)) {
+                    saveData('fin_pocketcal_requests', parsed.requests);
+                    requests = parsed.requests;
+                }
+                if (parsed.limit) {
+                    localStorage.setItem('fin_pocketcal_limit', parsed.limit);
+                }
+                renderCalendar();
+                renderRequests();
+                showSnackbar('Data restored successfully! 🔄');
+            } catch (err) {
+                showSnackbar('Failed to parse file. Invalid JSON.', 'error');
+            }
+        };
+        reader.readAsText(file);
+    };
+
+    window.exportPcCSV = function() {
+        const sorted = [...data].sort((a,b) => new Date(a.date) - new Date(b.date));
+        let csvContent = "data:text/csv;charset=utf-8,ID,Date,Amount,Source,Notes\n";
+        sorted.forEach(row => {
+            const notesEscaped = (row.notes || '').replace(/"/g, '""');
+            csvContent += `"${row.id}","${row.date}",${row.amount},"${row.category}","${notesEscaped}"\n`;
+        });
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", `PocketCal_Allowance_Report_${new Date().toISOString().split('T')[0]}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        showSnackbar('CSV Exporter success! 📊');
+    };
+
+    // ----------------------------------------------------
     // INIT
     // ----------------------------------------------------
     window.addEventListener('DOMContentLoaded', () => {
         renderCalendar();
+        renderRequests();
         document.addEventListener('themeChanged', renderCharts);
 
         // Load Custom Categories
         const pcCatSelect = document.getElementById('pcCategory');
         if (pcCatSelect) {
             const fullCategoryMap = window.loadData('fin_full_category_map');
-            
+            const existingVals = Array.from(pcCatSelect.options).map(o => o.value);
             if (fullCategoryMap && fullCategoryMap.incomeList && fullCategoryMap.incomeList.length > 0) {
                 fullCategoryMap.incomeList.forEach(cat => {
-                    const opt = document.createElement('option');
-                    opt.value = cat;
-                    opt.textContent = cat;
-                    pcCatSelect.appendChild(opt);
-                });
-            }
-            
-            // Just for flexibility, we can still load expense categories, but they are now nested
-            if (fullCategoryMap && fullCategoryMap.expenseMap) {
-                Object.values(fullCategoryMap.expenseMap).forEach(subList => {
-                    subList.forEach(cat => {
-                        if (cat === 'All') return;
+                    if (!existingVals.includes(cat)) {
                         const opt = document.createElement('option');
                         opt.value = cat;
                         opt.textContent = cat;
                         pcCatSelect.appendChild(opt);
-                    });
+                    }
                 });
             }
         }

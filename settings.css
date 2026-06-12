@@ -36,22 +36,24 @@
 
 /* Preferences Group Card Container */
 .settings-group {
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
     border-radius: 1.5rem;
     padding: 0 1.25rem;
     margin-bottom: 1.5rem;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.03);
+    box-shadow: var(--glass-shadow);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    transition: all 0.3s ease;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+                border-color 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+                box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     overflow: visible; /* Allows custom dropdown menu items to show over boundaries */
 }
 
-[data-theme="dark"] .settings-group {
-    background: rgba(20, 20, 20, 0.35);
-    border-color: rgba(255, 255, 255, 0.04);
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+.settings-group:hover {
+    transform: translateY(-2px);
+    border-color: var(--accent-primary);
+    box-shadow: 0 12px 30px rgba(6, 182, 212, 0.12);
 }
 
 /* Row elements inside Settings Cards */
@@ -145,7 +147,10 @@
     cursor: pointer;
     border: 1px solid rgba(255, 255, 255, 0.1) !important;
     background: rgba(255, 255, 255, 0.08) !important;
-    transition: background-color 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s !important;
+    transition: background-color 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+                border-color 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+                box-shadow 0.3s ease !important;
     overflow: hidden;
     box-shadow: inset 0 2px 4px rgba(0,0,0,0.15) !important;
     outline: none !important;
@@ -160,6 +165,15 @@
 [data-theme="dark"] #toggleBudgetBtn {
     background: rgba(0, 0, 0, 0.3) !important;
     border-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+#toggleVoiceBtn:hover,
+#toggleAnimeAssistantBtn:hover,
+#toggleEfficiencyBtn:hover,
+#toggleUseNameBtn:hover,
+#togglePrivacyBtn:hover,
+#toggleBudgetBtn:hover {
+    transform: scale(1.06);
 }
 
 #toggleVoiceBtn::after,
@@ -177,7 +191,17 @@
     border-radius: 50%;
     background: #ffffff;
     box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), width 0.2s;
+}
+
+/* Toggle Switch Active Push Effect */
+#toggleVoiceBtn:active::after,
+#toggleAnimeAssistantBtn:active::after,
+#toggleEfficiencyBtn:active::after,
+#toggleUseNameBtn:active::after,
+#togglePrivacyBtn:active::after,
+#toggleBudgetBtn:active::after {
+    width: 26px; /* Squishes knob slightly like iOS */
 }
 
 /* Toggle Switch On States */
@@ -192,6 +216,11 @@
 #toggleUseNameBtn.bg-emerald-500::after {
     transform: translateX(22px);
 }
+#toggleVoiceBtn.bg-emerald-500:hover,
+#toggleEfficiencyBtn.bg-emerald-500:hover,
+#toggleUseNameBtn.bg-emerald-500:hover {
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.1), 0 0 14px rgba(52, 199, 89, 0.4) !important;
+}
 
 #toggleAnimeAssistantBtn.bg-blue-500,
 #togglePrivacyBtn.bg-blue-500 {
@@ -202,6 +231,10 @@
 #togglePrivacyBtn.bg-blue-500::after {
     transform: translateX(22px);
 }
+#toggleAnimeAssistantBtn.bg-blue-500:hover,
+#togglePrivacyBtn.bg-blue-500:hover {
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.1), 0 0 14px rgba(0, 122, 255, 0.4) !important;
+}
 
 #toggleBudgetBtn.bg-amber-500 {
     background-color: #ff9500 !important; /* iOS Active Orange */
@@ -209,6 +242,9 @@
 }
 #toggleBudgetBtn.bg-amber-500::after {
     transform: translateX(22px);
+}
+#toggleBudgetBtn.bg-amber-500:hover {
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.1), 0 0 14px rgba(255, 149, 0, 0.4) !important;
 }
 
 /* ========================================================================
@@ -218,15 +254,24 @@
     -webkit-appearance: none;
     width: 100%;
     height: 8px;
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(0, 0, 0, 0.08);
     border-radius: 10px;
     outline: none;
     transition: background 0.3s ease, box-shadow 0.3s;
     background-image: linear-gradient(90deg, var(--accent-primary), var(--accent-info));
     background-size: var(--val, 50%) 100%;
     background-repeat: no-repeat;
-    box-shadow: inset 0 1px 3px rgba(0,0,0,0.3);
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.15);
     cursor: pointer;
+}
+
+[data-theme="dark"] .premium-slider {
+    background: rgba(255, 255, 255, 0.08);
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.3);
+}
+
+.premium-slider:hover {
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.15), 0 0 10px rgba(6, 182, 212, 0.2);
 }
 
 .premium-slider::-webkit-slider-thumb {
@@ -239,17 +284,23 @@
     cursor: pointer;
     box-shadow: 0 2px 6px rgba(0,0,0,0.3);
     border: 2px solid var(--accent-primary);
-    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+                background-color 0.2s,
+                border-color 0.2s;
 }
 
 .premium-slider::-webkit-slider-thumb:hover {
-    transform: scale(1.2);
+    transform: scale(1.25);
     border-color: #ffffff;
     background: var(--accent-primary);
+    box-shadow: 0 4px 10px rgba(6, 182, 212, 0.3);
 }
 
 .premium-slider::-webkit-slider-thumb:active {
-    transform: scale(1.05);
+    transform: scale(1.35);
+    background: var(--accent-primary);
+    border-color: #ffffff;
+    box-shadow: 0 0 15px rgba(6, 182, 212, 0.5);
 }
 
 .premium-slider::-moz-range-thumb {
@@ -260,13 +311,23 @@
     cursor: pointer;
     box-shadow: 0 2px 6px rgba(0,0,0,0.3);
     border: 2px solid var(--accent-primary);
-    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+                background-color 0.2s,
+                border-color 0.2s;
 }
 
 .premium-slider::-moz-range-thumb:hover {
-    transform: scale(1.2);
+    transform: scale(1.25);
     border-color: #ffffff;
     background: var(--accent-primary);
+    box-shadow: 0 4px 10px rgba(6, 182, 212, 0.3);
+}
+
+.premium-slider::-moz-range-thumb:active {
+    transform: scale(1.35);
+    background: var(--accent-primary);
+    border-color: #ffffff;
+    box-shadow: 0 0 15px rgba(6, 182, 212, 0.5);
 }
 
 /* Intensity Display Badge */
@@ -366,27 +427,60 @@
     width: 100%;
     height: 100%;
     z-index: 2000; /* Above regular header and bottom dock */
-    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
     display: flex;
     flex-direction: column;
     padding-bottom: env(safe-area-inset-bottom);
 }
 
 [data-theme="dark"] .subpage-overlay {
-    background: radial-gradient(circle at 50% 50%, rgba(10, 10, 10, 0.45) 0%, rgba(5, 5, 5, 0.85) 100%);
-    backdrop-filter: blur(30px);
-    -webkit-backdrop-filter: blur(30px);
+    background: radial-gradient(circle at 50% 50%, rgba(5, 5, 5, 0.3) 0%, rgba(0, 0, 0, 0.75) 100%);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
 }
 
 [data-theme="light"] .subpage-overlay {
-    background: radial-gradient(circle at 50% 50%, rgba(248, 250, 252, 0.45) 0%, rgba(241, 245, 249, 0.85) 100%);
-    backdrop-filter: blur(30px);
-    -webkit-backdrop-filter: blur(30px);
+    background: radial-gradient(circle at 50% 50%, rgba(241, 245, 249, 0.4) 0%, rgba(226, 232, 240, 0.8) 100%);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
 }
 
 .subpage-overlay.active {
     transform: translateX(-100%); /* Slide in to cover page */
 }
+
+/* Staggered entrance animations for elements inside active subpages */
+.subpage-overlay .subpage-header,
+.subpage-overlay .subpage-content > * {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.subpage-overlay .subpage-header {
+    transform: translateY(-20px);
+}
+
+/* Long transition and staggered delays ONLY on entrance (active state) */
+.subpage-overlay.active .subpage-header,
+.subpage-overlay.active .subpage-content > * {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.subpage-overlay.active .subpage-header { transition-delay: 0.08s; }
+.subpage-overlay.active .subpage-content > :nth-child(1) { transition-delay: 0.12s; }
+.subpage-overlay.active .subpage-content > :nth-child(2) { transition-delay: 0.16s; }
+.subpage-overlay.active .subpage-content > :nth-child(3) { transition-delay: 0.20s; }
+.subpage-overlay.active .subpage-content > :nth-child(4) { transition-delay: 0.24s; }
+.subpage-overlay.active .subpage-content > :nth-child(5) { transition-delay: 0.28s; }
+.subpage-overlay.active .subpage-content > :nth-child(6) { transition-delay: 0.32s; }
+.subpage-overlay.active .subpage-content > :nth-child(7) { transition-delay: 0.36s; }
+.subpage-overlay.active .subpage-content > :nth-child(8) { transition-delay: 0.40s; }
+.subpage-overlay.active .subpage-content > :nth-child(9) { transition-delay: 0.44s; }
+.subpage-overlay.active .subpage-content > :nth-child(10) { transition-delay: 0.48s; }
 
 /* Subpage Navigation Bar - Styled to match the Global Floating Header */
 .subpage-header {
@@ -417,7 +511,7 @@
     border-color: rgba(0, 0, 0, 0.05);
 }
 
-/* Back Link Button - Pill glass button */
+/* Back Link Button - Pill glass button matching main UI click styling */
 .subpage-back-btn {
     display: flex;
     align-items: center;
@@ -427,46 +521,43 @@
     font-size: 0.75rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    background: rgba(255, 255, 255, 0.05);
+    background: var(--glass-bg);
     border: 1px solid var(--glass-border);
     border-radius: 14px;
     padding: 6px 14px;
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-[data-theme="dark"] .subpage-back-btn {
-    background: rgba(255, 255, 255, 0.03);
-}
-
-[data-theme="light"] .subpage-back-btn {
-    background: rgba(0, 0, 0, 0.03);
+    box-shadow: var(--glass-shadow);
 }
 
 .subpage-back-btn:hover {
     transform: translateY(-2px);
-    background: rgba(255, 255, 255, 0.1);
+    background: var(--accent-primary);
+    color: white;
+    border-color: var(--accent-primary);
+    box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3);
 }
 
 /* Subpage Save Link - Pill glass button green/accent */
 .subpage-save-btn {
-    color: var(--accent-primary);
+    color: #ffffff;
     font-weight: 800;
     font-size: 0.75rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    background: rgba(6, 182, 212, 0.1);
-    border: 1px solid rgba(6, 182, 212, 0.2);
+    background: linear-gradient(135deg, var(--accent-primary), var(--accent-info, #8b5cf6));
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 14px;
     padding: 6px 14px;
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 2px 8px rgba(6, 182, 212, 0.2);
 }
 
 .subpage-save-btn:hover {
     transform: translateY(-2px);
-    background: rgba(6, 182, 212, 0.2);
-    box-shadow: 0 0 12px rgba(6, 182, 212, 0.2);
+    background: linear-gradient(135deg, var(--accent-info, #8b5cf6), var(--accent-primary));
+    box-shadow: 0 4px 15px rgba(6, 182, 212, 0.4);
 }
 
 /* Center Title Text */
@@ -495,14 +586,37 @@
 /* Interactive Clickable Settings Row */
 .settings-row.clickable {
     cursor: pointer;
+    border-radius: 14px;
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+    margin: 2px 0;
+    border-bottom: 1px solid transparent;
+    transition: background-color 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .settings-row.clickable:hover {
-    background: rgba(255, 255, 255, 0.02);
+    background: rgba(6, 182, 212, 0.08) !important;
+    transform: translateX(6px);
 }
 
-[data-theme="light"] .settings-row.clickable:hover {
-    background: rgba(0, 0, 0, 0.02);
+[data-theme="dark"] .settings-row.clickable:hover {
+    background: rgba(6, 182, 212, 0.12) !important;
+}
+
+.settings-row.clickable:active {
+    transform: scale(0.97) translateX(3px);
+}
+
+/* Row hover icon animation */
+.settings-icon-wrap {
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
+                box-shadow 0.4s ease;
+}
+
+.settings-row:hover .settings-icon-wrap {
+    transform: scale(1.15) rotate(8deg);
+    box-shadow: 0 4px 12px rgba(6, 182, 212, 0.25);
 }
 
 /* iCloud-Style Profile Card block */
@@ -511,29 +625,25 @@
     align-items: center;
     gap: 1.15rem;
     padding: 1.25rem;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
     border-radius: 1.5rem;
     margin-top: 10px;
     margin-bottom: 1.75rem;
     cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+                border-color 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+                box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.03);
+    box-shadow: var(--glass-shadow);
     text-align: left;
-}
-
-[data-theme="dark"] .icloud-profile-card {
-    background: rgba(20, 20, 20, 0.35);
-    border-color: rgba(255, 255, 255, 0.04);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
 }
 
 .icloud-profile-card:hover {
     transform: translateY(-2px);
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
-    border-color: rgba(var(--accent-primary-rgb), 0.3);
+    border-color: var(--accent-primary);
+    box-shadow: 0 15px 35px rgba(6, 182, 212, 0.15);
 }
 
 .icloud-avatar-wrap {
@@ -600,4 +710,137 @@ body.subpage-active .settings-main-scroll {
     transform: translateY(30px) !important;
     opacity: 0 !important;
     pointer-events: none;
+}
+
+/* GPU Hardware Acceleration for ultra-smoothness */
+#mainHeader,
+.bottom-dock-container,
+.settings-main-scroll,
+.subpage-overlay,
+.settings-group,
+.icloud-profile-card {
+    will-change: transform, opacity;
+}
+
+/* Custom styles for dynamically generated elements in Categories Subpage */
+#customCategoryList > div {
+    background: var(--glass-bg) !important;
+    border: 1px solid var(--glass-border) !important;
+    border-radius: 14px !important;
+    padding: 0.75rem 1rem !important;
+    margin-bottom: 8px;
+    box-shadow: var(--glass-shadow) !important;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+                border-color 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+                box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+#customCategoryList > div:hover {
+    transform: translateY(-2px) translateX(2px) !important;
+    border-color: var(--accent-primary) !important;
+    box-shadow: 0 6px 15px rgba(6, 182, 212, 0.12) !important;
+}
+
+#customCategoryList > div button {
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.3s, color 0.3s !important;
+}
+
+/* Red Danger Card hover upgrade */
+.settings-group.bg-red-500\/5 {
+    border-color: rgba(239, 68, 68, 0.15) !important;
+    background: rgba(239, 68, 68, 0.04) !important;
+}
+
+.settings-group.bg-red-500\/5:hover {
+    border-color: #ef4444 !important;
+    box-shadow: 0 12px 30px rgba(239, 68, 68, 0.15) !important;
+}
+
+/* Premium Datepicker & Custom Dropdown overrides */
+.calendar-popup {
+    border-radius: 1.5rem !important;
+    box-shadow: var(--glass-shadow) !important;
+    border: 1px solid var(--glass-border) !important;
+}
+
+/* ========================================================================
+   RESPONSIVE DESIGN & MOBILE OPTIMIZATIONS
+   ======================================================================== */
+@media (max-width: 576px) {
+    .subpage-header {
+        margin: 10px auto 10px auto;
+        height: 50px;
+        padding: 0 14px;
+        border-radius: 25px;
+        width: calc(100% - 20px);
+    }
+    
+    .subpage-title {
+        font-size: 0.85rem;
+    }
+    
+    .subpage-back-btn,
+    .subpage-save-btn {
+        padding: 4px 10px;
+        font-size: 0.65rem;
+        border-radius: 10px;
+    }
+    
+    .subpage-content {
+        padding: 0.75rem 0.5rem 4rem 0.5rem;
+    }
+    
+    .settings-group {
+        padding: 0 0.85rem;
+        border-radius: 1.25rem;
+        margin-bottom: 1rem;
+    }
+    
+    .settings-row {
+        padding: 0.85rem 0.15rem;
+    }
+    
+    .settings-title {
+        font-size: 0.85rem;
+    }
+    
+    .settings-desc {
+        font-size: 0.7rem;
+    }
+    
+    .icloud-profile-card {
+        padding: 1rem;
+        border-radius: 1.25rem;
+        gap: 0.85rem;
+        margin-bottom: 1.25rem;
+    }
+    
+    .icloud-avatar-wrap {
+        width: 48px;
+        height: 48px;
+        border-radius: 1rem;
+        font-size: 1.25rem;
+    }
+    
+    .icloud-info h3 {
+        font-size: 0.95rem;
+    }
+    
+    .icloud-info p {
+        font-size: 0.7rem;
+    }
+    
+    /* Responsive inputs wrapping inside settings group */
+    .settings-row.flex-col {
+        align-items: stretch !important;
+        gap: 8px;
+    }
+    
+    .settings-row.flex-col input,
+    .settings-row.flex-col select,
+    .settings-row.flex-col .custom-dropdown {
+        width: 100% !important;
+    }
 }

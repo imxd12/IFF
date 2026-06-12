@@ -217,12 +217,16 @@
     <section class="mb-16 grid grid-cols-1 lg:grid-cols-2 gap-6">
 
       <!-- Smart Insight Card -->
-      <div class="glass-panel p-8 ag-card-reveal relative overflow-hidden h-full flex flex-col justify-center"
+      <div id="aiInsightCard" class="glass-panel p-8 ag-card-reveal relative overflow-hidden h-full flex flex-col justify-center cursor-pointer hover:border-emerald-500/30 hover:shadow-[0_0_25px_rgba(16,185,129,0.12)] group transition-all duration-300"
         data-speed="0.12">
         <div class="absolute -top-10 -right-10 w-32 h-32 bg-emerald-500/20 rounded-full blur-2xl pointer-events-none">
         </div>
+        <div class="absolute top-4 right-4 flex items-center gap-1 text-[9px] font-extrabold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-full uppercase tracking-wider transition-all duration-300 group-hover:bg-emerald-500/25 group-hover:scale-105">
+          <i data-lucide="sparkles" class="w-3 h-3"></i>
+          <span>Details</span>
+        </div>
         <div class="flex items-center gap-4 mb-4 relative z-10">
-          <div class="p-3 bg-emerald-500/10 rounded-2xl border border-emerald-500/20">
+          <div class="p-3 bg-emerald-500/10 rounded-2xl border border-emerald-500/20 group-hover:bg-emerald-500/20 group-hover:scale-110 transition-all">
             <i data-lucide="brain" class="text-emerald-500 w-6 h-6"></i>
           </div>
           <h3 class="text-2xl font-bold">Smart Insight</h3>
@@ -232,19 +236,21 @@
       </div>
 
       <!-- AI Spend Predictor -->
-      <div class="glass-panel p-8 ag-card-reveal relative overflow-hidden h-full flex flex-col justify-center"
+      <div id="aiPredictorCard" class="glass-panel p-8 ag-card-reveal relative overflow-hidden h-full flex flex-col justify-center cursor-pointer hover:border-amber-500/30 hover:shadow-[0_0_25px_rgba(245,158,11,0.12)] group transition-all duration-300"
         data-speed="0.15">
         <div class="absolute -bottom-10 -left-10 w-32 h-32 bg-amber-500/10 rounded-full blur-2xl pointer-events-none">
         </div>
+        <div class="absolute top-4 right-4 flex items-center gap-1 text-[9px] font-extrabold text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2.5 py-1 rounded-full uppercase tracking-wider transition-all duration-300 group-hover:bg-amber-500/25 group-hover:scale-105">
+          <i data-lucide="trending-up" class="w-3 h-3"></i>
+          <span>Details</span>
+        </div>
         <div class="flex items-center justify-between mb-4 relative z-10">
           <div class="flex items-center gap-4">
-            <div class="p-3 bg-amber-500/10 rounded-2xl border border-amber-500/20">
+            <div class="p-3 bg-amber-500/10 rounded-2xl border border-amber-500/20 group-hover:bg-amber-500/20 group-hover:scale-110 transition-all">
               <i data-lucide="trending-up" class="text-amber-500 w-6 h-6"></i>
             </div>
             <h3 class="text-2xl font-bold">AI Spend Predictor</h3>
           </div>
-          <span
-            class="text-[10px] font-bold bg-white/10 px-2 py-1 rounded-lg text-muted border border-white/5 uppercase tracking-wider">Forecast</span>
         </div>
         <div class="flex justify-between items-end relative z-10 mt-2">
           <div>
@@ -422,6 +428,177 @@
         <span>Settings</span>
       </a>
     </nav>
+  </div>
+
+  <!-- AI Details Overlay -->
+  <div class="subpage-overlay" id="aiDetailsOverlay">
+    <!-- Overlay Navigation Header -->
+    <header class="subpage-header">
+      <button class="subpage-back-btn glass-button" id="closeAiDetailsBtn">
+        <i data-lucide="chevron-left"></i>
+        <span>Back</span>
+      </button>
+      <span class="subpage-title flex items-center gap-2">
+        <i data-lucide="brain" class="w-5 h-5 text-emerald-400 animate-pulse animate-[pulse_2s_infinite]"></i>
+        <span class="font-extrabold tracking-wide">AI Forecast Insights</span>
+      </span>
+      <div class="flex items-center gap-2 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20 text-[10px] text-emerald-400 font-extrabold uppercase tracking-widest">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+        <span>Active</span>
+      </div>
+    </header>
+
+    <!-- Overlay Scrollable Content -->
+    <div class="subpage-content overflow-y-auto px-4 pb-20 w-full max-w-4xl mx-auto flex flex-col gap-6">
+      
+      <!-- Prediction Bento Section -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="glass-panel p-4 flex flex-col justify-between h-28 relative overflow-hidden group">
+          <div class="absolute -right-2 -bottom-2 opacity-5"><i data-lucide="receipt" class="w-16 h-16 text-white"></i></div>
+          <span class="text-[10px] font-bold uppercase tracking-wider text-muted">Spent So Far</span>
+          <h3 class="text-2xl font-extrabold text-white" id="modalSpentSoFar">₹0</h3>
+          <span class="text-[10px] text-emerald-400 font-medium">Logged expenses</span>
+        </div>
+        <div class="glass-panel p-4 flex flex-col justify-between h-28 relative overflow-hidden group">
+          <div class="absolute -right-2 -bottom-2 opacity-5"><i data-lucide="trending-up" class="w-16 h-16 text-amber-500"></i></div>
+          <span class="text-[10px] font-bold uppercase tracking-wider text-muted">Projected Variable</span>
+          <h3 class="text-2xl font-extrabold text-amber-400" id="modalProjectedVar">₹0</h3>
+          <span class="text-[10px] text-muted font-medium" id="modalProjectedVarSub">For remaining -- days</span>
+        </div>
+        <div class="glass-panel p-4 flex flex-col justify-between h-28 relative overflow-hidden group">
+          <div class="absolute -right-2 -bottom-2 opacity-5"><i data-lucide="calendar" class="w-16 h-16 text-blue-500"></i></div>
+          <span class="text-[10px] font-bold uppercase tracking-wider text-muted">Upcoming Bills</span>
+          <h3 class="text-2xl font-extrabold text-blue-400" id="modalUpcomingBills">₹0</h3>
+          <span class="text-[10px] text-blue-400/70 font-medium">Expected recurring</span>
+        </div>
+        <div class="glass-panel p-4 flex flex-col justify-between h-28 relative overflow-hidden group">
+          <div class="absolute -right-2 -bottom-2 opacity-5"><i data-lucide="alert-triangle" class="w-16 h-16 text-rose-500"></i></div>
+          <span class="text-[10px] font-bold uppercase tracking-wider text-muted">Isolated Spikes</span>
+          <h3 class="text-2xl font-extrabold text-rose-400" id="modalIsolatedSpikes">₹0</h3>
+          <span class="text-[10px] text-rose-400/70 font-medium">One-off anomalies</span>
+        </div>
+      </div>
+
+      <!-- Main Forecast Gauge & Speedometer Section -->
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+        <!-- Predicted Card -->
+        <div class="glass-panel p-6 md:col-span-7 flex flex-col justify-between relative overflow-hidden">
+          <div class="absolute top-0 right-0 w-32 h-32 bg-amber-500/5 rounded-full blur-3xl pointer-events-none"></div>
+          <div>
+            <div class="flex justify-between items-center mb-3">
+              <span class="text-xs font-bold uppercase tracking-wider text-muted">Total Projected Spend</span>
+              <span class="px-2.5 py-0.5 rounded-full text-[9px] font-bold uppercase border bg-amber-500/10 text-amber-400 border-amber-500/20">Month End</span>
+            </div>
+            <h2 class="text-4xl md:text-5xl font-extrabold text-amber-500 mb-2" id="modalPredictedTotal">₹0</h2>
+            <p class="text-xs text-slate-300 leading-relaxed" id="modalPredictionFormula">
+              Based on historical daily base run-rate blended with current month habits.
+            </p>
+          </div>
+          <!-- Target Daily Allowance badge -->
+          <div class="mt-6 p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl flex items-center justify-between" id="modalAllowanceBox">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-full bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+                <i data-lucide="shield-check" class="w-4 h-4"></i>
+              </div>
+              <div>
+                <div class="text-[10px] font-bold uppercase tracking-wider text-emerald-400/80">Target Allowance</div>
+                <div class="text-sm font-extrabold text-white" id="modalAllowanceAmount">₹0 / day</div>
+              </div>
+            </div>
+            <span class="text-[10px] text-muted text-right max-w-[150px] leading-tight">Max spend to stay within budget</span>
+          </div>
+        </div>
+
+        <!-- Velocity Speedometer Widget -->
+        <div class="glass-panel p-6 md:col-span-5 flex flex-col justify-between items-center relative overflow-hidden">
+          <span class="text-xs font-bold uppercase tracking-wider text-muted self-start">Spending Momentum</span>
+          
+          <div class="relative w-36 h-20 flex justify-center items-end mt-4">
+            <!-- Semi-circle Gauge -->
+            <div class="absolute inset-0 rounded-t-full border-[10px] border-white/5 border-b-0"></div>
+            <!-- Dynamic Color Sections inside Gauge (CSS Approximation) -->
+            <div class="absolute inset-0 rounded-t-full border-[10px] border-transparent border-t-emerald-500/30 border-l-emerald-500/30 border-r-rose-500/30 border-b-0"></div>
+            
+            <!-- Speedometer Needle -->
+            <div class="absolute bottom-0 w-1 h-12 bg-gradient-to-t from-white to-amber-400 rounded-full origin-bottom transition-transform duration-1000 ease-[cubic-bezier(0.25,1,0.5,1)]" id="speedometerNeedle" style="transform: rotate(0deg); bottom: 0; left: calc(50% - 2px);"></div>
+            <!-- Center cap -->
+            <div class="absolute bottom-0 w-3 h-3 bg-slate-800 border-[2px] border-white rounded-full translate-y-1 z-10" style="left: calc(50% - 6px);"></div>
+          </div>
+          
+          <div class="text-center mt-3">
+            <div class="text-lg font-extrabold text-white" id="velocityText">Steady</div>
+            <p class="text-[10px] text-muted max-w-[180px] mt-1 leading-tight" id="velocitySubtext">Spending speed vs last week</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recurring Bills Checklist Timeline -->
+      <div class="glass-panel p-6">
+        <div class="flex justify-between items-center mb-4">
+          <div class="flex items-center gap-2">
+            <i data-lucide="calendar-check" class="text-blue-400 w-5 h-5"></i>
+            <span class="text-base font-extrabold text-slate-200">Recurring Bills Checklist</span>
+          </div>
+          <span class="text-[10px] font-bold bg-white/5 px-2 py-0.5 rounded-lg border border-white/5 text-muted uppercase tracking-wider">Timeline</span>
+        </div>
+        <p class="text-xs text-muted mb-4 leading-relaxed">
+          AI monitors these subscriptions/fixed bills. Unpaid items are projected into the month-end forecast.
+        </p>
+        
+        <div class="flex flex-col gap-2.5" id="modalRecurringList">
+          <!-- Dynamic checklist injected by JS -->
+          <div class="text-center text-xs text-muted p-4">Scanning recurring bills...</div>
+        </div>
+      </div>
+
+      <!-- Detailed Breakdown & Action Items -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- AI Calibration Diagnostics -->
+        <div class="glass-panel p-6 flex flex-col gap-4">
+          <h4 class="text-sm font-extrabold text-slate-200 flex items-center gap-2">
+            <i data-lucide="sliders" class="w-4 h-4 text-emerald-400"></i>
+            <span>Calibration & Diagnostics</span>
+          </h4>
+          <div class="flex flex-col gap-2.5 text-xs">
+            <div class="flex justify-between items-center border-b border-white/5 pb-2">
+              <span class="text-muted">Current Month Blend Weight</span>
+              <span class="font-bold text-white" id="diagBlendWeight">0%</span>
+            </div>
+            <div class="flex justify-between items-center border-b border-white/5 pb-2">
+              <span class="text-muted">Historical Daily Base</span>
+              <span class="font-bold text-slate-300" id="diagHistDaily">₹0</span>
+            </div>
+            <div class="flex justify-between items-center border-b border-white/5 pb-2">
+              <span class="text-muted">Historical Weekday / Weekend</span>
+              <span class="font-bold text-slate-300" id="diagHistWdWe">₹0 / ₹0</span>
+            </div>
+            <div class="flex justify-between items-center border-b border-white/5 pb-2">
+              <span class="text-muted">Active Weekday / Weekend</span>
+              <span class="font-bold text-slate-300" id="diagActiveWdWe">₹0 / ₹0</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-muted">Calculated Baseline Rate</span>
+              <span class="font-extrabold text-emerald-400" id="diagBlendedDaily">₹0 / day</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Items / Recommendations -->
+        <div class="glass-panel p-6 flex flex-col justify-between">
+          <div>
+            <h4 class="text-sm font-extrabold text-slate-200 flex items-center gap-2 mb-3">
+              <i data-lucide="sparkles" class="w-4 h-4 text-amber-400"></i>
+              <span>AI Recommendations</span>
+            </h4>
+            <ul class="flex flex-col gap-2.5 text-xs text-slate-300 pl-1" id="modalRecommendations">
+              <li>✨ Analyzed categories are within budget margins. Maintain steady spending.</li>
+            </ul>
+          </div>
+          <p class="text-[10px] text-muted italic mt-4">Recommendations are computed locally based on variable velocity spikes.</p>
+        </div>
+      </div>
+
+    </div>
   </div>
 
   <!-- CDNs for Smooth Experiences -->

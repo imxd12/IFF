@@ -354,3 +354,53 @@
     top: -2px;
 }
 
+/* ========================================================================
+   PREMIUM GREETING CARD UPGRADES
+   ======================================================================== */
+.welcome-card {
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+                box-shadow 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+                border-color 0.5s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.welcome-card:hover {
+    transform: translateY(-4px) scale(1.005) !important;
+    border-color: rgba(6, 182, 212, 0.3) !important;
+    box-shadow: 0 30px 70px rgba(6, 182, 212, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Onboarding Modal Styling */
+#usernameOnboardingModal.modal-overlay {
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Username hover controls */
+#usernameContainer i {
+    transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+#usernameContainer:hover i {
+    transform: scale(1.1) rotate(5deg);
+}
+
+/* Greeting Animation */
+@keyframes greetingReveal {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+        filter: blur(6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+        filter: blur(0);
+    }
+}
+
+.greeting-fade-in {
+    animation: greetingReveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+

@@ -104,24 +104,86 @@
 
     <!-- Welcome Section (Parallax Speed 0.1) -->
     <section class="mt-8 mb-12" data-speed="0.1">
-      <div id="weatherBadge"
-        class="group inline-flex items-center gap-3 px-4 py-2 bg-white/5 border border-white/10 rounded-2xl backdrop-blur-md shadow-[0_4px_20px_rgba(0,0,0,0.1)] mb-4 cursor-pointer transition-all duration-300 hover:bg-white/10 hover:-translate-y-1 hover:shadow-[0_8px_25px_rgba(16,185,129,0.15)] hover:border-emerald-500/30">
-        <div class="relative w-8 h-8 flex items-center justify-center rounded-full bg-blue-500/10 border border-blue-500/20 group-hover:bg-blue-500/20 transition-colors">
-          <i data-lucide="cloud" class="w-4 h-4 animate-pulse text-blue-400"></i>
-          <div class="absolute inset-0 rounded-full animate-ping bg-blue-400/20" style="animation-duration: 3s;"></div>
+      <div class="glass-panel welcome-card p-6 md:p-8 relative overflow-hidden group shadow-[0_20px_50px_rgba(0,0,0,0.3)] border border-white/10 transition-all duration-500">
+        <!-- Glowing background blobs -->
+        <div class="absolute -right-20 -top-20 w-80 h-80 rounded-full bg-cyan-500/10 blur-3xl pointer-events-none group-hover:bg-cyan-500/15 transition-all duration-700"></div>
+        <div class="absolute -left-20 -bottom-20 w-80 h-80 rounded-full bg-purple-500/10 blur-3xl pointer-events-none group-hover:bg-purple-500/15 transition-all duration-700"></div>
+
+        <div class="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
+          
+          <!-- Greeting and Name Section -->
+          <div class="md:col-span-2 space-y-4">
+            <!-- Weather Badge inside card -->
+            <div id="weatherBadge" class="inline-flex items-center gap-3 px-4 py-2 bg-white/5 border border-white/10 rounded-2xl backdrop-blur-md shadow-[0_4px_20px_rgba(0,0,0,0.1)] cursor-pointer transition-all duration-300 hover:bg-white/10 hover:border-cyan-500/30">
+              <div class="relative w-8 h-8 flex items-center justify-center rounded-full bg-cyan-500/10 border border-cyan-500/20 group-hover:bg-cyan-500/20 transition-colors">
+                <i data-lucide="cloud" class="w-4 h-4 animate-pulse text-cyan-400" id="weatherIcon"></i>
+                <div class="absolute inset-0 rounded-full animate-ping bg-cyan-400/20" style="animation-duration: 3s;"></div>
+              </div>
+              <div class="flex flex-col text-left">
+                <span class="text-[9px] font-bold uppercase tracking-widest text-muted hover:text-cyan-400 transition-colors" id="weatherLocationLabel">Atmosphere</span>
+                <span class="text-xs font-extrabold text-white/90" id="weatherTextShort">Detecting Weather...</span>
+              </div>
+            </div>
+
+            <!-- Greeting Text -->
+            <div class="space-y-1">
+              <h1 class="text-3xl md:text-5xl font-extrabold tracking-tight text-white flex flex-wrap items-center gap-x-3 gap-y-1" id="welcomeText">
+                <span>Welcome, User</span>
+              </h1>
+              <p class="text-muted text-base md:text-lg">Your financial overview. Track, analyze, and master your cashflow.</p>
+            </div>
+
+            <!-- Interactive Settings Panel Inside Welcome Card -->
+            <div class="flex flex-wrap items-center gap-3 pt-2">
+              <a href="spendly.html" class="inline-flex items-center gap-2 bg-emerald-500 hover:bg-emerald-400 text-black px-4 py-2.5 rounded-xl font-extrabold transition-all shadow-[0_0_15px_rgba(16,185,129,0.2)] hover:scale-105 active:scale-95 group text-xs md:text-sm mr-2">
+                <i data-lucide="plus" class="w-4 h-4 group-hover:rotate-90 transition-transform"></i>
+                <span>Log Transaction</span>
+              </a>
+
+              <!-- Voice Toggle Button -->
+              <button id="voiceMuteToggle" class="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-xs font-bold text-slate-300 hover:bg-white/10 hover:text-white transition-all duration-300 shadow-md">
+                <i data-lucide="volume-2" class="w-3.5 h-3.5" id="voiceToggleIcon"></i>
+                <span id="voiceToggleText">Voice Active</span>
+              </button>
+              
+              <!-- Quick speak/test button -->
+              <button id="voiceSpeakBtn" class="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-xs font-bold text-slate-300 hover:bg-white/10 hover:text-white transition-all duration-300 shadow-md" title="Replay greeting">
+                <i data-lucide="play" class="w-3.5 h-3.5"></i>
+                <span>Hear Assist</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Weather Dashboard Widget (Right Column) -->
+          <div class="glass-panel bg-white/5 border border-white/10 p-5 rounded-2xl flex flex-col justify-between h-full space-y-4 hover:border-cyan-500/20 transition-all duration-300 shadow-inner">
+            <div class="flex items-center justify-between">
+              <span class="text-[10px] font-extrabold uppercase tracking-wider text-cyan-400/80">Local Weather</span>
+              <span class="text-[9px] text-muted uppercase tracking-widest font-bold" id="weatherUpdateTime">Updated Just Now</span>
+            </div>
+            
+            <div class="flex items-center gap-4">
+              <span class="text-4xl md:text-5xl font-black text-white" id="weatherTempDisplay">--°C</span>
+              <div class="flex flex-col text-left">
+                <span class="font-extrabold text-sm text-slate-200" id="weatherConditionDisplay">Loading...</span>
+                <span class="text-xs text-muted" id="weatherCityDisplay">Locating...</span>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2 pt-2 border-t border-white/5 text-[10px]">
+              <div class="flex items-center gap-1.5 text-muted">
+                <i data-lucide="droplet" class="w-3.5 h-3.5 text-cyan-400/80"></i>
+                <span class="font-bold">Humidity:</span>
+                <span class="text-slate-200 font-extrabold" id="weatherHumidityDisplay">--%</span>
+              </div>
+              <div class="flex items-center gap-1.5 text-muted">
+                <i data-lucide="wind" class="w-3.5 h-3.5 text-cyan-400/80"></i>
+                <span class="font-bold">Wind:</span>
+                <span class="text-slate-200 font-extrabold" id="weatherWindDisplay">-- km/h</span>
+              </div>
+            </div>
+          </div>
+
         </div>
-        <div class="flex flex-col">
-          <span class="text-[10px] font-bold uppercase tracking-widest text-muted group-hover:text-emerald-400/70 transition-colors">Local Atmosphere</span>
-          <span class="text-sm font-extrabold text-white/90 group-hover:text-white transition-colors">Detecting Weather...</span>
-        </div>
-      </div>
-      <h1 class="text-4xl md:text-5xl font-extrabold mb-2" id="welcomeText">Welcome, User</h1>
-      <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-        <p class="text-muted text-lg">Your financial overview.</p>
-        <a href="spendly.html" class="inline-flex items-center gap-2 bg-emerald-500 hover:bg-emerald-400 text-black px-5 py-2.5 rounded-xl font-extrabold transition-all shadow-[0_0_15px_rgba(16,185,129,0.2)] hover:scale-105 active:scale-95 group">
-          <i data-lucide="plus" class="w-5 h-5 group-hover:rotate-90 transition-transform"></i>
-          <span>Log Transaction</span>
-        </a>
       </div>
     </section>
 
@@ -598,6 +660,30 @@
         </div>
       </div>
 
+    </div>
+  </div>
+
+  <!-- Onboarding Username Modal -->
+  <div id="usernameOnboardingModal" class="modal-overlay" style="display: none; z-index: 9999;">
+    <div class="modal-content-glass max-w-sm w-full relative p-8 border border-white/10 shadow-[0_0_50px_rgba(6,182,212,0.25)] rounded-3xl overflow-hidden backdrop-blur-2xl bg-black/60">
+      <div class="absolute inset-0 bg-gradient-to-br from-cyan-500/10 via-transparent to-purple-500/10 pointer-events-none"></div>
+      
+      <div class="text-center relative z-10 space-y-6">
+        <div class="w-16 h-16 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center mx-auto text-cyan-400 shadow-[0_0_20px_rgba(6,182,212,0.2)]">
+          <i data-lucide="user" class="w-8 h-8"></i>
+        </div>
+        
+        <div class="space-y-2">
+          <h2 class="text-2xl font-extrabold tracking-tight text-white">Welcome to MoneyFlow</h2>
+          <p class="text-sm text-muted">Please enter your name to customize your personalized smart experience.</p>
+        </div>
+        
+        <input type="text" id="onboardingUsernameInput" class="glass-input w-full !py-3.5 text-center text-lg font-bold shadow-inner border-white/10 focus:border-cyan-500/50 text-white placeholder-slate-500" placeholder="Your Name">
+        
+        <button id="saveOnboardingUsernameBtn" class="w-full py-3.5 rounded-2xl font-extrabold bg-gradient-to-r from-cyan-500 to-indigo-500 text-black shadow-lg hover:shadow-[0_0_25px_rgba(6,182,212,0.4)] hover:scale-[1.02] active:scale-[0.98] transition-all duration-300">
+          Get Started
+        </button>
+      </div>
     </div>
   </div>
 

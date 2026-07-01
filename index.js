@@ -916,18 +916,74 @@
     }
 
     function getGreetingTemplate(hour) {
-        if (hour >= 0 && hour < 2) return { text: "Burning the midnight oil, {username}?", emoji: "🌙" };
-        if (hour >= 2 && hour < 4) return { text: "Late-night vibes, {username}!", emoji: "😴" };
-        if (hour >= 4 && hour < 6) return { text: "Rise and shine, {username}!", emoji: "🌄" };
-        if (hour >= 6 && hour < 8) return { text: "Good Morning, {username}!", emoji: "☀️" };
-        if (hour >= 8 && hour < 10) return { text: "Ready for a productive day, {username}?", emoji: "🌞" };
-        if (hour >= 10 && hour < 12) return { text: "Have an amazing day, {username}!", emoji: "✨" };
-        if (hour >= 12 && hour < 14) return { text: "Good Afternoon, {username}!", emoji: "🍽️" };
-        if (hour >= 14 && hour < 16) return { text: "Stay focused, {username}!", emoji: "⚡" };
-        if (hour >= 16 && hour < 18) return { text: "Good Evening, {username}!", emoji: "☕" };
-        if (hour >= 18 && hour < 20) return { text: "Hope your evening is awesome, {username}!", emoji: "🌇" };
-        if (hour >= 20 && hour < 22) return { text: "Relax and enjoy, {username}!", emoji: "🎮" };
-        return { text: "Good Night, {username}!", emoji: "🌌" };
+        const templates = {
+            0: [
+                { text: "Burning the midnight oil, {username}?", emoji: "🌙" },
+                { text: "Late night coding or calculation, {username}?", emoji: "💻" },
+                { text: "Up late planning finances, {username}?", emoji: "🦉" }
+            ],
+            2: [
+                { text: "Late-night vibes, {username}!", emoji: "😴" },
+                { text: "Insomnia mode active, {username}? 👾", emoji: "👾" },
+                { text: "Quiet hours are the best hours, {username}.", emoji: "🌌" }
+            ],
+            4: [
+                { text: "Rise and shine, {username}!", emoji: "🌄" },
+                { text: "Early bird gets the worm, {username}! 🌅", emoji: "🌅" },
+                { text: "Catching the first light, {username}?", emoji: "☀️" }
+            ],
+            6: [
+                { text: "Good Morning, {username}!", emoji: "☀️" },
+                { text: "Fresh start of the day, {username}! ☕", emoji: "☕" },
+                { text: "Wishing you a bright morning, {username}!", emoji: "🌞" }
+            ],
+            8: [
+                { text: "Ready for a productive day, {username}?", emoji: "🌞" },
+                { text: "Let's smash some goals, {username}! 🚀", emoji: "🚀" },
+                { text: "Money flows to the focused, {username}!", emoji: "💼" }
+            ],
+            10: [
+                { text: "Have an amazing day, {username}!", emoji: "✨" },
+                { text: "Doing great, {username}! Keep it up! 💪", emoji: "💪" },
+                { text: "Mid-morning power check, {username}!", emoji: "🔋" }
+            ],
+            12: [
+                { text: "Good Afternoon, {username}!", emoji: "🍽️" },
+                { text: "Midday check-in, {username}! 🥪", emoji: "🥪" },
+                { text: "Lunch break budget time, {username}?", emoji: "🥗" }
+            ],
+            14: [
+                { text: "Stay focused, {username}!", emoji: "⚡" },
+                { text: "Powering through the afternoon, {username}! ⚡", emoji: "⚡" },
+                { text: "Hydrate and build wealth, {username}!", emoji: "🥤" }
+            ],
+            16: [
+                { text: "Good Evening, {username}!", emoji: "☕" },
+                { text: "Sunset vibes, {username}! Time to wind down? 🌇", emoji: "🌇" },
+                { text: "Afternoon wrap-up, {username}!", emoji: "🍃" }
+            ],
+            18: [
+                { text: "Hope your evening is awesome, {username}!", emoji: "🌇" },
+                { text: "Time for a break, {username}? 🍵", emoji: "🍵" },
+                { text: "Unwinding and reflecting, {username}!", emoji: "🌙" }
+            ],
+            20: [
+                { text: "Relax and enjoy, {username}!", emoji: "🎮" },
+                { text: "Unwinding for the day, {username}! 🛀", emoji: "🛀" },
+                { text: "Peaceful evening vibes, {username}!", emoji: "🕯️" }
+            ],
+            22: [
+                { text: "Good Night, {username}!", emoji: "🌌" },
+                { text: "Sweet dreams, {username}! Time to sleep 😴", emoji: "😴" },
+                { text: "Rest well, {username}. Tomorrow awaits! 🌠", emoji: "🌠" }
+            ]
+        };
+
+        const slot = Math.floor(hour / 2) * 2;
+        const options = templates[slot] || templates[22];
+        const dayOfMonth = new Date().getDate();
+        const index = dayOfMonth % options.length;
+        return options[index];
     }
 
     function updateTextGreeting() {
@@ -959,11 +1015,12 @@
         const styledName = `<span class="text-gradient font-black cursor-pointer group/name relative inline-flex items-center gap-1.5" id="usernameContainer"><span id="displayedUsername">${username}</span><i data-lucide="edit-3" class="w-3.5 h-3.5 opacity-0 group-hover/name:opacity-100 transition-opacity text-cyan-400 cursor-pointer" id="editUsernameBtn" title="Edit Username"></i></span>`;
         
         let finalHtml = "";
+        const formattedEmoji = `<span class="welcome-emoji inline-block mr-2">${emoji}</span>`;
         if (template.text.includes("{username}")) {
             const parts = template.text.split("{username}");
-            finalHtml = `<span>${emoji} ${parts[0]}</span>${styledName}<span>${parts[1]}</span>`;
+            finalHtml = `<span>${formattedEmoji}${parts[0]}</span>${styledName}<span>${parts[1]}</span>`;
         } else {
-            finalHtml = `<span>${emoji} ${template.text} </span>${styledName}`;
+            finalHtml = `<span>${formattedEmoji}${template.text} </span>${styledName}`;
         }
 
         // Apply visual fade animation by re-triggering class

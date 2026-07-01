@@ -1608,212 +1608,307 @@
     }
 
     // ----------------------------------------------------
-    // AI SMART FEATURES (SPENDLY)
+    // AI SMART FEATURES & ADVANCED NLP PARSING (SPENDLY)
     // ----------------------------------------------------
+    let lastLoggedTransaction = null;
+
+    // Advanced NLP Date Parser
+    function parseSmartDate(input) {
+        const todayDate = new Date();
+        let targetDate = new Date(todayDate);
+        const lowerInput = input.toLowerCase();
+        
+        if (lowerInput.includes('today')) {
+            // Already set to today
+        } else if (lowerInput.includes('yesterday')) {
+            targetDate.setDate(todayDate.getDate() - 1);
+        } else if (lowerInput.includes('day before yesterday')) {
+            targetDate.setDate(todayDate.getDate() - 2);
+        } else {
+            const daysAgoMatch = lowerInput.match(/(\d+)\s*days?\s*ago/);
+            if (daysAgoMatch) {
+                targetDate.setDate(todayDate.getDate() - parseInt(daysAgoMatch[1], 10));
+            } else {
+                // Check for relative weekdays (e.g. "on monday", "last friday")
+                const weekdays = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+                let foundWeekday = -1;
+                for (let i = 0; i < 7; i++) {
+                    if (new RegExp('\\b' + weekdays[i] + '\\b').test(lowerInput)) {
+                        foundWeekday = i;
+                        break;
+                    }
+                }
+                
+                if (foundWeekday !== -1) {
+                    const currentDay = todayDate.getDay();
+                    let diff = currentDay - foundWeekday;
+                    if (diff <= 0) diff += 7; // Grab the most recent past occurrence
+                    targetDate.setDate(todayDate.getDate() - diff);
+                } else {
+                    // Check for specific date match like "25 june", "25 jun", "june 25"
+                    const months = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
+                    const monthsFull = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'];
+                    
+                    let monthIdx = -1;
+                    let dayNum = -1;
+                    
+                    for(let i = 0; i < 12; i++) {
+                        if (lowerInput.includes(monthsFull[i]) || lowerInput.includes(months[i])) {
+                            monthIdx = i;
+                            break;
+                        }
+                    }
+                    
+                    if (monthIdx !== -1) {
+                        const dayMatch = lowerInput.match(/\b(\d{1,2})(st|nd|rd|th)?\b/);
+                        if (dayMatch) {
+                            dayNum = parseInt(dayMatch[1], 10);
+                        }
+                    }
+                    
+                    if (monthIdx !== -1 && dayNum !== -1) {
+                        targetDate.setMonth(monthIdx);
+                        targetDate.setDate(dayNum);
+                        // If date is future-bound, assume previous year
+                        if (targetDate > todayDate) {
+                            targetDate.setFullYear(todayDate.getFullYear() - 1);
+                        }
+                    } else {
+                        // Standard formats: DD-MM-YYYY, DD/MM/YYYY, YYYY-MM-DD
+                        const formatMatch = lowerInput.match(/\b(\d{1,2})[-/](\d{1,2})[-/](\d{4})\b/) || lowerInput.match(/\b(\d{4})[-/](\d{1,2})[-/](\d{1,2})\b/);
+                        if (formatMatch) {
+                            if (formatMatch[3].length === 4) { // DD-MM-YYYY
+                                targetDate = new Date(formatMatch[3], formatMatch[2] - 1, formatMatch[1]);
+                            } else { // YYYY-MM-DD
+                                targetDate = new Date(formatMatch[1], formatMatch[2] - 1, formatMatch[3]);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return targetDate.toISOString().split('T')[0];
+    }
+
+    // Advanced Notes Cleaner
+    function extractSmartNotes(input, amount, type, category, sub) {
+        let clean = input.toLowerCase();
+        
+        // Remove amount
+        if (amount) {
+            clean = clean.replace(new RegExp('\\b' + amount + '\\b', 'g'), '');
+        }
+        
+        // Remove currencies
+        const curWords = ['rs', 'rupees', 'bucks', 'rupee', 'cents', 'dollars', 'dollar', 'usd', 'inr', '₹', '\\$'];
+        curWords.forEach(w => {
+            clean = clean.replace(new RegExp('\\b' + w + '\\b', 'g'), '');
+            clean = clean.replace(new RegExp(w, 'g'), '');
+        });
+        
+        // Remove calendar date formats
+        clean = clean.replace(/\b\d{1,2}[-/]\d{1,2}[-/]\d{2,4}\b/g, '');
+        clean = clean.replace(/\b\d{4}[-/]\d{1,2}[-/]\d{1,2}\b/g, '');
+        
+        // Remove relative dates & weekdays
+        const dateWords = ['today', 'yesterday', 'day before yesterday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday', 'days? ago', 'ago'];
+        dateWords.forEach(w => {
+            clean = clean.replace(new RegExp('\\b' + w + '\\b', 'g'), '');
+        });
+        
+        // Remove action triggers
+        const verbs = ['spent', 'got', 'received', 'earned', 'logged', 'added', 'add', 'log', 'buy', 'bought', 'paid', 'pay', 'income', 'expense', 'record', 'recorded'];
+        verbs.forEach(w => {
+            clean = clean.replace(new RegExp('\\b' + w + '\\b', 'g'), '');
+        });
+
+        // Remove prepositions & fillers
+        const preps = ['on', 'for', 'in', 'at', 'from', 'to', 'with', 'of', 'a', 'an', 'the'];
+        preps.forEach(w => {
+            clean = clean.replace(new RegExp('\\b' + w + '\\b', 'g'), '');
+        });
+
+        // Remove matched category names to clean the string
+        if (category) {
+            let plainCat = category.replace(/^(\p{Emoji_Presentation}|\p{Extended_Pictographic})+\s*/u, '').toLowerCase().trim();
+            clean = clean.replace(new RegExp('\\b' + plainCat + '\\b', 'g'), '');
+        }
+        if (sub) {
+            let plainSub = sub.replace(/^(\p{Emoji_Presentation}|\p{Extended_Pictographic})+\s*/u, '').toLowerCase().trim();
+            clean = clean.replace(new RegExp('\\b' + plainSub + '\\b', 'g'), '');
+        }
+
+        // Remove brackets, trailing dashes, or punctuation
+        clean = clean.replace(/[^a-zA-Z0-9\s]/g, ' ');
+        clean = clean.replace(/\s+/g, ' ').trim();
+        
+        if (!clean) {
+            return `Smart Entry: ${category || 'Transaction'}`;
+        }
+        
+        return clean.charAt(0).toUpperCase() + clean.slice(1);
+    }
+
+    // Expose Global UI AI Interaction endpoints
+    window.aiUndoTransaction = function(id) {
+        const idx = data.findIndex(d => d.id === id);
+        if (idx !== -1) {
+            const removed = data.splice(idx, 1)[0];
+            window.saveData('fin_spendly', data);
+            updateUI();
+            
+            if (lastLoggedTransaction && lastLoggedTransaction.id === id) {
+                lastLoggedTransaction = null;
+            }
+            if (window.showSnackbar) window.showSnackbar(`Transaction of ₹${removed.amount} undone! 🗑️`);
+            
+            const history = document.getElementById('aiChatHistory');
+            if (history) {
+                const bubble = document.createElement('div');
+                bubble.className = 'chat-bubble bot flex gap-2 w-full';
+                bubble.innerHTML = `
+                    <div class="w-6 h-6 rounded-full bg-cyan-500/20 flex items-center justify-center flex-shrink-0 text-cyan-400 text-[10px]"><i data-lucide="bot" class="w-3.5 h-3.5"></i></div>
+                    <div class="bubble-content shadow-md border border-white/5 bg-white/5 p-3 rounded-2xl text-xs text-slate-200 leading-relaxed">
+                        Undone! I have removed the logged transaction of <strong>₹${removed.amount}</strong> for <em>${removed.category}</em>.
+                    </div>
+                `;
+                history.appendChild(bubble);
+                history.scrollTop = history.scrollHeight;
+                if (window.lucide) lucide.createIcons({ root: bubble });
+            }
+        }
+    };
+
+    window.aiSetBudget = function(category, limit) {
+        if (typeof window.saveCategoryBudget === 'function') {
+            window.saveCategoryBudget(category, limit);
+            if (window.showSnackbar) window.showSnackbar(`Budget configured for ${category}! 🎯`);
+            
+            const history = document.getElementById('aiChatHistory');
+            if (history) {
+                const bubble = document.createElement('div');
+                bubble.className = 'chat-bubble bot flex gap-2 w-full';
+                bubble.innerHTML = `
+                    <div class="w-6 h-6 rounded-full bg-cyan-500/20 flex items-center justify-center flex-shrink-0 text-cyan-400 text-[10px]"><i data-lucide="bot" class="w-3.5 h-3.5"></i></div>
+                    <div class="bubble-content shadow-md border border-white/5 bg-white/5 p-3 rounded-2xl text-xs text-slate-200 leading-relaxed">
+                        I've set your monthly budget limit for <strong>${category}</strong> to <strong>₹${limit}</strong>.
+                    </div>
+                `;
+                history.appendChild(bubble);
+                history.scrollTop = history.scrollHeight;
+                if (window.lucide) lucide.createIcons({ root: bubble });
+            }
+        }
+    };
+
     window.processSmartEntry = function() {
-        const input = document.getElementById('smartEntryInput').value.toLowerCase();
+        const input = document.getElementById('smartEntryInput').value;
         if(!input) return;
         
-        // 1. Extract Amount
-        const amountMatch = input.match(/\d+(\.\d{1,2})?/);
+        const lowerInput = input.toLowerCase();
+
+        // 1. Extract clean numeric amount
+        // Strips common currency prefixes/suffixes to get clean digits
+        const amountMatch = lowerInput.replace(/[₹$]/g, '').match(/\b\d+(\.\d{1,2})?\b/);
         if(!amountMatch) {
-            showSnackbar('AI needs an amount. Try "Spent 250 on food"', 'error');
+            showSnackbar('Could not find transaction amount. Try: "Spent 300 on cab"', 'error');
             return;
         }
         const amount = Number(amountMatch[0]);
 
-        // 2. Extract Date (yesterday, today, days ago)
-        let dateStr = new Date().toISOString().split('T')[0];
-        if (input.includes('yesterday')) {
-            let d = new Date(); d.setDate(d.getDate() - 1);
-            dateStr = d.toISOString().split('T')[0];
-        } else if (input.match(/(\d+) days ago/)) {
-            let days = Number(input.match(/(\d+) days ago/)[1]);
-            let d = new Date(); d.setDate(d.getDate() - days);
-            dateStr = d.toISOString().split('T')[0];
-        }
+        // 2. Parse relative or specific date
+        const dateStr = parseSmartDate(lowerInput);
         
-        // 3. Determine Type
+        // 3. Determine transaction type
         let type = 'expense';
-        if (input.includes('got ') || input.includes('received') || input.includes('earned') || input.includes('income') || input.includes('salary') || input.includes('pocket money')) {
+        if (lowerInput.includes('got') || lowerInput.includes('received') || lowerInput.includes('earned') || lowerInput.includes('income') || lowerInput.includes('salary') || lowerInput.includes('pocket money')) {
             type = 'income';
         }
 
-        // 4. Fuzzy Match Category (Extremely Smart)
-        let category = type === 'expense' ? 'Other' : 'Other';
-        let sub = '';
-
-        const aiSynonyms = {
-            'auto': { cat: 'Travel', sub: '🛺 Auto/Rickshaw' },
-            'rickshaw': { cat: 'Travel', sub: '🛺 Auto/Rickshaw' },
-            'best': { cat: 'Travel', sub: '🚍 BEST/City Bus' },
-            'bus': { cat: 'Travel', sub: '🚍 BEST/City Bus' },
-            'metro': { cat: 'Travel', sub: '🚇 Metro' },
-            'train': { cat: 'Travel', sub: '🚆 Local Train' },
-            'local': { cat: 'Travel', sub: '🚆 Local Train' },
-            'petrol': { cat: 'Travel', sub: '🛵 Bike Petrol' },
-            'bike': { cat: 'Travel', sub: '🛵 Bike Petrol' },
-            'fuel': { cat: 'Travel', sub: '⛽ Fuel/Diesel' },
-            'taxi': { cat: 'Travel', sub: '🚗 Taxi/Cab' },
-            'cab': { cat: 'Travel', sub: '🚗 Taxi/Cab' },
-            'ola': { cat: 'Travel', sub: '🚗 Taxi/Cab' },
-            'uber': { cat: 'Travel', sub: '🚗 Taxi/Cab' },
-            'milk': { cat: 'Food', sub: '🥛 Milk/Doodh' },
-            'doodh': { cat: 'Food', sub: '🥛 Milk/Doodh' },
-            'ration': { cat: 'Food', sub: '🌾 Ration/Kirana' },
-            'grocery': { cat: 'Food', sub: '🌾 Ration/Kirana' },
-            'veg': { cat: 'Food', sub: '🥬 Vegetables/Mandi' },
-            'fruits': { cat: 'Food', sub: '🍎 Fruits' },
-            'bread': { cat: 'Food', sub: '🍞 Bakery/Bread' },
-            'chicken': { cat: 'Food', sub: '🍗 Non-Veg/Meat' },
-            'meat': { cat: 'Food', sub: '🍗 Non-Veg/Meat' },
-            'tea': { cat: 'Food', sub: '☕ Tea/Chai' },
-            'chai': { cat: 'Food', sub: '☕ Tea/Chai' },
-            'street food': { cat: 'Food', sub: '🥙 Street Food' },
-            'vadapav': { cat: 'Food', sub: '🥙 Street Food' },
-            'burger': { cat: 'Food', sub: '🍔 Outside Junk' },
-            'pizza': { cat: 'Food', sub: '🍔 Outside Junk' },
-            'electricity': { cat: 'Bills', sub: '💡 Electricity Bill' },
-            'recharge': { cat: 'Bills', sub: '📱 Mobile Recharge' },
-            'wifi': { cat: 'Bills', sub: '🌐 WiFi/Broadband' },
-            'medicine': { cat: 'Health', sub: '💊 Medicines/Pharmacy' },
-            'pharmacy': { cat: 'Health', sub: '💊 Medicines/Pharmacy' },
-            'doctor': { cat: 'Health', sub: '🩺 Doctor Visit/Clinic' },
-            'xerox': { cat: 'Education', sub: '🖨️ Printout/Xerox' },
-            'print': { cat: 'Education', sub: '🖨️ Printout/Xerox' },
-            'movie': { cat: 'Entertainment', sub: '🎬 Movies/Theater' },
-            'netflix': { cat: 'Entertainment', sub: '🎥 OTT (Netflix/Prime)' },
-            'haircut': { cat: 'Other', sub: '💇 Haircut/Barber' }
-        };
+        // 4. Advanced Category Matching (utilizing full custom category maps)
+        let category = 'Other';
+        let sub = 'All';
 
         if (type === 'expense') {
-            // Check Synonyms First (Most Accurate)
-            for (const [key, val] of Object.entries(aiSynonyms)) {
-                if (new RegExp('\\b' + key + '\\b').test(input)) {
-                    category = val.cat;
-                    sub = val.sub;
-                    break;
-                }
-            }
-
-            // Fallback: Intelligent Score-Based Matching for Future/Custom Categories
-            if (!sub) {
-                let bestMatchScore = 0;
-                let bestCat = 'Other';
-                let bestSub = '';
-
-                const expCategories = Object.keys(fullCategoryMap.expenseMap);
-                for(let cat of expCategories) {
-                    let catName = cat.toLowerCase();
-                    let catBaseScore = new RegExp('\\b' + catName + '\\b').test(input) ? 2 : 0;
-
-                    fullCategoryMap.expenseMap[cat].forEach(s => {
-                        let score = catBaseScore;
-                        let plainSub = s.replace(/^(\p{Emoji_Presentation}|\p{Extended_Pictographic})+\s*/u, '').toLowerCase().trim();
-                        
-                        // 1. Direct Exact Match (Highest Score)
-                        if (input.includes(plainSub)) {
-                            score += 10;
-                        } else {
-                            // 2. Tokenized Match
-                            let words = plainSub.split(/[\s\/&()]+/).filter(w => w.length > 2);
-                            let matchedWords = 0;
-                            
-                            for (let w of words) {
-                                // Remove trailing 's' for basic plural matching (e.g. "apples" -> "apple")
-                                let singular = w.endsWith('s') ? w.slice(0, -1) : w;
-                                if (new RegExp('\\b' + w + '\\b').test(input) || new RegExp('\\b' + singular + '\\b').test(input)) {
-                                    matchedWords++;
-                                }
-                            }
-                            score += (matchedWords * 3);
-                        }
-
-                        if (score > bestMatchScore) {
-                            bestMatchScore = score;
-                            bestCat = cat;
-                            bestSub = s;
-                        }
-                    });
-                }
-
-                if (bestMatchScore > 0) {
-                    category = bestCat;
-                    sub = bestSub;
-                }
-            }
-            
-            // Default sub if category matched but sub didn't
-            if (category !== 'Other' && !sub && fullCategoryMap.expenseMap[category].length > 0) {
-                sub = fullCategoryMap.expenseMap[category][0]; // Pick first
-                if (fullCategoryMap.expenseMap[category].includes('All')) sub = 'All';
-            }
-        } else {
-            const aiIncomeSynonyms = {
-                'pocket money': '💵 Pocket Money',
-                'allowance': '💵 Pocket Money',
-                'kharchi': '💵 Pocket Money',
-                'salary': '💼 Salary',
-                'paycheck': '💼 Salary',
-                'wage': '💼 Salary',
-                'job': '💼 Salary',
-                'gift': '🎁 Gift/Eidi',
-                'eidi': '🎁 Gift/Eidi',
-                'shagun': '🎁 Gift/Eidi',
-                'bonus': '🎁 Gift/Eidi',
-                'loan': '🤝 Loan Given Back',
-                'borrowed': '🤝 Loan Given Back',
-                'lent': '🤝 Loan Given Back',
-                'refund': '💸 Cashback/Discount',
-                'cashback': '💸 Cashback/Discount',
-                'discount': '💸 Cashback/Discount',
-                'investment': '📈 Investment Returns',
-                'dividend': '📈 Investment Returns',
-                'interest': '📈 Investment Returns',
-                'stock': '📈 Investment Returns',
-                'crypto': '📈 Investment Returns',
-                'freelance': '👨‍💻 Freelance/Side Hustle',
-                'side hustle': '👨‍💻 Freelance/Side Hustle',
-                'gig': '👨‍💻 Freelance/Side Hustle',
-                'fiverr': '👨‍💻 Freelance/Side Hustle',
-                'upwork': '👨‍💻 Freelance/Side Hustle',
-                'commission': '👨‍💻 Freelance/Side Hustle'
-            };
-
-            let matchedViaSynonym = false;
-            for (const [key, val] of Object.entries(aiIncomeSynonyms)) {
-                if (new RegExp('\\b' + key + '\\b').test(input)) {
-                    category = val;
-                    matchedViaSynonym = true;
-                    break;
-                }
-            }
-
-            if (!matchedViaSynonym) {
-                let bestScore = 0;
-                for(let inc of fullCategoryMap.incomeList) {
-                    let plainInc = inc.replace(/^(\p{Emoji_Presentation}|\p{Extended_Pictographic})+\s*/u, '').toLowerCase().trim();
-                    let score = 0;
+            let bestScore = 0;
+            for (const [cat, subList] of Object.entries(fullCategoryMap.expenseMap)) {
+                const plainCat = cat.replace(/^(\p{Emoji_Presentation}|\p{Extended_Pictographic})+\s*/u, '').toLowerCase().trim();
+                let catScore = new RegExp('\\b' + plainCat + '\\b', 'i').test(lowerInput) ? 3 : 0;
+                
+                subList.forEach(s => {
+                    const plainSub = s.replace(/^(\p{Emoji_Presentation}|\p{Extended_Pictographic})+\s*/u, '').toLowerCase().trim();
+                    let score = catScore;
                     
-                    if(input.includes(plainInc)) {
-                        score += 10;
+                    if (lowerInput.includes(plainSub)) {
+                        score += 15;
                     } else {
-                        let words = plainInc.split(/[\s\/&()]+/).filter(w => w.length > 2);
-                        for (let w of words) {
+                        const words = plainSub.split(/[\s\/&()]+/).filter(w => w.length > 2);
+                        let matchedWords = 0;
+                        words.forEach(w => {
                             let singular = w.endsWith('s') ? w.slice(0, -1) : w;
-                            if (new RegExp('\\b' + w + '\\b').test(input) || new RegExp('\\b' + singular + '\\b').test(input)) {
-                                score += 3;
+                            if (new RegExp('\\b' + w + '\\b', 'i').test(lowerInput) || new RegExp('\\b' + singular + '\\b', 'i').test(lowerInput)) {
+                                matchedWords++;
                             }
-                        }
+                        });
+                        score += (matchedWords * 4);
                     }
                     
                     if (score > bestScore) {
                         bestScore = score;
+                        category = cat;
+                        sub = s;
+                    }
+                });
+            }
+        } else {
+            let bestScore = 0;
+            // Match custom incomes first
+            fullCategoryMap.incomeList.forEach(inc => {
+                const plainInc = inc.replace(/^(\p{Emoji_Presentation}|\p{Extended_Pictographic})+\s*/u, '').toLowerCase().trim();
+                let score = 0;
+                if (lowerInput.includes(plainInc)) {
+                    score += 15;
+                } else {
+                    const words = plainInc.split(/[\s\/&()]+/).filter(w => w.length > 2);
+                    words.forEach(w => {
+                        let singular = w.endsWith('s') ? w.slice(0, -1) : w;
+                        if (new RegExp('\\b' + w + '\\b', 'i').test(lowerInput) || new RegExp('\\b' + singular + '\\b', 'i').test(lowerInput)) {
+                            score += 4;
+                        }
+                    });
+                }
+                if (score > bestScore) {
+                    bestScore = score;
+                    category = inc;
+                }
+            });
+            
+            // Fallback default incomes
+            if (bestScore === 0) {
+                const defaultIncomes = ['💵 Pocket Money', '💼 Salary', '🎁 Gift/Eidi', '🤝 Loan Given Back', '💸 Cashback/Discount', '📈 Investment Returns', '👨‍💻 Freelance/Side Hustle'];
+                defaultIncomes.forEach(inc => {
+                    const plainInc = inc.replace(/^(\p{Emoji_Presentation}|\p{Extended_Pictographic})+\s*/u, '').toLowerCase().trim();
+                    let score = 0;
+                    if (lowerInput.includes(plainInc)) {
+                        score += 15;
+                    } else {
+                        const words = plainInc.split(/[\s\/&()]+/).filter(w => w.length > 2);
+                        words.forEach(w => {
+                            if (new RegExp('\\b' + w + '\\b', 'i').test(lowerInput)) {
+                                score += 4;
+                            }
+                        });
+                    }
+                    if (score > bestScore) {
+                        bestScore = score;
                         category = inc;
                     }
-                }
+                });
             }
         }
+
+        // 5. Build cleaned, precise notes
+        const notes = extractSmartNotes(input, amount, type, category, sub);
 
         const newEntry = {
             id: Date.now(),
@@ -1822,7 +1917,7 @@
             amount: amount,
             category: category,
             sub: sub,
-            notes: `Auto-logged: ${input}`
+            notes: notes
         };
 
         if(typeof checkForAnomaly === 'function' && checkForAnomaly(newEntry)) {
@@ -1834,6 +1929,8 @@
         data.push(newEntry);
         saveData('fin_spendly', data);
         
+        lastLoggedTransaction = newEntry;
+        
         if (type === 'income' && typeof syncIncomeToPocketCal === 'function') {
             syncIncomeToPocketCal(newEntry);
         }
@@ -1841,6 +1938,7 @@
         document.getElementById('smartEntryInput').value = '';
         updateUI();
         if(typeof showTransactionPopup === 'function') showTransactionPopup(type);
+        showSnackbar(`Smart logged ₹${amount} on ${category}! ✨`);
     };
 
     window.generateAIHealthReport = function() {
@@ -1849,7 +1947,7 @@
         if(!container || !textEl) return;
         
         container.classList.remove('hidden');
-        textEl.innerHTML = '<i class="lucide lucide-loader animate-spin w-5 h-5 inline-block mr-2"></i> Analyzing your financial footprint...';
+        textEl.innerHTML = '<i class="lucide lucide-loader animate-spin w-5 h-5 inline-block mr-2 text-purple-400"></i> Running structural health diagnostics...';
         if(window.lucide) lucide.createIcons();
         
         setTimeout(() => {
@@ -1876,26 +1974,33 @@
             let message = "";
 
             if(monthInc === 0 && monthExp === 0) {
-                message = "Not enough data for this month. Try logging some transactions first.";
+                message = "💡 No transaction logs registered for this month yet. Log a few items to run structural diagnostics.";
             } else {
-                message = `<strong>AI Diagnosis:</strong><br><br>`;
+                message = `<div class="space-y-3 font-semibold text-slate-300">`;
                 
-                if(savingsRate < 0) {
-                    message += `🚨 <strong>Critical:</strong> You are operating at a <strong>${Math.abs(savingsRate).toFixed(1)}% deficit</strong>. You've spent ₹${Math.abs(monthInc - monthExp)} more than you earned.<br>`;
-                } else if(savingsRate < 20) {
-                    message += `⚠️ <strong>Warning:</strong> Your savings rate is <strong>${savingsRate.toFixed(1)}%</strong>, which is below the recommended 20%. Consider reducing discretionary spending.<br>`;
+                if (savingsRate < 0) {
+                    message += `<p class="flex items-center gap-2 text-rose-400 font-extrabold text-sm"><i data-lucide="alert-circle" class="w-4 h-4"></i> Cash Deficit Detected</p>
+                                <p>You have spent <strong>₹${Math.abs(monthInc - monthExp).toLocaleString('en-IN')}</strong> more than you logged. Your current deficit rate is <strong>${Math.abs(savingsRate).toFixed(1)}%</strong>. Immediate spending cuts are advised.</p>`;
+                } else if (savingsRate < 20) {
+                    message += `<p class="flex items-center gap-2 text-amber-400 font-extrabold text-sm"><i data-lucide="alert-triangle" class="w-4 h-4"></i> Below Savings Threshold</p>
+                                <p>You saved <strong>${savingsRate.toFixed(1)}%</strong> of your income this month. Standard recommendations target a 20% savings buffer. Try limiting discretionary spending.</p>`;
                 } else {
-                    message += `✅ <strong>Excellent:</strong> You have a strong savings rate of <strong>${savingsRate.toFixed(1)}%</strong>. Keep up the great financial discipline!<br>`;
+                    message += `<p class="flex items-center gap-2 text-emerald-400 font-extrabold text-sm"><i data-lucide="check-circle" class="w-4 h-4"></i> Optimal Financial Health</p>
+                                <p>Superb budgeting! Your savings rate is a robust <strong>${savingsRate.toFixed(1)}%</strong> (₹${(monthInc - monthExp).toLocaleString('en-IN')} saved). You are on track with your long-term goals.</p>`;
                 }
 
                 if(topCat.amount > 0) {
                     let catPercent = (topCat.amount / monthExp) * 100;
-                    message += `<br>🔍 <strong>Deep Dive:</strong> Your highest expense category is <strong>${topCat.name}</strong>, taking up ${catPercent.toFixed(1)}% of your monthly spending. If you need to cut back, this is the prime target.`;
+                    message += `<div class="mt-4 pt-3 border-t border-white/5 text-xs text-slate-400">
+                                📊 <strong>Top Category:</strong> ${topCat.name} accounts for <strong>${catPercent.toFixed(1)}%</strong> (₹${topCat.amount.toLocaleString('en-IN')}) of your total monthly expenditures.
+                               </div>`;
                 }
+                message += `</div>`;
             }
 
             textEl.innerHTML = message;
-        }, 1500);
+            if(window.lucide) lucide.createIcons({ root: textEl });
+        }, 1200);
     };
 
     // ----------------------------------------------------
@@ -1932,15 +2037,14 @@
 
             appendChatBubble(prompt, 'user');
             aiChatInput.value = '';
-
             aiChatHistory.scrollTop = aiChatHistory.scrollHeight;
 
             setTimeout(() => {
-                const response = processAIQuery(prompt.toLowerCase());
+                const response = processAIQuery(prompt);
                 appendChatBubble(response, 'bot');
                 aiChatHistory.scrollTop = aiChatHistory.scrollHeight;
                 if (window.playUISound) window.playUISound('on');
-            }, 800);
+            }, 600);
         });
     }
 
@@ -1957,7 +2061,7 @@
 
         bubble.innerHTML = `
             ${sender === 'bot' ? avatar : ''}
-            <div class="bubble-content shadow-md border border-white/5 rounded-2xl leading-relaxed">
+            <div class="bubble-content shadow-md border border-white/5 rounded-2xl leading-relaxed text-xs">
                 ${text}
             </div>
             ${sender === 'user' ? avatar : ''}
@@ -1967,89 +2071,208 @@
     }
 
     function processAIQuery(query) {
+        const lowerQuery = query.toLowerCase().trim();
         const currentM = today.slice(0, 7);
         const monthlyIncome = data.filter(d => d.type === 'income' && d.date.startsWith(currentM)).reduce((s, d) => s + Number(d.amount), 0);
         const monthlyExpense = data.filter(d => d.type === 'expense' && d.date.startsWith(currentM)).reduce((s, d) => s + Number(d.amount), 0);
         const balance = monthlyIncome - monthlyExpense;
 
-        if (query.startsWith('add') || query.startsWith('log') || query.includes('spent') || query.includes('got') || query.includes('received')) {
-            const amountMatch = query.match(/\d+(\.\d{1,2})?/);
+        // Intent 1: Undo / Delete
+        if (lowerQuery === 'undo' || lowerQuery === 'delete last' || lowerQuery === 'scratch that' || lowerQuery === 'cancel last' || lowerQuery === 'remove last') {
+            if (lastLoggedTransaction) {
+                const id = lastLoggedTransaction.id;
+                const idx = data.findIndex(d => d.id === id);
+                if (idx !== -1) {
+                    const removed = data.splice(idx, 1)[0];
+                    window.saveData('fin_spendly', data);
+                    updateUI();
+                    lastLoggedTransaction = null;
+                    return `Transaction undone! 🗑️<br>I've removed the entry of <strong>₹${removed.amount}</strong> for <em>${removed.category}</em>.`;
+                }
+            }
+            // Fallback: Delete most recent transaction logged today
+            const todayLogs = data.filter(d => d.date === today);
+            if (todayLogs.length > 0) {
+                const target = todayLogs[todayLogs.length - 1];
+                const idx = data.findIndex(d => d.id === target.id);
+                if (idx !== -1) {
+                    data.splice(idx, 1);
+                    window.saveData('fin_spendly', data);
+                    updateUI();
+                    return `Undid your last logged transaction from today: removed <strong>₹${target.amount}</strong> for <em>${target.category}</em>.`;
+                }
+            }
+            return "I couldn't find any recent transactions in this session to undo.";
+        }
+
+        // Intent 2: Edit Last Transaction Amount or Details
+        if (lastLoggedTransaction && (lowerQuery.includes('actually') || lowerQuery.includes('change') || lowerQuery.includes('correct'))) {
+            const idx = data.findIndex(d => d.id === lastLoggedTransaction.id);
+            if (idx !== -1) {
+                let updated = false;
+                
+                // 2a. Modify amount
+                const amtMatch = lowerQuery.replace(/[₹$]/g, '').match(/\b\d+(\.\d{1,2})?\b/);
+                if (amtMatch) {
+                    const oldAmt = data[idx].amount;
+                    data[idx].amount = Number(amtMatch[0]);
+                    updated = true;
+                }
+                
+                // 2b. Modify category
+                let matchedCat = null;
+                let matchedSub = null;
+                for (const [cat, subList] of Object.entries(fullCategoryMap.expenseMap)) {
+                    if (lowerQuery.includes(cat.toLowerCase())) {
+                        matchedCat = cat;
+                        break;
+                    }
+                    for (let s of subList) {
+                        const plainSub = s.replace(/^(\p{Emoji_Presentation}|\p{Extended_Pictographic})+\s*/u, '').toLowerCase();
+                        if (lowerQuery.includes(plainSub)) {
+                            matchedCat = cat;
+                            matchedSub = s;
+                            break;
+                        }
+                    }
+                }
+                if (matchedCat) {
+                    data[idx].category = matchedCat;
+                    if (matchedSub) data[idx].sub = matchedSub;
+                    updated = true;
+                }
+
+                // 2c. Modify notes
+                if (lowerQuery.includes('notes') || lowerQuery.includes('for') || lowerQuery.includes('description')) {
+                    const notesMatch = query.match(/(?:notes|for|to)\s+(.+)$/i);
+                    if (notesMatch) {
+                        data[idx].notes = notesMatch[1].trim();
+                        updated = true;
+                    }
+                }
+
+                if (updated) {
+                    window.saveData('fin_spendly', data);
+                    updateUI();
+                    return `Done! I've updated your last transaction details:<br><br>
+                            <strong>Amount:</strong> ₹${data[idx].amount}<br>
+                            <strong>Category:</strong> ${data[idx].category} (${data[idx].sub || 'All'})<br>
+                            <strong>Notes:</strong> ${data[idx].notes}`;
+                }
+            }
+        }
+
+        // Intent 3: Log a new transaction via Chat
+        if (lowerQuery.startsWith('add') || lowerQuery.startsWith('log') || lowerQuery.includes('spent') || lowerQuery.includes('got') || lowerQuery.includes('received') || lowerQuery.includes('paid')) {
+            const amountMatch = lowerQuery.replace(/[₹$]/g, '').match(/\b\d+(\.\d{1,2})?\b/);
             if (!amountMatch) {
-                return "I couldn't identify an amount in your input. Try saying: <em>'Spent 500 on Food'</em>.";
+                return "I need an amount to log a transaction. Try: <em>'Spent 500 on Food'</em>.";
             }
             const amount = Number(amountMatch[0]);
             
             let type = 'expense';
-            if (query.includes('got') || query.includes('received') || query.includes('earned') || query.includes('income') || query.includes('salary') || query.includes('pocket money')) {
+            if (lowerQuery.includes('got') || lowerQuery.includes('received') || lowerQuery.includes('earned') || lowerQuery.includes('income') || lowerQuery.includes('salary') || lowerQuery.includes('pocket money')) {
                 type = 'income';
             }
 
-            let category = type === 'expense' ? 'Other' : 'Other';
-            let sub = '';
+            let category = 'Other';
+            let sub = 'All';
 
-            const aiSynonyms = {
-                'auto': { cat: 'Travel', sub: '🛺 Auto/Rickshaw' },
-                'rickshaw': { cat: 'Travel', sub: '🛺 Auto/Rickshaw' },
-                'bus': { cat: 'Travel', sub: '🚍 BEST/City Bus' },
-                'metro': { cat: 'Travel', sub: '🚇 Metro' },
-                'train': { cat: 'Travel', sub: '🚆 Local Train' },
-                'petrol': { cat: 'Travel', sub: '🛵 Bike Petrol' },
-                'taxi': { cat: 'Travel', sub: '🚗 Taxi/Cab' },
-                'ola': { cat: 'Travel', sub: '🚗 Taxi/Cab' },
-                'uber': { cat: 'Travel', sub: '🚗 Taxi/Cab' },
-                'milk': { cat: 'Food', sub: '🥛 Milk/Doodh' },
-                'ration': { cat: 'Food', sub: '🌾 Ration/Kirana' },
-                'grocery': { cat: 'Food', sub: '🌾 Ration/Kirana' },
-                'veg': { cat: 'Food', sub: '🥬 Vegetables/Mandi' },
-                'fruits': { cat: 'Food', sub: '🍎 Fruits' },
-                'bread': { cat: 'Food', sub: '🍞 Bakery/Bread' },
-                'chicken': { cat: 'Food', sub: '🍗 Non-Veg/Meat' },
-                'tea': { cat: 'Food', sub: '☕ Tea/Chai' },
-                'chai': { cat: 'Food', sub: '☕ Tea/Chai' },
-                'street food': { cat: 'Food', sub: '🥙 Street Food' },
-                'burger': { cat: 'Food', sub: '🍔 Outside Junk' },
-                'pizza': { cat: 'Food', sub: '🍔 Outside Junk' },
-                'electricity': { cat: 'Bills', sub: '💡 Electricity Bill' },
-                'recharge': { cat: 'Bills', sub: '📱 Mobile Recharge' },
-                'wifi': { cat: 'Bills', sub: '🌐 WiFi/Broadband' },
-                'medicine': { cat: 'Health', sub: '💊 Medicines/Pharmacy' },
-                'doctor': { cat: 'Health', sub: '🩺 Doctor Visit/Clinic' },
-                'movie': { cat: 'Entertainment', sub: '🎬 Movies/Theater' },
-                'netflix': { cat: 'Entertainment', sub: '🎥 OTT (Netflix/Prime)' },
-                'haircut': { cat: 'Other', sub: '💇 Haircut/Barber' }
-            };
-
-            for (const [key, val] of Object.entries(aiSynonyms)) {
-                if (new RegExp('\\b' + key + '\\b').test(query)) {
-                    category = val.cat;
-                    sub = val.sub;
-                    break;
+            if (type === 'expense') {
+                let bestScore = 0;
+                for (const [cat, subList] of Object.entries(fullCategoryMap.expenseMap)) {
+                    const plainCat = cat.replace(/^(\p{Emoji_Presentation}|\p{Extended_Pictographic})+\s*/u, '').toLowerCase().trim();
+                    let catScore = new RegExp('\\b' + plainCat + '\\b', 'i').test(lowerQuery) ? 3 : 0;
+                    
+                    subList.forEach(s => {
+                        const plainSub = s.replace(/^(\p{Emoji_Presentation}|\p{Extended_Pictographic})+\s*/u, '').toLowerCase().trim();
+                        let score = catScore;
+                        
+                        if (lowerQuery.includes(plainSub)) {
+                            score += 15;
+                        } else {
+                            const words = plainSub.split(/[\s\/&()]+/).filter(w => w.length > 2);
+                            let matchedWords = 0;
+                            words.forEach(w => {
+                                let singular = w.endsWith('s') ? w.slice(0, -1) : w;
+                                if (new RegExp('\\b' + w + '\\b', 'i').test(lowerQuery) || new RegExp('\\b' + singular + '\\b', 'i').test(lowerInput)) {
+                                    matchedWords++;
+                                }
+                            });
+                            score += (matchedWords * 4);
+                        }
+                        
+                        if (score > bestScore) {
+                            bestScore = score;
+                            category = cat;
+                            sub = s;
+                        }
+                    });
                 }
+            } else {
+                let bestScore = 0;
+                fullCategoryMap.incomeList.forEach(inc => {
+                    const plainInc = inc.replace(/^(\p{Emoji_Presentation}|\p{Extended_Pictographic})+\s*/u, '').toLowerCase().trim();
+                    let score = 0;
+                    if (lowerQuery.includes(plainInc)) {
+                        score += 15;
+                    } else {
+                        const words = plainInc.split(/[\s\/&()]+/).filter(w => w.length > 2);
+                        words.forEach(w => {
+                            let singular = w.endsWith('s') ? w.slice(0, -1) : w;
+                            if (new RegExp('\\b' + w + '\\b', 'i').test(lowerQuery) || new RegExp('\\b' + singular + '\\b', 'i').test(lowerQuery)) {
+                                score += 4;
+                            }
+                        });
+                    }
+                    if (score > bestScore) {
+                        bestScore = score;
+                        category = inc;
+                    }
+                });
             }
+
+            const parsedDate = parseSmartDate(lowerQuery);
+            const notes = extractSmartNotes(query, amount, type, category, sub);
 
             const entry = {
                 id: Date.now(),
                 type: type,
-                date: today,
+                date: parsedDate,
                 amount: amount,
                 category: category,
-                sub: sub || 'All',
-                notes: `Chat AI logged: ${query}`
+                sub: sub,
+                notes: notes
             };
 
             data.push(entry);
             window.saveData('fin_spendly', data);
-            if (type === 'income') syncIncomeToPocketCal(entry);
+            
+            lastLoggedTransaction = entry;
+            
+            if (type === 'income' && typeof syncIncomeToPocketCal === 'function') {
+                syncIncomeToPocketCal(entry);
+            }
             updateUI();
             
-            return `Transaction logged! ✅<br><br>
-                    <strong>Type:</strong> ${type.toUpperCase()}<br>
-                    <strong>Amount:</strong> ${fmt(amount)}<br>
-                    <strong>Category:</strong> ${category}${sub ? ` (${sub})` : ''}<br>
-                    <strong>Notes:</strong> Added via chat query.`;
+            return `<div class="space-y-2">
+                        <p class="text-emerald-400 font-extrabold flex items-center gap-1.5"><i data-lucide="check-circle" class="w-3.5 h-3.5"></i> Transaction Logged</p>
+                        <p>I have added <strong>₹${amount.toLocaleString('en-IN')}</strong> to your ledger.</p>
+                        <div class="text-[10px] bg-white/5 border border-white/5 rounded-xl p-2.5 mt-1 space-y-1 text-slate-400">
+                            <div>• <strong>Type:</strong> ${type.toUpperCase()}</div>
+                            <div>• <strong>Date:</strong> ${parsedDate}</div>
+                            <div>• <strong>Category:</strong> ${category} (${sub})</div>
+                            <div>• <strong>Notes:</strong> ${notes}</div>
+                        </div>
+                        <div class="flex gap-2 mt-2">
+                            <button onclick="window.aiUndoTransaction(${entry.id})" class="text-[10px] font-extrabold bg-rose-500/15 text-rose-400 hover:bg-rose-500 hover:text-white px-2.5 py-1.5 rounded-lg transition-all">Undo</button>
+                            <button onclick="window.openEditModal(${entry.id})" class="text-[10px] font-extrabold bg-cyan-500/15 text-cyan-400 hover:bg-cyan-500 hover:text-white px-2.5 py-1.5 rounded-lg transition-all">Edit Details</button>
+                        </div>
+                    </div>`;
         }
 
-        if (query.includes('recommend') || query.includes('suggest') || query.includes('advice')) {
+        // Intent 4: Budget recommendations & suggestions
+        if (lowerQuery.includes('recommend') || lowerQuery.includes('suggest') || lowerQuery.includes('advice') || lowerQuery.includes('tip')) {
             const monthlySpends = {};
             data.filter(d => d.type === 'expense' && d.date.startsWith(currentM)).forEach(d => {
                 monthlySpends[d.category] = (monthlySpends[d.category] || 0) + Number(d.amount);
@@ -2062,24 +2285,39 @@
             cats.forEach(cat => {
                 const spent = monthlySpends[cat] || 0;
                 if (spent > 0) {
-                    const suggestedLimit = Math.round(spent * 0.9);
-                    suggestions += `• For <strong>${cat}</strong>: set budget to <strong>${fmt(suggestedLimit)}</strong> (based on current spend of ${fmt(spent)}).<br>`;
+                    const suggestedLimit = Math.round(spent * 0.85); // Suggest 15% reduction
+                    suggestions += `<div class="mb-3 p-2.5 rounded-xl bg-white/5 border border-white/5 flex justify-between items-center text-xs">
+                                        <div>
+                                            <p class="font-extrabold text-slate-200">${cat}</p>
+                                            <p class="text-[10px] text-muted">Current Spend: ${fmt(spent)}</p>
+                                        </div>
+                                        <button onclick="window.aiSetBudget('${cat}', ${suggestedLimit})" class="px-2.5 py-1 bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 rounded-lg text-[10px] font-extrabold hover:bg-cyan-500 hover:text-white transition">Limit ₹${suggestedLimit}</button>
+                                    </div>`;
                     addedSug = true;
                 }
             });
 
             if (!addedSug) {
-                suggestions += "I suggest starting with a budget limit of <strong>₹3,000 for Food</strong> and <strong>₹1,500 for Travel</strong>. Try logging some transactions first to receive tailored limits!";
-            } else {
-                suggestions += `<br>🎯 <em>Clicking "Set Limit" in the Category Budgets card will lock these settings!</em>`;
+                suggestions += `<p>I suggestion configuring baseline target limits to set up safe boundaries:</p>
+                                <div class="space-y-2 mt-3">
+                                    <div class="p-2.5 rounded-xl bg-white/5 border border-white/5 flex justify-between items-center text-xs">
+                                        <span>🍔 Food Budget</span>
+                                        <button onclick="window.aiSetBudget('Food', 4000)" class="px-2.5 py-1 bg-cyan-500/20 text-cyan-400 rounded-lg text-[10px] font-extrabold hover:bg-cyan-500 hover:text-white transition">Limit ₹4,000</button>
+                                    </div>
+                                    <div class="p-2.5 rounded-xl bg-white/5 border border-white/5 flex justify-between items-center text-xs">
+                                        <span>🛺 Travel Budget</span>
+                                        <button onclick="window.aiSetBudget('Travel', 2000)" class="px-2.5 py-1 bg-cyan-500/20 text-cyan-400 rounded-lg text-[10px] font-extrabold hover:bg-cyan-500 hover:text-white transition">Limit ₹2,000</button>
+                                    </div>
+                                </div>`;
             }
             return suggestions;
         }
 
-        if (query.includes('budget') || query.includes('limit')) {
+        // Intent 5: Budget Status Query
+        if (lowerQuery.includes('budget') || lowerQuery.includes('limit')) {
             const activeBudgets = Object.keys(budgets);
             if (activeBudgets.length === 0) {
-                return "You haven't set any category budgets yet. Try setting one in the Category Budgets card on your dashboard!";
+                return "No budgets configured yet. Create a category limit in the Category Budgets card on your dashboard!";
             }
 
             const monthlySpends = {};
@@ -2092,59 +2330,71 @@
                 const limit = budgets[cat];
                 const spent = monthlySpends[cat] || 0;
                 const p = Math.round((spent / limit) * 100);
-                status += `• <strong>${cat}</strong>: ${fmt(spent)} of ${fmt(limit)} (${p}% used)${p >= 100 ? ' 🚨' : p >= 85 ? ' ⚠️' : ''}<br>`;
+                status += `<div class="mb-2">
+                             <div class="flex justify-between text-xs font-semibold mb-1">
+                                <span>${cat}</span>
+                                <span class="${p >= 100 ? 'text-rose-400' : p >= 80 ? 'text-amber-400' : 'text-slate-300'}">${fmt(spent)} / ${fmt(limit)} (${p}%)</span>
+                             </div>
+                             <div class="w-full h-1.5 bg-white/10 rounded-full overflow-hidden">
+                                <div class="h-full rounded-full bg-gradient-to-r ${p >= 100 ? 'from-rose-500 to-red-500' : p >= 80 ? 'from-amber-400 to-orange-500' : 'from-cyan-400 to-indigo-400'}" style="width: ${Math.min(p, 100)}%"></div>
+                             </div>
+                           </div>`;
             });
             return status;
         }
 
-        if (query.includes('predict') || query.includes('forecast') || query.includes('trend')) {
+        // Intent 6: Spending Forecast
+        if (lowerQuery.includes('predict') || lowerQuery.includes('forecast') || lowerQuery.includes('trend')) {
             const daysInMonth = new Date(today.slice(0, 4), today.slice(5, 7), 0).getDate();
             const currentDay = parseInt(today.slice(8, 10), 10);
             
             if (currentDay === 0 || monthlyExpense === 0) {
-                return "Not enough transactional history to forecast. Try logging a few transactions first!";
+                return "Not enough transaction history to run spending forecast projections.";
             }
 
             const velocity = monthlyExpense / currentDay;
             const projected = velocity * daysInMonth;
 
             let diagnosis = `<strong>AI Spend Forecast:</strong><br><br>`;
-            diagnosis += `• Current Velocity: <strong>${fmt(velocity)}/day</strong><br>`;
-            diagnosis += `• Projected Month End Spend: <strong>${fmt(projected)}</strong><br><br>`;
+            diagnosis += `• Daily Burn Velocity: <strong>${fmt(velocity)}/day</strong><br>`;
+            diagnosis += `• Projected Month-End: <strong>${fmt(projected)}</strong><br><br>`;
 
             if (monthlyIncome > 0) {
                 const deficit = projected - monthlyIncome;
                 if (projected > monthlyIncome) {
-                    diagnosis += `⚠️ <strong>Warning:</strong> You are projected to exceed your monthly income by <strong>${fmt(deficit)}</strong>. AI suggests reducing discretionary spending.`;
+                    diagnosis += `<p class="text-rose-400 flex items-center gap-1"><i data-lucide="alert-triangle" class="w-4 h-4"></i> warning:</p>
+                                  You are on track to exceed your income by <strong>${fmt(deficit)}</strong>. Recommend slowing discretionary purchases.`;
                 } else {
-                    diagnosis += `✅ <strong>Optimal:</strong> You are safely within your income bounds. Projected monthly savings: <strong>${fmt(monthlyIncome - projected)}</strong>.`;
+                    diagnosis += `<p class="text-emerald-400 flex items-center gap-1"><i data-lucide="check" class="w-4 h-4"></i> safe:</p>
+                                  Safely inside income limits. Projected surplus: <strong>${fmt(monthlyIncome - projected)}</strong>.`;
                 }
             } else {
-                diagnosis += `💡 Set an income log for the month to calculate deficit metrics!`;
+                diagnosis += `💡 Tip: Log your monthly income to unlock savings projection metrics.`;
             }
             return diagnosis;
         }
 
-        if (query.includes('spend') || query.includes('expense')) {
-            return `This month, you have spent a total of <strong>${fmt(monthlyExpense)}</strong>.`;
+        // Intent 7: Basic Metrics
+        if (lowerQuery.includes('spend') || lowerQuery.includes('expense')) {
+            return `You've spent a total of <strong>${fmt(monthlyExpense)}</strong> this month.`;
         }
 
-        if (query.includes('income') || query.includes('earn')) {
-            return `This month, you logged a total income of <strong>${fmt(monthlyIncome)}</strong>.`;
+        if (lowerQuery.includes('income') || lowerQuery.includes('earn')) {
+            return `You've logged a total income of <strong>${fmt(monthlyIncome)}</strong> this month.`;
         }
 
-        if (query.includes('balance') || query.includes('net')) {
-            return `Your net balance for this month is <strong>${fmt(balance)}</strong> (Income: ${fmt(monthlyIncome)}, Expenses: ${fmt(monthlyExpense)}).`;
+        if (lowerQuery.includes('balance') || lowerQuery.includes('net')) {
+            return `Your net balance for this month is <strong>${fmt(balance)}</strong> (Income: ${fmt(monthlyIncome)}, Expense: ${fmt(monthlyExpense)}).`;
         }
 
-        return `I can help you audit your transactions! 
+        return `I can help you audit and record transactions!
                 <br><br>
                 Try saying:
                 <ul class="list-disc pl-4 mt-2 space-y-1 text-muted">
                     <li>"How much did I spend this month?"</li>
                     <li>"Show my budget status"</li>
                     <li>"Predict my month end spending"</li>
-                    <li>"Add expense 350 for travel"</li>
+                    <li>"Add expense 350 for travel yesterday"</li>
                     <li>"Suggest budgets"</li>
                 </ul>`;
     }

@@ -1,59 +1,129 @@
 /* ========================================================================
    MONEYFLOW - SETTINGS.CSS
-   Premium Tabs, iOS/One UI Settings Groups, Toggle Switches, Sliders
+   Premium Glassmorphism, iOS/One UI Settings Panels, Toggle Switches, Sliders
    ======================================================================== */
 
-/* Tab Content Areas */
-.tab-pane {
-    display: none;
-    animation: fadeSlideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+/* ========================================================================
+   1. GLOBAL PAGE & PREFERENCES CONTAINERS
+   ======================================================================== */
+.settings-main-scroll {
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease;
+    will-change: transform, opacity;
 }
 
-.tab-pane.active {
-    display: block;
+/* iOS/iCloud Profile Card */
+.icloud-profile-card {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    padding: 1.5rem;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    margin-top: 15px;
+    margin-bottom: 2rem;
+    cursor: pointer;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: var(--glass-shadow);
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+                border-color 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+                box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+    overflow: hidden;
 }
 
-@keyframes fadeSlideUp {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+.icloud-profile-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(135deg, rgba(255,255,255,0.12), transparent, rgba(255,255,255,0.05));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
 }
 
-/* Preferences Group Title */
+.icloud-profile-card:hover {
+    transform: translateY(-4px) scale(1.01);
+    border-color: rgba(6, 182, 212, 0.35);
+    box-shadow: 0 20px 45px rgba(6, 182, 212, 0.15), var(--glass-shadow);
+}
+
+.icloud-avatar-wrap {
+    width: 60px;
+    height: 60px;
+    border-radius: 18px;
+    background: linear-gradient(135deg, var(--accent-primary), var(--accent-info, #8b5cf6));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.6rem;
+    font-weight: 900;
+    color: white;
+    box-shadow: 0 8px 20px rgba(6, 182, 212, 0.25);
+    flex-shrink: 0;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.icloud-profile-card:hover .icloud-avatar-wrap {
+    transform: scale(1.1) rotate(2deg);
+}
+
+.icloud-info {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    flex: 1;
+    overflow: hidden;
+}
+
+.icloud-info h3 {
+    font-weight: 800;
+    font-size: 1.15rem;
+    color: var(--text-main);
+    letter-spacing: -0.3px;
+}
+
+.icloud-info p {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    line-height: 1.2;
+}
+
+/* Preferences Group Titles */
 .settings-group-title {
     font-size: 0.72rem;
     font-weight: 800;
     text-transform: uppercase;
     color: var(--text-muted);
-    letter-spacing: 0.07em;
-    margin: 20px 0 6px 12px;
+    letter-spacing: 0.08em;
+    margin: 24px 0 8px 16px;
 }
 
 /* Preferences Group Card Container */
 .settings-group {
     background: var(--glass-bg);
     border: 1px solid var(--glass-border);
-    border-radius: 1.5rem;
-    padding: 0 1.25rem;
-    margin-bottom: 1.5rem;
+    border-radius: 24px;
+    padding: 0 1.5rem;
+    margin-bottom: 1.75rem;
     box-shadow: var(--glass-shadow);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
                 border-color 0.4s cubic-bezier(0.16, 1, 0.3, 1),
                 box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    overflow: visible; /* Allows custom dropdown menu items to show over boundaries */
+    overflow: visible;
 }
 
 .settings-group:hover {
     transform: translateY(-2px);
-    border-color: var(--accent-primary);
-    box-shadow: 0 12px 30px rgba(6, 182, 212, 0.12);
+    border-color: rgba(6, 182, 212, 0.2);
+    box-shadow: 0 16px 36px rgba(6, 182, 212, 0.08), var(--glass-shadow);
 }
 
 /* Row elements inside Settings Cards */
@@ -61,8 +131,8 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem 0.25rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    padding: 1.15rem 0.25rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     transition: all 0.3s ease;
 }
 
@@ -78,7 +148,7 @@
 .settings-row-left {
     display: flex;
     align-items: center;
-    gap: 0.85rem;
+    gap: 1rem;
     text-align: left;
 }
 
@@ -89,32 +159,39 @@
 
 .settings-title {
     font-weight: 700;
-    font-size: 0.95rem;
+    font-size: 0.98rem;
     color: var(--text-main);
 }
 
 .settings-desc {
-    font-size: 0.75rem;
+    font-size: 0.78rem;
     color: var(--text-muted);
-    margin-top: 2px;
-    line-height: 1.3;
+    margin-top: 3px;
+    line-height: 1.35;
 }
 
 /* Icon Wrap Indicators */
 .settings-icon-wrap {
-    width: 32px;
-    height: 32px;
-    border-radius: 8px;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
     box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.1);
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
+                box-shadow 0.4s ease;
 }
 
 .settings-icon-wrap i {
-    width: 16px !important;
-    height: 16px !important;
+    width: 18px !important;
+    height: 18px !important;
+}
+
+.settings-row:hover .settings-icon-wrap {
+    transform: scale(1.12) rotate(6deg);
+    box-shadow: 0 4px 15px rgba(6, 182, 212, 0.25);
 }
 
 /* Colored presets for settings rows */
@@ -128,9 +205,71 @@
 .icon-bg-orange { background: rgba(249, 115, 22, 0.15); color: #f97316; }
 .icon-bg-red { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
 
+/* Interactive Clickable Settings Row */
+.settings-row.clickable {
+    cursor: pointer;
+    border-radius: 16px;
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+    margin: 2px 0;
+    border-bottom: 1px solid transparent;
+    transition: background-color 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.settings-row.clickable:hover {
+    background: rgba(6, 182, 212, 0.08) !important;
+    transform: translateX(6px);
+}
+
+[data-theme="dark"] .settings-row.clickable:hover {
+    background: rgba(6, 182, 212, 0.12) !important;
+}
+
+.settings-row.clickable:active {
+    transform: scale(0.97) translateX(3px);
+}
+
 /* ========================================================================
-   CUSTOM iOS STYLE TOGGLE SWITCHES
+   2. FORM INPUTS, RANGES & TOGGLES
    ======================================================================== */
+.subpage-content .glass-input {
+    background: rgba(255, 255, 255, 0.04) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 14px !important;
+    padding: 0.75rem 1rem !important;
+    font-weight: 600;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.subpage-content .glass-input:focus {
+    background: rgba(255, 255, 255, 0.08) !important;
+    border-color: var(--accent-primary) !important;
+    box-shadow: 0 0 15px rgba(6, 182, 212, 0.2) !important;
+}
+
+[data-theme="light"] .subpage-content .glass-input {
+    background: rgba(0, 0, 0, 0.02) !important;
+    border-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+[data-theme="light"] .subpage-content .glass-input:focus {
+    background: rgba(0, 0, 0, 0.04) !important;
+}
+
+/* Custom Dropdown select */
+.custom-select {
+    cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2306b6d4'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 1rem;
+    padding-right: 2.5rem !important;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+/* Custom Toggle switches - iOS style */
 #toggleVoiceBtn,
 #toggleAnimeAssistantBtn,
 #toggleEfficiencyBtn,
@@ -141,8 +280,8 @@
     display: inline-block;
     width: 50px !important;
     height: 28px !important;
-    border-radius: 14px !important;
-    font-size: 0 !important; /* Visual hiding of standard On/Off text */
+    border-radius: 15px !important;
+    font-size: 0 !important;
     padding: 0 !important;
     cursor: pointer;
     border: 1px solid rgba(255, 255, 255, 0.1) !important;
@@ -151,7 +290,6 @@
                 border-color 0.3s cubic-bezier(0.16, 1, 0.3, 1),
                 transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
                 box-shadow 0.3s ease !important;
-    overflow: hidden;
     box-shadow: inset 0 2px 4px rgba(0,0,0,0.15) !important;
     outline: none !important;
     flex-shrink: 0;
@@ -163,8 +301,18 @@
 [data-theme="dark"] #toggleUseNameBtn,
 [data-theme="dark"] #togglePrivacyBtn,
 [data-theme="dark"] #toggleBudgetBtn {
-    background: rgba(0, 0, 0, 0.3) !important;
+    background: rgba(0, 0, 0, 0.35) !important;
     border-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+[data-theme="light"] #toggleVoiceBtn,
+[data-theme="light"] #toggleAnimeAssistantBtn,
+[data-theme="light"] #toggleEfficiencyBtn,
+[data-theme="light"] #toggleUseNameBtn,
+[data-theme="light"] #togglePrivacyBtn,
+[data-theme="light"] #toggleBudgetBtn {
+    background: rgba(0, 0, 0, 0.08) !important;
+    border-color: rgba(0, 0, 0, 0.05) !important;
 }
 
 #toggleVoiceBtn:hover,
@@ -173,7 +321,7 @@
 #toggleUseNameBtn:hover,
 #togglePrivacyBtn:hover,
 #toggleBudgetBtn:hover {
-    transform: scale(1.06);
+    transform: scale(1.05);
 }
 
 #toggleVoiceBtn::after,
@@ -190,25 +338,24 @@
     height: 22px;
     border-radius: 50%;
     background: #ffffff;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.25);
     transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), width 0.2s;
 }
 
-/* Toggle Switch Active Push Effect */
 #toggleVoiceBtn:active::after,
 #toggleAnimeAssistantBtn:active::after,
 #toggleEfficiencyBtn:active::after,
 #toggleUseNameBtn:active::after,
 #togglePrivacyBtn:active::after,
 #toggleBudgetBtn:active::after {
-    width: 26px; /* Squishes knob slightly like iOS */
+    width: 26px;
 }
 
-/* Toggle Switch On States */
+/* Green Active Toggles */
 #toggleVoiceBtn.bg-emerald-500,
 #toggleEfficiencyBtn.bg-emerald-500,
 #toggleUseNameBtn.bg-emerald-500 {
-    background-color: #34c759 !important; /* iOS Active Green */
+    background-color: #34c759 !important;
     border-color: #34c759 !important;
 }
 #toggleVoiceBtn.bg-emerald-500::after,
@@ -222,9 +369,10 @@
     box-shadow: inset 0 1px 2px rgba(0,0,0,0.1), 0 0 14px rgba(52, 199, 89, 0.4) !important;
 }
 
+/* Blue Active Toggles */
 #toggleAnimeAssistantBtn.bg-blue-500,
 #togglePrivacyBtn.bg-blue-500 {
-    background-color: #007aff !important; /* iOS Active Blue */
+    background-color: #007aff !important;
     border-color: #007aff !important;
 }
 #toggleAnimeAssistantBtn.bg-blue-500::after,
@@ -236,8 +384,9 @@
     box-shadow: inset 0 1px 2px rgba(0,0,0,0.1), 0 0 14px rgba(0, 122, 255, 0.4) !important;
 }
 
+/* Orange Active Toggles */
 #toggleBudgetBtn.bg-amber-500 {
-    background-color: #ff9500 !important; /* iOS Active Orange */
+    background-color: #ff9500 !important;
     border-color: #ff9500 !important;
 }
 #toggleBudgetBtn.bg-amber-500::after {
@@ -247,9 +396,7 @@
     box-shadow: inset 0 1px 2px rgba(0,0,0,0.1), 0 0 14px rgba(255, 149, 0, 0.4) !important;
 }
 
-/* ========================================================================
-   CUSTOM RANGES & SLIDER INPUTS
-   ======================================================================== */
+/* Premium Sliders */
 .premium-slider {
     -webkit-appearance: none;
     width: 100%;
@@ -258,7 +405,7 @@
     border-radius: 10px;
     outline: none;
     transition: background 0.3s ease, box-shadow 0.3s;
-    background-image: linear-gradient(90deg, var(--accent-primary), var(--accent-info));
+    background-image: linear-gradient(90deg, var(--accent-primary), var(--accent-info, #8b5cf6));
     background-size: var(--val, 50%) 100%;
     background-repeat: no-repeat;
     box-shadow: inset 0 1px 3px rgba(0,0,0,0.15);
@@ -271,7 +418,7 @@
 }
 
 .premium-slider:hover {
-    box-shadow: inset 0 1px 3px rgba(0,0,0,0.15), 0 0 10px rgba(6, 182, 212, 0.2);
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.15), 0 0 10px rgba(6, 182, 212, 0.25);
 }
 
 .premium-slider::-webkit-slider-thumb {
@@ -290,199 +437,118 @@
 }
 
 .premium-slider::-webkit-slider-thumb:hover {
-    transform: scale(1.25);
+    transform: scale(1.2);
     border-color: #ffffff;
     background: var(--accent-primary);
-    box-shadow: 0 4px 10px rgba(6, 182, 212, 0.3);
+    box-shadow: 0 4px 12px rgba(6, 182, 212, 0.35);
 }
 
 .premium-slider::-webkit-slider-thumb:active {
-    transform: scale(1.35);
+    transform: scale(1.3);
     background: var(--accent-primary);
     border-color: #ffffff;
     box-shadow: 0 0 15px rgba(6, 182, 212, 0.5);
 }
 
-.premium-slider::-moz-range-thumb {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background: #ffffff;
-    cursor: pointer;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-    border: 2px solid var(--accent-primary);
-    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
-                background-color 0.2s,
-                border-color 0.2s;
-}
-
-.premium-slider::-moz-range-thumb:hover {
-    transform: scale(1.25);
-    border-color: #ffffff;
-    background: var(--accent-primary);
-    box-shadow: 0 4px 10px rgba(6, 182, 212, 0.3);
-}
-
-.premium-slider::-moz-range-thumb:active {
-    transform: scale(1.35);
-    background: var(--accent-primary);
-    border-color: #ffffff;
-    box-shadow: 0 0 15px rgba(6, 182, 212, 0.5);
-}
-
-/* Intensity Display Badge */
+/* Slider Badge */
 .intensity-badge {
-    background: rgba(255,255,255,0.05);
+    background: rgba(255, 255, 255, 0.05);
     color: var(--accent-primary);
-    padding: 0.2rem 0.5rem;
-    border-radius: 0.4rem;
+    padding: 0.25rem 0.65rem;
+    border-radius: 8px;
     font-size: 0.75rem;
     font-weight: 800;
-    min-width: 3rem;
+    min-width: 3.25rem;
     text-align: center;
+    border: 1px solid rgba(255,255,255,0.05);
 }
 
-/* ========================================================================
-   USER IDENTITY AVATAR STYLING
-   ======================================================================== */
+/* Avatar setup page */
 .identity-avatar-container {
     width: 90px;
     height: 90px;
-    border-radius: 2rem;
-    background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary, #8b5cf6));
+    border-radius: 24px;
+    background: linear-gradient(135deg, var(--accent-primary), var(--accent-info, #8b5cf6));
     margin: 0.5rem auto 1rem auto;
     display: flex;
     align-items: center;
     justify-content: center;
     color: white;
-    font-size: 2.25rem;
+    font-size: 2.2rem;
     font-weight: 900;
-    box-shadow: 0 10px 25px rgba(var(--accent-primary-rgb), 0.25);
+    box-shadow: 0 10px 25px rgba(6, 182, 212, 0.25);
     position: relative;
-    border: 1px solid rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.15);
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Category Manager Items */
-.cat-item-card {
-    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    background: rgba(255,255,255,0.02);
-    border: 1px solid rgba(255,255,255,0.05);
-    border-radius: 0.75rem;
-    padding: 0.65rem 1rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-[data-theme="dark"] .cat-item-card {
-    background: rgba(0,0,0,0.15);
-    border-color: rgba(255,255,255,0.02);
-}
-
-.cat-item-card:hover {
-    background: rgba(var(--accent-primary-rgb), 0.08);
-    border-color: rgba(var(--accent-primary-rgb), 0.2);
-    transform: translateX(2px);
-}
-
-.cat-item-card button {
-    opacity: 0.6;
-    transition: all 0.2s;
-    background: rgba(239, 68, 68, 0.1);
-    color: #ef4444;
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.cat-item-card button:hover {
-    opacity: 1;
-    background: #ef4444;
-    color: white;
-    transform: scale(1.1);
-}
-
-/* Dropdown arrow custom positioning */
-#mainCategorySelect {
-    cursor: pointer;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23f59e0b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 1rem center;
-    background-size: 1rem;
-    padding-right: 2.5rem;
-    -webkit-appearance: none;
-    appearance: none;
+.identity-avatar-container:hover {
+    transform: scale(1.05);
 }
 
 /* ========================================================================
-   iOS / ONE UI SLIDE-IN SUB-PAGES
+   3. iOS / ONE UI SLIDE-IN SUB-PAGES
    ======================================================================== */
 .subpage-overlay {
     position: fixed;
     top: 0;
-    left: 100%; /* Off-screen right */
+    left: 100%;
     width: 100%;
     height: 100%;
-    z-index: 2000; /* Above regular header and bottom dock */
-    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 2000;
+    transition: transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
     display: flex;
     flex-direction: column;
     padding-bottom: env(safe-area-inset-bottom);
 }
 
 [data-theme="dark"] .subpage-overlay {
-    background: radial-gradient(circle at 50% 50%, rgba(5, 5, 5, 0.3) 0%, rgba(0, 0, 0, 0.75) 100%);
-    backdrop-filter: blur(18px);
-    -webkit-backdrop-filter: blur(18px);
+    background: radial-gradient(circle at 50% 50%, rgba(5, 5, 5, 0.3) 0%, rgba(0, 0, 0, 0.82) 100%);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
 }
 
 [data-theme="light"] .subpage-overlay {
-    background: radial-gradient(circle at 50% 50%, rgba(241, 245, 249, 0.4) 0%, rgba(226, 232, 240, 0.8) 100%);
-    backdrop-filter: blur(18px);
-    -webkit-backdrop-filter: blur(18px);
+    background: radial-gradient(circle at 50% 50%, rgba(241, 245, 249, 0.4) 0%, rgba(226, 232, 240, 0.85) 100%);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
 }
 
 .subpage-overlay.active {
-    transform: translateX(-100%); /* Slide in to cover page */
+    transform: translateX(-100%);
 }
 
-/* Staggered entrance animations for elements inside active subpages */
+/* Staggered entrance animations for items inside active subpages */
 .subpage-overlay .subpage-header,
 .subpage-overlay .subpage-content > * {
     opacity: 0;
-    transform: translateY(30px);
-    transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1),
-                transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    transform: translateY(20px);
+    transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .subpage-overlay .subpage-header {
-    transform: translateY(-20px);
+    transform: translateY(-15px);
 }
 
-/* Long transition and staggered delays ONLY on entrance (active state) */
+/* snappier active transition */
 .subpage-overlay.active .subpage-header,
 .subpage-overlay.active .subpage-content > * {
     opacity: 1;
     transform: translateY(0);
-    transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
-                transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.subpage-overlay.active .subpage-header { transition-delay: 0.08s; }
-.subpage-overlay.active .subpage-content > :nth-child(1) { transition-delay: 0.12s; }
-.subpage-overlay.active .subpage-content > :nth-child(2) { transition-delay: 0.16s; }
-.subpage-overlay.active .subpage-content > :nth-child(3) { transition-delay: 0.20s; }
-.subpage-overlay.active .subpage-content > :nth-child(4) { transition-delay: 0.24s; }
-.subpage-overlay.active .subpage-content > :nth-child(5) { transition-delay: 0.28s; }
-.subpage-overlay.active .subpage-content > :nth-child(6) { transition-delay: 0.32s; }
-.subpage-overlay.active .subpage-content > :nth-child(7) { transition-delay: 0.36s; }
-.subpage-overlay.active .subpage-content > :nth-child(8) { transition-delay: 0.40s; }
-.subpage-overlay.active .subpage-content > :nth-child(9) { transition-delay: 0.44s; }
-.subpage-overlay.active .subpage-content > :nth-child(10) { transition-delay: 0.48s; }
+.subpage-overlay.active .subpage-header { transition-delay: 0.05s; }
+.subpage-overlay.active .subpage-content > :nth-child(1) { transition-delay: 0.1s; }
+.subpage-overlay.active .subpage-content > :nth-child(2) { transition-delay: 0.14s; }
+.subpage-overlay.active .subpage-content > :nth-child(3) { transition-delay: 0.18s; }
+.subpage-overlay.active .subpage-content > :nth-child(4) { transition-delay: 0.22s; }
+.subpage-overlay.active .subpage-content > :nth-child(5) { transition-delay: 0.26s; }
+.subpage-overlay.active .subpage-content > :nth-child(6) { transition-delay: 0.3s; }
+.subpage-overlay.active .subpage-content > :nth-child(7) { transition-delay: 0.34s; }
 
-/* Subpage Navigation Bar - Styled to match the Global Floating Header */
+/* Subpage Navigation Bar - Styled matching Global Floating Header */
 .subpage-header {
     margin: 16px auto 12px auto;
     width: calc(100% - clamp(16px, 3vw, 32px));
@@ -503,15 +569,10 @@
     z-index: 10;
 }
 
-[data-theme="dark"] .subpage-header {
-    border-color: rgba(255, 255, 255, 0.05);
-}
+[data-theme="dark"] .subpage-header { border-color: rgba(255, 255, 255, 0.05); }
+[data-theme="light"] .subpage-header { border-color: rgba(0, 0, 0, 0.05); }
 
-[data-theme="light"] .subpage-header {
-    border-color: rgba(0, 0, 0, 0.05);
-}
-
-/* Back Link Button - Pill glass button matching main UI click styling */
+/* Back & Save Link Buttons */
 .subpage-back-btn {
     display: flex;
     align-items: center;
@@ -535,10 +596,9 @@
     background: var(--accent-primary);
     color: white;
     border-color: var(--accent-primary);
-    box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3);
+    box-shadow: 0 4px 12px rgba(6, 182, 212, 0.35);
 }
 
-/* Subpage Save Link - Pill glass button green/accent */
 .subpage-save-btn {
     color: #ffffff;
     font-weight: 800;
@@ -551,13 +611,13 @@
     padding: 6px 14px;
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    box-shadow: 0 2px 8px rgba(6, 182, 212, 0.2);
+    box-shadow: 0 2px 8px rgba(6, 182, 212, 0.25);
 }
 
 .subpage-save-btn:hover {
     transform: translateY(-2px);
     background: linear-gradient(135deg, var(--accent-info, #8b5cf6), var(--accent-primary));
-    box-shadow: 0 4px 15px rgba(6, 182, 212, 0.4);
+    box-shadow: 0 4px 15px rgba(6, 182, 212, 0.45);
 }
 
 /* Center Title Text */
@@ -573,127 +633,17 @@
     pointer-events: none;
 }
 
-/* Scrollable sub-content frame */
+/* Scrollable sub-content container */
 .subpage-content {
     flex: 1;
     overflow-y: auto;
     padding: 1.5rem 1rem 5rem 1rem;
     width: 100%;
-    max-width: 640px;
+    max-width: 680px;
     margin: 0 auto;
 }
 
-/* Interactive Clickable Settings Row */
-.settings-row.clickable {
-    cursor: pointer;
-    border-radius: 14px;
-    padding-left: 0.75rem;
-    padding-right: 0.75rem;
-    margin: 2px 0;
-    border-bottom: 1px solid transparent;
-    transition: background-color 0.3s cubic-bezier(0.16, 1, 0.3, 1),
-                transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.settings-row.clickable:hover {
-    background: rgba(6, 182, 212, 0.08) !important;
-    transform: translateX(6px);
-}
-
-[data-theme="dark"] .settings-row.clickable:hover {
-    background: rgba(6, 182, 212, 0.12) !important;
-}
-
-.settings-row.clickable:active {
-    transform: scale(0.97) translateX(3px);
-}
-
-/* Row hover icon animation */
-.settings-icon-wrap {
-    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
-                box-shadow 0.4s ease;
-}
-
-.settings-row:hover .settings-icon-wrap {
-    transform: scale(1.15) rotate(8deg);
-    box-shadow: 0 4px 12px rgba(6, 182, 212, 0.25);
-}
-
-/* iCloud-Style Profile Card block */
-.icloud-profile-card {
-    display: flex;
-    align-items: center;
-    gap: 1.15rem;
-    padding: 1.25rem;
-    background: var(--glass-bg);
-    border: 1px solid var(--glass-border);
-    border-radius: 1.5rem;
-    margin-top: 10px;
-    margin-bottom: 1.75rem;
-    cursor: pointer;
-    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
-                border-color 0.4s cubic-bezier(0.16, 1, 0.3, 1),
-                box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    box-shadow: var(--glass-shadow);
-    text-align: left;
-}
-
-.icloud-profile-card:hover {
-    transform: translateY(-2px);
-    border-color: var(--accent-primary);
-    box-shadow: 0 15px 35px rgba(6, 182, 212, 0.15);
-}
-
-.icloud-avatar-wrap {
-    width: 56px;
-    height: 56px;
-    border-radius: 1.25rem;
-    background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary, #8b5cf6));
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5rem;
-    font-weight: 900;
-    color: white;
-    box-shadow: 0 5px 15px rgba(var(--accent-primary-rgb), 0.25);
-    flex-shrink: 0;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.icloud-info {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    flex: 1;
-    overflow: hidden;
-}
-
-.icloud-info h3 {
-    font-weight: 800;
-    font-size: 1.05rem;
-    color: var(--text-main);
-}
-
-.icloud-info p {
-    font-size: 0.75rem;
-    color: var(--text-muted);
-}
-
-/* Subpage transition animations for main page elements */
-#mainHeader {
-    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease;
-}
-
-.bottom-dock-container {
-    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease;
-}
-
-.settings-main-scroll {
-    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease;
-}
-
+/* Main page transition states */
 body.subpage-active #mainHeader {
     transform: translate(-50%, -120px) !important;
     opacity: 0 !important;
@@ -712,23 +662,63 @@ body.subpage-active .settings-main-scroll {
     pointer-events: none;
 }
 
-/* GPU Hardware Acceleration for ultra-smoothness */
-#mainHeader,
-.bottom-dock-container,
-.settings-main-scroll,
-.subpage-overlay,
-.settings-group,
-.icloud-profile-card {
-    will-change: transform, opacity;
+/* ========================================================================
+   4. DYNAMIC SUBPAGE-SPECIFIC WIDGETS
+   ======================================================================== */
+
+/* Category item cards */
+.cat-item-card {
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 16px;
+    padding: 0.75rem 1.25rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: var(--glass-shadow);
 }
 
-/* Custom styles for dynamically generated elements in Categories Subpage */
+[data-theme="dark"] .cat-item-card {
+    background: rgba(0, 0, 0, 0.25);
+    border-color: rgba(255, 255, 255, 0.03);
+}
+
+.cat-item-card:hover {
+    background: rgba(6, 182, 212, 0.08);
+    border-color: rgba(6, 182, 212, 0.25);
+    transform: translateX(4px);
+}
+
+.cat-item-card button {
+    opacity: 0.7;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    background: rgba(239, 68, 68, 0.15);
+    color: #f43f5e;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid transparent;
+}
+
+.cat-item-card button:hover {
+    opacity: 1;
+    background: #f43f5e;
+    color: white;
+    transform: scale(1.1) rotate(9deg);
+    box-shadow: 0 0 10px rgba(244, 63, 94, 0.4);
+}
+
+/* Custom list layout */
 #customCategoryList > div {
     background: var(--glass-bg) !important;
     border: 1px solid var(--glass-border) !important;
-    border-radius: 14px !important;
-    padding: 0.75rem 1rem !important;
-    margin-bottom: 8px;
+    border-radius: 16px !important;
+    padding: 0.75rem 1.25rem !important;
+    margin-bottom: 10px;
     box-shadow: var(--glass-shadow) !important;
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
@@ -738,98 +728,109 @@ body.subpage-active .settings-main-scroll {
 }
 
 #customCategoryList > div:hover {
-    transform: translateY(-2px) translateX(2px) !important;
+    transform: translateY(-2px) translateX(3px) !important;
     border-color: var(--accent-primary) !important;
-    box-shadow: 0 6px 15px rgba(6, 182, 212, 0.12) !important;
+    box-shadow: 0 8px 20px rgba(6, 182, 212, 0.12) !important;
 }
 
 #customCategoryList > div button {
     transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.3s, color 0.3s !important;
 }
 
-/* Red Danger Card hover upgrade */
+/* Red Danger Zone Settings Group styling */
 .settings-group.bg-red-500\/5 {
-    border-color: rgba(239, 68, 68, 0.15) !important;
+    border-color: rgba(239, 68, 68, 0.18) !important;
     background: rgba(239, 68, 68, 0.04) !important;
 }
 
 .settings-group.bg-red-500\/5:hover {
-    border-color: #ef4444 !important;
-    box-shadow: 0 12px 30px rgba(239, 68, 68, 0.15) !important;
+    border-color: rgba(239, 68, 68, 0.6) !important;
+    box-shadow: 0 12px 30px rgba(239, 68, 68, 0.15), var(--glass-shadow) !important;
 }
 
-/* Premium Datepicker & Custom Dropdown overrides */
+/* Custom Datepicker popup */
 .calendar-popup {
     border-radius: 1.5rem !important;
-    box-shadow: var(--glass-shadow) !important;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.2) !important;
     border: 1px solid var(--glass-border) !important;
+    background: var(--glass-bg) !important;
+}
+
+/* Hardware GPU acceleration layers */
+#mainHeader,
+.bottom-dock-container,
+.settings-main-scroll,
+.subpage-overlay,
+.settings-group,
+.icloud-profile-card {
+    will-change: transform, opacity;
 }
 
 /* ========================================================================
-   RESPONSIVE DESIGN & MOBILE OPTIMIZATIONS
+   5. RESPONSIVE DESIGN & MOBILE OVERRIDES
    ======================================================================== */
-@media (max-width: 576px) {
+@media (max-width: 767px) {
     .subpage-header {
-        margin: 10px auto 10px auto;
-        height: 50px;
+        margin: 10px auto;
+        height: 52px;
         padding: 0 14px;
-        border-radius: 25px;
-        width: calc(100% - 20px);
+        border-radius: 26px;
+        width: calc(100% - 16px);
     }
     
     .subpage-title {
-        font-size: 0.85rem;
+        font-size: 0.88rem;
     }
     
     .subpage-back-btn,
     .subpage-save-btn {
-        padding: 4px 10px;
-        font-size: 0.65rem;
-        border-radius: 10px;
+        padding: 5px 12px;
+        font-size: 0.68rem;
+        border-radius: 12px;
     }
     
     .subpage-content {
-        padding: 0.75rem 0.5rem 4rem 0.5rem;
+        padding: 0.85rem 0.5rem 4.5rem 0.5rem;
     }
     
     .settings-group {
-        padding: 0 0.85rem;
-        border-radius: 1.25rem;
-        margin-bottom: 1rem;
-    }
-    
-    .settings-row {
-        padding: 0.85rem 0.15rem;
-    }
-    
-    .settings-title {
-        font-size: 0.85rem;
-    }
-    
-    .settings-desc {
-        font-size: 0.7rem;
-    }
-    
-    .icloud-profile-card {
-        padding: 1rem;
-        border-radius: 1.25rem;
-        gap: 0.85rem;
+        padding: 0 1rem;
+        border-radius: 20px;
         margin-bottom: 1.25rem;
     }
     
+    .settings-row {
+        padding: 1rem 0.15rem;
+    }
+    
+    .settings-title {
+        font-size: 0.9rem;
+    }
+    
+    .settings-desc {
+        font-size: 0.72rem;
+    }
+    
+    .icloud-profile-card {
+        padding: 1.15rem;
+        border-radius: 20px;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+    
     .icloud-avatar-wrap {
-        width: 48px;
-        height: 48px;
-        border-radius: 1rem;
-        font-size: 1.25rem;
+        width: 52px;
+        height: 52px;
+        border-radius: 15px;
+        font-size: 1.4rem;
     }
     
     .icloud-info h3 {
-        font-size: 0.95rem;
+        font-size: 1rem;
     }
     
     .icloud-info p {
-        font-size: 0.7rem;
+        font-size: 0.72rem;
     }
     
     /* Responsive inputs wrapping inside settings group */

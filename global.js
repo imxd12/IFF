@@ -696,50 +696,142 @@
   };
 
   // ----------------------------------------------------
-  // 8. MONEYFLOW GREETING VOICE ENGINE
+  // 8. MONEYFLOW GREETING VO  // ----------------------------------------------------
+  // VOICE ENGINE & 2-HOUR GRANULAR TIME GREETING MATRIX
   // ----------------------------------------------------
   window.MoneyFlowVoiceEngine = {
       greetings: {
-          en: { morning: "Good morning", afternoon: "Good afternoon", evening: "Good evening", night: "Good night", welcome: "{timeGreeting}, {username}. Welcome to MoneyFlow." },
-          hi: { morning: "सुप्रभात", afternoon: "नमस्कार", evening: "शुभ संध्या", night: "शुभ रात्रि", welcome: "{timeGreeting}, नमस्ते {username}. MoneyFlow में आपका स्वागत है।" },
-          ur: { morning: "صبح بخیر", afternoon: "السلام علیکم", evening: "شام بخیر", night: "شب بخیر", welcome: "{timeGreeting}, {username}. MoneyFlow میں آپ کا خوش آمدید ہے۔" },
-          mr: { morning: "शुभ सकाळ", afternoon: "नमस्कार", evening: "शुभ संध्या", night: "शुभ रात्री", welcome: "{timeGreeting}, नमस्कार {username}. MoneyFlow मध्ये तुमचं स्वागत आहे." },
-          gu: { morning: "સુપ્રભાત", afternoon: "નમસ્કાર", evening: "શુભ સાંજ", night: "શુભ રાત્રિ", welcome: "{timeGreeting}, નમસ્તે {username}. MoneyFlow માં તમારું સ્વાગત છે." },
-          pa: { morning: "ਸੁਪ੍ਰਭਾਤ", afternoon: "ਸਤ ਸ੍ਰੀ ਅਕਾਲ", evening: "ਸ਼ੁਭ ਸ਼ਾਮ", night: "ਸ਼ੁਭ ਰਾਤ", welcome: "{timeGreeting}, ਸਤ ਸ੍ਰੀ ਅਕਾਲ {username}. MoneyFlow ਵਿੱਚ ਤੁਹਾਡਾ ਸਵਾਗਤ ਹੈ।" },
-          ta: { morning: "காலை வணக்கம்", afternoon: "மதிய வணக்கம்", evening: "மாலை வணக்கம்", night: "இரவு வணக்கம்", welcome: "{timeGreeting}, வணக்கம் {username}. MoneyFlow இற்கு வரவேற்கிறோம்." },
-          te: { morning: "శుభోదయం", afternoon: "నమస్కారం", evening: "శుభ సాయంత్రం", night: "శుభరాత్రి", welcome: "{timeGreeting}, నమస్కారం {username}. MoneyFlow కు స్వాగతం." },
-          kn: { morning: "ಶುಭೋದಯ", afternoon: "ನಮಸ್ಕಾರ", evening: "ಶುಭ ಸಂಜೆ", night: "ಶುಭ ರಾತ್ರಿ", welcome: "{timeGreeting}, ನಮಸ್ಕಾರ {username}. MoneyFlow ಗೆ ಸ್ವಾಗತ." },
-          bn: { morning: "সুপ্রভাত", afternoon: "নমস্কার", evening: "শুভ সন্ধ্যা", night: "শুভ রাত্রি", welcome: "{timeGreeting}, নমস্কার {username}. MoneyFlow এ আপনাকে স্বাগতম।" },
-          ml: { morning: "സുപ്രഭാതം", afternoon: "നമസ്കാരം", evening: "ശുഭ സായാഹ്നം", night: "ശുഭരാത്രി", welcome: "{timeGreeting}, നമസ്കാരം {username}. MoneyFlow ലേക്ക് സ്വാഗതം." },
-          ja: { morning: "おはようございます", afternoon: "こんにちは", evening: "こんばんは", night: "おやすみなさい", welcome: "{timeGreeting} {username}さん。MoneyFlowへようこそ。" },
-          es: { morning: "Buenos días", afternoon: "Buenas tardes", evening: "Buenas noches", night: "Buenas noches", welcome: "{timeGreeting}, {username}. Bienvenido a MoneyFlow." },
-          fr: { morning: "Bonjour", afternoon: "Bon après-midi", evening: "Bonsoir", night: "Bonne nuit", welcome: "{timeGreeting}, {username}. Bienvenue à MoneyFlow." },
-          de: { morning: "Guten Morgen", afternoon: "Guten Tag", evening: "Guten Abend", night: "Gute Nacht", welcome: "{timeGreeting}, {username}. Willkommen bei MoneyFlow." }
+          en: {
+              late_night: "Good late night",
+              early_morning: "Good early morning",
+              early_morning_2: "Good morning",
+              morning: "Good morning",
+              late_morning: "Good late morning",
+              early_afternoon: "Good afternoon",
+              afternoon: "Good afternoon",
+              late_afternoon: "Good late afternoon",
+              evening: "Good evening",
+              late_evening: "Good late evening",
+              night: "Good night",
+              welcome: "{timeGreeting}, {username}. Welcome to MoneyFlow."
+          },
+          hi: {
+              late_night: "शुभ रात्रि",
+              early_morning: "सुप्रभात",
+              early_morning_2: "सुप्रभात",
+              morning: "सुप्रभात",
+              late_morning: "शुभ प्रभात",
+              early_afternoon: "नमस्कार",
+              afternoon: "नमस्कार",
+              late_afternoon: "शुभ अपराह्न",
+              evening: "शुभ संध्या",
+              late_evening: "शुभ संध्या",
+              night: "शुभ रात्रि",
+              welcome: "{timeGreeting}, नमस्ते {username}। MoneyFlow में आपका स्वागत है।"
+          },
+          ur: {
+              late_night: "شب بخیر",
+              early_morning: "صبح بخیر",
+              early_morning_2: "صبح بخیر",
+              morning: "صبح بخیر",
+              late_morning: "صبح بخیر",
+              early_afternoon: "السلام علیکم",
+              afternoon: "السلام علیکم",
+              late_afternoon: "شام بخیر",
+              evening: "شام بخیر",
+              late_evening: "شام بخیر",
+              night: "شب بخیر",
+              welcome: "{timeGreeting}, {username}. MoneyFlow میں آپ کا خوش آمدید ہے۔"
+          },
+          mr: {
+              late_night: "शुभ रात्री",
+              early_morning: "शुभ सकाळ",
+              early_morning_2: "शुभ सकाळ",
+              morning: "शुभ सकाळ",
+              late_morning: "शुभ सकाळ",
+              early_afternoon: "नमस्कार",
+              afternoon: "नमस्कार",
+              late_afternoon: "शुभ दुपपार",
+              evening: "शुभ संध्या",
+              late_evening: "शुभ संध्या",
+              night: "शुभ रात्री",
+              welcome: "{timeGreeting}, नमस्कार {username}. MoneyFlow मध्ये तुमचं स्वागत आहे."
+          },
+          gu: {
+              late_night: "શુભ રાત્રિ",
+              early_morning: "સુપ્રભાત",
+              early_morning_2: "સુપ્રભાત",
+              morning: "સુપ્રભાત",
+              late_morning: "સુપ્રભાત",
+              early_afternoon: "નમસ્કાર",
+              afternoon: "નમસ્કાર",
+              late_afternoon: "શુભ બપોર",
+              evening: "શુભ સાંજ",
+              late_evening: "શુભ સાંજ",
+              night: "શુભ રાત્રિ",
+              welcome: "{timeGreeting}, નમસ્તે {username}. MoneyFlow માં તમારું સ્વાગત છે."
+          },
+          es: {
+              late_night: "Buenas noches",
+              early_morning: "Buenos días",
+              early_morning_2: "Buenos días",
+              morning: "Buenos días",
+              late_morning: "Buenos días",
+              early_afternoon: "Buenas tardes",
+              afternoon: "Buenas tardes",
+              late_afternoon: "Buenas tardes",
+              evening: "Buenas noches",
+              late_evening: "Buenas noches",
+              night: "Buenas noches",
+              welcome: "{timeGreeting}, {username}. Bienvenido a MoneyFlow."
+          },
+          fr: {
+              late_night: "Bonne nuit",
+              early_morning: "Bonjour",
+              early_morning_2: "Bonjour",
+              morning: "Bonjour",
+              late_morning: "Bonjour",
+              early_afternoon: "Bon après-midi",
+              afternoon: "Bon après-midi",
+              late_afternoon: "Bonsoir",
+              evening: "Bonsoir",
+              late_evening: "Bonsoir",
+              night: "Bonne nuit",
+              welcome: "{timeGreeting}, {username}. Bienvenue à MoneyFlow."
+          }
       },
       bcpTags: {
-          en: 'en-US', hi: 'hi-IN', ur: 'ur-PK', mr: 'mr-IN', gu: 'gu-IN', pa: 'pa-IN', ta: 'ta-IN', te: 'te-IN', kn: 'kn-IN', bn: 'bn-IN', ml: 'ml-IN', ja: 'ja-JP', es: 'es-ES', fr: 'fr-FR', de: 'de-DE'
+          en: 'en-US', hi: 'hi-IN', ur: 'ur-PK', mr: 'mr-IN', gu: 'gu-IN', es: 'es-ES', fr: 'fr-FR'
       },
       getTimeKey(hour) {
-          if (hour >= 5 && hour < 12) return "morning";
-          if (hour >= 12 && hour < 17) return "afternoon";
-          if (hour >= 17 && hour < 22) return "evening";
+          if (hour >= 0 && hour < 4) return "late_night";
+          if (hour >= 4 && hour < 6) return "early_morning";
+          if (hour >= 6 && hour < 8) return "early_morning_2";
+          if (hour >= 8 && hour < 10) return "morning";
+          if (hour >= 10 && hour < 12) return "late_morning";
+          if (hour >= 12 && hour < 14) return "early_afternoon";
+          if (hour >= 14 && hour < 16) return "afternoon";
+          if (hour >= 16 && hour < 18) return "late_afternoon";
+          if (hour >= 18 && hour < 20) return "evening";
+          if (hour >= 20 && hour < 22) return "late_evening";
           return "night";
       },
       getGreeting(language, timeKey, username, useName) {
           const langData = this.greetings[language] || this.greetings['en'];
-          const timeGreeting = langData[timeKey] || langData.morning;
-          let finalName = (useName && username) ? username : '';
+          const timeGreeting = langData[timeKey] || langData.morning || "Good day";
+          let finalName = (useName !== false && username) ? username : '';
           
           let message = langData.welcome.replace('{timeGreeting}', timeGreeting);
           if (finalName) {
               message = message.replace('{username}', finalName);
           } else {
-              message = message.replace(', {username}', '').replace(' {username}さん', '').replace(' {username}', '').replace('नमस्ते ', 'नमस्ते. ').replace('नमस्कार ', 'नमस्कार. ').replace('ਸਤ ਸ੍ਰੀ ਅਕਾਲ ', 'ਸਤ ਸ੍ਰੀ ਅਕਾਲ. ');
+              message = message.replace(', {username}', '').replace(' {username}', '').replace('नमस्ते ', 'नमस्ते. ').replace('नमस्कार ', 'नमस्कार. ');
           }
           return message;
       },
       getVoiceForLang(langCode, savedURI = null) {
-          const voices = speechSynthesis.getVoices();
+          if (!window.speechSynthesis) return null;
+          const voices = window.speechSynthesis.getVoices();
           if (savedURI) {
               const v = voices.find(v => v.voiceURI === savedURI);
               if (v) return v;
@@ -747,13 +839,58 @@
           const targetLang = this.bcpTags[langCode] || 'en-US';
           let preferred = voices.find(v => v.lang.startsWith(targetLang) || v.lang.replace('_', '-').startsWith(targetLang));
           if (!preferred) {
-              preferred = voices.find(v => v.name.includes("Google US English") || v.name.includes("Samantha")) || voices[0];
+              preferred = voices.find(v => v.lang.startsWith('en') && (v.name.includes("Google") || v.name.includes("Natural") || v.name.includes("Samantha"))) || voices[0];
           }
           return preferred;
       },
       speak(forcePlay = false) {
-          // Voice system disabled per user request. Anime assistant now only uses text.
-          return;
+          if (!window.speechSynthesis) return;
+
+          const isMuted = localStorage.getItem('fin_voice_mute') === 'true' || localStorage.getItem('voiceGreeting') === 'off';
+          if (isMuted && !forcePlay) return;
+
+          // Prevent speaking on page refresh within the same app session
+          if (!forcePlay) {
+              const sessionSpoken = sessionStorage.getItem('fin_voice_session_spoken');
+              if (sessionSpoken === 'true') return;
+          }
+
+          const username = localStorage.getItem('fin_userName') || 'Friend';
+          const language = localStorage.getItem('fin_language') || 'en';
+          const savedURI = localStorage.getItem('fin_voiceURI');
+          const useName = localStorage.getItem('fin_speak_name') !== 'false';
+
+          const date = new Date();
+          const hour = date.getHours();
+          const timeKey = this.getTimeKey(hour);
+          const textToSpeak = this.getGreeting(language, timeKey, username, useName);
+
+          window.speechSynthesis.cancel();
+
+          const triggerSpeech = () => {
+              sessionStorage.setItem('fin_voice_session_spoken', 'true');
+              const utterance = new SpeechSynthesisUtterance(textToSpeak);
+              const voice = this.getVoiceForLang(language, savedURI);
+              if (voice) utterance.voice = voice;
+
+              utterance.rate = 0.95;
+              utterance.pitch = 1.0;
+              utterance.volume = 1.0;
+
+              utterance.onerror = (err) => console.warn('TTS Speech Error:', err);
+
+              window.speechSynthesis.speak(utterance);
+          };
+
+          const voices = window.speechSynthesis.getVoices();
+          if (voices.length > 0) {
+              triggerSpeech();
+          } else {
+              window.speechSynthesis.onvoiceschanged = () => {
+                  triggerSpeech();
+                  window.speechSynthesis.onvoiceschanged = null;
+              };
+          }
       }
   };
 
@@ -777,7 +914,8 @@
     initSplashScreen();
     initBirthdayCheck();
     window.setupCustomDropdowns();
-    window.setupCustomDatePickers();
+    // Custom device wallpaper init
+    if (window.applyCustomWallpaper) window.applyCustomWallpaper();
     
     // Defer skill popups slightly to ensure DOM is ready
     setTimeout(initSkillPopup, 100);
@@ -1283,124 +1421,202 @@
       if (!assistantBtn) return;
       
       assistantBtn.addEventListener('click', () => {
-          const username = localStorage.getItem('fin_userName') || 'Friend';
-          const weatherText = document.querySelector('#weatherBadge span:last-child')?.innerText || 'Nice weather';
-          let timeGreeting = "Day";
-          if (window.MoneyFlowVoiceEngine) {
-              timeGreeting = window.MoneyFlowVoiceEngine.getTimeKey(new Date().getHours());
-          }
-          
-          // --- SMART AI ASSISTANT LOGIC ---
-          let dynamicMessages = [
-              `Good ${timeGreeting}, ${username}! All systems operational! ✨`,
-              `The weather feels like ${weatherText}! Stay cozy! ⛅`,
-              `Stay hydrated and stay wealthy, ${username}! 💧`,
-              `Ready to track some expenses? 🚀`,
-              `Remember: A penny saved is a penny earned! 💰`,
-              `You're doing great with your finances today, ${username}! 🌟`,
-              `Let's review those budgets later! 📊`,
-              `I'm here if you need anything, ${username}! 🤖`,
-              `A little progress each day adds up to big results! 📈`,
-              `Did you know? Tracking expenses is the first step to wealth! 💡`,
-              `Feeling good? Let's make today a productive day! ⚡`,
-              `Don't let small leaks sink your financial ship! 🚢`
-          ];
-          
-          try {
-              const spendData = JSON.parse(localStorage.getItem('fin_spendly') || '[]');
-              const currentMonth = new Date().toISOString().slice(0, 7);
-              const today = new Date().toISOString().split('T')[0];
-              
-              const monthlyExpense = spendData.filter(t => t.type === 'expense' && t.date && t.date.startsWith(currentMonth)).reduce((sum, t) => sum + Number(t.amount || 0), 0);
-              const todayExpense = spendData.filter(t => t.type === 'expense' && t.date === today).reduce((sum, t) => sum + Number(t.amount || 0), 0);
-              
-              if (todayExpense > 0) {
-                  dynamicMessages.push(`You've spent ₹${todayExpense.toLocaleString('en-IN')} today. Keep an eye on it! 🧐`);
-              } else {
-                  dynamicMessages.push(`No expenses logged today yet. Great job saving, ${username}! 💎`);
-              }
-              
-              if (monthlyExpense > 0) {
-                  dynamicMessages.push(`Your total spending this month is ₹${monthlyExpense.toLocaleString('en-IN')}. 📊`);
-                  
-                  // Top category logic
-                  const categorySpends = {};
-                  spendData.filter(t => t.type === 'expense' && t.date && t.date.startsWith(currentMonth)).forEach(t => {
-                      const cat = t.category || 'General';
-                      categorySpends[cat] = (categorySpends[cat] || 0) + Number(t.amount || 0);
-                  });
-                  const topCat = Object.entries(categorySpends).sort((a, b) => b[1] - a[1])[0];
-                  if(topCat) {
-                      dynamicMessages.push(`A quick heads-up: You're spending the most on ${topCat[0]} this month. 🍔`);
-                  }
-              }
-              
-              const pocketData = JSON.parse(localStorage.getItem('fin_pocketcal') || '[]');
-              const monthPocket = pocketData.filter(p => p.date && p.date.startsWith(currentMonth)).reduce((sum, p) => sum + Number(p.amount || 0), 0);
-              
-              if (monthPocket > 0 && monthlyExpense > 0) {
-                  const percent = Math.round((monthlyExpense / monthPocket) * 100);
-                  if (percent > 85) {
-                      dynamicMessages.push(`🚨 Careful! You've used ${percent}% of your PocketCal budget!`);
-                  } else if (percent < 50) {
-                      dynamicMessages.push(`You've only used ${percent}% of your budget so far. Excellent pacing! 🚀`);
-                  }
-              } else if (monthPocket === 0) {
-                  dynamicMessages.push(`Don't forget to set a budget in PocketCal for better insights! 💡`);
-              }
-          } catch(e) {
-              console.error("AI Assistant Data Error", e);
-          }
-
-          const msg = dynamicMessages[Math.floor(Math.random() * dynamicMessages.length)];
-          
-          if(window.playUISound) window.playUISound('on');
-          
-          assistantBtn.style.transform = 'scale(1.2) translateY(-10px) rotate(15deg)';
-          setTimeout(() => {
-              assistantBtn.style.transform = '';
-          }, 300);
-
-          const eyes = document.querySelectorAll('.bot-eye');
-          eyes.forEach(e => e.style.animationDuration = '0.1s');
-          setTimeout(() => {
-              eyes.forEach(e => e.style.animationDuration = '4s');
-          }, 1500);
-
-          let popup = document.getElementById('animeAssistantPopup');
-          if (popup) popup.remove();
-
-          popup = document.createElement('div');
-          popup.id = 'animeAssistantPopup';
-          popup.className = 'fixed left-1/2 -translate-x-1/2 bottom-[85px] z-[1000] w-max max-w-[90vw] px-5 py-3 rounded-[20px] shadow-[0_10px_40px_rgba(6,182,212,0.3)] border border-cyan-400/30 flex items-center gap-4 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] transform translate-y-10 opacity-0 pointer-events-none bg-black/60 backdrop-blur-xl';
-          
-          popup.innerHTML = `
-            <div class="w-10 h-10 rounded-full bg-cyan-500/20 border border-cyan-500/50 flex items-center justify-center flex-shrink-0 relative">
-               <i data-lucide="bot" class="w-5 h-5 text-cyan-400 relative z-10"></i>
-               <div class="absolute inset-0 rounded-full animate-ping bg-cyan-400/20"></div>
-            </div>
-            <div>
-               <p class="text-[10px] font-extrabold text-cyan-400/70 uppercase tracking-widest mb-0.5">M-Bot Assistant</p>
-               <p class="text-sm font-bold text-white leading-tight">${msg}</p>
-            </div>
-          `;
-          
-          document.body.appendChild(popup);
-          if (window.lucide) window.lucide.createIcons();
-
-          requestAnimationFrame(() => {
-              popup.style.transform = 'translate(-50%, 0) scale(1)';
-              popup.style.opacity = '1';
-          });
-
-          setTimeout(() => {
-              if(popup.parentElement) {
-                  popup.style.transform = 'translate(-50%, 10px) scale(0.95)';
-                  popup.style.opacity = '0';
-                  setTimeout(() => popup.remove(), 500);
-              }
-          }, 5000);
+          if (window.openFinAiModal) window.openFinAiModal();
       });
+  };
+
+  window.openFinAiModal = function () {
+    let overlay = document.getElementById('finAiAssistantModal');
+    if (!overlay) {
+      overlay = document.createElement('div');
+      overlay.id = 'finAiAssistantModal';
+      overlay.className = 'finai-modal-overlay';
+      
+      const hasApiKey = !!localStorage.getItem('fin_gemini_api_key');
+      const modeLabel = hasApiKey ? 'Gemini 2.5 Flash' : 'Offline Neural AI';
+      const modeColor = hasApiKey ? 'text-cyan-400 bg-cyan-500/10 border-cyan-500/30' : 'text-emerald-400 bg-emerald-500/10 border-emerald-500/30';
+
+      overlay.innerHTML = `
+        <div class="finai-card">
+          <div class="finai-header">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-2xl bg-cyan-500/20 border border-cyan-500/40 flex items-center justify-center text-cyan-400 shadow-[0_0_15px_rgba(6,182,212,0.3)]">
+                <i data-lucide="bot" class="w-5 h-5"></i>
+              </div>
+              <div>
+                <h3 class="text-base font-extrabold text-white leading-tight">Aura Copilot</h3>
+                <span class="text-[10px] font-bold px-2 py-0.5 rounded-full border ${modeColor} uppercase tracking-wider inline-block mt-0.5" id="finAiEngineBadge">
+                  ${modeLabel}
+                </span>
+              </div>
+            </div>
+            <button class="text-slate-400 hover:text-white p-2 rounded-xl hover:bg-white/10 transition" onclick="window.closeFinAiModal()">
+              <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+          </div>
+
+          <div class="finai-chat-body" id="finAiChatBody">
+            <div class="finai-msg ai">
+              <div class="finai-bubble">
+                👋 Hello <b>${localStorage.getItem('fin_userName') || 'Friend'}</b>! I am your <b>Aura Financial Copilot</b>.<br>Ask me anything about your cashflow, budgets, spending habits, or how to reach your savings goals!
+              </div>
+            </div>
+          </div>
+
+          <div class="finai-prompts-bar">
+            <div class="finai-prompt-pill" onclick="window.sendFinAiPrompt('💡 How can I save ₹5000 this month?')">💡 How to save ₹5k?</div>
+            <div class="finai-prompt-pill" onclick="window.sendFinAiPrompt('📊 Audit my financial health score')">📊 Financial Health Audit</div>
+            <div class="finai-prompt-pill" onclick="window.sendFinAiPrompt('🔥 Where am I spending the most?')">🔥 Top Spend Category</div>
+            <div class="finai-prompt-pill" onclick="window.sendFinAiPrompt('📈 Predict my month-end balance')">📈 Month-End Forecast</div>
+          </div>
+
+          <div class="finai-input-wrap">
+            <input type="text" id="finAiInput" class="finai-input" placeholder="Ask Aura about your money..." onkeydown="if(event.key === 'Enter') window.handleFinAiSubmit()">
+            <button class="finai-send-btn" onclick="window.handleFinAiSubmit()">
+              <i data-lucide="send" class="w-4 h-4"></i>
+            </button>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(overlay);
+      if (window.lucide) window.lucide.createIcons();
+    }
+    
+    overlay.classList.add('open');
+    if (window.playUISound) window.playUISound('on');
+  };
+
+  window.closeFinAiModal = function () {
+    const overlay = document.getElementById('finAiAssistantModal');
+    if (overlay) overlay.classList.remove('open');
+  };
+
+  window.sendFinAiPrompt = function (promptText) {
+    const input = document.getElementById('finAiInput');
+    if (input) {
+      input.value = promptText;
+      window.handleFinAiSubmit();
+    }
+  };
+
+  window.handleFinAiSubmit = async function () {
+    const input = document.getElementById('finAiInput');
+    const chatBody = document.getElementById('finAiChatBody');
+    if (!input || !chatBody) return;
+
+    const query = input.value.trim();
+    if (!query) return;
+
+    // Append User Msg
+    const userMsgDiv = document.createElement('div');
+    userMsgDiv.className = 'finai-msg user';
+    userMsgDiv.innerHTML = `<div class="finai-bubble">${query}</div>`;
+    chatBody.appendChild(userMsgDiv);
+    input.value = '';
+    chatBody.scrollTop = chatBody.scrollHeight;
+
+    // Append Loading AI Msg
+    const aiMsgDiv = document.createElement('div');
+    aiMsgDiv.className = 'finai-msg ai';
+    aiMsgDiv.innerHTML = `<div class="finai-bubble"><span class="inline-flex items-center gap-2"><i data-lucide="loader-2" class="w-4 h-4 animate-spin text-cyan-400"></i> Thinking...</span></div>`;
+    chatBody.appendChild(aiMsgDiv);
+    if (window.lucide) window.lucide.createIcons();
+    chatBody.scrollTop = chatBody.scrollHeight;
+
+    const apiKey = localStorage.getItem('fin_gemini_api_key');
+    let aiResponseText = '';
+
+    if (apiKey) {
+      try {
+        const spendData = JSON.parse(localStorage.getItem('fin_spendly') || '[]');
+        const pocketData = JSON.parse(localStorage.getItem('fin_pocketcal') || '[]');
+        const currentMonth = new Date().toISOString().slice(0, 7);
+        const monthlySpent = spendData.filter(t => t.type === 'expense' && t.date && t.date.startsWith(currentMonth)).reduce((sum, t) => sum + Number(t.amount || 0), 0);
+        const monthlyIncome = spendData.filter(t => t.type === 'income' && t.date && t.date.startsWith(currentMonth)).reduce((sum, t) => sum + Number(t.amount || 0), 0);
+        
+        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{
+              parts: [{
+                text: `You are Aura Copilot, an elite personal financial advisor. User: ${localStorage.getItem('fin_userName') || 'Friend'}. Financial context: Monthly Income ₹${monthlyIncome}, Monthly Spent ₹${monthlySpent}. PocketCal entries count: ${pocketData.length}. Keep advice friendly, concise, specific, formatted with clean HTML tags (<b>, <i>, <br>). Question: ${query}`
+              }]
+            }]
+          })
+        });
+
+        if (res.ok) {
+          const resData = await res.json();
+          aiResponseText = resData.candidates?.[0]?.content?.parts?.[0]?.text || '';
+        }
+      } catch (err) {
+        console.warn('Gemini API call failed, falling back to local Neural AI', err);
+      }
+    }
+
+    if (!aiResponseText) {
+      // Offline Neural AI Engine
+      aiResponseText = window.runOfflineFinAiEngine(query);
+    }
+
+    aiMsgDiv.querySelector('.finai-bubble').innerHTML = aiResponseText;
+    chatBody.scrollTop = chatBody.scrollHeight;
+  };
+
+  window.runOfflineFinAiEngine = function (query) {
+    const q = query.toLowerCase();
+    const username = localStorage.getItem('fin_userName') || 'Friend';
+    const spendData = JSON.parse(localStorage.getItem('fin_spendly') || '[]');
+    const pocketData = JSON.parse(localStorage.getItem('fin_pocketcal') || '[]');
+    const currentMonth = new Date().toISOString().slice(0, 7);
+
+    const monthlySpent = spendData.filter(t => t.type === 'expense' && t.date && t.date.startsWith(currentMonth)).reduce((sum, t) => sum + Number(t.amount || 0), 0);
+    const monthlyIncome = spendData.filter(t => t.type === 'income' && t.date && t.date.startsWith(currentMonth)).reduce((sum, t) => sum + Number(t.amount || 0), 0);
+
+    const catTotals = {};
+    spendData.filter(t => t.type === 'expense' && t.date && t.date.startsWith(currentMonth)).forEach(t => {
+      const cat = t.category || 'General';
+      catTotals[cat] = (catTotals[cat] || 0) + Number(t.amount || 0);
+    });
+    const sortedCats = Object.entries(catTotals).sort((a, b) => b[1] - a[1]);
+    const topCat = sortedCats[0] ? sortedCats[0][0] : 'None';
+    const topCatAmt = sortedCats[0] ? sortedCats[0][1] : 0;
+
+    if (q.includes('save') || q.includes('cut') || q.includes('reduce')) {
+      if (topCatAmt > 0) {
+        return `💡 <b>Savings Strategy for ${username}:</b><br>Your highest expense this month is <b>${topCat}</b> (₹${topCatAmt.toLocaleString('en-IN')}). Reducing this category by 20% would instantly save you <b>₹${Math.round(topCatAmt * 0.2).toLocaleString('en-IN')}</b>!`;
+      }
+      return `💡 <b>Savings Strategy:</b> Track your daily expenses consistently in Spendly. Even setting aside 15% of your income first before spending builds strong financial resilience!`;
+    }
+
+    if (q.includes('audit') || q.includes('health') || q.includes('score')) {
+      const savingsRate = monthlyIncome > 0 ? Math.max(0, Math.round(((monthlyIncome - monthlySpent) / monthlyIncome) * 100)) : 25;
+      const score = Math.min(100, Math.max(40, savingsRate * 1.5 + 30));
+      let rating = 'Standard';
+      if (score >= 85) rating = '🌟 Excellent Fiduciary Health';
+      else if (score >= 70) rating = '📈 Good Stability';
+      else rating = '⚠️ High Spending Velocity';
+
+      return `📊 <b>Financial Health Audit:</b><br>Overall Score: <b>${Math.round(score)}/100</b> (${rating})<br>• Savings Rate: <b>${savingsRate}%</b><br>• Total Spent: <b>₹${monthlySpent.toLocaleString('en-IN')}</b><br>• Top Drag: <b>${topCat}</b>`;
+    }
+
+    if (q.includes('predict') || q.includes('forecast') || q.includes('month-end') || q.includes('balance')) {
+      const daysInMonth = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate();
+      const currentDay = new Date().getDate();
+      const dailyVelocity = currentDay > 0 ? monthlySpent / currentDay : 0;
+      const projectedTotal = Math.round(dailyVelocity * daysInMonth);
+
+      return `📈 <b>Month-End Forecast:</b><br>At your current velocity of ₹${Math.round(dailyVelocity).toLocaleString('en-IN')}/day, projected month-end total spend is <b>₹${projectedTotal.toLocaleString('en-IN')}</b>.`;
+    }
+
+    if (q.includes('category') || q.includes('where') || q.includes('most')) {
+      if (sortedCats.length === 0) return `You haven't recorded any expenses for ${currentMonth} yet!`;
+      const catList = sortedCats.slice(0, 3).map(([c, a]) => `• <b>${c}</b>: ₹${a.toLocaleString('en-IN')}`).join('<br>');
+      return `🔥 <b>Top Spending Breakdown:</b><br>${catList}`;
+    }
+
+    return `🤖 <b>Aura AI Insight:</b><br>So far this month you have spent <b>₹${monthlySpent.toLocaleString('en-IN')}</b> across ${spendData.length} total entries. Keep logging transactions to unlock deeper neural analytics!`;
   };
 
   window.applyGlobalPreferences = function () {
@@ -1502,6 +1718,24 @@
       });
   };
 
+  window.toggleWeatherDrawer = function (e) {
+    if (e) {
+      if (e.stopPropagation) e.stopPropagation();
+    }
+    const drawer = document.getElementById('weatherDetailsDrawer');
+    const icon = document.getElementById('weatherChevronIcon');
+    if (drawer) {
+      const isHidden = drawer.classList.contains('hidden');
+      if (isHidden) {
+        drawer.classList.remove('hidden');
+        if (icon) icon.classList.add('rotate-180');
+      } else {
+        drawer.classList.add('hidden');
+        if (icon) icon.classList.remove('rotate-180');
+      }
+    }
+  };
+
   window.initNetworkStatus = function() {
       const updateNetworkStatus = () => {
           if (navigator.onLine) {
@@ -1517,7 +1751,48 @@
       window.addEventListener('offline', updateNetworkStatus);
   };
 
+  window.applyCustomWallpaper = function () {
+    const savedWallpaper = localStorage.getItem('fin_custom_wallpaper');
+    const blurVal = localStorage.getItem('fin_wallpaper_blur') || '12';
+    const dimVal = localStorage.getItem('fin_wallpaper_dim') || '40';
+
+    let layer = document.getElementById('customWallpaperLayer');
+    let overlay = document.getElementById('customWallpaperOverlay');
+
+    if (savedWallpaper) {
+      if (!layer) {
+        layer = document.createElement('div');
+        layer.id = 'customWallpaperLayer';
+        layer.className = 'custom-wallpaper-layer';
+        document.body.prepend(layer);
+      }
+      if (!overlay) {
+        overlay = document.createElement('div');
+        overlay.id = 'customWallpaperOverlay';
+        overlay.className = 'custom-wallpaper-overlay';
+        document.body.prepend(overlay);
+      }
+
+      layer.style.backgroundImage = `url("${savedWallpaper}")`;
+      layer.style.filter = `blur(${blurVal}px)`;
+      layer.style.display = 'block';
+
+      overlay.style.background = `rgba(0, 0, 0, ${Number(dimVal) / 100})`;
+      overlay.style.display = 'block';
+
+      const blobs = document.querySelectorAll('.liquid-blob');
+      blobs.forEach(b => b.style.opacity = '0.2');
+    } else {
+      if (layer) layer.style.display = 'none';
+      if (overlay) overlay.style.display = 'none';
+
+      const blobs = document.querySelectorAll('.liquid-blob');
+      blobs.forEach(b => b.style.opacity = '');
+    }
+  };
+
   window.addEventListener('DOMContentLoaded', () => {
+      window.applyCustomWallpaper();
       window.applyGlobalPreferences();
       window.initSmartHeader();
       window.initAnimeAssistant();

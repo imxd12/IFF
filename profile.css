@@ -11,8 +11,8 @@ html {
 /* Base Body Adjustments */
 .profile-body {
     overflow-x: hidden;
-    background: #050505; /* Deep Space Black */
-    color: #f8fafc;
+    background: var(--bg-main, #070a12);
+    color: var(--text-main, #f8fafc);
     font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
     -webkit-font-smoothing: antialiased;
     transition: background 0.4s ease, color 0.4s ease;

@@ -1,26 +1,29 @@
 /* ========================================================================
-   MONEYFLOW - POCKETCAL CSS
-   Specific styling for the CSS Grid Calendar
-======================================================================== */
+   MONEYFLOW - POCKETCAL CSS (LIQUID OBSIDIAN REDESIGN)
+   CSS Grid Calendar with Liquid Glass Tiles & Neon Entry Indicators
+   ======================================================================== */
 
 .calendar-wrapper {
     container-type: inline-size;
-    /* Allow container queries */
     width: 100%;
 }
 
 .calendar-days {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    font-size: clamp(0.7rem, 2cqi, 0.9rem);
-    letter-spacing: 1px;
+    font-size: clamp(0.7rem, 2cqi, 0.85rem);
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted, #94a3b8);
+    margin-bottom: 8px;
 }
 
 .calendar-grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: clamp(2px, 1.5cqi, 8px);
-    padding: clamp(2px, 1cqi, 4px);
+    gap: clamp(4px, 1.5cqi, 10px);
+    padding: clamp(2px, 1cqi, 6px);
 }
 
 .day {
@@ -28,78 +31,85 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    padding: clamp(2px, 1.5cqi, 8px);
-    background: var(--glass-bg);
-    border: 1px solid var(--glass-border);
-    border-radius: clamp(6px, 2cqi, 12px);
+    padding: clamp(4px, 1.5cqi, 10px);
+    background: var(--glass-bg, rgba(15, 23, 42, 0.6));
+    border: 1px solid var(--glass-border, rgba(255, 255, 255, 0.08));
+    border-radius: clamp(10px, 2.5cqi, 18px);
     cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+                border-color 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+                box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+                background 0.3s ease;
     position: relative;
     overflow: hidden;
     min-width: 0;
-    /* Prevents flex blowout */
+    will-change: transform;
 }
 
 .day:not(.blank):hover {
-    transform: scale(1.05) translateY(-2px);
-    box-shadow: 0 8px 24px rgba(16, 185, 129, 0.15);
-    background: var(--nav-active);
+    transform: scale(1.06) translate3d(0, -3px, 0);
+    box-shadow: 0 12px 30px rgba(16, 185, 129, 0.2);
+    background: rgba(255, 255, 255, 0.06);
     z-index: 5;
-    border-color: var(--accent-primary);
+    border-color: rgba(16, 185, 129, 0.5);
 }
 
 .day.blank {
     background: transparent;
     border-color: transparent;
     cursor: default;
+    box-shadow: none;
 }
 
 .day.today {
-    border: 2px solid var(--accent-info);
+    border: 2px solid #06b6d4 !important;
+    box-shadow: 0 0 20px rgba(6, 182, 212, 0.3);
 }
 
 .day.has-entry {
-    background: rgba(16, 185, 129, 0.1);
-    border-color: rgba(16, 185, 129, 0.3);
+    background: rgba(16, 185, 129, 0.12);
+    border-color: rgba(16, 185, 129, 0.35);
 }
 
 .date-num {
-    font-size: clamp(0.6rem, 2.5cqi, 0.85rem);
-    font-weight: 700;
-    color: var(--text-muted);
+    font-size: clamp(0.7rem, 2.5cqi, 0.9rem);
+    font-weight: 800;
+    color: var(--text-muted, #94a3b8);
     line-height: 1;
 }
 
 .day.has-entry .date-num {
-    color: var(--text-main);
+    color: var(--text-main, #f8fafc);
 }
 
 .date-amount {
     text-align: right;
     width: 100%;
     margin-top: auto;
-    font-size: clamp(0.55rem, 2.2cqi, 0.8rem);
-    font-weight: 800;
-    color: var(--accent-primary);
+    font-size: clamp(0.6rem, 2.2cqi, 0.85rem);
+    font-weight: 900;
+    color: #10b981;
     word-break: break-all;
     line-height: 1.1;
     display: -webkit-box;
     -webkit-line-clamp: 2;
-    /* Limit to 2 lines to stop overflow */
     line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
+    text-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
 }
 
-/* Fail-safe media query for extreme mobile widths + 150% scaling */
-@media (max-width: 400px) {
+/* Mobile Responsiveness */
+@media (max-width: 420px) {
     .calendar-grid {
-        gap: 2px;
+        gap: 3px;
     }
 
     .day {
-        padding: 2px;
-        border-radius: 4px;
+        padding: 4px;
+        border-radius: 10px;
     }
 
     .date-num {
@@ -108,30 +118,5 @@
 
     .date-amount {
         font-size: 0.55rem;
-        -webkit-line-clamp: 3;
-        line-clamp: 3;
     }
-}
-
-/* Custom Scrollbar for Requests List */
-.custom-scrollbar::-webkit-scrollbar {
-    width: 5px;
-}
-.custom-scrollbar::-webkit-scrollbar-track {
-    background: transparent;
-}
-.custom-scrollbar::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 10px;
-}
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.2);
-}
-
-/* Smooth status animations */
-.glass-panel {
-    transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
-}
-.glass-panel:hover {
-    border-color: rgba(255, 255, 255, 0.15);
 }

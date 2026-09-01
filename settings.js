@@ -108,6 +108,57 @@
             const fmt = localStorage.getItem('fin_date_format') || 'DD/MM/YYYY';
             mainLedgerStatus.textContent = `${sym} ${code}, Format: ${fmt}`;
         }
+
+        // 5. AI config status preview text
+        const aiConfigPreviewStatus = document.getElementById('aiConfigPreviewStatus');
+        if (aiConfigPreviewStatus) {
+            const apiKey = localStorage.getItem('fin_gemini_api_key');
+            const keyInput = document.getElementById('geminiApiKeyInput');
+            if (apiKey) {
+                aiConfigPreviewStatus.textContent = 'Gemini 2.5 Flash Active 🚀';
+                if (keyInput) keyInput.value = apiKey;
+            } else {
+                aiConfigPreviewStatus.textContent = 'Offline Neural AI Active ⚡';
+                if (keyInput) keyInput.value = '';
+            }
+        }
+
+        // 6. Device wallpaper preview text & sliders sync
+        const wallpaperPreviewStatus = document.getElementById('wallpaperPreviewStatus');
+        const customWallpaper = localStorage.getItem('fin_custom_wallpaper');
+        if (wallpaperPreviewStatus) {
+            wallpaperPreviewStatus.textContent = customWallpaper ? 'Personal Wallpaper Active 🖼️' : 'Default Liquid Theme';
+        }
+
+        const previewImg = document.getElementById('wallpaperPreviewImg');
+        const uploadPlaceholder = document.getElementById('wallpaperUploadPlaceholder');
+        if (previewImg && uploadPlaceholder) {
+            if (customWallpaper) {
+                previewImg.src = customWallpaper;
+                previewImg.classList.remove('hidden');
+                uploadPlaceholder.classList.add('hidden');
+            } else {
+                previewImg.src = '';
+                previewImg.classList.add('hidden');
+                uploadPlaceholder.classList.remove('hidden');
+            }
+        }
+
+        const blurSlider = document.getElementById('wallpaperBlurSlider');
+        const blurDisplay = document.getElementById('wallpaperBlurValDisplay');
+        if (blurSlider && blurDisplay) {
+            const val = localStorage.getItem('fin_wallpaper_blur') || '12';
+            blurSlider.value = val;
+            blurDisplay.textContent = `${val}px`;
+        }
+
+        const dimSlider = document.getElementById('wallpaperDimSlider');
+        const dimDisplay = document.getElementById('wallpaperDimValDisplay');
+        if (dimSlider && dimDisplay) {
+            const val = localStorage.getItem('fin_wallpaper_dim') || '40';
+            dimSlider.value = val;
+            dimDisplay.textContent = `${val}%`;
+        }
     };
 
     // ----------------------------------------------------
@@ -890,6 +941,146 @@
                 );
             }
         );
+    };
+
+    window.saveAiConfig = function() {
+        const keyInput = document.getElementById('geminiApiKeyInput');
+        if (keyInput) {
+            const val = keyInput.value.trim();
+            if (val) {
+                localStorage.setItem('fin_gemini_api_key', val);
+                showSnackbar('Gemini API key saved! Aura AI Cloud Active 🚀');
+            } else {
+                localStorage.removeItem('fin_gemini_api_key');
+                showSnackbar('Key cleared. Switched to Offline Aura Neural AI ⚡');
+            }
+            if (window.updateSettingsPreviews) window.updateSettingsPreviews();
+        }
+    };
+
+    window.clearGeminiKey = function() {
+        const keyInput = document.getElementById('geminiApiKeyInput');
+        if (keyInput) keyInput.value = '';
+        localStorage.removeItem('fin_gemini_api_key');
+        const statusEl = document.getElementById('geminiTestStatus');
+        if (statusEl) statusEl.classList.add('hidden');
+        showSnackbar('Gemini API key cleared.');
+        if (window.updateSettingsPreviews) window.updateSettingsPreviews();
+    };
+
+    window.testGeminiKey = async function() {
+        const keyInput = document.getElementById('geminiApiKeyInput');
+        const statusEl = document.getElementById('geminiTestStatus');
+        if (!keyInput || !statusEl) return;
+        const key = keyInput.value.trim();
+
+        if (!key) {
+            statusEl.className = 'text-xs p-3 rounded-xl border border-rose-500/30 bg-rose-500/10 text-rose-300 block';
+            statusEl.textContent = '❌ Please enter an API key first.';
+            return;
+        }
+
+        statusEl.className = 'text-xs p-3 rounded-xl border border-cyan-500/30 bg-cyan-500/10 text-cyan-300 block';
+        statusEl.textContent = '⏳ Testing connection to Gemini API...';
+
+        try {
+            const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    contents: [{ parts: [{ text: "Hello, reply with OK" }] }]
+                })
+            });
+
+            if (res.ok) {
+                statusEl.className = 'text-xs p-3 rounded-xl border border-emerald-500/30 bg-emerald-500/10 text-emerald-300 block';
+                statusEl.textContent = '✅ Success! Connected to Gemini 2.5 Flash API.';
+                localStorage.setItem('fin_gemini_api_key', key);
+                if (window.updateSettingsPreviews) window.updateSettingsPreviews();
+            } else {
+                const errData = await res.json();
+                statusEl.className = 'text-xs p-3 rounded-xl border border-rose-500/30 bg-rose-500/10 text-rose-300 block';
+                statusEl.textContent = `❌ Failed (${res.status}): ${errData.error?.message || 'Invalid API key'}`;
+            }
+        } catch (e) {
+            statusEl.className = 'text-xs p-3 rounded-xl border border-rose-500/30 bg-rose-500/10 text-rose-300 block';
+            statusEl.textContent = `❌ Network Error: ${e.message}`;
+        }
+    };
+
+    // ----------------------------------------------------
+    // CUSTOM WALLPAPER ENGINE HANDLERS
+    // ----------------------------------------------------
+    window.handleWallpaperUpload = function(event) {
+        const file = event.target.files?.[0];
+        if (!file) return;
+
+        if (!file.type.startsWith('image/')) {
+            showSnackbar('Please select a valid image file (PNG, JPG, WebP)', 'error');
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const img = new Image();
+            img.onload = function() {
+                // Compress & downscale image to fits comfortably in local storage
+                const canvas = document.createElement('canvas');
+                const maxDim = 1280;
+                let width = img.width;
+                let height = img.height;
+
+                if (width > maxDim || height > maxDim) {
+                    if (width > height) {
+                        height = Math.round((height * maxDim) / width);
+                        width = maxDim;
+                    } else {
+                        width = Math.round((width * maxDim) / height);
+                        height = maxDim;
+                    }
+                }
+
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+
+                const dataUrl = canvas.toDataURL('image/jpeg', 0.82);
+                try {
+                    localStorage.setItem('fin_custom_wallpaper', dataUrl);
+                    if (window.applyCustomWallpaper) window.applyCustomWallpaper();
+                    if (window.updateSettingsPreviews) window.updateSettingsPreviews();
+                    showSnackbar('Personal wallpaper applied! ✨', 'success');
+                } catch (err) {
+                    showSnackbar('Image size is too large. Please select a smaller photo.', 'error');
+                }
+            };
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    };
+
+    window.updateWallpaperSettings = function() {
+        const blurVal = document.getElementById('wallpaperBlurSlider')?.value || '12';
+        const dimVal = document.getElementById('wallpaperDimSlider')?.value || '40';
+
+        localStorage.setItem('fin_wallpaper_blur', blurVal);
+        localStorage.setItem('fin_wallpaper_dim', dimVal);
+
+        const blurDisplay = document.getElementById('wallpaperBlurValDisplay');
+        if (blurDisplay) blurDisplay.textContent = `${blurVal}px`;
+
+        const dimDisplay = document.getElementById('wallpaperDimValDisplay');
+        if (dimDisplay) dimDisplay.textContent = `${dimVal}%`;
+
+        if (window.applyCustomWallpaper) window.applyCustomWallpaper();
+    };
+
+    window.removeCustomWallpaper = function() {
+        localStorage.removeItem('fin_custom_wallpaper');
+        if (window.applyCustomWallpaper) window.applyCustomWallpaper();
+        if (window.updateSettingsPreviews) window.updateSettingsPreviews();
+        showSnackbar('Device wallpaper removed. Default theme active.');
     };
 
     // Run initial update on load

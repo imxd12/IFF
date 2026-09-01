@@ -34,7 +34,8 @@
     </div>
 
     <!-- Fixed Header -->
-    <header class="global-header glass-panel transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]" id="mainHeader">
+    <header class="global-header glass-panel transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]"
+        id="mainHeader">
         <div class="brand flex items-center gap-3 relative z-10">
             <a href="javascript:history.back()"
                 class="glass-button w-10 h-10 rounded-full flex items-center justify-center hover:-translate-x-1">
@@ -73,7 +74,7 @@
     <main class="main-content flex flex-col items-center">
         <!-- Main Settings One-Page Scroll List -->
         <div class="settings-main-scroll max-w-2xl w-full mx-auto px-4 pb-28">
-            
+
             <!-- iCloud-style Profile Card -->
             <div class="icloud-profile-card" onclick="window.openSubpage('#subpage-identity')">
                 <div class="icloud-avatar-wrap">
@@ -82,7 +83,8 @@
                 </div>
                 <div class="icloud-info">
                     <h3 id="mainProfileName" class="font-bold text-lg text-white leading-tight">User Name</h3>
-                    <p id="mainProfileBio" class="text-xs text-muted leading-snug line-clamp-1">Manage profile bio and information cards</p>
+                    <p id="mainProfileBio" class="text-xs text-muted leading-snug line-clamp-1">Manage profile bio and
+                        information cards</p>
                 </div>
                 <i data-lucide="chevron-right" class="text-muted w-5 h-5 ml-auto"></i>
             </div>
@@ -101,7 +103,8 @@
                             <span class="settings-desc" id="currentThemeDisplay">Light Mode</span>
                         </div>
                     </div>
-                    <button id="toggleAppThemeBtn" class="px-3 py-1.5 rounded-xl text-xs font-bold transition shadow-md bg-glass-bg border border-glass-border hover:bg-white/10">White</button>
+                    <button id="toggleAppThemeBtn"
+                        class="px-3 py-1.5 rounded-xl text-xs font-bold transition shadow-md bg-glass-bg border border-glass-border hover:bg-white/10">White</button>
                 </div>
 
                 <!-- Voice Assistant Subpage Row -->
@@ -145,6 +148,20 @@
                     </div>
                     <i data-lucide="chevron-right" class="text-muted w-5 h-5"></i>
                 </div>
+
+                <!-- Custom Device Wallpaper Row -->
+                <div class="settings-row clickable" onclick="window.openSubpage('#subpage-wallpaper')">
+                    <div class="settings-row-left">
+                        <div class="settings-icon-wrap icon-bg-cyan">
+                            <i data-lucide="image"></i>
+                        </div>
+                        <div class="settings-row-left-info">
+                            <span class="settings-title">Device Wallpaper</span>
+                            <span class="settings-desc" id="wallpaperPreviewStatus">Default Liquid Theme</span>
+                        </div>
+                    </div>
+                    <i data-lucide="chevron-right" class="text-muted w-5 h-5"></i>
+                </div>
             </div>
 
             <!-- Group 2: Financial Settings -->
@@ -173,6 +190,20 @@
                         <div class="settings-row-left-info">
                             <span class="settings-title">Subcategory Manager</span>
                             <span class="settings-desc">Edit transaction categories</span>
+                        </div>
+                    </div>
+                    <i data-lucide="chevron-right" class="text-muted w-5 h-5"></i>
+                </div>
+
+                <!-- FinAI & Gemini Key Row -->
+                <div class="settings-row clickable" onclick="window.openSubpage('#subpage-ai-config')">
+                    <div class="settings-row-left">
+                        <div class="settings-icon-wrap icon-bg-purple">
+                            <i data-lucide="bot"></i>
+                        </div>
+                        <div class="settings-row-left-info">
+                            <span class="settings-title">Aura AI & Gemini API Key</span>
+                            <span class="settings-desc" id="aiConfigPreviewStatus">Offline Neural AI Active</span>
                         </div>
                     </div>
                     <i data-lucide="chevron-right" class="text-muted w-5 h-5"></i>
@@ -215,16 +246,20 @@
             <div class="settings-group-title">Support & Legal</div>
             <div class="settings-group p-4">
                 <div class="grid grid-cols-2 gap-3">
-                    <a href="howtouse.html" class="glass-button p-3 rounded-lg text-xs font-bold text-center flex items-center justify-center gap-2">
+                    <a href="howtouse.html"
+                        class="glass-button p-3 rounded-lg text-xs font-bold text-center flex items-center justify-center gap-2">
                         <i data-lucide="help-circle" class="w-4 h-4 text-purple-500"></i> Help
                     </a>
-                    <a href="feedback.html" class="glass-button p-3 rounded-lg text-xs font-bold text-center flex items-center justify-center gap-2">
+                    <a href="feedback.html"
+                        class="glass-button p-3 rounded-lg text-xs font-bold text-center flex items-center justify-center gap-2">
                         <i data-lucide="message-square" class="w-4 h-4 text-blue-500"></i> Feedback
                     </a>
-                    <a href="privacy-policy.html" class="glass-button p-3 rounded-lg text-xs font-bold text-center flex items-center justify-center gap-2">
+                    <a href="privacy-policy.html"
+                        class="glass-button p-3 rounded-lg text-xs font-bold text-center flex items-center justify-center gap-2">
                         <i data-lucide="shield" class="w-4 h-4 text-emerald-500"></i> Privacy
                     </a>
-                    <a href="terms-conditions.html" class="glass-button p-3 rounded-lg text-xs font-bold text-center flex items-center justify-center gap-2">
+                    <a href="terms-conditions.html"
+                        class="glass-button p-3 rounded-lg text-xs font-bold text-center flex items-center justify-center gap-2">
                         <i data-lucide="file-text" class="w-4 h-4 text-amber-500"></i> Terms
                     </a>
                 </div>
@@ -243,10 +278,11 @@
     <div class="subpage-overlay" id="subpage-identity">
         <div class="subpage-header">
             <button class="subpage-back-btn" onclick="window.closeSubpage('#subpage-identity')">
-                <i data-lucide="chevron-left" class="inline w-5 h-5 mr-0.5"></i> Settings
+                <i data-lucide="chevron-left" class="inline w-5 h-5 mr-0.5"></i>
             </button>
             <h2 class="subpage-title">Personal Identity</h2>
-            <button class="subpage-save-btn" onclick="window.saveIdentity(); window.closeSubpage('#subpage-identity');">Save</button>
+            <button class="subpage-save-btn"
+                onclick="window.saveIdentity(); window.closeSubpage('#subpage-identity');">Save</button>
         </div>
         <div class="subpage-content">
             <!-- Avatar Upload Row -->
@@ -254,14 +290,16 @@
                 <div class="identity-avatar-container cursor-pointer relative group" id="avatarUploadTrigger">
                     <span id="avatarInitials">U</span>
                     <img id="avatarImage" src="" alt="" class="hidden w-full h-full object-cover rounded-[2rem]" />
-                    <div class="absolute inset-0 bg-black/50 rounded-[2rem] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div
+                        class="absolute inset-0 bg-black/50 rounded-[2rem] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                         <i data-lucide="camera" class="text-white w-8 h-8"></i>
                     </div>
                     <input type="file" id="avatarFileInput" accept="image/*" class="hidden" />
                 </div>
                 <p class="text-xs text-muted">Tap to upload a profile picture</p>
                 <div class="flex gap-2 justify-center mt-4 w-full">
-                    <a href="profile.html" class="flex-1 px-4 py-2 rounded-xl text-xs font-bold bg-gradient-to-r from-purple-500/20 to-indigo-500/20 border border-purple-500/30 text-purple-300 hover:bg-purple-500/30 hover:text-white transition active:scale-95 flex items-center justify-center gap-1">
+                    <a href="profile.html"
+                        class="flex-1 px-4 py-2 rounded-xl text-xs font-bold bg-gradient-to-r from-purple-500/20 to-indigo-500/20 border border-purple-500/30 text-purple-300 hover:bg-purple-500/30 hover:text-white transition active:scale-95 flex items-center justify-center gap-1">
                         <i data-lucide="code-2" class="w-4 h-4"></i> Creator Profile
                     </a>
                 </div>
@@ -352,7 +390,8 @@
                             <span class="settings-desc">City, Country location tags.</span>
                         </div>
                     </div>
-                    <input type="text" id="locationInput" class="glass-input w-full sm:w-64" placeholder="City, Country">
+                    <input type="text" id="locationInput" class="glass-input w-full sm:w-64"
+                        placeholder="City, Country">
                 </div>
             </div>
 
@@ -400,7 +439,8 @@
             <!-- Bio Inputs -->
             <div class="settings-group-title">Biography</div>
             <div class="settings-group p-4">
-                <textarea id="bioInput" class="glass-input w-full" rows="3" placeholder="Tell us about yourself..."></textarea>
+                <textarea id="bioInput" class="glass-input w-full" rows="3"
+                    placeholder="Tell us about yourself..."></textarea>
             </div>
         </div>
     </div>
@@ -409,7 +449,7 @@
     <div class="subpage-overlay" id="subpage-voice">
         <div class="subpage-header">
             <button class="subpage-back-btn" onclick="window.closeSubpage('#subpage-voice')">
-                <i data-lucide="chevron-left" class="inline w-5 h-5 mr-0.5"></i> Settings
+                <i data-lucide="chevron-left" class="inline w-5 h-5 mr-0.5"></i>
             </button>
             <h2 class="subpage-title">Voice Assistant</h2>
             <div style="width: 40px;"></div>
@@ -428,7 +468,7 @@
                     </div>
                     <button id="toggleVoiceBtn" class="bg-emerald-500 text-white">On</button>
                 </div>
-                
+
                 <div class="settings-row flex-col sm:flex-row gap-3 items-stretch sm:items-center">
                     <div class="settings-row-left">
                         <div class="settings-icon-wrap icon-bg-cyan">
@@ -482,7 +522,7 @@
     <div class="subpage-overlay" id="subpage-sounds">
         <div class="subpage-header">
             <button class="subpage-back-btn" onclick="window.closeSubpage('#subpage-sounds')">
-                <i data-lucide="chevron-left" class="inline w-5 h-5 mr-0.5"></i> Settings
+                <i data-lucide="chevron-left" class="inline w-5 h-5 mr-0.5"></i>
             </button>
             <h2 class="subpage-title">Sounds & Haptics</h2>
             <div style="width: 40px;"></div>
@@ -528,7 +568,7 @@
     <div class="subpage-overlay" id="subpage-behaviors">
         <div class="subpage-header">
             <button class="subpage-back-btn" onclick="window.closeSubpage('#subpage-behaviors')">
-                <i data-lucide="chevron-left" class="inline w-5 h-5 mr-0.5"></i> Settings
+                <i data-lucide="chevron-left" class="inline w-5 h-5 mr-0.5"></i>
             </button>
             <h2 class="subpage-title">Behaviors & Assist</h2>
             <div style="width: 40px;"></div>
@@ -568,7 +608,7 @@
     <div class="subpage-overlay" id="subpage-ledger">
         <div class="subpage-header">
             <button class="subpage-back-btn" onclick="window.closeSubpage('#subpage-ledger')">
-                <i data-lucide="chevron-left" class="inline w-5 h-5 mr-0.5"></i> Settings
+                <i data-lucide="chevron-left" class="inline w-5 h-5 mr-0.5"></i>
             </button>
             <h2 class="subpage-title">Ledger Preferences</h2>
             <div style="width: 40px;"></div>
@@ -593,7 +633,8 @@
                             </div>
                             <div class="custom-menu">
                                 <div class="custom-search-container">
-                                    <input type="text" id="currencySearch" class="custom-search-input" placeholder="Search currency (e.g. USD)...">
+                                    <input type="text" id="currencySearch" class="custom-search-input"
+                                        placeholder="Search currency (e.g. USD)...">
                                 </div>
                                 <div class="custom-list" id="currencyList">
                                     <!-- Populated by JS -->
@@ -655,33 +696,44 @@
     <div class="subpage-overlay" id="subpage-categories">
         <div class="subpage-header">
             <button class="subpage-back-btn" onclick="window.closeSubpage('#subpage-categories')">
-                <i data-lucide="chevron-left" class="inline w-5 h-5 mr-0.5"></i> Settings
+                <i data-lucide="chevron-left" class="inline w-5 h-5 mr-0.5"></i>
             </button>
             <h2 class="subpage-title">Subcategories</h2>
             <div style="width: 40px;"></div>
         </div>
         <div class="subpage-content">
             <div class="settings-group p-5">
-                <p class="text-xs text-muted mb-4">Manage specific tracking tags dynamically synced into Spendly and PocketCal dropdown fields.</p>
-                
-                <div class="relative flex bg-black/40 backdrop-blur-2xl p-1.5 rounded-[2rem] border border-white/10 shadow-[inset_0_2px_10px_rgba(0,0,0,0.5),0_10px_30px_rgba(0,0,0,0.2)] w-full max-w-sm mx-auto z-20 overflow-hidden mb-6">
+                <p class="text-xs text-muted mb-4">Manage specific tracking tags dynamically synced into Spendly and
+                    PocketCal dropdown fields.</p>
+
+                <div
+                    class="relative flex bg-black/40 backdrop-blur-2xl p-1.5 rounded-[2rem] border border-white/10 shadow-[inset_0_2px_10px_rgba(0,0,0,0.5),0_10px_30px_rgba(0,0,0,0.2)] w-full max-w-sm mx-auto z-20 overflow-hidden mb-6">
                     <!-- Glowing Underline Sliding Pill -->
-                    <div id="catTypeSwitcherPill" class="absolute top-1.5 bottom-1.5 left-1.5 w-[calc(50%-6px)] bg-white/10 rounded-[1.75rem] border border-white/20 shadow-[0_0_15px_rgba(239,68,68,0.3)] transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] overflow-hidden">
-                        <div id="catTypeSwitcherNeon" class="absolute bottom-0 left-1/2 -translate-x-1/2 w-[60%] h-[3px] rounded-t-full bg-gradient-to-r from-rose-400 to-red-500 shadow-[0_0_12px_rgba(239,68,68,1)] transition-colors duration-500"></div>
-                        <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-white/5 to-transparent"></div>
+                    <div id="catTypeSwitcherPill"
+                        class="absolute top-1.5 bottom-1.5 left-1.5 w-[calc(50%-6px)] bg-white/10 rounded-[1.75rem] border border-white/20 shadow-[0_0_15px_rgba(239,68,68,0.3)] transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] overflow-hidden">
+                        <div id="catTypeSwitcherNeon"
+                            class="absolute bottom-0 left-1/2 -translate-x-1/2 w-[60%] h-[3px] rounded-t-full bg-gradient-to-r from-rose-400 to-red-500 shadow-[0_0_12px_rgba(239,68,68,1)] transition-colors duration-500">
+                        </div>
+                        <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-white/5 to-transparent">
+                        </div>
                     </div>
-                    <button id="catTypeExpense" class="relative flex-1 py-3 text-xs sm:text-sm font-black tracking-widest uppercase rounded-[1.75rem] text-white transition-colors duration-300 z-10 active:scale-95">Expense</button>
-                    <button id="catTypeIncome" class="relative flex-1 py-3 text-xs sm:text-sm font-black tracking-widest uppercase rounded-[1.75rem] text-muted hover:text-white transition-colors duration-300 z-10 active:scale-95">Income</button>
+                    <button id="catTypeExpense"
+                        class="relative flex-1 py-3 text-xs sm:text-sm font-black tracking-widest uppercase rounded-[1.75rem] text-white transition-colors duration-300 z-10 active:scale-95">Expense</button>
+                    <button id="catTypeIncome"
+                        class="relative flex-1 py-3 text-xs sm:text-sm font-black tracking-widest uppercase rounded-[1.75rem] text-muted hover:text-white transition-colors duration-300 z-10 active:scale-95">Income</button>
                 </div>
 
                 <div id="mainCategorySelectContainer" class="mb-4 relative z-50">
                     <label class="block text-xs font-bold text-muted mb-1">Parent Category</label>
-                    <select id="mainCategorySelect" class="glass-input !py-3 !px-4 text-sm font-bold text-amber-500 shadow-sm custom-select"></select>
+                    <select id="mainCategorySelect"
+                        class="glass-input !py-3 !px-4 text-sm font-bold text-amber-500 shadow-sm custom-select"></select>
                 </div>
 
                 <div class="flex gap-3 mb-5 relative z-10">
-                    <input type="text" id="newCategoryInput" class="glass-input flex-1 !py-3 shadow-sm" placeholder="e.g. 🛵 Travel - Rapido">
-                    <button id="addCategoryBtn" class="bg-gradient-to-r from-amber-500 to-orange-400 text-white px-5 py-3 rounded-xl text-sm font-bold shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all flex items-center justify-center">
+                    <input type="text" id="newCategoryInput" class="glass-input flex-1 !py-3 shadow-sm"
+                        placeholder="e.g. 🛵 Travel - Rapido">
+                    <button id="addCategoryBtn"
+                        class="bg-gradient-to-r from-amber-500 to-orange-400 text-white px-5 py-3 rounded-xl text-sm font-bold shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all flex items-center justify-center">
                         <i data-lucide="plus" class="w-5 h-5"></i>
                     </button>
                 </div>
@@ -697,7 +749,7 @@
     <div class="subpage-overlay" id="subpage-backups">
         <div class="subpage-header">
             <button class="subpage-back-btn" onclick="window.closeSubpage('#subpage-backups')">
-                <i data-lucide="chevron-left" class="inline w-5 h-5 mr-0.5"></i> Settings
+                <i data-lucide="chevron-left" class="inline w-5 h-5 mr-0.5"></i>
             </button>
             <h2 class="subpage-title">Data Backups</h2>
             <div style="width: 40px;"></div>
@@ -711,8 +763,10 @@
                     <h3 class="font-bold text-sm">Export Data</h3>
                     <p class="text-xs text-muted leading-tight">Backup ledger databases locally.</p>
                     <div class="flex gap-2 w-full mt-2">
-                        <button onclick="window.exportDataJSON()" class="flex-1 glass-button py-2 rounded-lg font-bold text-emerald-500 text-xs">.JSON</button>
-                        <button onclick="window.exportDataCSV()" class="flex-1 glass-button py-2 rounded-lg font-bold text-emerald-500 text-xs">.CSV</button>
+                        <button onclick="window.exportDataJSON()"
+                            class="flex-1 glass-button py-2 rounded-lg font-bold text-emerald-500 text-xs">.JSON</button>
+                        <button onclick="window.exportDataCSV()"
+                            class="flex-1 glass-button py-2 rounded-lg font-bold text-emerald-500 text-xs">.CSV</button>
                     </div>
                 </div>
 
@@ -722,8 +776,11 @@
                     </div>
                     <h3 class="font-bold text-sm">Import Data</h3>
                     <p class="text-xs text-muted leading-tight">Import ledger data and override local storage.</p>
-                    <input type="file" id="importFile" accept=".json" class="hidden" onchange="window.importDataJSON(this)">
-                    <button onclick="document.getElementById('importFile').click()" class="w-full glass-button py-2 rounded-lg font-bold text-blue-500 text-xs mt-2">Choose File</button>
+                    <input type="file" id="importFile" accept=".json" class="hidden"
+                        onchange="window.importDataJSON(this)">
+                    <button onclick="document.getElementById('importFile').click()"
+                        class="w-full glass-button py-2 rounded-lg font-bold text-blue-500 text-xs mt-2">Choose
+                        File</button>
                 </div>
             </div>
 
@@ -738,8 +795,99 @@
                             <span class="settings-desc" id="lastBackupText">Last: Never</span>
                         </div>
                     </div>
-                    <button onclick="window.runSimulatedBackup()" class="glass-button p-2 rounded-lg text-purple-500 hover:bg-purple-500/10 active:scale-90 transition-all">
+                    <button onclick="window.runSimulatedBackup()"
+                        class="glass-button p-2 rounded-lg text-purple-500 hover:bg-purple-500/10 active:scale-90 transition-all">
                         <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SUBPAGE: FINAI CONFIG -->
+    <div class="subpage-overlay" id="subpage-ai-config">
+        <div class="subpage-header">
+            <button class="subpage-back-btn" onclick="window.closeSubpage('#subpage-ai-config')">
+                <i data-lucide="chevron-left" class="inline w-5 h-5 mr-0.5"></i>
+            </button>
+            <h2 class="subpage-title">Aura AI & Gemini API</h2>
+            <button class="subpage-save-btn" onclick="window.saveAiConfig(); window.closeSubpage('#subpage-ai-config');">Save</button>
+        </div>
+        <div class="subpage-content">
+            <div class="settings-group-title">Google Gemini Integration</div>
+            <div class="settings-group p-4 space-y-4">
+                <p class="text-xs text-muted leading-relaxed">
+                    Optionally enter a Google Gemini API Key to enable cloud-powered AI consulting. If empty, Aura AI runs 100% offline using client-side Neural AI.
+                </p>
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 mb-1.5">Gemini API Key</label>
+                    <input type="password" id="geminiApiKeyInput" class="glass-input w-full font-mono text-sm" placeholder="AIzaSy...">
+                </div>
+                <div class="flex gap-3">
+                    <button class="glass-button px-4 py-2 text-xs font-bold rounded-xl text-cyan-400 border-cyan-500/30 flex-1 flex items-center justify-center gap-1.5" onclick="window.testGeminiKey()">
+                        <i data-lucide="shield-check" class="w-4 h-4"></i> Test Connection
+                    </button>
+                    <button class="glass-button px-4 py-2 text-xs font-bold rounded-xl text-rose-400 border-rose-500/30 flex items-center justify-center gap-1.5" onclick="window.clearGeminiKey()">
+                        Clear Key
+                    </button>
+                </div>
+                <div id="geminiTestStatus" class="hidden text-xs p-3 rounded-xl border"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SUBPAGE: CUSTOM WALLPAPER -->
+    <div class="subpage-overlay" id="subpage-wallpaper">
+        <div class="subpage-header">
+            <button class="subpage-back-btn" onclick="window.closeSubpage('#subpage-wallpaper')">
+                <i data-lucide="chevron-left" class="inline w-5 h-5 mr-0.5"></i>
+            </button>
+            <h2 class="subpage-title">Device Wallpaper</h2>
+            <button class="subpage-save-btn" onclick="window.closeSubpage('#subpage-wallpaper')">Done</button>
+        </div>
+        <div class="subpage-content space-y-4">
+            <div class="settings-group-title">Personal Ambient Background</div>
+            <div class="settings-group p-5 space-y-5">
+                <p class="text-xs text-slate-400 leading-relaxed">
+                    Upload any photo or wallpaper from your device gallery to set it as MoneyFlow's dynamic glass background.
+                </p>
+
+                <!-- Thumbnail & Upload Box -->
+                <div class="flex flex-col items-center gap-3">
+                    <div id="wallpaperThumbnailWrap" class="w-full h-40 rounded-2xl border border-white/15 overflow-hidden relative group bg-black/40 flex items-center justify-center cursor-pointer shadow-inner" onclick="document.getElementById('wallpaperFileInput').click()">
+                        <img id="wallpaperPreviewImg" src="" class="hidden w-full h-full object-cover">
+                        <div id="wallpaperUploadPlaceholder" class="flex flex-col items-center gap-2 text-slate-400 group-hover:text-white transition">
+                            <div class="w-12 h-12 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 group-hover:scale-110 transition-transform">
+                                <i data-lucide="upload-cloud" class="w-6 h-6"></i>
+                            </div>
+                            <span class="text-xs font-bold">Tap to select device photo</span>
+                        </div>
+                        <input type="file" id="wallpaperFileInput" accept="image/*" class="hidden" onchange="window.handleWallpaperUpload(event)">
+                    </div>
+                </div>
+
+                <!-- Sliders for Blur and Dimming -->
+                <div class="space-y-4 pt-2 border-t border-white/10">
+                    <div>
+                        <div class="flex justify-between text-xs font-bold text-slate-300 mb-1.5">
+                            <span>Blur Intensity</span>
+                            <span id="wallpaperBlurValDisplay" class="text-cyan-400 font-mono">12px</span>
+                        </div>
+                        <input type="range" id="wallpaperBlurSlider" min="0" max="30" value="12" class="w-full accent-cyan-400" oninput="window.updateWallpaperSettings()">
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between text-xs font-bold text-slate-300 mb-1.5">
+                            <span>Dark Overlay Dimming</span>
+                            <span id="wallpaperDimValDisplay" class="text-cyan-400 font-mono">40%</span>
+                        </div>
+                        <input type="range" id="wallpaperDimSlider" min="0" max="85" value="40" class="w-full accent-cyan-400" oninput="window.updateWallpaperSettings()">
+                    </div>
+                </div>
+
+                <div class="pt-2">
+                    <button class="w-full py-3 rounded-xl font-bold bg-rose-500/10 text-rose-400 border border-rose-500/20 hover:bg-rose-500/20 transition text-xs" onclick="window.removeCustomWallpaper()">
+                        Remove Custom Wallpaper
                     </button>
                 </div>
             </div>
@@ -750,7 +898,7 @@
     <div class="subpage-overlay" id="subpage-danger">
         <div class="subpage-header">
             <button class="subpage-back-btn" onclick="window.closeSubpage('#subpage-danger')">
-                <i data-lucide="chevron-left" class="inline w-5 h-5 mr-0.5"></i> Settings
+                <i data-lucide="chevron-left" class="inline w-5 h-5 mr-0.5"></i>
             </button>
             <h2 class="subpage-title">Danger Zone</h2>
             <div style="width: 40px;"></div>
@@ -767,7 +915,9 @@
                             <span class="settings-desc">Wipes all databases and settings.</span>
                         </div>
                     </div>
-                    <button class="px-4 py-2 rounded-xl text-xs font-bold bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white border border-red-500/30 transition active:scale-95" onclick="window.wipeData()">Reset</button>
+                    <button
+                        class="px-4 py-2 rounded-xl text-xs font-bold bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white border border-red-500/30 transition active:scale-95"
+                        onclick="window.wipeData()">Reset</button>
                 </div>
             </div>
         </div>

@@ -738,11 +738,19 @@
 
         const cacheKey = 'fin_weather_cache';
 
+        const aqiEl = document.getElementById('weatherAqiDisplay');
+        const uvEl = document.getElementById('weatherUvDisplay');
+        const aqiDrawerEl = document.getElementById('weatherAqiDrawer');
+        const uvDrawerEl = document.getElementById('weatherUvDrawer');
+        const humidDrawerEl = document.getElementById('weatherHumidityDrawer');
+        const windDrawerEl = document.getElementById('weatherWindDrawer');
+        const pressureDrawerEl = document.getElementById('weatherPressureDrawer');
+
         const setWeatherUI = (weather) => {
             if (!weather) return;
             currentWeatherData = weather;
             
-            const { temp, code, humidity, wind, city } = weather;
+            const { temp, code, humidity, wind, pressure, uv, aqi, city } = weather;
             const details = getWeatherDetails(code);
 
             if (tempEl) tempEl.textContent = `${temp}°C`;
@@ -750,6 +758,22 @@
             if (cityEl) cityEl.textContent = `📍 ${city}`;
             if (humidEl) humidEl.textContent = `${humidity}%`;
             if (windEl) windEl.textContent = `${wind} km/h`;
+
+            // Rich telemetry updates
+            const aqiVal = aqi || 28;
+            const aqiLabel = aqiVal <= 50 ? 'Good' : aqiVal <= 100 ? 'Moderate' : 'Unhealthy';
+            if (aqiEl) aqiEl.textContent = `${aqiVal} (${aqiLabel})`;
+            if (aqiDrawerEl) aqiDrawerEl.textContent = `${aqiVal} (${aqiLabel})`;
+
+            const uvVal = uv !== undefined ? Math.round(uv) : 2;
+            const uvLabel = uvVal <= 2 ? 'Low' : uvVal <= 5 ? 'Moderate' : 'High';
+            if (uvEl) uvEl.textContent = `${uvVal} (${uvLabel})`;
+            if (uvDrawerEl) uvDrawerEl.textContent = `${uvVal} (${uvLabel})`;
+
+            if (humidDrawerEl) humidDrawerEl.textContent = `${humidity}%`;
+            if (windDrawerEl) windDrawerEl.textContent = `${wind} km/h`;
+            if (pressureDrawerEl) pressureDrawerEl.textContent = `${pressure || 1013} hPa`;
+
             if (updateTimeEl) {
                 const now = new Date();
                 updateTimeEl.textContent = `Updated ${now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
@@ -820,12 +844,10 @@
         };
 
         const fetchWeather = async () => {
-            // Spin reload icon if available
             const refreshIcon = document.querySelector('#weatherBadge i');
             if (refreshIcon) refreshIcon.classList.add('animate-spin');
 
             try {
-                // Step 1: Geolocation by IP
                 let lat = 19.076, lon = 72.8777, city = 'Mumbai'; // Default Fallback
                 try {
                     const geoRes = await fetch('https://ipapi.co/json/');
@@ -857,17 +879,35 @@
                     }
                 }
 
-                // Step 2: Open Meteo Weather Forecast API
-                const weatherRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,wind_speed_10m,weather_code`);
+                // Open Meteo Weather Forecast API with rich telemetry
+                const weatherRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code,uv_index`);
                 if (!weatherRes.ok) throw new Error("Weather API failed");
                 
                 const weatherData = await weatherRes.json();
+
+                // Air Quality API
+                let aqiVal = 32;
+                try {
+                    const aqiRes = await fetch(`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lat}&longitude=${lon}&current=us_aqi`);
+                    if (aqiRes.ok) {
+                        const aqiData = await aqiRes.json();
+                        if (aqiData.current && aqiData.current.us_aqi) {
+                            aqiVal = Math.round(aqiData.current.us_aqi);
+                        }
+                    }
+                } catch (e) {
+                    console.warn('AQI fetch fallback used');
+                }
+
                 const newWeather = {
                     timestamp: Date.now(),
                     temp: Math.round(weatherData.current.temperature_2m),
                     code: weatherData.current.weather_code,
                     humidity: weatherData.current.relative_humidity_2m,
-                    wind: weatherData.current.wind_speed_10m,
+                    wind: Math.round(weatherData.current.wind_speed_10m),
+                    pressure: Math.round(weatherData.current.surface_pressure || 1013),
+                    uv: weatherData.current.uv_index || 2,
+                    aqi: aqiVal,
                     city: city
                 };
 
@@ -902,15 +942,24 @@
             fetchWeather();
         }
 
-        // Setup badge click to manual refresh
-        const badge = document.getElementById('weatherBadge');
-        if (badge) {
-            badge.addEventListener('click', (e) => {
-                e.preventDefault();
-                fetchWeather();
-            });
-        }
+        // Toggle Drawer logic
+        window.toggleWeatherDrawer = function(e) {
+            if (e) e.stopPropagation();
+            const drawer = document.getElementById('weatherDetailsDrawer');
+            const icon = document.getElementById('weatherChevronIcon');
+            if (drawer) {
+                const isHidden = drawer.classList.contains('hidden');
+                if (isHidden) {
+                    drawer.classList.remove('hidden');
+                    if (icon) icon.classList.add('rotate-180');
+                } else {
+                    drawer.classList.add('hidden');
+                    if (icon) icon.classList.remove('rotate-180');
+                }
+            }
+        };
 
+        window.refreshWeather = fetchWeather;
         // Auto refresh every 5 minutes
         setInterval(fetchWeather, 300000);
     }
@@ -986,16 +1035,27 @@
         return options[index];
     }
 
+    function getTimeGreetingPrefix(hour) {
+        if (hour >= 0 && hour < 4) return { prefix: "Good Late Night", emoji: "🌌" };
+        if (hour >= 4 && hour < 6) return { prefix: "Good Early Morning", emoji: "🌅" };
+        if (hour >= 6 && hour < 12) return { prefix: "Good Morning", emoji: "☀️" };
+        if (hour >= 12 && hour < 17) return { prefix: "Good Afternoon", emoji: "🌤️" };
+        if (hour >= 17 && hour < 22) return { prefix: "Good Evening", emoji: "🌆" };
+        return { prefix: "Good Night", emoji: "🌙" };
+    }
+
     function updateTextGreeting() {
         const welcomeEl = document.getElementById('welcomeText');
+        const subtextEl = document.getElementById('welcomeSubText');
         if (!welcomeEl) return;
 
         const username = localStorage.getItem('fin_userName') || 'User';
         const date = new Date();
         const hour = date.getHours();
 
+        const timeInfo = getTimeGreetingPrefix(hour);
         const template = getGreetingTemplate(hour);
-        let emoji = template.emoji;
+        let emoji = timeInfo.emoji;
 
         // Smart weather emoji overlay
         if (currentWeatherData && currentWeatherData.code !== undefined) {
@@ -1011,28 +1071,33 @@
             }
         }
 
+        const startEmoji = emoji;
+        const endEmoji = template.emoji || "✨";
+
         // Render template text
-        const styledName = `<span class="text-gradient font-black cursor-pointer group/name relative inline-flex items-center gap-1.5" id="usernameContainer"><span id="displayedUsername">${username}</span><i data-lucide="edit-3" class="w-3.5 h-3.5 opacity-0 group-hover/name:opacity-100 transition-opacity text-cyan-400 cursor-pointer" id="editUsernameBtn" title="Edit Username"></i></span>`;
-        
-        let finalHtml = "";
-        const formattedEmoji = `<span class="welcome-emoji inline-block mr-2">${emoji}</span>`;
-        if (template.text.includes("{username}")) {
-            const parts = template.text.split("{username}");
-            finalHtml = `<span>${formattedEmoji}${parts[0]}</span>${styledName}<span>${parts[1]}</span>`;
-        } else {
-            finalHtml = `<span>${formattedEmoji}${template.text} </span>${styledName}`;
+        const styledName = `<span class="text-gradient font-black" id="displayedUsername">${username}</span>`;
+
+        // Exact requested format: (Emoji) Good Morning, User! (Emoji)
+        const finalHeaderHtml = `<span class="welcome-emoji inline-block mr-1.5">${startEmoji}</span><span>${timeInfo.prefix}, </span>${styledName}<span>! </span><span class="welcome-emoji inline-block ml-1">${endEmoji}</span>`;
+
+        // Clean tagline for subtitle
+        let tagline = template.text.replace("{username}", username).replace("Good Morning, ", "").replace("Good Afternoon, ", "").replace("Good Evening, ", "").replace("Good Night, ", "");
+        if (subtextEl) {
+            subtextEl.textContent = `${tagline} Track, analyze, and master your financial cashflow.`;
         }
 
         // Apply visual fade animation by re-triggering class
         welcomeEl.classList.remove('greeting-fade-in');
         void welcomeEl.offsetWidth; // Reflow
-        welcomeEl.innerHTML = finalHtml;
+        welcomeEl.innerHTML = finalHeaderHtml;
         welcomeEl.classList.add('greeting-fade-in');
 
-        // Setup Username Edit click
-        const editBtn = document.getElementById('editUsernameBtn');
-        if (editBtn) {
-            editBtn.addEventListener('click', (e) => {
+        // Setup Username Edit click on name tap
+        const nameEl = document.getElementById('displayedUsername');
+        if (nameEl) {
+            nameEl.classList.add('cursor-pointer');
+            nameEl.title = "Tap to change name";
+            nameEl.addEventListener('click', (e) => {
                 e.stopPropagation();
                 if (window.showPromptModal) {
                     window.showPromptModal("Change Name", username, "Enter your name", (newName) => {
@@ -1048,64 +1113,19 @@
                 }
             });
         }
-        
+
         if (window.lucide) window.lucide.createIcons({ root: welcomeEl });
     }
+
+    window.openAiDetailsModal = openAiDetailsModal;
 
     // ----------------------------------------------------
     // SPEECH SYNTHESIS ENGINE
     // ----------------------------------------------------
     function speakVoiceGreeting(force = false) {
-        if (!window.speechSynthesis) return;
-
-        const isMuted = localStorage.getItem('fin_voice_mute') === 'true';
-        if (isMuted && !force) return;
-
-        // Prevent speaking twice per session automatically
-        if (sessionStorage.getItem('fin_voice_spoken') === 'true' && !force) {
-            return;
+        if (window.MoneyFlowVoiceEngine) {
+            window.MoneyFlowVoiceEngine.speak(force);
         }
-
-        // Cancel any current speaking
-        window.speechSynthesis.cancel();
-
-        const username = localStorage.getItem('fin_userName') || 'User';
-        const date = new Date();
-        const hour = date.getHours();
-
-        let timeGreeting = "day";
-        if (hour >= 5 && hour < 12) timeGreeting = "morning";
-        else if (hour >= 12 && hour < 17) timeGreeting = "afternoon";
-        else if (hour >= 17 && hour < 22) timeGreeting = "evening";
-        else timeGreeting = "night";
-
-        const capitalizedName = username.charAt(0).toUpperCase() + username.slice(1);
-        let message = "";
-        
-        if (timeGreeting === "morning") {
-            message = `Good morning ${capitalizedName}, hope you have an amazing day!`;
-        } else if (timeGreeting === "afternoon") {
-            message = `Good afternoon ${capitalizedName}, stay focused and make the most of your day!`;
-        } else if (timeGreeting === "evening") {
-            message = `Good evening ${capitalizedName}, hope your evening is going awesome!`;
-        } else {
-            message = `Good night ${capitalizedName}, sleep well and rest up!`;
-        }
-
-        const utterance = new SpeechSynthesisUtterance(message);
-        
-        // Select premium voice if available
-        const voices = window.speechSynthesis.getVoices();
-        let voice = voices.find(v => v.lang.startsWith('en') && (v.name.includes('Google') || v.name.includes('Natural') || v.name.includes('Samantha')));
-        if (!voice) {
-            voice = voices.find(v => v.lang.startsWith('en')) || voices[0];
-        }
-        if (voice) utterance.voice = voice;
-        utterance.rate = 0.95;
-        utterance.pitch = 1.0;
-
-        sessionStorage.setItem('fin_voice_spoken', 'true');
-        window.speechSynthesis.speak(utterance);
     }
 
     function initVoiceControls() {

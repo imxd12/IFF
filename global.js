@@ -1201,40 +1201,102 @@
           
           let currentMonth = currentDate.getMonth();
           let currentYear = currentDate.getFullYear();
-          let selectedDateStr = input.value;
+          let selectedDateStr = input.value || new Date().toISOString().split('T')[0];
           let calendarMode = 'days';
-          let yearPageStart = currentYear - (currentYear % 15);
+          let yearPageStart = currentYear - 5;
 
           const renderCalendar = () => {
               popup.innerHTML = '';
+
+              // Quick Action Presets Header Bar
+              const presetsBar = document.createElement('div');
+              presetsBar.className = 'flex items-center justify-between gap-1 mb-2.5 pb-2 border-b border-white/10 text-[11px] font-bold';
+              
+              const todayBtn = document.createElement('button');
+              todayBtn.type = 'button';
+              todayBtn.className = 'px-2 py-1 rounded-lg bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/25 transition-all';
+              todayBtn.textContent = 'Today';
+              todayBtn.onclick = (e) => {
+                  e.stopPropagation();
+                  const d = new Date();
+                  selectedDateStr = d.toISOString().split('T')[0];
+                  input.value = selectedDateStr;
+                  currentMonth = d.getMonth();
+                  currentYear = d.getFullYear();
+                  input.dispatchEvent(new Event('change', { bubbles: true }));
+                  wrapper.classList.remove('open');
+                  if(window.playUISound) window.playUISound('tap');
+              };
+
+              const yestBtn = document.createElement('button');
+              yestBtn.type = 'button';
+              yestBtn.className = 'px-2 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/25 transition-all';
+              yestBtn.textContent = 'Yesterday';
+              yestBtn.onclick = (e) => {
+                  e.stopPropagation();
+                  const d = new Date();
+                  d.setDate(d.getDate() - 1);
+                  selectedDateStr = d.toISOString().split('T')[0];
+                  input.value = selectedDateStr;
+                  currentMonth = d.getMonth();
+                  currentYear = d.getFullYear();
+                  input.dispatchEvent(new Event('change', { bubbles: true }));
+                  wrapper.classList.remove('open');
+                  if(window.playUISound) window.playUISound('tap');
+              };
+
+              const weekAgoBtn = document.createElement('button');
+              weekAgoBtn.type = 'button';
+              weekAgoBtn.className = 'px-2 py-1 rounded-lg bg-purple-500/10 border border-purple-500/30 text-purple-400 hover:bg-purple-500/25 transition-all';
+              weekAgoBtn.textContent = '-7 Days';
+              weekAgoBtn.onclick = (e) => {
+                  e.stopPropagation();
+                  const d = new Date();
+                  d.setDate(d.getDate() - 7);
+                  selectedDateStr = d.toISOString().split('T')[0];
+                  input.value = selectedDateStr;
+                  currentMonth = d.getMonth();
+                  currentYear = d.getFullYear();
+                  input.dispatchEvent(new Event('change', { bubbles: true }));
+                  wrapper.classList.remove('open');
+                  if(window.playUISound) window.playUISound('tap');
+              };
+
+              presetsBar.appendChild(todayBtn);
+              presetsBar.appendChild(yestBtn);
+              presetsBar.appendChild(weekAgoBtn);
+              popup.appendChild(presetsBar);
               
               const header = document.createElement('div');
               header.className = 'calendar-header';
               
               const prevBtn = document.createElement('button');
+              prevBtn.type = 'button';
               prevBtn.innerHTML = '<i data-lucide="chevron-left"></i>';
               
               const nextBtn = document.createElement('button');
+              nextBtn.type = 'button';
               nextBtn.innerHTML = '<i data-lucide="chevron-right"></i>';
               
               const titleSpan = document.createElement('span');
-              titleSpan.className = 'calendar-month-year';
+              titleSpan.className = 'calendar-month-year cursor-pointer hover:text-cyan-400 transition-colors';
               
               if (calendarMode === 'days') {
                   titleSpan.textContent = `${monthNames[currentMonth]} ${currentYear}`;
+                  titleSpan.title = "Click to select Month or Past Year";
                   titleSpan.onclick = (e) => { e.stopPropagation(); calendarMode = 'months'; renderCalendar(); };
                   prevBtn.onclick = (e) => { e.stopPropagation(); currentMonth--; if(currentMonth < 0) { currentMonth = 11; currentYear--; } renderCalendar(); };
                   nextBtn.onclick = (e) => { e.stopPropagation(); currentMonth++; if(currentMonth > 11) { currentMonth = 0; currentYear++; } renderCalendar(); };
               } else if (calendarMode === 'months') {
-                  titleSpan.textContent = `${currentYear}`;
-                  titleSpan.onclick = (e) => { e.stopPropagation(); calendarMode = 'years'; yearPageStart = currentYear - (currentYear % 15); renderCalendar(); };
+                  titleSpan.textContent = `${currentYear} (Select Month)`;
+                  titleSpan.onclick = (e) => { e.stopPropagation(); calendarMode = 'years'; yearPageStart = currentYear - 5; renderCalendar(); };
                   prevBtn.onclick = (e) => { e.stopPropagation(); currentYear--; renderCalendar(); };
                   nextBtn.onclick = (e) => { e.stopPropagation(); currentYear++; renderCalendar(); };
               } else if (calendarMode === 'years') {
-                  titleSpan.textContent = `${yearPageStart} - ${yearPageStart + 14}`;
+                  titleSpan.textContent = `${yearPageStart} - ${yearPageStart + 11}`;
                   titleSpan.onclick = (e) => { e.stopPropagation(); calendarMode = 'days'; renderCalendar(); };
-                  prevBtn.onclick = (e) => { e.stopPropagation(); yearPageStart -= 15; renderCalendar(); };
-                  nextBtn.onclick = (e) => { e.stopPropagation(); yearPageStart += 15; renderCalendar(); };
+                  prevBtn.onclick = (e) => { e.stopPropagation(); yearPageStart -= 12; renderCalendar(); };
+                  nextBtn.onclick = (e) => { e.stopPropagation(); yearPageStart += 12; renderCalendar(); };
               }
               
               header.appendChild(prevBtn);
@@ -1309,7 +1371,7 @@
               else if (calendarMode === 'years') {
                   const grid = document.createElement('div');
                   grid.className = 'calendar-mode-grid';
-                  for (let i = 0; i < 15; i++) {
+                  for (let i = 0; i < 12; i++) {
                       const y = yearPageStart + i;
                       const yEl = document.createElement('div');
                       yEl.className = 'calendar-mode-item';
@@ -1348,6 +1410,7 @@
                           selectedDateStr = input.value;
                       }
                   }
+                  calendarMode = 'days';
                   renderCalendar();
                   if(window.playUISound) window.playUISound('tap');
               }
